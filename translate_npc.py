@@ -64,6 +64,9 @@ def process_folder(folder_path, output_suffix='_fr'):
     """Process all .txt files in a folder"""
     count = 0
     for txt_file in Path(folder_path).glob('*.txt'):
+        # Skip files that already have _fr suffix or contain _fr in name
+        if '_fr' in txt_file.stem:
+            continue
         output_file = str(txt_file.parent / f"{txt_file.stem}{output_suffix}{txt_file.suffix}")
         if translate_file(str(txt_file), output_file):
             count += 1
@@ -77,15 +80,12 @@ if __name__ == "__main__":
     count = process_folder('npc/other')
     print(f"Translated {count} files in /npc/other/\n")
 
-    # Translate files in /npc/cities/
-    print("Translating /npc/cities/...")
-    count = process_folder('npc/cities')
-    print(f"Translated {count} files in /npc/cities/\n")
-
-    # Translate files in /npc/quests/
-    print("Translating /npc/quests/...")
-    count = process_folder('npc/quests')
-    print(f"Translated {count} files in /npc/quests/\n")
-
-    save_cache()
-    print("Translation cache saved!")
+    # Uncomment when ready for cities
+    # print("Translating /npc/cities/...")
+    # count = process_folder('npc/cities')
+    # print(f"Translated {count} files in /npc/cities/\n")
+    
+    # Uncomment when ready for quests
+    # print("Translating /npc/quests/...")
+    # count = process_folder('npc/quests')
+    # print(f"Translated {count} files in /npc/quests/\n")

@@ -1,0 +1,253 @@
+//===== rAthena Script =======================================
+//= Buying Shop Scripts
+//===== By: ==================================================
+//= Kisuka
+//===== Current Version: =====================================
+//= 1.1b
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Buying Shop licenses.
+//===== Additional Comments: =================================
+//= 1.0 First version. [Kisuka]
+//= 1.1 Added Catalog Magician. [Euphy]
+//= 1.1a Moved Catalog Magician to Renewal path. [Euphy]
+//= 1.1b Added missing weight checks. [Euphy]
+//============================================================ 
+
+// Black Marketeer (Buy Licenses - Non-Merchant Classes) :: qskill_buy_store
+//============================================================ 
+que_job01,68,84,1	script	Black Marketeer#Buying	881,{
+	if (checkweight(1201,1) == 0 || MaxWeight - Weight < 2400) {
+		mes "[M. Jass]";
+		mes "Tu es trop cupide, même par rapport à quelqu'un comme moi !";
+		mes "Pourquoi ne pas alléger ton sac d'abord ?";
+		close;
+	}
+	if (getskilllv("ALL_BUYING_STORE") == 1) {
+		mes "[M. Jass]";
+		mes "Hey, tu as déjà fait un contrat avec Hugh.";
+		mes "Je n'ai aucun commerce à faire avec toi.";
+		close;
+	}
+	mes "[M. Jass]";
+	mes "Tu dois avoir besoin de quelque chose d'important pour venir me trouver.";
+	mes "Que veux-tu?";
+	next;
+	switch(select("Bulk Buyer Shop License:Who are you?:Nothing, nothing!")) {
+	case 1:
+		mes "[M. Jass]";
+		mes "Je savais que c'était ça!";
+		mes "Bien sûr, je peux le faire pour toi.";
+		mes "Le mien ressemble exactement à l'original que les commerçants obtiennent de ce salopard de M. Hugh !";
+		next;
+		mes "[M. Jass]";
+		mes "Et mon permis est meilleur car tu n'as pas besoin d'apprendre de nouvelles compétences.";
+		mes "Combien en veux-tu ?";
+		next;
+		mes "[M. Jass]";
+		mes "Sache que je ne peux en fabriquer qu'en petites quantités, jusqu'à 10 à la fois.";
+		mes "Cela te coûtera 500 zeny pour chacun.";
+		next;
+		while(1) {
+			input .@input;
+			mes "[M. Jass]";
+			if (.@input == 0) {
+				mes "N'as-tu pas besoin de ces licences ?";
+				close;
+			} else if (.@input > 10) {
+				mes "Je ne peux en fabriquer que jusqu'à 10 à la fois, tu sais.";
+				next;
+			} else {
+				mes "It'll cost "+(.@input*500)+" zeny.";
+				if (Zeny < (.@input*500)) {
+					mes "mais tu n'as pas assez d'argent.";
+					next;
+					mes "[M. Jass]";
+					mes "Ne connais-tu donc pas les bases des affaires ? Tout a un prix.";
+					mes "Si tu veux quelque chose, il faut le payer.";
+				} else {
+					mes "Ha... Ha ha ha !";
+					mes "Mr Hugh, je vais prendre en charge votre licence commerciale. Vous verrez !";
+					mes "*Rire Rire*";
+					getitem 12548,.@input; //Buy_Market_Permit2
+					set Zeny,Zeny-(.@input*500);
+				}
+				close;
+			}
+		}
+	case 2:
+		mes "[M. Jass]";
+		mes "Je suis parti de ma ville natale il y a longtemps.";
+		mes "Il est inutile de demander qui je suis car tout ce qu'il me reste maintenant, c'est ma haine.";
+		next;
+		mes "[M. Jass]";
+		mes "...";
+		mes "Hugh est un commerçant corrompu sans éthique commerciale.";
+		mes "Mon seul but dans la vie est de détruire Hugh.";
+		next;
+		mes "[M. Jass]";
+		mes "Aaah... j'ai trop bu... (*Hic*)";
+		mes "C'est juste l'alcool qui parle.";
+		mes "Veuillez ignorer tout ce que je vous ai dit.";
+		close;
+	case 3:
+		mes "[M. Jass]";
+		mes "D'accord, d'accord ! Il n'y a pas besoin de crier.";
+		mes "Laissez-moi tranquille si vous n'avez rien à me dire.";
+		close;
+	}
+}
+
+// Purchasing Team (Learn Skill - Merchant Classes)
+//============================================================ 
+alberta_in,58,52,4	script	Purchasing Team#Buying	59,{
+	if (checkweight(1201,1) == 0 || MaxWeight - Weight < 2400) {
+		mes "- Vous ne pouvez ni converser ni faire la quête car vous transportez trop d'objets. -";
+		close;
+	}
+	mes "[M. Hugh]";
+	if (BaseClass == Job_Merchant && getskilllv("MC_VENDING") >= 1) {
+		if (getskilllv("ALL_BUYING_STORE") == 1) {
+			mes "Je suis Hugh de l'équipe des Achats.";
+			mes "Comment puis-je vous aider aujourd'hui ?";
+			next;
+			if(select("Purchase Bulk Buyer Shop License:Quit") == 2) {
+				mes "[M. Hugh]";
+				mes "N'hésitez pas à me demander si vous avez besoin de licences pour le Magasin d'Acheteur en Gros.";
+				mes "Au revoir~";
+				close;
+			}
+			mes "[M. Hugh]";
+			mes "C'est 200 zeny par licence de magasin d'acheteur en gros, et vous pouvez acheter jusqu'à 50 à la fois.";
+			mes "Combien de licences avez-vous besoin?";
+			next;
+			while(1) {
+				input .@input;
+				mes "[M. Hugh]";
+				if (.@input == 0) {
+					mes "Vous avez annulé le commerce.";
+					mes "Passe une bonne journée.";
+					close;
+				} else if (.@input > 50) {
+					mes "Veuillez entrer un montant de 50 ou moins.";
+					next;
+				} else {
+					mes "It'll cost "+(.@input*200)+" zeny for "+.@input+" licenses.";
+					if (Zeny < (.@input*200)) {
+						mes "mais vous ne semblez pas avoir assez d'argent.";
+					} else {
+						mes "Merci pour votre mécénat.";
+						getitem 6377,.@input; //Buy_Market_Permit
+						set Zeny,Zeny-(.@input*200);
+					}
+					close;
+				}
+			}
+		} else {
+			mes "Je suis Hugh de l'Équipe d'Achat du Guilde Marchande d'Alberta.";
+			mes "Tu es...";
+			next;
+			mes "[M. Hugh]";
+			mes "Saviez-vous? Notre guilde a délivré une licence pour permettre aux individus d'acheter des marchandises auprès d'autres personnes.";
+			next;
+			select("I've never had problems buying items...");
+			mes "[M. Hugh]";
+			mes "Vous avez raison, mais réfléchissez-y:";
+			mes "n'avez-vous pas eu du mal à acheter en gros?";
+			mes "Vous auriez dû trouver et parler à chacun qui possède l'article que vous souhaitez.";
+			mes "Plutôt inconvenant, n'est-ce pas?";
+			next;
+			mes "[M. Hugh]";
+			mes "Comme l'achat en gros est une question importante pour nous, les Marchands,";
+			mes "j'ai proposé un plan innovant à notre guilde, basé sur mes 10 ans d’expérience dans les achats.";
+			next;
+			mes "[M. Hugh]";
+			mes "'Laissez les individus ouvrir
+un magasin d'acheteur en gros !'";
+			mes "Voici le titre de ma proposition.";
+			mes "Vous verrez, quand vous lirez cela...";
+			mes "[M. Hugh]";
+			next;
+			mes "[M. Hugh]";
+			mes "...";
+			mes "[M. Hugh]";
+			next;
+			select("Alright, what's your point?");
+			mes "[M. Hugh]";
+			mes "vous pouvez acheter certains objets en gros par le biais de la Vente.";
+			mes "[M. Hugh]";
+			next;
+			mes "[M. Hugh]";
+			mes "[M. Hugh]";
+			next;
+			mes "[M. Hugh]";
+			mes "[M. Hugh]";
+			next;
+			mes "[M. Hugh]";
+			mes "Notre président était si content d'apprendre que nous allions faire des bénéfices importants!";
+			mes "Our president was so happy to hear that we're going to make big bucks!";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "Veuillez en venir au fait !";
+			next;
+			mes "[M. Hugh]";
+			mes "Ne sois pas si impatient, d'accord ?";
+			mes "Mon propos est que nous pouvons vous laisser ouvrir le Bulk Buyer Shop si vous avez appris le Vending.";
+			next;
+			mes "[M. Hugh]";
+			mes "Bien sûr, nous facturons un frais de dossier unique de 10 000 zeny.";
+			mes "Vous devrez avoir une ^4A4AFFLicence du Bulk Buyer Shop^000000 chaque fois que vous ouvrirez le magasin.";
+			next;
+			mes "[M. Hugh]";
+			mes "Dis donc, voudrais-tu t'inscrire maintenant ?";
+			mes "Si c'est le cas, je vais te montrer comment ouvrir le Bulk Buyer Shop.";
+			next;
+			if(select("Learn how to open Bulk Buyer Shop:Cancel") == 2) {
+				mes "[M. Hugh]";
+				mes "C'est décevant !";
+				mes "Utiliser cette option d'acheteur en gros peut vous être très bénéfique pour votre affaire, mais c'est ton choix.";
+				mes "Je suis toujours disponible pour une consultation!";
+				close;
+			}
+			mes "[M. Hugh]";
+			if (Zeny < 10000) {
+				mes "Le frais de dossier est de 10 000 zeny.";
+				mes "Veuillez avoir le paiement prêt d'abord.";
+				close;
+			} else {
+				mes "Tu as fait un bon choix.";
+				mes "Veuillez me donner le montant du frais de dossier, et signez ici....";
+				next;
+				input .@name$;
+				mes "[M. Hugh]";
+				mes .@name$+"....";
+				mes "J'aime ton écriture.";
+				mes "D'accord, tu es maintenant autorisé à ouvrir le Magasin Acheteur en Gros.";
+				set Zeny,Zeny-10000;
+				getitem 6377,5; //Buy_Stall_Permit
+				skill "ALL_BUYING_STORE",1,SKILL_PERM_GRANT;
+				next;
+				mes "[M. Hugh]";
+				mes "Actuellement, seules les ^8C2121EXCEPTIONS^000000 équipements, certains potions et des objets artisanaux peuvent être achetés en gros, mais cela peut toujours être très bénéfique pour toi, selon l'usage que tu en fais.";
+				next;
+				mes "[M. Hugh]";
+				mes "Oh, et tu dois avoir au moins un de l'objet que tu veux acheter dans ton inventaire car tu dois le montrer aux autres à travers ta boutique.";
+				next;
+				mes "[M. Hugh]";
+				mes "Ta compétence devrait maintenant être enregistrée dans la fenêtre Compétences. Si tu ne peux pas la voir, il faut probablement que tu minimises ta liste de Compétences et vérifies l'onglet Job 3.";
+				next;
+				mes "[M. Hugh]";
+				mes "Je t'ai donné 5 Licences Magasin Acheteur en Gros pour ton essai.";
+				mes "Amuse-toi bien avec les achats !";
+				close;
+			}
+		}
+	}
+	mes "Je suis Hugh de l'Équipe d'Achat du Guilde Marchande d'Alberta.";
+	mes "J'aimerais discuter, mais je suis trop occupé en ce moment.";
+	next;
+	mes "[M. Hugh]";
+	mes "Mon temps est entièrement consacré à nos clients dans l'industrie des marchands.";
+	close;
+}

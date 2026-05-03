@@ -1,0 +1,253 @@
+//===== rAthena Script =======================================
+//= Old Pharmacist
+//===== By: ==================================================
+//= DZeroX
+//===== Current Version: =====================================
+//= 1.4
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Trade in items for potions.
+//= Breakdown of arguments used:
+//= arg(0): Herb required.
+//= arg(1): Zeny cost.
+//= arg(2): Potion given.
+//===== Additional Comments: =================================
+//= 1.0 Fully working. [DZeroX]
+//= 1.0a Minor fixes [Lupus]
+//= 1.1 Added changed the dialogs and name to fit the
+//=     the official information. [DZeroX]
+//= 1.1a Removed .GATs [Lupus]
+//= 1.1b Fixed a bug in Orange Potion creating. Copy&Pasting = bad. [L0ne_W0lf]
+//= 1.2 Added checkweight, and input min/max values. [L0ne_W0lf]
+//= 1.3 Fixed minor condition check bug. (bugreport:597) [L0ne_W0lf]
+//= 1.4 Updated to match AEGIS script. [Kisuka]
+//============================================================
+
+alberta_in,16,28,4	script	Pharmacist	61,{
+	if (checkweight(1201,1) == 0) {
+		mes "- Attendez un moment ! -";
+		mes "- Actuellement, vous portez -";
+		mes "- trop d'objets avec vous. -";
+		mes "- Veuillez revenir plus tard -";
+		mes "- après avoir mis certains objets en entreposage chez Kafra. -";
+		close;
+	}
+	mes "[Ancien Pharmacien]";
+	mes "Hummm...";
+	mes "Qu'est-ce qui vous amène ici...?";
+	next;
+	switch(select("Make Potion:Talk.:Mixing Information:Cancel")) {
+	case 1:
+		if (MaxWeight - Weight < 5000) {
+			mes "[Ancien Pharmacien]";
+			mes "Pourquoi trimballez-vous autant de choses!";
+			mes "Ne soyez pas avide, emportez seulement ce dont vous avez besoin!";
+			next;
+			mes "[Ancien Pharmacien]";
+			mes "Vous êtes trop lourd pour recevoir des potions de ma part...";
+			mes "Allez ranger certains objets dans votre coffre d'abord!";
+			close;
+		} else {
+			mes "[Ancien Pharmacien]";
+			mes "Avez-vous tout ce dont vous avez besoin, hein ? Lequel souhaitez-vous?";
+			next;
+			switch(select("Red Potion.:Orange Potion.:Yellow Potion.:White Potion.:Blue Potion.:Green Potion.:Actually, I don't want anything.")) {
+			case 1:
+				callsub L_Making,507,3,501;
+			case 2:
+				mes "[Ancien Pharmacien]";
+				if (countitem(507) < countitem(713)) {
+					set .@max,countitem(507);
+				}
+				else if (countitem(508) < countitem(713)) {
+					set .@max,countitem(508);
+				}
+				else {
+					set .@max,countitem(713);
+				}
+				if ((countitem(507) < 1) || (countitem(508) < 1) || (countitem(713) == 0)) {
+					mes "Vaurien ! Que pouviez-vous espérer ?! Être ici sans rien du tout. Tss !";
+					mes "^FF0000";
+					close;
+				}
+				if (Zeny < 3) {
+					mes "Vaurien ! Que pouviez-vous espérer ?! Être ici sans rien du tout. Tss !";
+					mes "^FF0000";
+					close;
+				}
+				mes "Combien en voulez-vous ?";
+				next;
+				switch(select("Make as many as I can.:I want to choose an amount.:Actually, I don't want anything.")) {
+				case 1:
+					if ((countitem(507) < .@max) || (countitem(508) < .@max) || (countitem(713) < .@max) || (Zeny < .@max*3)) {
+						mes "[Ancien Pharmacien]";
+						mes "Ah ah ! Tu ne possèdes même pas tous les matériaux et tu veux que je te fasse des potions ?!";
+						close;
+					}
+					set Zeny,Zeny-(.@max*5);
+					delitem 507,.@max; //Red_Herb
+					delitem 508,.@max; //Yellow_Herb
+					delitem 713,.@max; //Empty_Bottle
+					getitem 502,.@max; //Orange_Potion
+					break;
+				case 2:
+					mes "[Ancien Pharmacien]";
+					mes "Then pick a number below 100. If you don't want any, just enter '0'. With the materials you have, you can make about "+.@max+" potions.";
+					next;
+					input .@amount,0,101;
+					if (.@amount == 0) {
+						mes "[Ancien Pharmacien]";
+						mes "^FF0000Décide-toi, tu veux?!";
+						close;
+					}
+					if (.@amount > 100) {
+						mes "[Ancien Pharmacien]";
+						mes "Es-tu sourd ? J'ai dit moins de 100 !";
+						close;
+					}
+					if ((countitem(507) < .@amount) || (countitem(508) < .@amount) || (countitem(713) < .@amount) || (Zeny < .@amount*3)) {
+						mes "[Ancien Pharmacien]";
+						mes "Ah ah ! Tu ne possèdes même pas tous les matériaux et tu veux que je te fasse des potions ?!";
+						close;
+					}
+					next;
+					set Zeny,Zeny-(.@amount*5);
+					delitem 507,.@amount; //Red_Herb
+					delitem 508,.@amount; //Yellow_Herb
+					delitem 713,.@amount; //Empty_Bottle
+					getitem 502,.@amount; //Orange_Potion
+					break;
+				case 3:
+					mes "[Ancien Pharmacien]";
+					mes "Quoi?!";
+					mes "Grrr...";
+					mes "Bleh !";
+					mes "^FF0000";
+					close;
+				}
+				mes "[Ancien Pharmacien]";
+				mes "Tiens. C'est prêt donc prends-le. Mais n'oublie pas ! L'abus de médicaments est mauvais.";
+				close;
+			case 3:
+				callsub L_Making,508,10,503;
+			case 4:
+				callsub L_Making,509,20,504;
+			case 5:
+				callsub L_Making,510,30,505;
+			case 6:
+				callsub L_Making,511,3,506;
+			case 7:
+				mes "[Ancien Pharmacien]";
+				mes "Quoi?!";
+				mes "Grrr...";
+				mes "Bleh !";
+				mes "^FF0000";
+				close;
+			}
+		}
+	case 2:
+		mes "[Ancien Pharmacien]";
+		mes "Avec la médecine, vous pouvez augmenter les capacités de régénération d'une personne. Mais, elles ne sont bonnes que jusqu'à un certain point. *Sigh* Je commence à penser aux jours où j'étais jeune. J'ai l'impression de vieillir.";
+		next;
+		mes "[Ancien Pharmacien]";
+		mes "Bref, une potion est simplement une potion. Rien de plus et rien de moins.";
+		close;
+	case 3:
+		mes "[Ancien Pharmacien]";
+		mes "Hrrrmm...";
+		mes "Vous jeunes gens pouvez être assez pénibles. Mais puisque vous me le demandez, je vais vous expliquer.";
+		next;
+		mes "[Ancien Pharmacien]";
+		mes "Les herbes fonctionnent bien seules, mais si on utilise mes techniques et compétences spéciales pour en faire des potions, l'effet est beaucoup plus grand.";
+		next;
+		mes "[Ancien Pharmacien]";
+		mes "Si vous le demandez avec empressement et politesse, je les fabriquerai pour vous. Mais ce n'est pas gratuit... Ne vous inquiétez pas cependant, je ne demande qu'un petit montant, alors ce n'est pas cher du tout.";
+		next;
+		mes "[Ancien Pharmacien]";
+		mes "Potion Rouge - ^0098E52 Herbe Rouge, 1 Bouteille Vide, frais de 2 zeny.^000000";
+		mes "Potion Orange - ^0098E51 Herbe Rouge, 1 Herbe Jaune, 1 Bouteille Vide, frais de 5 zeny.^000000";
+		mes "Potion Jaune - ^0098E52 Herbes Jaunes, 1 Bouteille Vide, 10 zeny.^000000";
+		next;
+		mes "[Ancien Pharmacien]";
+		mes "Potion Blanche - ^0098E52 Herbe Blanche, 1 Bouteille Vide, frais de 20 zeny.^000000";
+		mes "Potion Bleue - ^0098E52 Herbes Bleues, 1 Bouteille Vide, frais de 30 zeny.^000000";
+		mes "Potion Verte - ^0098E52 Herbe Verte, 1 Bouteille Vide, frais de 3 zeny.^000000";
+		close;
+	case 4:
+		mes "[Ancien Pharmacien]";
+		mes "Quel être ennuyeux. Si vous avez quelque chose à dire, pourquoi ne le dites-vous pas ?!";
+		close;
+	}
+	
+L_Making:
+	.@item_req = getarg(0);
+	.@req_amount = getarg(1);
+
+	mes "[Ancien Pharmacien]";
+	if ((countitem(.@item_req)/2) < countitem(713)) {
+		.@max = countitem(.@item_req) /2;
+	} else {
+		.@max = countitem(713);
+	}
+	if (countitem(.@item_req) < 2 || countitem(713) == 0) {
+		mes "Vaurien ! Que pouviez-vous espérer ?! Être ici sans rien du tout. Tss !";
+		mes "^FF0000";
+		close;
+	}
+	if (Zeny < 3) {
+		mes "Vaurien ! Que pouviez-vous espérer ?! Être ici sans rien du tout. Tss !";
+		mes "^FF0000";
+		close;
+	}
+	mes "Combien en voulez-vous ?";
+	next;
+	switch(select("Make as many as I can.:I want to choose an amount.:Actually, I don't want anything.")) {
+	case 1:
+		if ((countitem(.@item_req) < .@max*2) || countitem(713) < .@max || (Zeny < .@max*.@req_amount)) {
+			mes "[Ancien Pharmacien]";
+			mes "Ah ah ! Tu ne possèdes même pas tous les matériaux et tu veux que je te fasse des potions ?!";
+			close;
+		}
+		Zeny = Zeny - (.@max*.@req_amount);
+		delitem .@item_req,.@max*2;
+		delitem 713,.@max; //Empty_Bottle
+		getitem getarg(2),.@max; 
+		break;
+	case 2:
+		mes "[Ancien Pharmacien]";
+		mes "Then pick a number below 100. If you don't want any, just enter '0'. With the materials you have, you can make about "+.@max+" potions.";
+		next;
+		input .@amount;
+		if (.@amount == 0) {
+			mes "[Ancien Pharmacien]";
+			mes "^FF0000Décide-toi, tu veux?!";
+			close;
+		}
+		if (.@amount > 100) {
+			mes "[Ancien Pharmacien]";
+			mes "Es-tu sourd ? J'ai dit moins de 100 !";
+			close;
+		}
+		if ((countitem(.@item_req) < .@amount*2) || countitem(713) < .@amount || (Zeny < .@amount*.@req_amount)) {
+			mes "[Ancien Pharmacien]";
+			mes "Ah ah ! Tu ne possèdes même pas tous les matériaux et tu veux que je te fasse des potions ?!";
+			close;
+		}
+		Zeny = Zeny - (.@max*.@req_amount);
+		delitem .@item_req,.@amount*2;
+		delitem 713,.@amount; //Empty_Bottle
+		getitem getarg(2),.@amount; 
+		break;
+	case 3:
+		mes "[Ancien Pharmacien]";
+		mes "Quoi?!";
+		mes "Grrr...";
+		mes "Bleh !";
+		mes "^FF0000";
+		close;
+	}
+	mes "[Ancien Pharmacien]";
+	mes "Tiens. C'est prêt donc prends-le. Mais n'oublie pas ! L'abus de médicaments est mauvais.";
+	close;
+}

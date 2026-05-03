@@ -1,0 +1,544 @@
+//===== rAthena Script =======================================
+//= Thief Job Quest
+//===== By: ==================================================
+//= rAthena Dev Team
+//===== Current Version: =====================================
+//= 1.8
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Job quest for Thief classes
+//===== Additional Comments: =================================
+//= 1.0 Fully working.
+//= 1.1 Added instant job change for High Novice [Lupus]
+//= 1.3 Added Baby Class support [Lupus]
+//= 1.4 Optimised and moved first checker to Jfunc1-1 [massdriller]
+//=     Fixed possible EXP abuse [Lupus]
+//= 1.5 Now saves/restores all quest skills [Lupus]
+//= 1.6 Merged back JFunc [Lupus] 1.6a typos
+//= 1.7 Rescripted to Aegis 10.3 stadards. [L0ne_W0lf]
+//=     No longer uses function "F_ToHigh"
+//= 1.8 Added Quest Log commands. [L0ne_W0lf]
+//============================================================
+
+moc_prydb1,39,129,2	script	Thief Guide	69,{
+	if (Upper == 1) {
+		if (ADVJOB == Job_Assassin_Cross || ADVJOB == Job_Stalker) {
+			if (Class == Job_Novice_High) {
+				mes "[Guide Voleur]";
+				mes "Hé ? Je te connais ? C'est flippant que tu sembles si familier. Tu n'as pas de jumeau, hein ?";
+				next;
+				if (!callfunc("F_CanChangeJob")) {
+					mes "[Guide Voleur]";
+					mes "Ah, veux-tu vraiment être un Voleur ? Désolé, mais tu as l'air d'avoir besoin de plus d'entraînement.";
+					next;
+					mes "[Guide Voleur]";
+					mes "Prends ton temps et apprends tous les Compétences de Base, d'accord ? Eh bien, à bientôt~!";
+					close;
+				}
+				mes "[Guide Voleur]";
+				mes "Bien, j'ai l'impression que tu as vécu une vie entière en combattant, alors je te promeus immédiatement au rang de Voleur. Il va falloir que je t'offre ce qu'un vrai dur à cuire veut...";
+				next;
+				skill "NV_TRICKDEAD",0,SKILL_PERM;
+				jobchange Job_Thief_High;
+				skill "TF_SPRINKLESAND",1,SKILL_PERM;
+				skill "TF_BACKSLIDING",1,SKILL_PERM;
+				skill "TF_PICKSTONE",1,SKILL_PERM;
+				skill "TF_THROWSTONE",1,SKILL_PERM;
+				mes "[Guide Voleur]";
+				mes "Maintenant que tu es un Voleur, vis comme un Voleur. Allez, vas-y ! Suivant~";
+				close;
+			}
+			else {
+				mes "[Guide Voleur]";
+				if (Sex == SEX_MALE)
+					mes "Hey, mec.";
+				else
+					mes "Hey, bébé~";
+				close;
+			}
+		}
+		else {
+			mes "[Guide Voleur]";
+			if (Sex == SEX_MALE)
+				mes "Hey, mec.";
+			else
+				mes "Hey, bébé.";
+			mes "...Hey ! Tu as l'air trop gentil pour vouloir être un Voleur!! Maintenant casse-toi, je suis occupé. Suivant !";
+			close;
+		}
+	}
+	if (BaseJob == Job_Thief) {
+		mes "[Guide Voleur]";
+		mes "Si tu as un problème, n'hésite pas à venir me voir quand tu veux, d'accord ?";
+		close;
+	}
+	else if (BaseJob != Job_Novice && BaseJob != Job_Thief) {
+		mes "[Guide Voleur]";
+		mes "^FF0000Quoi donc...?";
+		switch(Class) {
+		case 1:
+			mes "Hmmf.";
+			mes "^FF0000Maintenant, ça";
+			mes "^FF0000c'est une grande épée.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Donc...";
+			mes "^FF0000Essaies-tu de";
+			mes "^FF0000rattraper quelque chose";
+			mes "^FF0000...Copain?";
+			break;
+		case 2:
+			mes "^FF0000Qu'est-ce qu'un Mage fait ici ? Tu ne devrais pas faire des tours de cartes ailleurs ? Bah, c'est un pays libre...";
+			next;
+			mes "[Guide Voleur]";
+			mes "^FF0000Oh attends,";
+			mes "^FF0000ce n'est pas...";
+			mes "^FF0000Dégage d'ici !";
+			break;
+		case 3:
+			mes "^FF0000Hey, ne devrait-on pas";
+			mes "^FF0000les archers jouer";
+			mes "^FF0000dans la forêt";
+			mes "^FF0000ou quelque chose comme ça?";
+			break;
+		case 4:
+			mes "^FF0000Tu sais que nous volons tous pour gagner notre vie, n'est-ce pas ? Qu'est-ce que tu fais dans un endroit pareil, Acolyte ?";
+			break;
+		case 5:
+			mes "^FF0000Eh bien, tu es un Marchand,";
+			mes "^FF0000n'est-ce pas ? Pourquoi entres-tu";
+			mes "^FF0000dans une tanière";
+			mes "^FF0000Eh des voleurs? !";
+			next;
+			mes "[Guide Voleur]";
+			mes "C'est comme si vous nous suppliiez de vous voler!";
+			mes "Allez, dépêchez-vous et sortez d'ici~";
+			mes "Est-ce que je meurs?";
+			mes "[Guide du Voleur]";
+			break;
+		case 8:
+			mes "Oh mon Dieu...";
+			mes "Pourquoi un Prêtre serait-il ici sinon ? Je suppose que je devrais commencer à confesser tous mes péchés.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Nom d'un chien ! Vous êtes vraiment devenu cool tout à coup ! Vous devez avoir des compétences dont je ne peux que rêver!";
+			close;
+		case 12:
+			mes "[Guide du Voleur]";
+			close;
+		case 17:
+			mes "*Sigh* Écoutez, il n'y a vraiment pas besoin pour vous d'être dans un endroit comme celui-ci. Vous devriez aller où vous devez être.";
+			close;
+		}
+		next;
+		mes "[Guide Voleur]";
+		mes "Vous avez récolté des Champignons pour";
+		close;
+	}
+	if (job_thief_q == 3 && countitem(1069) > 0 || countitem(1070) > 0) {
+		mes "[Guide Voleur]";
+		mes "Hmmm?";
+		mes "[Guide du Voleur]";
+		mes "Voici, parlez à l'autre type juste à côté de moi. C'est lui qui est en charge de vérifier vos Champignons.";
+		next;
+		mes "[Guide Voleur]";
+		mes "Alors, comment s'est";
+		close;
+	}
+	else if (job_thief_q == 3) {
+		mes "[Guide Voleur]";
+		mes "So how was the";
+		mes "Fermier à Champignons?";
+		mes "As-tu passé un bon moment?";
+		next;
+		if (select("Yeah, kinda Cool.:It was horrible.") == 1) {
+			mes "[Guide Voleur]";
+			mes "Hé hé ! C'est une bonne attitude. Dans notre ligne de travail, il faut aimer se salir les mains d'une manière ou d'une autre.";
+			close;
+		}
+		mes "[Guide Voleur]";
+		mes "Ah oui ? J'y ai aussi été, alors je comprends pourquoi ce lieu n'est pas à tout le monde goût. Cependant, être voleur ne consiste pas uniquement en fastueux cocktails de nuit et vie nocturne branchée.";
+		close;
+	}
+	if (job_thief_q == 2) {
+		mes "[Guide Voleur]";
+		mes "Hey, qu'est-ce que tu fais là ? N'as-tu pas dû aller ramasser des Champignons ? Ou as-tu besoin que je te le réexplique encore une fois?";
+		next;
+		if  (select("Yes.:No, that's okay.") == 1) {
+			mes "[Guide Voleur]";
+			mes "*Sigh* Eh bien, il y a toujours un casse-pieds dans la bande. D'accord, écoute attentivement.";
+			next;
+			mes "[Guide Voleur]";
+			mes "D'accord, pour ton test, tu dois voler des Champignons sur une ferme. Ne t'inquiète pas, le type qui possède la ferme mérite d'être cambriolé.";
+			next;
+			mes "[Guide Voleur]";
+			mes "De toute façon, il faut rassembler deux sortes de Champignons : ^0000FFChampignons Orange à Réseaux^000000 et ^0000FFChampignons Gommeux Oranges^000000.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Faites attention, il y a des monstres sur la ferme qui sont là pour protéger les Champignons. Donc ce n'est pas une partie de plaisir.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Quand vous reviendrez ici après avoir rassemblé vos Champignons, votre test sera basé sur les Champignons que vous aurez collectés.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Chaque Champignon Orange à Réseaux vaut trois points et chaque Champignon Gommeux Oranges un point. Vous avez besoin d'un total de 25 points pour passer l'épreuve.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Sortez et continuez tout droit vers le Champ des Pyramides Est. Ensuite, vous verrez l'un de nos camarades entre deux colonnes.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Parlez à ce type-là, et il vous emmènera jusqu'à la ferme par une entrée secrète.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Sur ce champ, je pense que ses coordonnées sont '^FF0000141, 125^000000'. Vous pouvez taper ^3355FF/where^000000 dans la boîte de chat située sur le côté droit pour vérifier vos propres coordonnées.";
+			close;
+		}
+		mes "[Guide Voleur]";
+		mes "Hm. Pendant une seconde, j'ai cru que tu avais quelque chose d'important à me dire.";
+		close;
+	}
+	mes "[Guide Voleur]";
+	if (job_thief_q == 0) {
+		mes "Qu'est-ce qui te pousse à descendre 
+ici dans ce trou ?";
+		mes "Tu es revenu.
+prêt à retenter
+l'expérience?";
+	}
+	else {
+		mes "Ah...";
+		mes "[Guide Voleur]";
+		mes "Es-tu sûr que tu es";
+		mes "Hein, j'aime ton assurance. Cependant, tu sais bien que d'être voleur ce n'est pas tout ce qu'on en dit.";
+	}
+	next;
+	if (select("Hey, I came here to be a Thief!:Nah, I'm just looking around.") == 1) {
+		if (job_thief_q == 0) {
+			mes "[Guide Voleur]";
+			mes "Est-ce vraiment
+ce que tu veux ?
+devenir un voleur ?";
+			next;
+			mes "[Guide Voleur]";
+			mes "Toujours...";
+			mes "Do you really";
+			mes "want to be";
+			mes "a Thief?";
+			next;
+			switch(select("Yeah.:No, just wasting your time.:Why did you become a Thief?")) {
+			case 1:
+				mes "[Guide Voleur]";
+				mes "^FF0000Vraiment...^000000";
+				break;
+			case 2:
+				mes "[Guide Voleur]";
+				mes "Ouais...";
+				mes "Je peux voir ça.";
+				break;
+			case 3:
+				mes "[Guide Voleur]";
+				mes "Moi...?";
+				mes "J'avais pas le choix à l'époque. C'était voler ou crever. Mais il ne faut pas que je raconte ma vie.";
+				break;
+			}
+			next;
+			mes "[Guide Voleur]";
+			mes "Alors tu veux";
+			mes "devenir voleur";
+			mes "ou pas?";
+			next;
+			switch(select("Yes, I will.:I'm too scared to be a Thief!")) {
+			case 1:
+				mes "[Guide Voleur]";
+				mes "D'accord, dis-moi";
+				mes "ton nom.";
+				next;
+				mes "[Guide Voleur]";
+				mes "" + strcharinfo(0) + "?";
+				mes "What kind of name is " + strcharinfo(0) + "? Anyway, give me a second.";
+				set job_thief_q,1;
+				next;
+				mes "[Guide Voleur]";
+				mes "D'accord, ton inscription a été traitée. Ok, tu peux commencer ton test si tu es prêt.";
+				next;
+				switch(select("Yeah, I'm ready.:No, I'm not ready yet.")) {
+				case 1:
+					break;
+				case 2:
+					mes "[Guide Voleur]";
+					mes "Pas prêt?";
+					mes "Comment est-ce que";
+					mes "tu peux pas être prêt?!";
+					close;
+				}
+				break;
+			case 2:
+				mes "[Guide Voleur]";
+				mes "Trop effrayé?!?";
+				mes "Hahahahahahah!";
+				mes "Oh, s'il vous plaît...!";
+				mes "C'est hilarant !";
+				close;
+			}
+		}
+		else {
+			mes "[Guide Voleur]";
+			mes "D'accord...";
+			mes "Attends-moi";
+			mes "une seconde.";
+			next;
+		}
+		mes "[Guide Voleur]";
+		mes "Ton nom est...";
+		mes strcharinfo(0) + "? Um, where is it? Ah, here it is. Let's see...";
+		next;
+		mes "[Guide Voleur]";
+		if (!callfunc("F_CanChangeJob")) {
+			mes "N'est-ce pas adorable ? Je vois que tu es ambitieux, mais il faut apprendre tous les Skills de Base avant de pouvoir devenir un Voleur.";
+			close;
+		}
+		mes "D'accord. J'ai regardé ton Dossier Pénal et tu sembles avoir un passé très intéressant. Tu as peut-être ce qu'il faut pour être un Voleur.";
+		next;
+		mes "[Guide Voleur]";
+		mes "Parce que j'en ai envie, je décrète maintenant que tu as réussi cet entretien. Bon travail !";
+		set job_thief_q,2;
+		setquest 1013;
+		next;
+		mes "[Guide Voleur]";
+		mes "Maintenant, tes vraies compétences doivent être testées. Tu sais quelque chose à propos de ce test ?";
+		next;
+		switch(select("Yes, I do.:Sorry, I don't.")) {
+		case 1:
+			mes "[Guide Voleur]";
+			mes "Oh oui ? Eh bien, cela rend les choses beaucoup plus faciles.";
+			break;
+		case 2:
+			mes "[Guide Voleur]";
+			mes "D'accord, laisse-moi t'informer alors. Écoute attentivement. Ce test décide si tu es digne de devenir un Voleur.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Vous serez en train de vous faufiler jusqu'à la ferme de Shibu. C'est le pire marchand au niveau d'éthique à Morocc.";
+			next;
+			mes "[Guide Voleur]";
+			mes "D'accord, pour votre épreuve, il faut que vous voliez des Champignons sur sa ferme. Ne vous inquiétez pas, ce type le mérite amplement.";
+			next;
+			mes "[Guide Voleur]";
+			mes "De toute façon, il faut rassembler deux sortes de Champignons : ^0000FFChampignons Orange à Réseaux^000000 et ^0000FFChampignons Gommeux Oranges^000000.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Faites attention, il y a des monstres sur la ferme qui sont là pour protéger les Champignons. Donc ce n'est pas une partie de plaisir.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Quand vous reviendrez ici après avoir rassemblé vos Champignons, votre test sera basé sur les Champignons que vous aurez collectés.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Chaque Champignon Orange à Réseaux vaut trois points et chaque Champignon Gommeux Oranges un point. Vous avez besoin d'un total de 25 points pour passer l'épreuve.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Sortez et continuez tout droit vers le Champ des Pyramides Est. Ensuite, vous verrez l'un de nos camarades entre deux colonnes.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Parlez à ce type-là, et il vous emmènera jusqu'à la ferme par une entrée secrète.";
+			next;
+			mes "[Guide Voleur]";
+			mes "Sur ce champ, je pense que ses coordonnées sont '^FF0000141, 125^000000'. Vous pouvez taper ^3355FF/where^000000 dans la boîte de chat située sur le côté droit pour vérifier vos propres coordonnées.";
+		}
+		next;
+		mes "[Guide Voleur]";
+		mes "N'oubliez pas de faire des plans et vous préparer avant d'entrer dans la ferme à Champignons. Déplacez-vous aussi rapidement que possible et essayez de ne pas être tué, d'accord ?";
+		close;
+	}
+	close;
+}
+
+moc_prydb1,42,133,2	script	Comrade	118,{
+	if (BaseJob == Job_Thief) {
+		mes "[Brad]";
+		mes "Nous n'avons pas d'événements spéciaux pour l'instant. Reviens quand il y aura du nouveau, d'accord ?";
+		close;
+	}
+	else if (BaseJob != Job_Novice && BaseJob != Job_Thief) {
+		mes "[Compagnon]";
+		mes "Euh...";
+		mes "Tu ne ressembles pas";
+		mes "à un Voleur.";
+		next;
+		mes "[Compagnon]";
+		mes "Qu'est-ce que tu fiches ici de toute façon ?";
+		mes "you doing here anyway?";
+		close;
+	}
+	if (job_thief_q == 0 || job_thief_q == 1) {
+		mes "[Compagnon]";
+		mes "Qu'y a-t-il ? Si tu veux être un Voleur, parle à la fille à côté de moi.";
+		close;
+	}
+	else if (job_thief_q == 2) {
+		mes "[Compagnon]";
+		mes "As-tu réussi l'entretien ?";
+		mes "Alors, qu'est-ce que tu attends encore ?";
+		close;
+	}
+	else if (job_thief_q == 3) {
+		mes "[Compagnon]";
+		mes "Ah, le guide m'a parlé de toi. Alors, laisse-moi vérifier tes champignons...";
+		if (countitem(1069) == 0 && countitem(1070) == 0) {
+			next;
+			mes "[Compagnon]";
+			mes "Putain...";
+			mes "Tu n'as aucun Champignon du tout ! Va en chercher et reviens. Sinon, tu ne passeras pas l'épreuve et tu ne deviendras jamais Voleur !";
+			close;
+		}
+		next;
+		set .@thief_item1,countitem(1069) * 3;
+		set .@thief_item2,countitem(1070);
+		set .@total_thief,.@thief_item1 + .@thief_item2;
+		set .@money_thief,((.@thief_item1 * 5) + (.@thief_item2 * 2)) + 200;
+		mes "[Compagnon]";
+		if (countitem(1069) != 0) {
+			mes "D'abord, laisse-moi vérifier les Champignons orange de Nétoy à ce que tu as ramenés.";
+			mes "Huh, " + countitem(1069) + " of them.";
+		}
+		if (countitem(1070) != 0)
+			mes "Now I'll just check your Orange Gooey Mushrooms. That's " + countitem(1070) + " you gathered.";
+		next;
+		mes "[Compagnon]";
+		mes "ça amènerait votre total à...";
+		mes "...";
+		next;
+		mes "[Compagnon]";
+		mes "Hmmm. " + .@total_thief + " degrees, multiplied by the speed of light, divided by the integral of pi times height plus the absolute value of politics...";
+		next;
+		mes "[Compagnon]";
+		mes "D'accord!";
+		mes "Je l'ai.";
+		next;
+		mes "[Compagnon]";
+		if (.@total_thief > 25) {
+			mes "Vous avez obtenu plus de";
+			mes "25 points!";
+			mes "Impressionnant!";
+		}
+		else if (.@total_thief == 25) {
+			mes "Exactement 25 points!";
+			mes "Félicitations! Incroyable!";
+		}
+		else {
+			mes "C'est bien moins que les 25 points nécessaires pour réussir. Allez-y et ramenez-moi plus de Champignons !";
+			close;
+		}
+		next;
+		mes "[Compagnon]";
+		mes strcharinfo(0) + "...";
+		mes "Vous avez réussi l'examen officiel du voleur. Vous êtes maintenant l'un des nôtres.";
+		if (countitem(1069) != 0) delitem 1069,countitem(1069); //Mushroom_Of_Thief_1
+		if (countitem(1070) != 0) delitem 1070,countitem(1070); //Mushroom_Of_Thief_2
+		callfunc "Job_Change",Job_Thief;
+		callfunc "F_ClearJobVar";
+		completequest 1013;
+		next;
+		mes "[Compagnon]";
+		mes "Félicitations pour votre promotion au rang de Voleur ! À partir de maintenant, soyez un représentant honorable de la Guilde des Voleurs.";
+		next;
+		mes "[Compagnon]";
+		mes "Si vous apportez une honte à notre guilde, vous serez tué. J'attends de votre part que vous fassiez preuve d'honneur envers vos camarades.";
+		next;
+		mes "[Brad]";
+		mes "^FF0000*Ahem* Bienvenue au Guilde, camarade ! Je suis Brad et je m'occupe des ressources humaines ici.";
+		next;
+		mes "[Brad]";
+		mes "Voici une petite subvention pour un nouveau venu comme vous. Dépensez-la où vous le souhaitez. D'accord alors, à bientôt~";
+		set Zeny, Zeny+.@money_thief;
+		close;
+	}
+}
+
+moc_ruins,141,125,3	script	Mr. Irrelevant	83,{
+	if (BaseJob == Job_Thief) {
+		mes "[Monsieur Inutile]";
+		mes "Ah, je vois que tu es maintenant un Voleur. Je savais toujours que tu nous rejoindrais.";
+		next;
+		mes "[Monsieur Inutile]";
+		mes "Voler dans une exploitation de champignons est trop facile pour toi à présent. Tu devrais améliorer tes compétences et maîtriser notre art.";
+		close;
+	}
+	else if (BaseJob != Job_Novice && BaseJob != Job_Thief) {
+		mes "[Monsieur Inutile]";
+		switch(rand(4)) {
+		case 1:
+			mes "J'aurais besoin d'une bonne boisson forte.";
+			close;
+		case 2:
+			mes "Donne-moi ton argent.";
+			next;
+			mes "[Monsieur Inutile]";
+			mes "Je plaisantais, je suis en pause.";
+			close;
+		case 3:
+			mes "QUI VOUS APPARTEINT-UN PSYCHOPATHE?!?!!";
+			close;
+		case 4:
+			mes "Je n'ai rien à vous dire. Pourriez-vous me laisser tranquille ?";
+			close;
+		default:
+			mes "Aujourd'hui semble être une bonne journée pour aller aux pyramides et chasser avec certains de mes amis.";
+			close;
+		}
+	}
+	if (job_thief_q == 3) {
+		mes "[Monsieur Inutile]";
+		mes "Hahahahaha~!";
+		mes "Vous n'avez pas";
+		mes "encore passé l'examen ?";
+		mes "D'accord, je vais vous laisser entrer...";
+		close2;
+		switch(rand(5)) {
+		case 1: warp "job_thief1",228,106; end;
+		case 2: warp "job_thief1",38,50; end;
+		case 3: warp "job_thief1",66,331; end;
+		case 4: warp "job_thief1",196,331; end;
+		default: warp "job_thief1",309,234; end;
+		}
+	}
+	else if (job_thief_q == 2) {
+		mes "[Monsieur Inutile]";
+		mes "Hmm...";
+		mes "Vous êtes venu passer l'essai, n'est-ce pas ? Je vois dans vos yeux que vous savez quelque chose.";
+		next;
+		mes "[Monsieur Inutile]";
+		mes "Your name is " + strcharinfo(0) + "? Ah, it's on the list. Alright, I'll let you into the Mushroom Farm , but I can't guarantee your safety...";
+		close2;
+		set job_thief_q,3;
+		switch(rand(5)) {
+		case 1: warp "job_thief1",228,106; end;
+		case 2: warp "job_thief1",38,50; end;
+		case 3: warp "job_thief1",66,331; end;
+		case 4: warp "job_thief1",196,331; end;
+		default: warp "job_thief1",309,234; end;
+		}
+	}
+	else if (job_thief_q == 1) {
+		mes "[Monsieur Inutile]";
+		mes "Il y a une odeur bizarre qui émane de... Vous. Et bien, pourquoi serait-ce le cas ?";
+		close;
+	}
+	mes "[Monsieur Inutile]";
+	mes "Hé Novice ! Pourquoi ne pas rejoindre les rangs du Guilde des Voleurs ? Les nouveaux sont toujours les bienvenus chez nous et notre cause égoïste.";
+	next;
+	mes "[Monsieur Inutile]";
+	mes "Vous pouvez obtenir plus d'informations dans la Salle Souterraine de la Pyramide 1 BF.";
+	close;
+}
+
+// Monsters
+//============================================================
+job_thief1,0,0	monster	Orange Mushroom	1182,180
+job_thief1,0,0	monster	Fabre	1184,50
+job_thief1,0,0	monster	Chonchon	1183,50
+job_thief1,0,0	monster	Spore	1014,30
+
+//============================================================
+// mapflag
+//============================================================

@@ -1,0 +1,418 @@
+//===== rAthena Script =======================================
+//= Taekwon Job Quest
+//===== Description: =========================================
+//= [Official Conversion]
+//= Taekwon Job Change Quest
+//===== Changelogs: ==========================================
+//= 1.0 Replaced previous TK Job Quest with this one [Tsuyuki]
+//= 1.1 Rewrote to the Aegis Standars. [Samuray22]
+//= 1.2 Fixed position the npc is facing. [Kisuka]
+//= 1.3 Added Quest Log commands. [Kisuka]
+//= 1.4 Removed use of 'goto', and fixed some indentation. [L0ne_W0lf]
+//= 1.5 Split into renewal [Lemongrass]
+//============================================================
+
+-	script	Phoenix::PhoenixTKJobChange	-1,{
+	if(Upper == 2) {
+		mes "[Phénix]";
+		mes "Bonjour, enfant.";
+		close;
+	} else if(Class == Job_Taekwon) {
+		mes "[Phénix]";
+		mes "Comment se passe ta formation ?";
+		mes "À mesure que tu progresses, ";
+		mes "tes techniques deviennent de plus en plus ";
+		mes "affinées ou spectaculaires, ";
+		mes "n'oublie jamais que tu peux toujours compter sur les fondamentaux.";
+		mes "always rely on the basics.";
+		close;
+	} else if(Class > Job_Novice) || (Class == Job_Novice && TK_Q == 0) {
+		mes "[Phénix]";
+		mes "Ce pays. Notre monde autrefois ";
+		mes "belle a été souillé par le mal : il y a trop d'hommes corrompus par la ";
+		mes "ténèbres, trop de monstres menaçant les innocents...";
+		mes "too many men corrupted by";
+		mes "[Phénix]";
+		mes "Le chaos qui règne dans ce monde est trop grand pour des humains ordinaires, qui ne peuvent pas y faire face";
+		next;
+		mes "[Phénix]";
+		mes "The havoc that reigns in this";
+		mes "world is too much for normal";
+		mes "humans, which cannot stand";
+		mes "^FF0000contre de telles^";
+		mes "^FF0000chances accablantes.^ Il est vrai que, malgré cela, on ";
+		mes "^FF0000doit aspirer à se battre contre les probabilités.^";
+		next;
+		mes "[Phénix]";
+		mes "Et ainsi, j'ai consacré ";
+		mes "ma vie à devenir plus fort.";
+		mes "J'entraîne pour atteindre l'éveil, en développant un art qui affine esprit et corps que";
+		mes "je souhaite partager avec le monde.";
+		mes "I wish to share with the world.";
+		next;
+		mes "[Phénix]";
+		mes "Je ne peux peut-être pas changer ";
+		mes "le monde par moi-même, mais je n'arrêterai jamais d'entraîner mon";
+		mes "corps et mon esprit.";
+		mes "spiritually and physically.";
+		mes "Je sais que la réponse viendra en son temps...";
+		mes "will come in time...";
+		next;
+		if (Class != Job_Novice) {
+			mes "[Phénix]";
+			mes "Héros noble :";
+			mes "si vous connaissez quelqu'un qui ";
+			mes "has not chosen his path";
+			mes "^FF0000 dans la vie, je vous recommande";
+			mes "^FF0000 de me le présenter. Si vous êtes intéressé(e),";
+			mes "^FF0000 je pourrais lui enseigner mon art...";
+			close;
+		}
+		mes "[Phénix]";
+		mes "^FF0000 Si vous n'avez pas encore choisi la voie que vous souhaitez emprunter dans";
+		mes "^FF0000 la vie, j'aimerais vous encourager à considérer";
+		mes "^FF0000 l'option de devenir un adepte de mon";
+		mes "^FF0000 art. Ce ne sera pas facile, mais cela vous mènera à une grande force...";
+		mes "[Phoenix]";
+		next;
+		if(select("Okay, I will join you.","No, thank you.") == 1) {
+			if(!callfunc("F_CanChangeJob")) {
+				mes "[Phénix]";
+				mes "^FF0000 Vous n'êtes pas encore prêt(e) à";
+				mes "^FF0000 commencer votre entraînement sous ma";
+				mes "^FF0000 tutelle avec votre Job Level actuel.";
+				mes "^FF0000 Veuillez revenir lorsque vous atteindrez un Job Level de 9 ou supérieur.";
+				mes "[Phoenix]";
+				close;
+			}
+			mes "[Phénix]";
+			mes "^FF0000 du entraînement, votre corps physique doit d'abord être conditionné";
+			mes "as my student. In beginning";
+			mes "training, your physical body";
+			mes "must first be conditioned in";
+			mes "pour exécuter les compétences";
+			mes "que vous allez apprendre.";
+			next;
+			if(BaseLevel > 19) {
+				mes "[Phénix]";
+				mes "Hm. Je vois que vous avez";
+				mes "subi un entraînement physique";
+				mes "suffisant en tant que Novice. Très bien. Alors préparons-nous pour votre";
+				mes "entraînement spirituel. Prenez une grande";
+				mes "respiration, parlez-moi quand vous êtes prêt.";
+				set TK_Q, 2;
+				setquest 6001;
+				close;
+			}
+			mes "[Phénix]";
+			mes "L'esprit n'est pas nécessairement";
+			mes "lié aux limites du corps, mais vous ne pourrez jamais réaliser votre";
+			mes "plein potentiel sans intégrer l'esprit et le corps. Allez, gagnez ^FF00001 plus";
+			mes "Base Level^000000, puis revenez.";
+			next;
+			set TAEK_Q, BaseLevel;
+			set TK_Q, 1;
+			setquest 6000;
+			mes "[Phénix]";
+			mes "Je comprends que ce n'est pas une";
+			mes "tâche facile pour les Novices, mais vous";
+			mes "devez vous préparer à l'effort pour cette tâche. Je compte sur vous";
+			mes "pour être plus fort";
+			mes "la prochaine fois que nous nous rencontrerons.";
+			mes "the next time we meet.";
+			close;
+		}
+		mes "[Phénix]";
+		mes "Je comprends. La vie peut";
+		mes "prendre de nombreux chemins, mais vous ne pouvez en choisir qu'un seul à la fois.";
+		mes "J'espère que vous travaillez vers l'éveil à votre manière, aventurier.";
+		mes "[Phénix]";
+		mes "Bien. Je sens que vous êtes plus en harmonie avec votre";
+		mes "force intérieure. C'est le résultat naturel d'avoir grimpé de niveau.";
+		close;
+	}
+	switch(TK_Q) {
+	case 1:
+		if(BaseLevel > TAEK_Q) {
+			set TK_Q, 2;
+			changequest 6000,6001;
+			mes "[Phénix]";
+			mes "[Phénix]";
+			mes "Vous devez acquérir ^FF00001 niveau de base^000000 de plus";
+			mes "pour prouver que vous pouvez surmonter les épreuves qui sont liées à ce travail. N'oubliez jamais votre entraînement.";
+			mes "natural result of leveling up.";
+			mes "We're ready to proceed with";
+			mes "the next portion of training.";
+			close;
+		}
+		mes "[Phénix]";
+		mes "You must gain ^FF00001 more";
+		mes "Base Level^000000 to prove that";
+		mes "you can endure the hardship";
+		mes "that entails this job. Never";
+		mes "neglect your training.";
+		close;
+	case 2:
+		mes "[Phénix]";
+		mes "Pour votre entraînement spirituel,";
+		mes "je vais vous poser une série de";
+		mes "questions pour tester votre esprit.";
+		mes "Détendez-vous. Répondez aussi honnêtement";
+		mes "que possible. Votre volonté et";
+		mes "vos convictions seront mises à l'épreuve.";
+		next;
+		mes "[Phénix]";
+		mes "En tant que praticien de mon";
+		mes "art, la capacité de prendre rapidement";
+		mes "la meilleure décision sera nécessaire en";
+		mes "bataille. Maintenant,";
+		mes "nous allons commencer l'interrogatoire.";
+		next;
+		mes "[Phénix]";
+		mes "Quand vous rencontrez";
+		mes "des difficultés considérables, comment";
+		mes "réagissez-vous généralement?";
+		next;
+		switch(select( "I face it head on.:Avoid it somehow.:Regroup and analyze the problem.")) {
+		case 1:
+			mes "[Phénix]";
+			mes "Oui, c'est la réponse que je souhaitais. Même si vous ne pouvez pas";
+			mes "I wanted. Even if you cannot";
+			mes "^FF0000commencer par gérer un problème, nous";
+			mes "^FF0000ne pouvons que bénéficier d'une telle";
+			mes "^FF0000résolution solide. Ne";
+			mes "^FF0000laissez aucun obstacle vous arrêter.";
+			next;
+			mes "[Phénix]";
+			mes "^FF0000Même si vous échouez, vous";
+			mes "^FF0000ne pouvez apprendre de l’expérience que lorsque vous donnez";
+			mes "^FF0000le meilleur de vous-même. Des tentatives à moitié";
+			mes "^FF0000faites rarement aboutissent";
+			mes "^FF0000à des résultats fructueux.";
+			mes "[Phoenix]";
+			next;
+			mes "[Phénix]";
+			mes "^FF0000de la volonté d'une personne, nous allons passer";
+			mes "^FF0000à la prochaine question.";
+			mes "[Phoenix]";
+			mes "^FF0000Sot ! Comment comptez-vous vous parfaire si vous fuyez";
+			next;
+			break;
+		case 2:
+			mes "[Phénix]";
+			mes "Fool! How do you expect";
+			mes "to mature if you run away";
+			mes "from challenges? Fear can";
+			mes "est une réaction normale que";
+			mes "peut sauver ta vie, mais la véritable";
+			mes "lâcheté est répugnante.";
+			next;
+			mes "[Phénix]";
+			mes "Je suis déçu d'";
+			mes "entendre dire ça. Ne dis jamais";
+			mes "ça à nouveau.";
+			mes "Hm. Réfléchis aux significations";
+			mes "du courage et de la lâcheté, puis";
+			mes "parle avec moi une nouvelle fois.";
+			close;
+		case 3:
+			mes "[Phénix]";
+			mes "Se regrouper ? C'est bon à faire";
+			mes "après une défaite.";
+			mes "Mais il vaut mieux affronter les problèmes";
+			mes "lorsqu'ils apparaissent.";
+			mes "Tu ne pourras pas toujours t'";
+			mes "offrir le luxe de te regrouper.";
+			next;
+			mes "[Phénix]";
+			mes "Les problèmes peuvent être prédits";
+			mes "et analysés, mais je pense";
+			mes "^FF0000 un retrait immédiat serait imprudent.";
+			mes "^FF0000 réfléchis à tes peurs,";
+			mes "^FF0000 ainsi qu'à ce que tu définis comme";
+			mes "^FF0000 échec. Puis, reviens vers moi.";
+			close;
+		}
+		mes "[Phénix]";
+		mes "^FF0000 Au cours de tes voyages, tu rencontreras";
+		mes "^FF0000 beaucoup de personnes avec des";
+		mes "^FF0000 antécédents et points de vue différents.";
+		mes "^FF0000 Inévitablement, tu rencontreras quelqu'un dont";
+		mes "^FF0000 le mode de vie te sera incompréhensible.";
+		mes "^FF0000 [Phoenix]";
+		next;
+		mes "[Phénix]";
+		mes "^FF0000 ton mode de vie. Lorsque vos deux points de vue";
+		mes "^FF0000 s'affrontent, entraînant un conflit enflammé,";
+		mes "^FF0000 comment réagirais-tu?";
+		mes "^FF0000 [Phoenix]";
+		mes "^FF0000 Il est important d'avoir ton propre avis. Cependant,";
+		next;
+		switch( select("Insist that I'm right, regardless:Disregard conflicting viewpoint:Accept differences and learn from them")) {
+		case 1:
+			mes "[Phénix]";
+			mes "It's important to have your";
+			mes "own opinion. However, you";
+			mes "^FF0000dois reconnaître que tu peux";
+			mes "^FF0000te tromper, et une vue";
+			mes "^FF0000opposée peut avoir du mérite.";
+			next;
+			mes "[Phénix]";
+			mes "^FF0000Il n'y a pas de réponse unique";
+			mes "^FF0000et la lumière de la";
+			mes "^FF0000vérité peut prendre plusieurs teintes.";
+			mes "^FF0000Tel est le chemin de la nature.";
+			mes "^FF0000Forcer des idées sur les autres est";
+			mes "^FF0000une pratique oppressive.";
+			next;
+			mes "[Phénix]";
+			mes "^FF0000Ne te limite pas";
+			mes "^FF0000à une seule vue, et ne";
+			mes "^FF0000étouffe ta croissance en";
+			mes "^FF0000adhérant à une vérité unique.";
+			mes "^FF0000Contemple cela, puis parle avec moi à nouveau.";
+			mes "[Phoenix]";
+			close;
+		case 2:
+			mes "[Phénix]";
+			mes "^FF0000avec les autres, mais";
+			mes "along with others, but";
+			mes "^FF0000ne rapporteras aucun valeur";
+			mes "^FF0000à ce monde sans ta";
+			mes "^FF0000contribution unique,";
+			mes "^FF0000pensées et opinions.";
+			next;
+			mes "[Phénix]";
+			mes "^FF0000Un conflit d'idéaux, quand";
+			mes "^FF0000mené avec respect pour";
+			mes "^FF0000toi-même et les autres, est une";
+			mes "^FF0000grande opportunité d'élargir";
+			mes "^FF0000ta compréhension du monde tel qu'il est pour les autres.";
+			mes "^FF0000[Phoenix]";
+			next;
+			mes "[Phénix]";
+			mes "^FF0000la soi, et l'harmonie avec les autres. Puis, reviens vers moi.";
+			mes "^FF0000[Phoenix]";
+			mes "^FF0000Bien. Tu dois voir les différences pour ce qu'elles";
+			mes "^FF0000sont vraiment.";
+			close;
+		case 3:
+			mes "[Phénix]";
+			mes "Good. You must see";
+			mes "differences for what they";
+			mes "truly are. You must also";
+			mes "^FF0000acceptez la critique avec autant d'^FF0000";
+			mes "^FF0000amour propre que vous donnez à vos propres^FF0000";
+			mes "^FF0000points de vue avec grâce et considération sincère.^FF0000";
+			next;
+			mes "[Phénix]";
+			mes "^FF0000Il est impossible de tout connaître dans ce monde.^FF0000";
+			mes "^FF0000Il est impossible de comprendre tous les points de vue. Mais cela ne signifie pas que^FF0000";
+			mes "^FF0000les points de vue que vous n'entendez pas sont sans valeur.^FF0000";
+			mes "[Phoenix]";
+			mes "^FF0000Celui avec qui vous ne serez pas d'accord pourrait avoir la réponse dont vous ignorez l'existence.^FF0000";
+			mes "^FF0000Lorsque vous êtes dans le besoin, cette personne peut être votre plus grande ressource. Rappelez-vous cela.^FF0000";
+			next;
+			mes "[Phénix]";
+			mes "^FF0000Je suis satisfait des réponses que vous avez données.^FF0000";
+			mes "disagree may have the";
+			mes "answer you do not know.";
+			mes "In your time of weakness,";
+			mes "this person may be your";
+			mes "greatest help. Remember that.";
+			next;
+		}
+		mes "[Phénix]";
+		mes "I am satisfied by the";
+		mes "answers you have given";
+		mes "Veuillez réfléchir à ce";
+		mes "que nous avons discuté pendant un";
+		mes "moment. Lorsque votre esprit est calme,";
+		mes "^FF0000come and speak to me.^";
+		set TK_Q, 3;
+		changequest 6001,6002;
+		close;
+	case 3:
+		mes "[Phénix]";
+		mes "Vous vous sentez apaisé";
+		mes "et en paix ? Je vais vous poser une question";
+		mes "très importante.";
+		mes "Donnez-moi votre réponse sincère.";
+		next;
+		mes "[Phénix]";
+		mes "^FF0000Êtes-vous prêt à vous consacrer";
+		mes "à l'art spécial que je vais vous enseigner, et à";
+		mes "respecter la dignité de sa philosophie ?";
+		mes "the dignity of its philosophy?";
+		next;
+		if( select( "Yes.","No.") == 1) {
+			mes "[Phénix]";
+			mes "Très bien. Vous n’êtes plus seulement un élève.";
+			mes "Vous êtes maintenant chargé des pouvoirs et";
+			mes "des responsabilités d'un disciple de ^FF0000Taekwon Do^000000.";
+			mes "the powers and responsibilities";
+			mes "of a disciple of ^FF0000Taekwon Do^000000.";
+			next;
+			mes "[Phénix]";
+			mes "''Taekwon'' signifie";
+			mes "punching et kicking.";
+			mes "et ''Do'' a le sens";
+			mes "de ''art.'' Cette discipline martiale se concentre sur les compétences utilisant";
+			mes "les poings et les pieds.";
+			mes "[Phoenix]";
+			next;
+			mes "[Phénix]";
+			mes "pour affûter votre corps et votre esprit, et apprendre les compétences qui vous conviennent le mieux. N'abandonnez jamais";
+			mes "votre entraînement ni ne faites honte à Taekwon Do.";
+			mes "[Phoenix]";
+			mes "Vous êtes encore jeune, donc je suppose que vous voudrez un titre d'emploi.";
+			mes "Hmm. Dans ce cas, vous êtes maintenant une ^FF0000Taekwon Girl^000000.";
+			mes "vous êtes maintenant un ^FF0000Taekwon Boy^000000.";
+			next;
+			completequest 6002;
+			callfunc "Job_Change",Job_Taekwon;
+			callfunc "F_ClearJobVar";
+			getitem 2101,1; // Guard[0]
+			mes "[Phénix]";
+			mes "You are still young, so";
+			mes "I assume you'll want a job";
+			mes "title. Mm. In that case, you";
+			if(Sex == SEX_FEMALE) {
+				mes "are now a ^FF0000Taekwon Girl^000000.";
+			} else {
+				mes "are now a ^FF0000Taekwon Boy^000000.";
+			}
+			mes "^FF0000Oui, cela semble bien.^";
+			next;
+			mes "[Phénix]";
+			mes "Prenez cette formation^FF0000 uniforme et ensemble de garde : faites^";
+			mes "^FF0000 bon usage de ces présents. ";
+			mes "^FF0000Allez, entraînez-vous bien et éclairez les autres sur notre art et apprenez ce que vous pouvez d'eux en retour.";
+			mes "[Phénix]";
+			mes "C'est maintenant le moment pour vous de^";
+			next;
+			mes "[Phénix]";
+			mes "pour trouver de nouveaux défis afin de développer votre force.";
+			mes "[Phénix]";
+			mes "Portez-vous avec fierté comme un pratiquant de Taekwon Do...";
+			mes "[Phénix]";
+			mes "^FF0000Très bien. Je vous souhaite bonne chance.^";
+			mes "^FF0000J'espère vous revoir^";
+			next;
+			mes "[Phénix]";
+			mes "Hm, peut-être n’êtes-vous pas encore prêt à progresser de";
+			mes "I hope to see you again";
+			mes "sometime, "+strcharinfo(0)+".";
+			close;
+		}
+		mes "[Phénix]";
+		mes "Hm, perhaps you are not";
+		mes "quite ready to progress from";
+		mes "^FF0000your status as a student to^";
+		mes "^FF0000a full fledged disciple.^";
+		mes "^FF0000When you feel prepared,^";
+		mes "^FF0000come and speak to me.^";
+		close;
+	}
+}
+

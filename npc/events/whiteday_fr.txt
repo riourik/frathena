@@ -1,0 +1,127 @@
+//===== rAthena Script =======================================
+//= White Day Event Script
+//===== By: ==================================================
+//= 1.0a Muad_Dib (Prometheus Project)
+//===== Current Version: =====================================
+//= 1.0a
+//===== Compatible With: =====================================
+//= rAthena Project; RO Episode 6+
+//===== Description: =========================================
+//= Sells candy, candy cane and well baked cookie.
+//===== Additional Comments: =================================
+//= 07/06/05 : Added 1st Version. [Muad_Dib]
+//= Converted to rAthena format by Dr.Evil
+//============================================================
+
+alberta,188,64,4	script	Sugar	91,{
+	set @maplenum,0;
+	set @mapleItemID,0;
+	set @maplePrice,0;
+	set @maplePriceT,0;
+	mes "[Sugar]";
+	mes "Accueillir!";
+	mes "Combien sont délicieuses les sucreries?";
+	mes "Mon maître........";
+	mes "Le bonbonnier d'ARUBERUTA";
+	mes "Il y a des sucreries qui sont bien construites.";
+	next;
+	mes "[Sugar]";
+	mes "Cela a été donné par la personne aimée.";
+	mes "En retour du cadeau....";
+	mes "plein de sincérité";
+	mes "la douceur du cadeau d'une certaine manière.";
+	next;
+	menu "Please give me!",-,"I don't need it.",M_END,"The teacher.",M_L1;
+
+	mes "[Sugar]";
+	mes "Oui!";
+	mes "Choisissez dans le menu ici.";
+	mes "Comme il y a une limitation en nombres";
+	mes "Pas plus que ^ff00005^000000 pièces.";
+	mes "sont autorisées à sortir?";
+	next;
+	menu "Candy",-,"Candy Cane",L0_2,"Well baked cookie",L0_3;
+
+	set @maplePrice,3000;
+	set @mapleItemID,529;
+	mes "[Sugar]";
+	mes "C'est un bonbon, et le prix est";
+	mes "3000 Zeny chacun.";
+	mes "^FF0000Combien en voulez-vous pour acheter?";
+	next;
+	goto L_INPUT;
+L0_2:
+	set @maplePrice,4000;
+	set @mapleItemID,530;
+	mes "[Sugar]";
+	mes "^FF0000C'est une canne à sucre et le prix est";
+	mes "^FF00004000 Zeny chacune.";
+	mes "^FF0000Combien en voulez-vous pour acheter?";
+	next;
+	goto L_INPUT;
+L0_3:
+	set @maplePrice,2000;
+	set @mapleItemID,538; 
+	mes "[Sugar]";
+	mes "^FF0000C'est un excellent cookie bien cuit, et le prix est";
+	mes "^FF00002000 Zeny chacun.";
+	mes "^FF0000Combien en voulez-vous pour acheter?";
+	next;
+
+L_INPUT:
+	input @maplenum;
+	if (@maplenum > 5) goto L_ERROR;
+	if (@maplenum == 0) goto M_END;
+	set @maplePriceT,@maplePrice*@maplenum;
+	if (Zeny < @maplePriceT) goto L_ERROR2;
+	set Zeny,Zeny- @maplePriceT;
+	getitem @mapleItemID,@maplenum;
+	mes "[Sugar]";
+	mes "^FF0000Merci!!!";
+	mes "^FF0000Ces sucreries sont vraiment délicieuses.";
+	mes "^FF0000Puisque mon professeur de sucrerie est le n°1 du monde!";
+	mes "^FF0000Bien que vous puissiez manger seul";
+	mes "^FF0000ne mangez pas trop ou vous prendrez du poids.";
+	mes "^FF0000Prenez soin de vous!!!";
+	close;
+
+M_L1:
+	mes "[Sugar]";
+	mes "^FF0000Oui";
+	mes "^FF0000Mon professeur";
+	mes "^FF0000est M. Kuberu, un artisan sucrerie.";
+	mes "^FF0000Fabrication de sucreries sous deux personnes.";
+	mes "qui est autorisé à s'entraîner seul.";
+	next;
+	mes "[Sugar]";
+	mes "Bien que la vente semble être effectuée ....";
+	mes "Où il se trouve maintenant ?";
+	mes "Ce dont je ne sais rien.";
+	close;
+
+L_ERROR:
+	mes "[Sugar]";
+	mes "???";
+	mes "Il me semble que vous avez un problème d'audition.";
+	mes "Je vais vous le dire une fois de plus ?";
+	mes "Vous pouvez uniquement acheter";
+	mes "^ff0000 5 pièces^000000 à la fois.";
+	next;
+	goto L_INPUT;
+
+L_ERROR2:
+	mes "[Sugar]";
+	mes "???";
+	mes "Hmmm il semble que vous n'ayez pas assez d'argent";
+	mes "pour effectuer cet achat.";
+	mes "Je vais vous demander de vérifier votre argent en premier lieu.";
+	close;
+
+M_END:
+	mes "[Sugar]";
+	mes "Vraiment .... Vous pourriez le regretter..";
+	mes "Si vous changez d'avis.";
+	mes "Je suis juste là, ok.";
+	mes "^FF0000Ayez une bonne journée !";
+	close;
+}

@@ -1,0 +1,124 @@
+//===== rAthena Script =======================================
+//= Custom Halloween Event 2006
+//===== By: ==================================================
+//= Stryker
+//===== Current Version: =====================================
+//= 1.2
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Halloween Event Script
+//===== Additional Comments: =================================
+//= 1.1 - Added trick to script
+//= 1.2 fixed bugs, optimized. Now uses 1 var instead of 3 [Lupus]
+//============================================================
+
+prontera,151,190,5	script	Hallows' Eve Event	807,{
+	mes "[Hallows' Eve Event]";
+	if(Class == Job_Novice){
+		mes "Je suis désolé mais vous devez avoir un emploi pour compléter l'événement.";
+		emotion ET_SWEAT, playerattached();
+		close;
+	}
+	if((EVENT_HALWN06&1) && (EVENT_HALWN06&2)){
+		mes "Je suis désolé mais vous avez déjà terminé l'événement.";
+		emotion ET_SORRY;
+		close;
+	}
+	mes "Salutations à toi, cher humain animé.";
+	next;
+	mes "[Hallows' Eve Event]";
+	mes "L'Halloween est là et il est presque temps d'aventurer dans des endroits où peu osent se rendre.";
+	next;
+	mes "[Hallows' Eve Event]";
+	mes "^FF0000[Trick or Treat]^FF0000, laquelle préférez-vous ?";
+	next;
+	menu "Trick",-, "Treat",L_Treat;
+
+	mes "[Hallows' Eve Event]";
+	if(EVENT_HALWN06&2){
+		mes "[DIALOGUE] Je suis désolé, mais vous avez déjà eu une astuce. Pourquoi ne pas aller choisir un bonbon maintenant ? [END DIALOGUE]";
+		emotion ET_SORRY;
+		close;
+	}
+	mes "Donnez-moi un moment...";
+	next;
+	set BaseExp,BaseExp+BaseLevel*1000;
+	set EVENT_HALWN06,EVENT_HALWN06|2;
+
+	mes "[Hallows' Eve Event]";
+	mes "Voici votre récompense. Votre Expérience de base a été légèrement augmentée.";
+	next;
+	mes "[Hallows' Eve Event]";
+	mes "J'espère que vous apprécierez votre tour et Joyeux Halloween !";
+	close;
+
+L_Treat:
+	mes "[Hallows' Eve Event]";
+	if(EVENT_HALWN06&1){
+		mes "Désolé, mais vous avez déjà reçu un cadeau. Pourquoi ne pas aller choisir une astuce maintenant ?";
+		emotion ET_SORRY;
+		close;
+	}
+	if(!(EVENT_HALWN06&4)){
+		mes "^FF0000Grande![NPC] ! Ça va être tellement amusant.";
+		next;
+		mes "[Hallows' Eve Event]";
+		mes "Je vais vous envoyer à la recherche d'objets disparus.";
+		next;
+		mes "[Hallows' Eve Event]";
+		mes "Ramenez tous les objets nécessaires et je vous préparerai un cadeau.";
+		next;
+		mes "[Hallows' Eve Event]";
+		mes "Ce n'est pas seulement un bonbon ordinaire que vous pouvez manger, mais c'est quelque chose que vous pouvez porter sur votre tête.";
+		next;
+		mes "[Hallows' Eve Event]";
+		mes "Mais pour tout créer, certains objets sont nécessaires en premier.";
+		mes "La liste :";
+		mes "1 Chapeau,";
+		mes "30 Citrouilles, et";
+		mes "20 Pièce de tissu noir";
+		next;
+		mes "[Hallows' Eve Event]";
+		mes "^FF0000[Personnage]^FF0000: Dépêche-toi maintenant.";
+		set EVENT_HALWN06,EVENT_HALWN06|4;
+		close;
+	}
+	mes "Avez-vous obtenu les objets que je vous ai demandés ou devez-vous revoir la liste ?";
+	next;
+	menu "Got'em",-, "Don't Have",L_Dont_Have, "See List",L_List;
+
+	mes "[Hallows' Eve Event]";
+	if((countitem(2220) < 1) || (countitem(535) < 30) || (countitem(7205) < 20)){
+		mes "Vous n'avez pas assez d'objets. Revenez quand vous en aurez.";
+		emotion ET_SORRY;
+		close;
+	}
+	delitem 2220,1;
+	delitem 535,30;
+	delitem 7205,20;
+	getitem 5134,1;
+	set EVENT_HALWN06,EVENT_HALWN06|1;
+	mes "^FF0000[Jobe]^0000: Bonne chose ! J'espère que vous êtes satisfait de votre objet.";
+	emotion ET_CONGRATULATION;
+	next;
+	mes "[Hallows' Eve Event]";
+	mes "Profitez du reste de votre fête d'Halloween.";
+	emotion ET_SCISSOR, playerattached();
+	close;
+
+L_Dont_Have:
+	mes "[Hallows' Eve Event]";
+	mes "Retournez dehors et cherchez-les. Voulez-vous voir la liste ?";
+	next;
+	menu "No",-, "Yes",L_List;
+	close;
+
+L_List:
+	mes "[Hallows' Eve Event]";
+	mes "Je requiers les objets suivants :";
+	mes "1 Chapeau,";
+	mes "30 Citrouilles, et";
+	mes "20 Morceaux de tissu noir.";
+	close;
+}

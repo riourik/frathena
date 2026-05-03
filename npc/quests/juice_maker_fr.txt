@@ -1,0 +1,349 @@
+//===== rAthena Script =======================================
+//= Juice Maker Quest
+//===== By: ==================================================
+//= kobra_k88
+//===== Current Version: =====================================
+//= 2.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Learn where to turn apples, bananas, carrots, and grapes
+//= into juice.
+//= Condition if done: (MISC_QUEST & 1)
+//===== Additional Comments: =================================
+//= 1.9 Rescripted to Aegis 10.3 standards. [L0ne_W0lf]
+//=     Added tracking variables in, which are unset when complete.
+//= 2.0 Added missing checkweight. [L0ne_W0lf]
+//= 2.1 Fixed dialog for if your missing the needed items (He always said the dialog for grape juice). [Kisuka]
+//============================================================
+
+prt_in,49,172,3	script	Marianne#juice	53,{
+	if ((MISC_QUEST&1) || morison_meat == 15) {
+		mes "[Marianne, femme au foyer]";
+		mes "Ouf...!";
+		mes "Pourtant, il ne mangera rien à moins que ce soit de la viande. Mais peut-être qu’il mangerait des fruits s’ils étaient coupés de manière à ce qu’ils soient faciles à manger. Comme si c'était mélangé à du jus...";
+		next;
+		set mother_marienu,0;
+		set morison_meat,0;
+		set MISC_QUEST,MISC_QUEST | 1;
+		mes "[Marianne, femme au foyer]";
+		mes "Ah ! À bien y penser, j'ai entendu dire qu'ils préparaient des jus de fruits quelque part. Maintenant, où était-il... Payon Village, ou Maroc ?";
+		close;
+	}
+	if (mother_marienu == 1) {
+		mes "[Marianne, femme au foyer]";
+		mes "Morrisson !! Mangez des fruits !! Vous ne voulez pas devenir un gros cochon baveux quand vous serez grand, n'est-ce pas ?";
+		next;
+		if (select("Talk:Cancel") == 1) {
+			mes "[Marianne, femme au foyer]";
+			mes "Hein ? ...Toi!";
+			mes "C'est toi qui as donné, mon petit Morrison, cette viande ?! Êtes-vous venu ici en pensant que je ne le saurais pas ?!";
+			next;
+			mes "[Marianne, femme au foyer]";
+			mes "Va-t'en, sors de chez moi MAINTENANT !!";
+			close;
+		}
+		mes "[Marianne, femme au foyer]";
+		mes "Morrisson !! Je vais être très très en colère si tu continues à faire ça !";
+		close;
+	}
+	if (morison_meat > 0) {
+		set mother_marienu,1;
+		mes "[Marianne, femme au foyer]";
+		mes "Oh !!.... Ceci...";
+		mes "qu'est-ce que c'est...??";
+		mes "Comment as-tu pu faire quelque chose comme ça à mon garçon ?!";
+		next;
+		mes "[Marianne, femme au foyer]";
+		mes "Argh ! Sortez de chez moi tout de suite !";
+		close;
+	}
+	mes "[Marianne, femme au foyer]";
+	mes "Morrisson !! S'il vous plaît, mangez des fruits !! S'il vous plaît ~ !";
+	next;
+	mes "[Marinaa, femme au foyer]";
+	mes "Soupir ~ !! Tel père, tel fils...";
+	next;
+	switch(select("Talk:Cancel")) {
+		mes "[Marianne, femme au foyer]";
+		mes "*Soupir*... Voici Morrison...";
+		mes "Mon seul et unique fils.";
+		next;
+		mes "[Marianne, femme au foyer]";
+		mes "Mais ces jours-ci, il ne mange tout simplement plus de fruits. Son visage est si terne parce qu’il refuse de manger sainement. Il veut juste manger de la viande. Je dois trouver un moyen de lui donner des fruits ou des légumes....";
+		close;
+	}
+	mes "[Marianne, femme au foyer]";
+	mes "Morrisson !! Vous allez avoir de gros ennuis si vous continuez comme ça !";
+	close;
+}
+
+prt_in,47,173,3	script	Morrison#juice	97,{
+	if ((MISC_QUEST&1) || morison_meat == 15) {
+		mes "[Petit Morrison]";
+		mes "Bleh... Oubliez ça.";
+		mes "Je vais juste me ratatiner rien qu'en mangeant des fruits. Ne vous inquiétez pas pour moi.";
+		close;
+	}
+	if (morison_meat > 9) {
+		mes "[Petit Morrison]";
+		mes "Ah... tellement plein~";
+		mes "Je pense que je peux vivre maintenant.";
+		mes "Vous n'êtes plus obligé de me donner de la viande. J'ai l'impression que je vais exploser si je mange encore.";
+		if (morison_meat == 10) {
+			next;
+			set morison_meat,morison_meat+1;
+			mes "[Petit Morrison]";
+			mes "Oh... et... euh.";
+			mes "Prends ça.";
+			next;
+			mes "[Petit Morrison]";
+			mes "C'est un petit quelque chose que j'ai gardé pour manger plus tard, mais depuis que tu m'as donné de la viande, je pense que je peux laisser de côté les bonbons.";
+			close;
+			getitem 529,3; //Candy
+			getitem 530,1; //Candy_Striper
+		}
+		close;
+	}
+	mes "[Petit Morrison]";
+	mes "Agh....Non !!!";
+	mes "Non, ne m'oblige pas à le manger ! Je ne supporte pas de goûter des fruits !";
+	next;
+	if (countitem(517) > 0) {
+		switch(select("Talk:Show the Meat:Cancel")) {
+		case 1:
+			mes "[Petit Morrison]";
+			mes "Aaaagh !! Une ou deux fois suffisent !! Je refuse de manger plus de fruits ! Il faut les éplucher et il y a tellement de jus que ça fait mal...";
+			next;
+			mes "[Petit Morrison]";
+			mes "Et ils sont tous glissants et aigres... Même si j'en mange, j'ai toujours faim. Aaaah~! Donnez-moi de la viande !";
+			close;
+		case 2:
+			mes "[Petit Morrison]";
+			mes "Ouh ! M-Meaaat~";
+			mes "Ah... hein... j'ai faim...";
+			mes "Le parfum de la viande...";
+			mes "Excusez-moi...";
+			mes "C-je peux en avoir un s'il te plaît ?";
+			next;
+			if (select("Give Meat:Don't Give Meat") == 1) {
+				delitem 517,1; //Meat
+				set morison_meat,morison_meat+1;
+				mes "[Petit Morrison]";
+				mes "Waouh~!!! Viande!!";
+				mes "Tellement délicieux !";
+				mes "Merci,";
+				mes "je pense que je peux";
+				mes "vivre maintenant.";
+				mes "*Mâche, mâche*";
+				close;
+			}
+			set morison_meat,15;
+			mes "[Petit Morrison]";
+			mes "Waah...!";
+			mes "Très bien, je comprends maintenant.";
+			mes "Les adultes sont tous pareils !";
+			close;
+		case 3:
+			mes "[Petit Morrison]";
+			mes "Aaaaah !!! Quoi qu’il en soit, je ne mangerai pas de fruits et légumes !";
+			close;
+		}
+	}
+	if (select("Talk:Cancel") == 1) {
+		mes "[Petit Morrison]";
+		mes "Aaah !! Je ne peux plus manger de fruits !";
+		next;
+		mes "[Petit Morrison]";
+		mes "Je refuse de manger plus de fruits ! Il faut les éplucher et il y a tellement de jus que ça fait mal...";
+		next;
+		mes "[Petit Morrison]";
+		mes "Et ils sont tous glissants et aigres... Même si j'en mange, j'ai toujours faim.";
+		mes "Aaaah~!";
+		mes "Donnez-moi de la viande !";
+		close;
+	}
+	mes "[Petit Morrison]";
+	mes "Aaaaah !!! Quoi qu’il en soit, je ne mangerai pas de fruits et légumes !";
+	close;
+}
+
+payon_in03,188,146,5	script	Marx Hansen#juice	86,{
+	if (checkweight(1201,1) == 0) {
+		mes "- Attends un instant ! -";
+		mes "- Actuellement, vous portez -";
+		mes "- trop d'objets avec vous. -";
+		mes "- S'il vous plaît, revenez plus tard -";
+		mes "- après avoir mis certains objets dans le stockage kafra. -";
+		close;
+	}
+	if (MISC_QUEST&1) {
+		mes "[Marchand Marx Hansen]";
+		mes "Accueillir.";
+		mes "Es-tu venu à";
+		mes "transformer les fruits également ?";
+		next;
+		switch(select("Make Juice.:Talk and get information about fruit processing.:Cancel.")) {
+		case 1:
+			mes "[Marchand Marx Hansen]";
+			mes "Quel genre de jus de fruits aimeriez-vous préparer ?";
+			next;
+			switch(select("Apple Juice:Banana Juice:Carrot Juice:Grape Juice:Cancel")) {
+			case 1:
+				set .@fruit,512;
+				set .@juice,531;
+				break;
+			case 2:
+				set .@fruit,513;
+				set .@juice,532;
+				break;
+			case 3:
+				set .@fruit,515;
+				set .@juice,534;
+				break;
+			case 4:
+				set .@fruit,514;
+				set .@juice,533;
+				break;
+			case 5:
+				mes "[Marchand Marx Hansen]";
+				mes "Eh bien alors...";
+				mes "A la prochaine fois.";
+				close;
+			}
+			if (countitem(.@fruit) == 0 || countitem(713) == 0 || Zeny < 3) {
+				mes "[Marchand Marx Hansen]";
+				mes "Oh non...";
+				mes "You don't have all the necessary materials. To make "+getitemname(.@juice)+", I need 1 "+getitemname(.@fruit)+" and 1 Empty Bottle. I will also need a 3 zeny fee.";
+				next;
+				mes "[Marchand Marx Hansen]";
+				mes "Lorsque vous aurez tout préparé, je mixerai les fruits pour vous offrir un délicieux jus.";
+				close;
+			}
+
+			mes "[Marchand Marx Hansen]";
+			mes "Combien en voudriez-vous ?";
+			next;
+			switch(select("As many as I can.:I want a certain amount.:Cancel.")) {
+			case 1:
+				set .@make,countitem(.@fruit);
+				if (countitem(713) < .@make) set .@make, countitem(713);
+				if (Zeny/3 < .@make) set .@make, Zeny/3;
+				break;
+			case 2:
+				mes "[Marchand Marx Hansen]";
+				mes "Choose a number less than 100. If you don't want to, put '0'. You can make up to " + countitem(.@fruit) + " bottles of juice.";
+				next;
+				while(1) {
+					input .@input;
+					if (.@input == 0) {
+						mes "[Marchand Marx Hansen]";
+						mes "Eh bien alors...";
+						mes "Reviens.";
+						close;
+					}
+					else if (.@input > 100) {
+						mes "[Marchand Marx Hansen]";
+						mes "Plus de 100 bouteilles est impossible. Choisissez un montant différent.";
+						next;
+					}
+					else {
+						break;
+					}
+				}
+				set .@make,.@input;
+				break;
+			case 3:
+				mes "[Marchand Marx Hansen]";
+				mes "Eh bien alors...";
+				mes "Reviens.";
+				close;
+			}
+
+			set .@total_zeny,3 * .@make;
+
+			if (countitem(.@fruit) < .@make || countitem(713) < .@make || Zeny < .@total_zeny) {
+				mes "[Marchand Marx Hansen]";
+				mes "Oh non...";
+				mes "Vous n'avez pas tout le matériel nécessaire. Je ne peux pas aider une situation comme celle-ci. Je suppose que vous rassemblez ce dont vous avez besoin.";
+				close;
+			}
+			delitem .@fruit,.@make;
+			delitem 713,.@make;
+			set Zeny, Zeny-.@total_zeny;
+			getitem .@juice,.@make;
+
+			mes "[Marchand Marx Hansen]";
+			mes "Voici! Jus frais et délicieux comme promis. Cela devrait être très rafraîchissant et savoureux.";
+			next;
+			mes "[Marchand Marx Hansen]";
+			mes "Eh bien alors...";
+			mes "Reviens.";
+			close;
+		case 2:
+			mes "[Marchand Marx Hansen]";
+			mes "Avant que les humains ne soient capables de développer des sociétés aussi vastes, ils cueillaient les fruits des arbres pour survivre. Les fruits ont peut-être été une bénédiction de la nature qui nous a permis d'exister dans le monde.";
+			next;
+			mes "[Marchand Marx Hansen]";
+			mes "Depuis que la vie est devenue si prospère, la jeune génération semble ne plus manger de fruits. J’ai donc commencé à réfléchir à des moyens de rendre les fruits plus faciles à manger.";
+			next;
+			mes "[Marchand Marx Hansen]";
+			mes "J'ai réalisé que lorsqu'on prépare des jus de fruits, ils sont plus pratiques à manger et ont un bien meilleur goût.";
+			next;
+			mes "# Informations sur les jus de fruits #";
+			mes "^CC4E5C- Jus de pomme -^000000";
+			mes "Pomme x 1 pièce, Bouteille vide x 1 pièce, 3 zeny.";
+			mes "^E3CF57- Jus de banane -^000000";
+			mes "Banane x 1 pièce, Bouteille vide x 1 pièce, 3 zeny.";
+			mes "^ED9121- Jus de carotte -^000000";
+			mes "Carotte x 1 pièce, Bouteille vide x 1 pièce, 3 zeny.";
+			mes "^CC00FF- Jus de raisin -^000000";
+			mes "Raisin x 1 ch., Bouteille vide x 1 ch., 3 zeny.";
+			close;
+		case 3:
+			mes "[Marchand Marx Hansen]";
+			mes "Hé!";
+			mes "Si vous visitez";
+			mes "quelqu'un, parle-lui !";
+			close;
+		}
+	}
+	else {
+		mes "[Marchand Marx Hansen]";
+		mes "Accueillir.";
+		mes "Comment puis-je vous aider ?";
+		next;
+		if (select("Talk:Cancel") == 1) {
+			mes "[Marchand Marx Hansen]";
+			mes "Avant que les humains ne soient capables de développer des sociétés aussi vastes, ils cueillaient les fruits des arbres pour survivre. Les fruits ont peut-être été une bénédiction de la nature qui nous a permis d'exister dans le monde.";
+			next;
+			mes "[Marchand Marx Hansen]";
+			mes "Depuis que la vie est devenue si prospère, la jeune génération semble ne plus manger de fruits. J’ai donc commencé à réfléchir à des moyens de rendre les fruits plus faciles à manger.";
+			next;
+			mes "[Marchand Marx Hansen]";
+			mes "J'ai réalisé que lorsqu'on prépare des jus de fruits, ils sont plus pratiques à manger et ont un bien meilleur goût.";
+			close;
+		}
+		mes "[Marchand Marx Hansen]";
+		mes "Hé!";
+		mes "Si vous visitez";
+		mes "quelqu'un, parle-lui !";
+		close;
+	}
+}
+
+//============================================================ 
+// Old changelog
+//============================================================ 
+//= 1.1 fixed input number check [Lupus]
+//= 1.2 fixed misplaced Grape<->Carrot juices [Lupus]
+//= 1.3 added a loopless menu 'as many as possible' [Lupus]
+//= 1.3a Turned the juice making part of the Juicer npc into a
+//=     subfunc.  Changed fruit amount needed to 1.[kobra_k88]
+//=     Fixed exploits [Lupus]
+//= 1.6 fixed typo (where did @ipnut came from?) [Lance]
+//= 1.8 got rid of vars: 'MEAT',"MARIANNE","MORRISON"
+//=     From now, all common quests start using bits of the
+//=     same variable MISC_QUEST [Lupus]
+//============================================================ 

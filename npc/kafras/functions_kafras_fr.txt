@@ -1,0 +1,673 @@
+//===== rAthena Script =======================================
+//= Kafra Functions
+//===== By: ==================================================
+//= rAthena Dev Team
+//= Darlskies, Darkchild, Syrus22, Lupus, kobra_k88 (2.0)
+//= L0ne_W0lf
+//===== Current Version: =====================================
+//= 6.8
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= These functions handle save, storage, cart rental, teleport,
+//= and Free Teleport/Warp/Rent Cart options for all Kafra NPCs.
+//=
+//= Kafra's will need a lot of work. The Welcome Message argument
+//= may become obsolete, as most kafras have a slightly differing
+//= Welcome message.
+//===== Additional Comments: =================================
+//= 1.1 Now using functions v2.1 Added Cart Rent for Classes: Whitesmith, Professor.
+//=     Replaced checkoption(x) into checkcart(0) [Lupus] v2.1b Added Fix Kafra Pass Func [Kobra_k88]
+//= 2.2 Final fix of the Kafra Pass Exploit! [Lupus] a -Izlude[4] fix
+//= 2.2a Minor changes to function calls.  Using agruments. Added Guild options. [kobra_k88]
+//= 2.2b This version uses arrays for the teleport option. Rearranged next statements to make menu transitions smoother. [kobra_k88]
+//= 2.3 Removed SAVE from Niflheim. [Lupus]
+//= 2.3 removed "fix" by HawkMoon RTFM and check supernovice.txt . There's a SPECIAL Kafra which gives CARTS to SN for a special proce. [Lupus]
+//= 2.4 Added Baby Class Support (Baby Novice check) Removed annoying storage feature where u had to close dialog window to be able to use your storage [Lupus]
+//= 2.5 Added Luoyang official Kafra, fixes some Kafras, not letting you to Save your position [Lupus]
+//= 2.6 Reverted Dungeons Kafras (they should offer only Storage). Added temp Ayothaya Kafra
+//= 2.7 Added correct Ayothaya, Luoyang & Amatsu Kafras. [Lupus]
+//= 2.8 Fixed Amatsu Storage problems [Lupus] 2.9 Fixed spelling mistakes. [Nexon]
+//= 3.0 Added special "not working teleport menu" for Einbroch Kafras [Lupus]
+//= 3.1 Removed callfunc Is_####_Class in favor of baseClass [Silentdragon]
+//= 3.2 Fixed an exploit [Lupus]
+//= 4.0 Added Kafra storage password protection. [Lupus]
+//=     to block Kafra Password, read comments at 350 line
+//= 5.0 Fixed the close2;....close; end; lines. Who let them slip away? =/ [erKURITA]
+//=     Also, the kafra upon warp was giving back the zeny. Removed. [erKURITA]
+//= 5.1 Optimized a little, added no tele/save arg's [Evera]
+//= 5.1a Temporary? Added F_ClearGarbage to clear unused/outdated variables [Lupus]
+//= 5.2 By default commented out custom Guilds Kafra's "Guild Storage". [Lupus]
+//= 5.3 uncommented Guild Storage. Confirmed kRO feature. [Lupus]
+//= 5.4 added -Guide option (Kafra shows you nearest Guide) Work in progress.
+//=     Need all coords for all guides.. and somehow pass their coords to kafra.
+//=     Removed universal Kafra Pass, added 3 new Kafra Tickets [Lupus]
+//= 5.4b temporary moved "-Guide" from the 1st menu punct [Lupus]
+//= 5.5 Added proper Niflheim welcome message.	[L0ne_W0lf]
+//=     Cleaned up the menus a bit. Got rid of the proceeding "-" prefix.
+//= 5.5b Missed a preceeding hyphen, which was screwing up teleporting. [L0ne_W0lf]
+//= 5.6 Further dialog updates, added  dynamic costs for cart and storage use. [L0ne_W0lf]
+//=     Updated some functions to handle Guild Kafras the way they should.
+//= 5.6a Corrected a few wrong names in the teleport function. [L0ne_W0lf]
+//= 5.7 Correced end message no longer displaying, and the duplicate names [L0ne_W0lf]
+//=     Thanks to Barron-Monster for pointing out the issues.
+//= 5.8 Fixed another double name being shown when "saving" [L0ne_W0lf]
+//= 5.9 Fixed the Kafra Welcome message for guilds. Thanks Barron-Monster. [L0ne_W0lf]
+//= 6.0 Closed Kafra Password exploit in Cool Event Corp. Storages until we got a client/packet based password support.
+//=     Added 2 args into F_SetKafCode to fit it in Cool Evnt Co. NPC [Lupus]
+//= 6.1 Added menu for Turbo Track Kafra Staff. [L0ne_W0lf]
+//= 6.2 Updated/Fixed warp cords. [Kisuka]
+//= 6.3 #kafra_code is now stored as is. [brianluau]
+//= 6.4 Removed unofficial Guide function. [Daegaladh]
+//= 6.5 Optimized. [Joseph]
+//= 6.6 Added Warp Points / View Points Function. [Joseph]
+//= 6.7 Added Rune Knight Kafra. [Euphy]
+//= 6.8 Updated some functions and added VIP features. [Euphy]
+//============================================================
+
+//=== Main Function ========================================================
+//=   arg(0): Used to determine which welcome message to show.
+//=   arg(1): Used to determine which menu to display.
+//=   arg(2): Used to determine if the info menu is shown in F_KafInfo.
+//=   arg(3): Cost to use Storage
+//=   arg(4): Cost to Rent a Pushcart
+//==========================================================================
+function	script	F_Kafra	{
+	callfunc "F_ClearGarbage"; // Clear outdated, unused variables
+	.@welcome = getarg(0);
+	.@menu_num = getarg(1);
+
+	// Display Kafra Welcome Message
+	switch(.@welcome) {
+	default:// Default message (obsolete)
+		mes "[Employé de Kafra]";
+		mes "Bienvenue au";
+		mes "Société Kafra.";
+		mes "Les services Kafra";
+		mes "sont toujours de votre côté.";
+		mes "Comment puis-je vous aider?";
+		break;
+	case 1:// Niflheim specific message
+		mes "[Employé de Kafra]";
+		mes "^666666W-welc-c-come";
+		mes "à th-th-le K-kaaafrrrra";
+		mes "C-coorpoor-r-ratioooonn...^000000";
+		break;
+	case 2:// Guild Castle Kafra message
+		mes "[Employé de Kafra]";
+		mes "Welcome. ^ff0000" + getguildname( getcharid(2) ) + "^000000 Member.";
+		mes "La Corporation Kafra vous accompagnera où que vous alliez.";
+		break;
+	case 3:// Amatsu specific message (obsolete)
+		mes "[Employé de Kafra]";
+		mes "Alors, venez-vous d'un pays lointain pour étudier notre culture ou faites-vous simplement du tourisme?";
+		mes "Dans les deux cas, pourquoi ne pas rester un peu?";
+		mes "L'air est constamment chargé de";
+		mes "l'odeur agréable des fleurs sauvages.";
+		break;
+	case 4:// Luoyang and Ayothaya specific message (obsolete)
+		mes "[Employé de Kafra]";
+		mes "Avec nos nombreux points de service Kafra,";
+		mes "vous n'êtes jamais";
+		mes "loin de chez vous.";
+		break;
+	case 5:// NPC has it's own welcome message. (Display nothing)
+		break;
+	}
+	next;
+	if (.@welcome == 2)// Guild Kafra Menu override (free Teleport, free Storage, Free Cart)
+		setarray .@K_Menu0$[0], "Use Storage", "Use Guild Storage", "Rent a Pushcart", "Use Teleport Service", "Cancel";
+	else {
+		switch(.@menu_num) {
+			// Save and Storage only
+			case 1:	setarray .@K_Menu0$[0],"Save","Use Storage","Cancel"; break;
+			// Storage only
+			case 2:	setarray .@K_Menu0$[0],"Use Storage","Cancel"; break;
+			// No Teleport (Common)
+			case 3: setarray .@K_Menu0$[0],"Save","Use Storage","Rent a Pushcart","Check Other Information","Cancel"; break;
+			// Case 4 is Einbroch no tele message.
+			// No save, or teleport. (Common)
+			case 5:	setarray .@K_Menu0$[0],"Use Storage","Rent a Pushcart","Check Other Information","Cancel"; break;
+			// Storage and Check Other Information only.
+			case 6:	setarray .@K_Menu0$[0],"Use Storage","Check Other Information","Cancel"; break;
+			// Save, Storage, and Pushcart only (Kafra Warehouse)
+			case 7:	setarray .@K_Menu0$[0],"Save","Use Storage","Rent a Pushcart","Cancel"; break;
+			// Save, Storage, Other Check information. (Turbo track)
+			case 8: setarray .@K_Menu0$[0],"Save","Use Storage","Check Other Information","Cancel"; break;
+			// No Save (Rune Knight)
+			case 9: setarray .@K_Menu0$[0],"Use Storage","Rent a Pushcart","Use Teleport Service","Check Other Information","Cancel"; break;
+			// Storage, Save, and Pushcart (Dewata, reorder of case 7)
+			case 10: setarray .@K_Menu0$[0],"Use Storage","Save","Rent a Pushcart","Cancel"; break;
+			// Default message (obsolete)
+			default: setarray .@K_Menu0$[0],"Save","Use Storage","Use Teleport Service","Rent a Pushcart","Check Other Information","Cancel"; break;
+		}
+	}
+	.@menu$ = implode(.@K_Menu0$,":");
+	while (true) {
+		.@j = select(.@menu$) - 1;
+		if (.@K_Menu0$[.@j] == "Save")
+			return;
+		else if (.@K_Menu0$[.@j] == "Use Storage") {
+			if (.@welcome == 2)// Do not charge for Guild Storage
+				callfunc "F_KafStor",2,0,0;
+			else
+				callfunc "F_KafStor",0,getarg(3),.@welcome;
+			next;
+		}
+		else if (.@K_Menu0$[.@j] == "Use Teleport Service") {
+			if (.@menu_num != 4)// Display Einbroch "No Teleport Service" notice.
+				callfunc "F_KafTele",.@welcome;
+			else {
+				mes "[Employé de Kafra]";
+				mes "En raison du ^FF0000Accord de Transport Limité^000000, la";
+				mes "Corporation Kafra ne peut pas";
+				mes "offrir de Services Téléportation";
+				mes "dans la République du Schwarzwald.";
+				mes "Nous vous demandons de bien vouloir";
+				next;
+				mes "[Employé de Kafra]";
+				mes "utiliser le Service Aéroplane.";
+				mes "use the Airship Service";
+				mes "au lieu de cela. Merci pour votre";
+				mes "compréhension et coopération.";
+			}
+			next;
+		}
+		else if (.@K_Menu0$[.@j] == "Rent a Pushcart") {
+			if (callfunc("F_KafCart",.@welcome,getarg(4)) == 1)
+				next;
+		}
+		else if (.@K_Menu0$[.@j] == "Check Other Information") {
+			callfunc "F_KafInfo",getarg(2);
+			next;
+		}
+		else if (.@K_Menu0$[.@j] == "Cancel") {
+			callfunc "F_KafEnd",.@welcome,0;
+			end;
+		}
+		else if (.@K_Menu0$[.@j] == "Use Guild Storage") {
+			callfunc "F_KafStor",1,0;
+			next;
+		}
+	}
+}
+
+//===================================================
+// Storage Function
+//===================================================
+function	script	F_KafStor	{
+	.@type = getarg(0);
+	.@fee = getarg(1);
+
+	// Unable to access Guild Storage (Busy)
+	if (.@type == 1) {
+		if (guildopenstorage()) {
+			mes "[Employé de Kafra]";
+			mes "Désolé mais un autre membre du guilde utilise le stockage du guilde";
+			mes "en ce moment. Veuillez attendre que cette personne termine.";
+			close3;
+		}
+		cutin "", 255;
+		close;
+	}
+	// Unable to access Normal Storage (Insufficient Basic Skills)
+	if (!callfunc("F_CanOpenStorage")) {
+		mes "[Employé de Kafra]";
+		// Niflheim Specific Message
+		if (getarg(2) == 1) {
+			mes "^666666S-s-ssoooorry,";
+			mes "y-you're a-a-aaaa";
+			mes "Noooviiice... N-neeeds";
+			mes "B-basic sssskill l-level 6...^000000";
+			return;
+		}
+		mes "Je suis désolé, mais toi";
+		mes "j'ai besoin du statut d'apprenti";
+		mes "Niveau de compétence basique 6 pour";
+		mes "utiliser le service de stockage.";
+		return;
+	}
+	// Accessing Normal Storage (Skipped if accessing Storage from Guild castle)
+	if (.@type != 2) {
+		// Consume "Free Ticket for Kafra Storage" if available.
+		if (countitem(7059))
+			delitem 7059,1;
+		else {
+			if (Zeny < .@fee) {
+				mes "[Employé de Kafra]";
+				// Niflheim Specific Message
+				if (getarg(2) == 1) {
+					percentheal -50,-50;
+					mes "^666666Zeeeeeny...";
+					mes "M-more z-zeny...!";
+					mes "N-neeed 150... zeny...";
+					mes "Ergh! T-taking bl-blood~!^000000";
+					return;
+				}
+				// Standard Message
+				mes "Je suis désolé, mais tu ne le fais pas";
+				mes "a assez de zenny pour utiliser";
+				mes "le Service de Stockage. Notre";
+				mes "Storage access fee is " + .@fee + " zeny.";
+				return;
+			}
+			Zeny -= .@fee;
+			RESRVPTS += (.@fee/5);
+		}
+	}
+
+	// Surpress the "End" message if in guild castle.
+	if (.@type != 2) {
+		// Niflheim specific Message
+		if (getarg(2) == 1) {
+			percentheal 0,-10;
+			mes "[Employé de Kafra]";
+			for ( .@i = 0; .@i < 5; .@i++ )
+				mes "^666666Merci.. pour... utiliser...^000000";
+		}
+		// Normal message
+		else {
+			mes "[Employé de Kafra]";
+			mes "Voici, laissez-moi ouvrir";
+			mes "votre espace de stockage pour vous.";
+			mes "Merci d'avoir utilisé";
+			mes "le service Kafra.";
+		}
+	}
+	callfunc("F_CheckKafCode");	//check your storage password, if set
+	close2;
+	openstorage;
+	cutin "", 255;
+	end;
+}
+
+//===================================================
+// Teleport Function
+//===================================================
+function	script	F_KafTele	{
+	mes "[Employé de Kafra]";
+	mes "Veuillez choisir";
+	mes "votre destination.";
+	next;
+	.@j = select( implode(@wrpC$,":") ) - 1;
+	if (@wrpC$[.@j] == "Cancel")
+		return;
+	// Consume "Free Ticket for Kafra Transportation" if available.
+	// Do not consume if in Guild castle
+	if (countitem(7060) > 0 && getarg(0) != 2)
+		delitem 7060,1;
+	else {
+		if (Zeny < @wrpP[.@j]) {
+			mes "[Employé de Kafra]";
+			mes "Désolé, mais vous n'avez pas";
+			mes "assez d'argent (zeny) pour le service Téléportation.";
+			mes "Le frais de téléportation est";
+			mes "to " + @wrpD$[.@j] + " is " + @wrpP[.@j] + " zeny.";
+			close3;
+		}
+		Zeny -= @wrpP[.@j];
+		RESRVPTS += (@wrpP[.@j]/16);
+	}
+	cutin "", 255;
+	if (@wrpD$[.@j] == "Al De Baran") warp "aldebaran",168,112;
+	else if (@wrpD$[.@j] == "Alberta") warp "alberta", 117, 56;
+	else if (@wrpD$[.@j] == "Comodo") warp "comodo", 209, 143;
+	else if (@wrpD$[.@j] == "Comodo Pharos Beacon") warp "cmd_fild07", 127, 134;
+	else if (@wrpD$[.@j] == "Geffen") warp "geffen", 120, 39;
+	else if (@wrpD$[.@j] == "Izlude") {
+		if (checkre(0) == true)
+			warp "izlude", 128, 98;
+		else
+			warp "izlude", 91, 105;
+	}
+	else if (@wrpD$[.@j] == "Juno") warp "yuno", 158, 125;
+	else if (@wrpD$[.@j] == "Mjolnir Dead Pit") warp "mjolnir_02", 99, 351;
+	else if (@wrpD$[.@j] == "Morocc") warp "morocc", 156, 46;
+	else if (@wrpD$[.@j] == "Orc Dungeon") warp "gef_fild10", 52, 326;
+	else if (@wrpD$[.@j] == "Payon") warp "payon", 161, 58;
+	else if (@wrpD$[.@j] == "Prontera") warp "prontera", 116, 72;
+	else if (@wrpD$[.@j] == "Umbala") warp "umbala", 100, 154;
+	end;
+}
+
+
+//===================================================
+// Cart Function
+//===================================================
+function	script	F_KafCart	{
+	// Ensure that the class wanting to rent a pushcart is a merchant
+	if (BaseClass != Job_Merchant) {
+		mes "[Employé de Kafra]";
+		mes "^FF0000Je suis désolé, mais le";
+		mes "service de location de chariot n'est disponible que pour les";
+		if (checkre(0) == true)
+			mes "est disponible uniquement pour les classes Commerçant.";
+		else {
+			mes "[Marchands], [Forgemestres], [Maîtres Forgemestres], [Alchimistes], [Bio-Alchimistes],";
+			mes "^FF0000et [Mécaniciens] ainsi que [Généticiens].";
+			mes "Alchimistes et Bio-Alchimistes.";
+		}
+		return 1;
+	}
+	// Make sure the invoking character does not have a cart already
+	else if (checkcart() == true) {
+		mes "[Employé de Kafra]";
+		mes "Malheureusement, nous ne pouvons pas";
+		mes "un Caddie équipé.";
+		mes "Malheureusement, nous ne pouvons pas";
+		mes "louer plus d'un à";
+		mes "à la fois par client.";
+		return 1;
+	}
+	// Check if the player has the Pushcart skill
+	else if (getskilllv("MC_PUSHCART") == 0) {
+		mes "[Employé de Kafra]";
+		mes "You can only rent a cart after learning the \"Push Cart\" skill.";
+		return 1;
+	}
+	// Consume "Free Ticket for the Cart Service" if available.
+	// Do not consume if in Guild castle.
+	if (countitem(7061) > 0 && getarg(0) != 2)
+		delitem 7061,1;
+	else {
+		.@rental_fee = getarg(1);
+		mes "[Employé de Kafra]";
+		mes "La location du landau de marchandises";
+		mes "fee is " + .@rental_fee + " zeny. Would";
+		mes "vous devez payer une redevance pour le landau de marchandises";
+		next;
+		if (select("Rent a Pushcart.:Cancel") == 2)
+			return 0;
+		if (Zeny < .@rental_fee) {
+			mes "[Employé de Kafra]";
+			mes "Je suis désolé, mais toi";
+			mes "je n'en ai pas assez";
+			mes "de 800 zeny.";
+			mes "rental fee of " + .@rental_fee + " zeny.";
+			return 1;
+		}
+		Zeny -= .@rental_fee;
+		RESRVPTS += 48;
+	}
+	setcart;
+	return 1;
+}
+
+//===================================================
+// Special Reserve Points Function
+//===================================================
+function	script	F_KafInfo	{
+// Uncomment next line to block Kafra Storage Protection
+//	.@block = 1;
+	if (getarg(0) == 2)// Port Malaya, Rune Knight
+		setarray .@menu$[0], "Check Special Reserve Points.", "", "", "Cancel";
+	else if (.@block)
+		setarray .@menu$[0], "Check Special Reserve Points.", "", "Kafra Employee Locations", "Cancel";
+	else
+		setarray .@menu$[0], "Check Special Reserve Points.", "Storage Password Service", "Kafra Employee Locations", "Cancel";
+	.@menu_list$ = implode(.@menu$,":");
+	while (true) {
+		.@j = select(.@menu_list$) - 1;
+		switch(.@j) {
+		case 0:// Check Special Reserve Points.
+			mes "[Employé de Kafra]";
+			mes "Voyons...";
+			mes "" + strcharinfo(0) + "...";
+			mes "Ah, tu as un total de";
+			mes "" + RESRVPTS + " Special Reserve Points.";
+			next;
+			mes "[Employé de Kafra]";
+			mes "Vous pouvez échanger vos";
+			mes "Points de Réserve Spéciale contre des";
+			mes "récompenses au bureau principal Kafra à Al De Baran. Veuillez utiliser nos";
+			mes "services pratiques pour voir les avantages de notre programme de récompense.";
+			if (getarg(0) == 1)
+				return;
+			next;
+			break;
+		case 1:// Storage Password Service
+			callfunc("F_SetKafCode","[Kafra Employee]","Kafra Services");
+		case 2:// Kafra Employee Locations
+			for ( .@i = 0; .@i <= 3; .@i++ )
+				viewpoint 1,@viewpX[.@i],@viewpY[.@i],(.@i+1),0xFF00FF;
+			next;
+			for ( .@i = 0; .@i <= 3; .@i++ )
+				viewpoint 2,@viewpX[.@i],@viewpY[.@i],(.@i+1),0xFF00FF;
+			break;
+		default:
+			return;
+		}
+	}
+}
+
+// === End Function ==================================================
+//  arg(0): used to determine what message to display.
+//  arg(1): used to determine if save message is displayed.
+//  arg(2): used to display the name of the area you're saving in.
+//===================================================================
+function	script	F_KafEnd	{
+	.@type = getarg(0);
+	mes "[Employé de Kafra]";
+	if (getarg(1) == true) {// Save
+		mes "Votre point de respawn";
+		mes "a été sauvegardé ici";
+		mes "" + getarg(2) + ".";
+		mes "Merci d'avoir utilisé";
+		mes "les services Kafra.";
+	} else if (.@type == 0 || .@type == 5) {// Generic End
+		mes "Je suis en attente depuis longtemps pour un maître qui accomplira mon destin.";
+		mes "Âme courageuse... le destin vous guidera vers votre avenir...";
+	} else if (.@type == 1) {// Niflheim End
+		percentheal 0,-25;
+		mes "^666666Kaffffra n-never";
+		mes "diiiiiiiiiiiiies. On...";
+		mes "On y-yooour siiiiiiide~^000000";
+	} else if (.@type == 2) {// RockRidge Save
+		mes "Sauvé.";
+		mes "Merci pour votre mécénat.";
+	}
+	close3;
+}
+
+//===================================================
+// Check Storage Password Function
+//===================================================
+function	script	F_CheckKafCode	{
+	if (!#kafra_code)
+		return;
+	mes "Entrez le mot de passe de votre coffre :";
+	input .@code_;
+	if (.@code_ != #kafra_code) {
+		dispbottom "Mot de passe incorrect.";
+		close3;
+	}
+	@kafcode_try = 0;
+	return;
+}
+
+// === Set / Change / Clear Storage Password Function ===
+// getarg(0): NPC Name
+// getarg(1): Company Name
+//=======================================================
+function	script	F_SetKafCode	{
+	.@npc_name$ = getarg(0);
+	.@comp_name$ = getarg(1);
+
+	mes .@npc_name$;
+	if (#kafra_code == 0) {
+		mes "" + .@comp_name$ + " proudly presents you a new service:";
+		mes "Protection supplémentaire du coffre avec un mot de passe.";
+		next;
+		if (select( "Set new password -> 5000z", "Cancel" ) == 1)
+			callsub( S_SET, .@npc_name$, .@comp_name$ );
+		close3;
+	}
+	mes "Votre coffre est protégé par un mot de passe. Que souhaitez-vous faire maintenant ?";
+	next;
+	switch( select( "Change old password -> 5000z", "Remove storage password -> 1000z", "Cancel" ) ) {
+	case 1:
+		mes .@npc_name$;
+		mes "D'abord, entrez votre ^0000FFancien mot de passe^000000.";
+		.@code = callfunc("F_EntKafCode");
+		if (!.@code || .@code != #kafra_code) {
+			mes "Mot de passe incorrect. Vous ne pouvez pas définir un nouveau mot de passe.";
+			emotion ET_SCRATCH;
+			break;
+		}
+		next;
+		callsub( S_SET, .@npc_name$, .@comp_name$ );
+		break;
+	case 2:
+		mes .@npc_name$;
+		mes "Veuillez entrer votre mot de passe avant sa suppression.";
+		.@code = callfunc("F_EntKafCode");
+		if (!.@code) {
+			mes "Le mot de passe n'a pas été supprimé.";
+			emotion ET_SCRATCH;
+			break;
+		}
+		next;
+		mes .@npc_name$;
+		if (Zeny < 1000) {
+			mes "Vous n'avez pas assez de zeny.";
+			emotion ET_MONEY;
+			break;
+		}
+		Zeny -= 1000;
+		if (.@code == #kafra_code) {
+			#kafra_code = 0;
+			mes "Vous avez nettoyé avec succès le mot de passe de votre coffre.";
+			mes "Thank you for using " + .@comp_name$ + ".";
+			emotion ET_THANKS;
+		} else {
+			mes "Mot de passe incorrect. Nous ne vous rembourserons pas vos 1000z.";
+			mes "Veuillez entrer correctement votre mot de passe la prochaine fois.";
+			emotion ET_SORRY;
+		}
+		break;
+	case 3:
+		break;
+	}
+	close3;
+
+S_SET:
+	.@npc_name$ = getarg(0);
+	.@comp_name$ = getarg(1);
+
+	mes .@npc_name$;
+	mes "Maintenant, entrez votre ^FF0000nouveau mot de passe^000000 pour protéger votre coffre des voleurs.";
+	.@code = callfunc("F_EntKafCode");
+	if (!.@code) {
+		mes "Le mot de passe n'a pas été modifié.";
+		emotion ET_SCRATCH;
+		return;
+	}
+	next;
+	mes .@npc_name$;
+	if (Zeny < 5000) {
+		mes "Vous n'avez pas assez de zeny.";
+		emotion ET_MONEY;
+		return;
+	}
+	Zeny -= 5000;
+	#kafra_code = .@code;
+	mes "Vous avez sécurisé votre coffre avec un mot de passe secret.";
+	mes "Thank you for using " + .@comp_name$ + ".";
+	emotion ET_THANKS;
+	return;
+}
+
+//===================================================
+// Basic Password Validation Function
+//===================================================
+function	script	F_EntKafCode	{
+	mes "Entrez un numéro de 1000~10000000 :";
+	@kafcode_try += 1;
+	if (@kafcode_try > 10) {
+		@kafcode_try = 0;
+		logmes "Essai d'ajuster le mot de passe du coffre-fort.";
+		return 0;
+	}
+	if (input(.@code_) == 1) {
+		mes "Vous ne pouvez pas utiliser un tel grand mot de passe.";
+		return 0;
+	}
+	if (.@code_ < 1000) {
+		mes "Vous ne devriez pas utiliser un tel court mot de passe.";
+		return 0;
+	}
+	return .@code_;
+}
+
+//===================================================
+// Warp Points / View Points Function
+//===================================================
+function	script	F_KafSet	{
+	deletearray @wrpC$[0], getarraysize(@wrpC$);
+	deletearray @wrpD$[0], getarraysize(@wrpD$);
+	deletearray @wrpP$[0], getarraysize(@wrpP$);
+	deletearray @viewpX[0], getarraysize(@viewpX);
+	deletearray @viewpY[0], getarraysize(@viewpY);
+
+	.@map$ = strnpcinfo(4);
+	if (.@map$ == "prontera") {
+		setarray @wrpD$[0], "Izlude", "Geffen", "Payon", "Morocc", "Orc Dungeon", "Alberta";
+		setarray @wrpP[0], 600, 1200, 1200, 1200, 1700, 1800;
+		setarray @viewpX[0], 151, 29, 282, 152;
+		setarray @viewpY[0], 29, 207, 200, 326;
+	} else if (.@map$ == "alberta") {
+		setarray @wrpP[0], 1200, 1800, 1800;
+		setarray @wrpD$[0], "Payon", "Morocc", "Prontera";
+		setarray @viewpX[0], 28, 113, 0, 0;
+		setarray @viewpY[0], 229, 60, 0, 0;
+	} else if (.@map$ == "aldebaran") {
+		setarray @wrpP[0], 1200, 1200, 1800, 1700;
+		setarray @wrpD$[0], "Geffen", "Juno" , "Izlude", "Mjolnir Dead Pit";
+	} else if (.@map$ == "comodo" ) {
+		setarray @wrpD$[0], "Morocc", "Comodo Pharos Beacon", "Umbala";
+		setarray @wrpP[0], 1800, 1200, 1800;
+	} else if (.@map$ == "cmd_fild07") {
+		setarray @wrpD$[0], "Comodo", "Morocc";
+		setarray @wrpP[0], 1200, 1200;
+	} else if (.@map$ == "geffen") {
+		setarray @wrpD$[0], "Prontera", "Al De Baran", "Orc Dungeon", "Mjolnir Dead Pit";
+		setarray @wrpP[0], 1200, 1200, 1700, 1700;
+		setarray @viewpX[0], 120, 203;
+		setarray @viewpY[0], 62, 123;
+	} else if (.@map$ == "izlude") {
+		setarray @wrpD$[0], "Geffen", "Payon", "Morocc", "Al De Baran";
+		setarray @wrpP[0], 1200, 1200, 1200, 1800;
+	} else if (.@map$ == "morocc") {
+		setarray @wrpD$[0], "Prontera", "Payon", "Alberta", "Comodo", "Comodo Pharos Beacon";
+		setarray @wrpP[0], 1200, 1200, 1800, 1800, 1200;
+		setarray @viewpX[0], 156, 163, 28, 292;
+		setarray @viewpY[0], 97, 260, 167, 211;
+	} else if (.@map$ == "umbala") {
+		setarray @wrpD$[0], "Comodo";
+		setarray @wrpP[0], 1800;
+	} else if (.@map$ == "payon") {
+		setarray @wrpD$[0], "Prontera", "Alberta", "Morocc";
+		setarray @wrpP[0], 1200, 1200, 1200;
+	} else if (.@map$ == "yuno") {
+		setarray @wrpD$[0], "Al De Baran";
+		setarray @wrpP[0], 1200;
+		setarray @viewpX[0], 328, 278, 153, 0;
+		setarray @viewpY[0], 108, 221, 187, 0;
+	} else if (.@map$ == "job3_rune01") {
+		setarray @wrpD$[0], "Izlude", "Geffen", "Payon", "Morocc", "Alberta";
+		setarray @wrpP[0], 600, 1200, 1200, 1200, 1800;
+	}
+
+	.@warp_size = getarraysize(@wrpD$);
+
+	// VIP pricing varies across the regional servers; this is most practical.
+	if (VIP_SCRIPT && !vip_status(VIP_STATUS_ACTIVE)) {
+		for ( .@i = 0; .@i < .@warp_size; .@i++ )
+			@wrpP[.@i] *= 2;
+	}
+
+	for ( .@i = 0; .@i < .@warp_size; .@i++ )
+		@wrpC$[.@i] = @wrpD$[.@i] + " -> " + @wrpP[.@i] + " z";
+	@wrpC$[ .@warp_size ] = "Cancel";
+	return;
+}

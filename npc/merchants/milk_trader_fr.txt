@@ -1,0 +1,80 @@
+//===== rAthena Script =======================================
+//= Milk Trader
+//===== By: ==================================================
+//= kobra_k88; L0ne_W0lf
+//===== Current Version: =====================================
+//= 1.5
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Trades bottles for milk
+//===== Additional Comments: =================================
+//= Fully working
+//= 1.1 Negative input bug fixed [Lupus]
+//= 1.2 Raised the price to close zeny exploit [Lupus]
+//= 1.2a Switched to Lupus's "loopless" technique.[kobra_k88]
+//= 1.3 Rescripted to Aegis 10.3 standards. [L0ne_W0lf]
+//= 1.4 Implemented checkweight. [L0ne_W0lf]
+//= 1.5 Fixed missed variable. (bugreport:1523) [L0ne_W0lf]
+//============================================================
+
+prontera,73,140,0	script	Milk Vendor	86,{
+	if (checkweight(1201,1) == 0) {
+		mes "^3355FFJuste une minute !";
+		mes "Je ne peux offrir aucun de mes";
+		mes "services pour vous parce que";
+		mes "tu en portes trop";
+		mes "truc. Mettez vos articles supplémentaires dans";
+		mes "Kafra Storage et revenez ~";
+		close;
+	}
+	mes "Oh, hé~!";
+	mes "Hey, hey... ";
+	mes "Si tu m'amènes";
+	mes "1 Bouteille vide et";
+	mes "15 Zeny, je vais les échanger";
+	mes "contre 1 Lait. Ça te va?";
+	mes "Ça te va?";
+	next;
+	if (select("Exchange all empty bottles.:Cancel") == 1) {
+		if (countitem(713) <= 0) {
+			mes "Oh, hé~!";
+			mes "Hé...";
+			mes "Tu n'as pas";
+			mes "aucune Bouteille vide.";
+			mes "Je ne peux pas vraiment te donner ce lait autrement, tu sais...";
+			mes "...";
+			mes "[Vendeuse de lait]";
+			close;
+		}
+		set .@bottles,countitem(713);
+		set .@total_weight,.@bottles * 50;
+		set .@total_cost,.@bottles * 15;
+		if (Zeny < .@Total_cost) {
+			mes "Oh, hé~!";
+			mes "Tu n'as pas assez de zeny pour échanger toutes ces Bouteilles vides contre du Lait. Tu dois avoir";
+			mes "plus de Zeny.";
+			mes "[Vendeuse de lait]";
+			mes "Pourrais-tu faire";
+			mes "Milk. You need to have";
+			mes "at least " + .@total_cost + " zeny.";
+			close;
+		}
+		if (MaxWeight - Weight < .@total_weight) {
+			mes "Oh, hé~!";
+			mes "Hmm...";
+			mes "Would you make";
+			mes "^FF0000un peu plus d'espace^";
+			mes "^FF0000dans votre inventaire^";
+			mes "^FF0000avant que je vous donne^";
+			mes "^FF0000tous ce lait ?^";
+			close;
+		}
+		set Zeny, Zeny-.@total_cost;
+		delitem 713,.@bottles; //Empty Bottles
+		getitem 519,.@bottles; //Milk
+		close;
+	}
+	close;
+}

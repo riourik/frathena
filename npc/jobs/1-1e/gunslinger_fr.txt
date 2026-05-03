@@ -1,0 +1,428 @@
+//===== rAthena Script ======================================= 
+//= Gunslinger Job Quest
+//===== By: ================================================== 
+//= erKURITA, RockmanEXE, Kisuka
+//===== Current Version: ===================================== 
+//= 2.2
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Gunslinger Job Change Quest
+//===== Additional Comments: ================================= 
+//= 1.0 Made the NPC [erKURITA]
+//= 1.5 Couple fixes to the npc, aswell as adding the missing
+//=     3 green herbs. [erKURITA]
+//= 1.6 job number->const, commonized variable name,
+//=     optimized [Lupus]
+//= 1.7 Now uses only ONE variable GUNS_Q [Lupus]
+//= 1.7a Grammar fixes, few spelling fixes, etc [CBMaster]
+//= 1.7b Parenthesis fixes [KarLaeda]
+//= 1.8 Fixed the reward you can get [Playtester]
+//= 1.9 Removed some 'clever' script constructs [ultramage]
+//= 2.0 Updated to official version - Thanks to Omega for
+//=     his first try [SinSloth] 1.10b - removed .GATs [Lupus]
+//= 2.1 Wise Bull Horn now deletes all items. Thanks to yyCC. [L0ne_W0lf]
+//= 2.1a Corrected a Typo error ";;". [Samuray22]
+//= 2.1b Corrected some typos errors. (bugreport:1549) [Samuray22]
+//= 2.1c Fixed some missing/messed up item checks. (bugreport:2693) [Kisuka]
+//= 2.2 Updated to match AEGIS script and Added Quest Log commands. [Kisuka]
+//============================================================ 
+
+que_ng,152,167,3	script	Master Miller	901,{
+	if (Upper == 2) {
+		mes "[Maître Miller]";
+		mes "Eh bien, tu n'es pas un";
+		mes "adorable petit enfant~";
+		mes "Où est ta mère?";
+		mes "Cet endroit est dangereux, donc";
+		mes "veuillez rentrer chez vous rapidement, d'accord?";
+		close;
+	}
+	if (Class == Job_Novice) {
+		if (!callfunc("F_CanChangeJob")) {
+			mes "[Maître Miller]";
+			mes "Intéressé à devenir";
+			mes "un Tireur, hein? Tu as";
+			mes "du potentiel, mais tu n'es pas encore assez";
+			mes "expérimenté.";
+			mes "Juste t'entraîner un peu plus,";
+			mes "et puis reviens, tu entends?";
+			close;
+		}
+		if (GUNS_Q == 0) {
+			mes "[Maître Miller]";
+			mes "Je suis Meiller, un tireur à plein temps";
+			mes "dresseur d'élite et";
+			mes "gardien à plein temps de Dame";
+			mes "Selena. Maintenant, que puis-je faire pour vous? Si ce n'est pas important, je ne peux pas y consacrer du temps.";
+			mes "^FF0000besoin ? Si ce n'est pas important, je ne peux pas m'occuper de vous.";
+			next;
+			if(select("Nothing.:I want to become a Gunslinger.") == 1) {
+				mes "[Maître Miller]";
+				mes "^FF0000Ne gaspille pas mon temps.";
+				mes "Si tu veux vraiment devenir";
+				mes "un Tireur d'élite, alors reviens";
+				mes "me parler.";
+				close;
+			}
+			mes "[Maître Miller]";
+			mes "Hm. Tu es assez jeune, mais";
+			mes "tes yeux me disent que tu as";
+			mes "du cran. Il te faudra passer notre entretien et suivre le cours";
+			mes "de formation pour devenir un Tireur d'élite. Veux-tu postuler ?";
+			next;
+			if(select("Give me some time to think.:Sure!") == 1) {
+				mes "[Maître Miller]";
+				mes "Compréhensible.";
+				mes "Si tu décides finalement que";
+				mes "tu veux devenir";
+				mes "un Tireur d'élite, alors reviens";
+				mes "me parler aussitôt.";
+				mes "Je vais te lancer dans le bain.";
+				close;
+			}
+			mes "[Maître Miller]";
+			mes "Génial, parfait. D'accord alors,";
+			mes "allons-y, commençons. Prends";
+			mes "cette lettre à M. Wise Bull";
+			mes "Corne à Payon. C'est un chamane.";
+			mes "qui décidera si oui ou non";
+			mes "vous êtes éligible pour devenir un Tireur.";
+			set GUNS_Q,1;
+			setquest 6020;
+			close;
+		}
+		else if (GUNS_Q == 1) {
+			mes "[Maître Miller]";
+			mes "Prenez cette lettre d'";
+			mes "introduction que j'ai écrite";
+			mes "pour vous à M. Wise Bull";
+			mes "Corne à Payon. Il va tester";
+			mes "vous pour voir si vous êtes vraiment";
+			mes "du matériel de Tireur.";
+			close;
+		}
+		else if (GUNS_Q == 2) {
+			mes "[Maître Miller]";
+			mes "Hmm... Wise Bull Corne";
+			mes "vous a demandé de collecter les";
+			mes "articles dont vous avez besoin pour fabriquer le";
+			mes "voucher ? Hmm. Je suppose que c'est";
+			mes "partie de son test d'admissibilité.";
+			close;
+		}
+		else if (GUNS_Q == 3) {
+			mes "[Maître Miller]";
+			mes "Wise Bull Corne vous a demandé";
+			mes "de lui apporter du";
+			mes "Lait ? Il doit vraiment l'aimer";
+			mes "vous si il vous le demande déjà";
+			mes "des faveurs. Bonne chance, ami.";
+			close;
+		}
+		else if (GUNS_Q == 4) {
+			mes "[Maître Miller]";
+			mes "Je m'attends à entendre de bonnes";
+			mes "nouvelles de votre part bientôt. Vous";
+			mes "savez, je n'ai aucun doute que vous";
+			mes "deviendrez un Tireur.";
+			close;
+		}
+		else if (GUNS_Q == 5) {
+			if (SkillPoint != 0) {
+				mes "[Maître Miller]";
+				mes "Hey, vous avez des points compétences";
+				mes "restants ? Vous feriez mieux";
+				mes "de les utiliser tous avant de revenir me";
+				mes "parler à nouveau.";
+				close;
+			}
+			mes "[Maître Miller]";
+			mes "Oh, vous avez apporté un bon";
+			mes "d'un Cornu Sage ?";
+			mes "Cela fait longtemps qu'il n'en a pas";
+			mes "donné à quelqu'un, alors";
+			mes "je suis vraiment fier de vous !";
+			next;
+			mes "[Maître Miller]";
+			mes "Si Cornu Sage approuve,";
+			mes "alors je n'ai aucune raison de";
+			mes "vous refuser. D'accord, je vais";
+			mes "vous promouvoir au rang de Gunfighter.";
+			mes "Mais d'abord, permettez-moi d'expliquer";
+			mes "nos tâches en détail.";
+			next;
+			mes "[Maître Miller]";
+			mes "En tant que Gunfighter, vous devez";
+			mes "garder votre arme avec vous à";
+			mes "tout moment. La Guilde des Gunfighters";
+			mes "tient un registre de chaque Arme et";
+			mes "de chaque Balle, donc vous pouvez uniquement les obtenir auprès de nos membres.";
+			mes "Ne vous inquiétez pas, les Gunfighters de la Guilde peuvent être trouvés presque";
+			next;
+			mes "[Maître Miller]";
+			mes "partout ces jours-ci. De toute façon, il faut que ce soit ainsi selon l'ordre de notre guild master, Lady Selena.";
+			mes "Vous aurez peut-être l'occasion de la rencontrer un jour.";
+			mes "De toute façon, maintenant que nous devons";
+			mes "réguler les ventes d'Armes et de Balles pour les garder loin du mal";
+			next;
+			mes "[Maître Miller]";
+			mes "You might get the chance to";
+			mes "meet her one of these days.";
+			mes "Anyway, just now that we have";
+			mes "to regulate Gun and Bullet sales to keep them away from evil";
+			mes "^FF0000 or irresponsibles.";
+			next;
+			mes "[Maître Miller]";
+			mes "^FF0000 dans tous les cas, c'est toujours";
+			mes "^FF0000 un plaisir pour moi d'échanger";
+			mes "^FF0000 avec un autre Gunsliger, donc";
+			mes "^FF0000 gardons le contact. Que la";
+			mes "^FF0000 puissance de la terre vous protège";
+			mes "^FF0000 dans toutes vos aventures~";
+			callfunc "Job_Change",Job_Gunslinger;
+			set GUNS_Q,6;
+			completequest 6024;
+			if (checkre(0)) {
+				getitem 13180,1;		// Novice_Rifle
+				getitem 12149,2;		// Bullet_Case
+				getitem 12151,1;		// Bullet_Case_Silver
+			} else {
+				if (rand(2))
+					getitem 13100,1;	// Six_Shooter
+				else
+					getitem 13150,1;	// Branch
+			}
+			close;
+		}
+	} else {
+		if (Class == Job_Gunslinger) {
+			mes "[Maître Miller]";
+			mes "^FF0000 Oh ! Ça fait longtemps que je ne t'ai pas vu,";
+			mes "^FF0000 ami. Comment vas-tu ?";
+			mes "^FF0000 J'espère que tu prends bien soin de ton Gun.";
+			mes "^FF0000 Prends-en soin et il te protégera. Souviens-toi-en.";
+			mes "^FF0000 Si tu n'as rien à me demander,";
+			mes "^FF0000 va donc de l'avant.";
+			close;
+		} else {
+			mes "[Maître Miller]";
+			mes "^FF0000 [Wise Bull Horn]";
+			mes "^FF0000 Salut, jeune loup.";
+			mes "^FF0000 Quelle est ta raison d'être ici devant moi ?";
+			close;
+		}
+	}
+}
+
+payon,184,65,3	script	Wise Bull Horn	866,{
+	if (GUNS_Q == 1) {
+		mes "[Buffle Sage]";
+		mes "Hello, young wolf.";
+		mes "What business has";
+		mes "brought you before me?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "M. Miller m'a envoyé me";
+		mes "rendre cette lettre à vous.";
+		mes "En fait, je suis intéressé par";
+		mes "devenir un Tireur d'élite...";
+		next;
+		mes "[Buffle Sage]";
+		mes "Miller, avez-vous dit?";
+		mes "Hm, le Renard Noir ne";
+		mes "donne pas de recommandations à";
+		mes "personne qu'il n'estime pas capable";
+		mes "de faire un bon Tireur d'élite. Oui, je pense";
+		mes "que je sais pourquoi il vous a envoyé vers moi.";
+		next;
+		mes "[Buffle Sage]";
+		mes "Je peux le voir dans vos yeux :";
+		mes "vous avez un coeur chaleureux et un sens";
+		mes "fort du devoir.";
+		mes "Tout ce dont vous avez besoin est la bénédiction";
+		mes "de la Terre pour vous protéger";
+		mes "en tant que Tireur d'élite.";
+		next;
+		mes "[Buffle Sage]";
+		mes "Je peux faire un bon qui";
+		mes "démontre votre désir";
+		mes "de devenir un guerrier de la";
+		mes "terre pour vous à présenter aux";
+		mes "[Maîtres d'entraînement Tirailleur].";
+		mes "J'aurai besoin de ces objets...";
+		next;
+		mes "[Buffle Sage]";
+		mes "^3355FF1 Trunk^000000,";
+		mes "^3355FF3 Fluffs^000000,";
+		mes "^3355FF3 Zargons^000000,";
+		mes "^3355FF10 Shells^000000,";
+		mes "^3355FF3 Green Herbs^000000, et";
+		mes "^3355FF3 Rainbow Shells^000000.";
+		next;
+		mes "[Buffle Sage]";
+		mes "Après que je complète le";
+		mes "bon pour vous, vous pouvez le";
+		mes "porter à Black Fox, et il";
+		mes "vous aidera à réaliser";
+		mes "votre objectif de devenir un";
+		mes "[Tirailleur].";
+		set GUNS_Q,2;
+		changequest 6020,6021;
+		close;
+	}
+	else if (GUNS_Q == 2) {
+		if (countitem(912) < 3 || countitem(914) < 3 || countitem(1019) < 1 || countitem(935) < 10 || countitem(511) < 3 || countitem(1013) < 3) {
+			mes "[Buffle Sage]";
+			mes "Je peux faire un bon qui";
+			mes "démontre votre désir";
+			mes "de devenir un guerrier de la";
+			mes "terre pour vous à présenter aux";
+			mes "[Maîtres d'entraînement Tirailleur].";
+			mes "J'aurai besoin de ces objets...";
+			next;
+			mes "[Buffle Sage]";
+			mes "^3355FF1 Trunk^000000,";
+			mes "^3355FF3 Fluffs^000000,";
+			mes "^3355FF3 Zargons^000000,";
+			mes "^3355FF10 Shells^000000,";
+			mes "^3355FF3 Green Herbs^000000, et";
+			mes "^3355FF3 Rainbow Shells^000000.";
+			next;
+			mes "[Buffle Sage]";
+			mes "Après que je complète le";
+			mes "bon pour vous, vous pouvez le";
+			mes "porter à Black Fox, et il";
+			mes "vous aidera à réaliser";
+			mes "votre objectif de devenir un";
+			mes "[Tirailleur].";
+			close;
+		}
+		delitem 912,3; // Zargon
+		delitem 914,3; // Fluff
+		delitem 1019,1; // Wooden_Block
+		delitem 935,10; // Shell
+		delitem 511,3; // Green_Herb
+		delitem 1013,3; // Colorful_Shell
+		set GUNS_Q,3;
+		changequest 6021,6022;
+		mes "[Buffle Sage]";
+		mes "^FF0000Ah, vous êtes de retour";
+		mes "avec tout ce dont j'ai besoin.";
+		mes "Veuillez me laisser un peu de temps";
+		mes "pour faire le bon de voyage. Si vous revenez dans un petit moment,";
+		mes "je devrais être terminé avec ça.";
+		mes "[Corne Sage]";
+		close;
+	}
+	else if (GUNS_Q == 3) {
+		mes "[Buffle Sage]";
+		mes "au bon moment. Cela fait longtemps";
+		mes "que je n'ai pas fait l'un de ces bons de voyage, donc j'aurais peut-être un peu";
+		mes "de rouille. Toutefois, cela me ramène aux jours de ma jeunesse.";
+		mes "[Corne Sage]";
+		next;
+		mes "[Buffle Sage]";
+		mes "de bons de voyage pour les Gunslinger";
+		mes "depuis quelques décennies maintenant. Mais avant cela, j'étais un";
+		mes "jeune aventurier comme toi.";
+		mes "[Corne Sage]";
+		mes "Cela me semble n'être qu'";
+		mes "young adventurer just like you.";
+		next;
+		mes "[Buffle Sage]";
+		mes "It feels like it was only";
+		mes "hier quand j'ai réussi à tenir tête";
+		mes "petit sésame en tant que Gun-slinger,";
+		mes "un guerrier de la terre. C'est ça";
+		mes "quand je suis tombé sur le père de Selena...";
+		mes "Comment peut-on passer si vite ?";
+		next;
+		mes "[Buffle Sage]";
+		mes "Ah... Je les apprécie vraiment";
+		mes "Selena et Black Fox pour tout";
+		mes "l'aide qu'ils m'ont apportée dans le recrutement";
+		mes "de jeunes Gun-slingers. Je suis très";
+		mes "vieux maintenant, et ne peux pas tout faire moi-même. *Sigh...* Tel est la vie.";
+		next;
+		mes "[Buffle Sage]";
+		mes "Avant que tu partes, puis-je";
+		mes "te demander de me rendre un petit service ?";
+		mes "J'ai soif et j'aimerais";
+		mes "boire un verre frais de lait. Pourrais-tu";
+		mes "m'en apporter, s'il te plaît?";
+		set GUNS_Q,4;
+		changequest 6022,6023;
+		close;
+	}
+	else if (GUNS_Q == 4) {
+		if (countitem(519) < 1) {
+			mes "[Buffle Sage]";
+			mes "Je suis un vieil homme qui va bientôt";
+			mes "être réuni avec ma mère";
+			mes "^FF0000Terre. Accepterais-tu de me rendre un service en m'apportant";
+			mes "^FF0000un verre de lait frais, s'il te plaît?";
+			mes "^FF0000[Corne Savante]";
+			close;
+		}
+		delitem 519,1; // Milk
+		set GUNS_Q,5;
+		changequest 6023,6024;
+		mes "[Buffle Sage]";
+		mes "^FF0000Je vois que tu m'as apporté du lait. Ahhhh, délicieux~";
+		mes "^FF0000[Corne Savante]";
+		mes "^FF0000J'admire ta patience, ta douceur et ta gentillesse en me rapportant cela.";
+		mes "^FF0000Oui, ce sont des traits que nous voulons tous voir chez les Gunslingers.";
+		next;
+		mes "[Buffle Sage]";
+		mes "^FF0000Maintenant, prends ce bon de commande";
+		mes "^FF0000à Miller, la Renarde Noire, avec mon approbation sans réserve.";
+		mes "^FF0000J'espère que tu useras ton fusil pour défendre la justice en tant que guerrier noble de la terre.";
+		mes "this to me. Yes, those are traits we all want Gunslingers to have.";
+		next;
+		mes "[Buffle Sage]";
+		mes "Now, please take this voucher";
+		mes "pour Miller, la Renarde Noire, avec";
+		mes "ma plus entière approbation.";
+		mes "J'espère que vous utiliserez votre";
+		mes "pistolet pour faire triompher la justice en tant que";
+		mes "courageux guerrier de la terre.";
+		next;
+		mes "[Buffle Sage]";
+		mes "^FF0000Eeh~Yeah~Eeh~Hooom";
+		mes "^FF0000Eeh~Yeah~Eeh~Hooom";
+		mes "^FF0000Maaaaarrraaa Neeey~";
+		mes "^FF0000Yippee Yippee Yai Yocaiyay~";
+		close;
+	}
+	else if (GUNS_Q == 5) {
+		mes "[Buffle Sage]";
+		mes "Prenez ce bon de commande, s'il vous plaît.";
+		mes "pour Miller, la Renarde Noire, avec";
+		mes "ma plus entière approbation.";
+		mes "J'espère que vous utiliserez votre";
+		mes "pistolet pour faire triompher la justice en tant que";
+		mes "courageux guerrier de la terre.";
+		next;
+		mes "[Buffle Sage]";
+		mes "^FF0000Eeh~Yeah~Eeh~Hooom";
+		mes "^FF0000Eeh~Yeah~Eeh~Hooom";
+		mes "^FF0000Maaaaarrraaa Neeey~";
+		mes "^FF0000Yippee Yippee Yai Yocaiyay~";
+		close;
+	}
+	else if (GUNS_Q == 6) {
+		mes "[Buffle Sage]";
+		mes "Ah, ça fait longtemps.";
+		mes "J'espère que vous deviendrez";
+		mes "une créature intelligente et utilisez";
+		mes "vos pouvoirs de Pistoler sur les bonnes choses et juste.";
+		close;
+	}
+	else {
+		mes "[Buffle Sage]";
+		mes "Zzzzzz~";
+		mes "^333333*Phew*^000000";
+		close;
+	}
+}

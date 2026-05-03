@@ -1,0 +1,108 @@
+//===== rAthena Script =======================================
+//= Slotted Sunglasses Quest
+//===== By: ==================================================
+//= amichan
+//===== Current Version: =====================================
+//= 1.8
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Quest to get Slotted Sunglasses.
+//= Will reset after quest completion.
+//===== Additional Comments: =================================
+//= 1.0 by Aegis 1.1 by aichan 1.2 by x[tsk] 1.3 by Darkchild
+//= 1.5 Fixed Exploit [Lupus]
+//= 1.6 Fixed Exploit [KarLaeda]
+//= 1.7 Relocated 'Maseph' to moc_fild07. [Kisuka]
+//= 1.8 Cleaning. [Euphy]
+//============================================================
+
+alberta,88,193,5	script	Sunglasses Trader	73,{
+	mes "[Vendeur de lunettes de soleil]";
+	if(SG_QUEST1 == 1) {
+		mes "Il n'y a rien d'autre que je puisse vous dire.";
+		next;
+		mes "[Vendeur de lunettes de soleil]";
+		mes "Allez voir Maseph. Elle est quelque part au nord de Morocc.";
+		close; }
+	mes "Bonjour. Que puis-je faire pour vous?";
+	next;
+	if(select("I heard that you can make ^0000FFSlotted Sunglasses^000000.:Nothing, sorry to bother you.")==2) {
+		mes "[Vendeur de lunettes de soleil]";
+		mes "Revenez me trouver quand vous serez prêt.";
+		close; }
+	mes "[Vendeur de lunettes de soleil]";
+	mes "Je ne les fabrique pas moi-même, mais je peux vous dire où trouver la personne qui le fait. Pour une petite récompense...";
+	next;
+	if(select("How much?:No way, I will find her myself!")==2) {
+		mes "[Vendeur de lunettes de soleil]";
+		mes "C'est comme ça, le Fabricant n'aura pas besoin d'fabriquer des ^0000FFLunettes à fentes^000000 pour vous si elle ne sait pas que vous venez.";
+		mes "Seulement moi peux lui dire que tu arrives.";
+		next;
+		mes "[Vendeur de lunettes de soleil]";
+		mes "Reviens me voir quand tu aurais abandonné. Hahaha...";
+		close; }
+	mes "[Vendeur de lunettes de soleil]";
+	mes "Pour que je puisse vous donner des informations sur les ^0000FFLunettes à fentes^000000, vous devez m'avoir apporté :";
+	mes " - ^000088Diamant de carat^000000";
+	mes " - ^00008850 Plumes^000000";
+	mes " - ^000088100000z^000000";
+	next;
+	if(select("Alright, here.:That's too much!")==2) {
+		mes "[Vendeur de lunettes de soleil]";
+		mes "Comme tu voudras.";
+		close; }
+	mes "[Vendeur de lunettes de soleil]";
+	if (countitem(730) < 1 || countitem(949) < 50 || Zeny < 100000) {
+		mes "Vous manquez quelque chose. Revenez quand vous aurez rassemblé tous les matériaux.";
+		close; }
+	delitem 730,1;
+	delitem 949,50;
+	set Zeny, Zeny-100000;
+	set SG_QUEST1,1;
+	mes "[Vendeur de lunettes de soleil]";
+	mes "Parfait. Maintenant, écoute attentivement.";
+	next;
+	mes "[Vendeur de lunettes de soleil]";
+	mes "Recherchez quelqu'un nommé Maseph quelque part au nord de Morocc.";
+	mes "Je vais lui envoyer un message pour lui dire que vous arrivez.";
+	close;
+}
+
+moc_fild07,334,186,5	script	Maseph	702,{
+	mes "[Maseph]";
+	if(SG_QUEST1 != 1) {
+		mes "Quel joli jour, n'est-ce pas ?";
+		close; }
+	mes "Bonjour.";
+	mes "Vous êtes venu chercher les ^000088Lunettes à fentes^000000, n'est-ce pas?";
+	next;
+	if(select("Yes:No, sorry to bother you.")==2) {
+		mes "[Maseph]";
+		mes "Allez-y alors.";
+		close; }
+	mes "[Maseph]";
+	mes "Pour en faire une, j'aurai besoin d'un ^000088paires de lunettes^000000 et de 400000z.";
+	next;
+	if(select("Here you go.:No, thanks.")==2) {
+		mes "[Maseph]";
+		mes "Comme vous le souhaitez.";
+		close; }
+	mes "[Maseph]";
+	if (countitem(2201) < 1) {
+		mes "J'ai besoin d'une ^000088paire de lunettes^000000. Revenez me voir quand vous en aurez une.";
+		close; }
+	if (Zeny < 400000) {
+		mes "You do not have enough Zeny. Come back to me when you do.";
+		close; }
+	delitem 2201,1;
+	set Zeny, Zeny-400000;
+	mes "Thank you. I will get on it right away...";
+	next;
+	mes "[Maseph]";
+	mes "Here you go, my friend.";
+	mes "Enjoy your ^000088Slotted Sunglasses^000000.";
+	getitem 2202,1;
+	set SG_QUEST1,0;
+	close;
+}

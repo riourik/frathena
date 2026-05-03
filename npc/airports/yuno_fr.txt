@@ -1,0 +1,161 @@
+//===== rAthena Script ======================================= 
+//= Juno Airport Staff
+//===== By: ================================================== 
+//= L0ne_W0lf, Muad_Dib
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Juno Airport Staff
+//===== Additional Comments: ================================= 
+//= 1.0 First version.
+//============================================================ 
+
+y_airport,143,43,5	script	Airport Staff#y_air1a::y_airport1	90,{
+	mes "[Personnel de l'aéroport]";
+	mes "Bienvenue à l'aéroport Juno où nous proposons des vols intérieurs vers Einbroch, Lighthalzen et Hugel,";
+	mes "et vols internationaux vers Izlude et Rachel.";
+	mes "Comment puis-je être utile ?";
+	next;
+	if (select("Board the Airship.:Cancel.") == 1) {
+		mes "[Personnel de l'aéroport]";
+		mes "Les frais d'embarquement pour tous";
+		mes "les vols coûtent 1 200 zeny. Si tu";
+		mes "utilisez un billet gratuit pour un dirigeable,";
+		mes "les frais d'embarquement seront supprimés. Alors, vous souhaitez partir ?";
+		next;
+		if (select("Yes:No") == 1) {
+			if (countitem(7311) > 0) {
+				delitem 7311,1; //Free_Flying_Ship_Ticket
+				warp "y_airport",148,51;
+				end;
+			}
+			if (Zeny >= 1200) {
+				set Zeny, Zeny - 1200;
+				warp "y_airport",148,51;
+				end;
+			}
+			mes "[Personnel de l'aéroport]";
+			mes "Je suis désolé, mais tu ne le fais pas";
+			mes "j'ai 1 200 zeny à payer";
+			mes "pour les frais d'embarquement.";
+			close;
+		}
+	}
+	mes "[Personnel de l'aéroport]";
+	mes "Merci et";
+	mes "passe une bonne journée.";
+	close;
+}
+
+y_airport,158,43,5	duplicate(y_airport1)	Airport Staff#y_air1b	90
+y_airport,126,43,5	duplicate(y_airport1)	Airport Staff#y_air1c	90
+
+y_airport,143,49,3	script	Arrival Staff#y_air2a::y_airport2	90,{
+	mes "[Personnel de l'aéroport]";
+	mes "Bienvenue à l'aéroport Juno. Si vous venez d'arriver de votre";
+	mes "vol, laissez-moi vous guider jusqu'au terminal principal. Sinon, s'il vous plaît";
+	mes "Montez à bord du dirigeable au départ pour atteindre votre destination prévue.";
+	next;
+	if (select("Exit to main terminal:Cancel") == 1) {
+		mes "[Personnel de l'aéroport]";
+		mes "Une fois dans le terminal principal, vous devez payer à nouveau les frais.";
+		mes "monter à bord d'un dirigeable au départ. Vous ne devez quitter que si votre intention est";
+		mes "la destination est Junon. Passer à";
+		mes "sortie vers le terminal principal ?";
+		next;
+		if (select("Yes:No") == 1) {
+			warp "y_airport",142,40;
+			end;
+		}
+	}
+	mes "[Personnel de l'aéroport]";
+	mes "Très bien, merci";
+	mes "pour votre mécénat";
+	mes "et j'espère que tu as";
+	mes "un vol agréable~";
+	close;
+}
+
+y_airport,126,51,3	duplicate(y_airport2)	Arrival Staff#y_air2b	90
+y_airport,158,50,3	duplicate(y_airport2)	Arrival Staff#y_air2c	90
+
+y_airport,145,63,5	script	Domestic Boarding	91,{
+	mes "[Personnel d'internat]";
+	mes "Souhaitez-vous monter à bord du";
+	mes "Dirigeable qui vole vers Einbroch,";
+	mes "Lighthalzen et Hugel ? Le cas échéant,";
+	mes "s'il te plaît, laisse-moi te guider vers cela";
+	mes "Zone d'embarquement du dirigeable.";
+	next;
+	if (select("Yes:No") == 1) {
+		warp "yuno",59,244;
+		end;
+	}
+	mes "[Personnel d'internat]";
+	mes "Très bien, alors.";
+	mes "Merci pour votre";
+	mes "patronage, et j'espère";
+	mes "tu apprécies tes voyages ~";
+	close;
+}
+
+y_airport,140,63,5	script	International Boarding	91,{
+	mes "[Personnel d'internat]";
+	mes "Souhaitez-vous embarquer";
+	mes "le dirigeable qui vole vers";
+	mes "Junon, Izlude et Rachel ?";
+	mes "Si c'est le cas, laissez-moi vous guider";
+	mes "vous à la zone d'embarquement.";
+	next;
+	if (select("Yes:No") == 1) {
+		warp "yuno",47,244;
+		end;
+	}
+	mes "[Personnel d'internat]";
+	mes "Très bien, alors.";
+	mes "Merci d'avoir volé";
+	mes "avec nous, et j'espère que vous";
+	mes "profitez de vos voyages sur notre";
+	mes "Dirigeables de pointe.";
+	close;
+}
+
+yuno,14,262,5	script	Airship Staff#yuno01	91,{
+	mes "[Personnel du dirigeable]";
+	mes "Bienvenue à l'aéroport Juno.";
+	mes "Veuillez utiliser cette porte pour";
+	mes "montez à bord du dirigeable qui";
+	mes "voler jusqu'à Izlude";
+	mes "dans le Royaume Rune-Midgarts,";
+	mes "et à Rachel dans l'Arunafeltz";
+	mes "République.";
+	next;
+	mes "[Personnel du dirigeable]";
+	mes "Sinon, si Juno est";
+	mes "votre destination prévue,";
+	mes "s'il te plaît, descends les escaliers";
+	mes "et demandez au personnel d'arrivée de diriger";
+	mes "vous au terminal principal. Remercier";
+	mes "vous et profitez de vos voyages.";
+	close;
+}
+
+yuno,88,263,3	script	Airship Staff#yuno02	91,{
+	mes "[Personnel du dirigeable]";
+	mes "Bienvenue à l'aéroport Juno.";
+	mes "Veuillez utiliser cette porte pour";
+	mes "Montez à bord du dirigeable qui s'arrête";
+	mes "sur Einbroch, Lighthalzen et";
+	mes "Hugel dans la République de Schwarzwald.";
+	next;
+	mes "[Personnel du dirigeable]";
+	mes "Sinon, si Juno est";
+	mes "votre destination prévue,";
+	mes "s'il te plaît, descends les escaliers";
+	mes "et demandez au personnel d'arrivée de diriger";
+	mes "vous au terminal principal. Remercier";
+	mes "vous et profitez de vos voyages.";
+	close;
+}

@@ -1,0 +1,115 @@
+//===== rAthena Script ======================================= 
+//= Dead Branch (+Bloody Branch) Quest
+//===== By: ================================================== 
+//= GM-Yevon
+//===== Current Version: ===================================== 
+//= 1.1
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+// Simple item trade-in quest, a person can get a Dead Branch
+// by simply providing the items: Log x3 (7201), Wooden Heart x1 (7189), 
+// Trunk x5 (1019), and Wooden Gnarl x1 (7222).
+//===== Additional Comments: ================================= 
+//= 1.1 Optimized, added Bloody Branch with 0.01% chance [Lupus]
+//============================================================
+
+niflheim,204,179,3	script	Mister Mobry	121,{
+
+	mes "[Mister Mobry]";
+	mes "Les arbres possèdent des esprits, vous le savez...";
+	next;
+
+	mes "[Mister Mobry]";
+	mes "En fait, je sais un secret à propos de ces esprits qui pourrait... peut-être vous aider dans certaines circonstances...";
+	next;
+
+	mes "[Mister Mobry]";
+	mes "Je peux créer une branche animée... C'est-à-dire si vous pouvez me fournir les matériaux adéquats...";
+	next;
+	goto L_MENU;
+
+L_MENU:
+	menu "What Do I Need?",-,"Where Can I find this Crap?",M_FIND,"Make me a Dead Branch!",M_CREATE,"Forget it...",M_END;
+
+	mes "[Mister Mobry]";
+	mes "Mwehehe... Je vois que vous voulez contrôler les esprits des arbres, n'est-ce pas ? D'accord... J'ai besoin de :
+";
+	mes "^1354453 Branches^000000
+";
+	mes "^1354451 Cœur en bois^000000
+";
+	mes "^1354455 Tronc^000000
+";
+	mes "^1354451 Gibbe de bois^000000
+";
+	next;
+	goto L_MENU;
+
+M_FIND:
+	mes "[Mister Mobry]";
+	mes "Vous pouvez trouver les éléments suivants sur certains monstres heheh...
+";
+	mes "^135445Branches peuvent être obtenues en tuant des Golems d'Arbres.^000000
+";
+	mes "^135445Cœurs en bois contiennent l'essence des Golems d'Arbres.^000000
+";
+	mes "^135445Troncs ? Sérieusement, pensez à du bois...^000000
+";
+	mes "^135445Gibbe de bois... Gibbet...^000000
+";
+	next;
+	goto L_MENU;
+
+L_NOLOG:
+	mes "[Mister Mobry]";
+	mes "^135445Branches^000000 forment le corps... J'en ai besoin en quantité.
+";
+	mes "Apporte-moi trois troncs et je vais te fabriquer l'esprit...";
+	close;
+
+L_NOHEART:
+	mes "[Mister Mobry]";
+	mes "Le ^135445Cœur de Bois^000000 est l'essence du spirituel.";
+	mes "Apporte-moi un cœur de bois et je vais te fabriquer l'esprit...";
+	close;
+
+L_NOTRUNK:
+	mes "[Mister Mobry]";
+	mes "Quoi ? Tu n'as même pas réussi à trouver ^1354455 Troncs^000000?";
+	mes "Tuez des Vieillards Willows ou quelque chose comme ça... Bon sang... sans troncs hein... pitoyable.";
+	close;
+
+L_NOGNARL:
+	mes "[Mister Mobry]";
+	mes "Comment puis-je en faire un sans ^135445Gnarre de Bois^000000?";
+	mes "Je t'ai dit Gibbet... ils sont partout autour d'ici...";
+	close;
+
+M_CREATE:
+	mes "[Mister Mobry]";
+	mes "Eh bien... voyons ce que tu m'as apporté...";
+	next;
+	if(countitem(7201)<3) goto L_NOLOG;
+	if(countitem(7189)<1) goto L_NOHEART;
+	if(countitem(1019)<5) goto L_NOTRUNK;
+	if(countitem(7222)<1) goto L_NOGNARL;
+	delitem 7201,3;
+	delitem 7189,1;
+	delitem 1019,5;
+	delitem 7222,1;
+	mes "[Mister Mobry]";
+	mes "Hein... Amuse-toi bien avec les esprits des arbres... Prends garde maintenant...";
+	mes "Hein... prends garde maintenant ? Qu'est-ce que j'en ai à faire si tu meurs..... Laisse tomber.";
+	if(rand(1000)==0) goto L_GIVE2;
+	getitem 604,1; //Dead Branch
+	close;
+L_GIVE2:
+	getitem 12103,1; //Bloody Branch
+	close;
+
+M_END:
+	mes "[Mister Mobry]";
+	mes "Pas d'esprit pour toi... alors va-t-en !";
+	close;
+}

@@ -1,0 +1,248 @@
+//===== rAthena Script ======================================= 
+//= Archer Job Quest
+//===== By: ================================================== 
+//= kobra_k88; L0ne_W0lf
+//===== Current Version: ===================================== 
+//= 1.9
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Job quest for Archer classes
+//===== Additional Comments: ================================= 
+//= 1.0 Fully working.
+//= 1.1 Added instant job change for High Novice [Lupus]
+//= 1.3 Added Baby Class support [Lupus]
+//= 1.4 Optimised and moved first checker to Jfunc1-1 [massdriller]
+//= 1.5 Now saves/restores all quest skills [Lupus]
+//= 1.6 Merged back JFunc [Lupus]
+//= 1.7 Rescripted to Aegis 10.3 stadards. [L0ne_W0lf]
+//=     Arrow reward is now equal to the type sof trunks brought.
+//=     No longer uses function "F_ToHigh"
+//= 1.7a Fixed minor dialogue bug at Grade==25 [Lupus]
+//= 1.8 Fixed mistake in condition check. [L0ne_W0lf]
+//= 1.9 Added Quest Log commands. [L0ne_W0lf]
+//============================================================ 
+
+payon_in02,64,71,4	script	Archer Guildsman#archer	85,{
+	if (Upper == 1) {
+		if (Class == Job_Novice_High && (ADVJOB == Job_Sniper || ADVJOB == Job_Clown || ADVJOB == Job_Gypsy)) {
+			mes "[Archery Master]";
+			mes "Salut, je te connais.";
+			mes "Tu as déjà passé ce test";
+			mes ", n'est-ce pas?";
+			next;
+			mes "[Archery Master]";
+			mes "Ah, tu dois être allé à Valhalla et y avoir été renaclé.";
+			mes "Waouh, c'est impressionnant!";
+			mes "[Archery Master]";
+			next;
+			if (!callfunc("F_CanChangeJob")) {
+				mes "[Archery Master]";
+				mes "Euh...";
+				mes "[Archery Master]";
+				next;
+				mes "[Archery Master]";
+				mes "[Archery Master]";
+				close;
+			}
+			mes "[Archery Master]";
+			mes "rien d'autre à ajouter.";
+			mes "Je sais que tu feras un excellent Archer...";
+			mes "[Archery Master]";
+			next;
+			skill "NV_TRICKDEAD",0,SKILL_PERM;
+			jobchange Job_Archer_high;
+			skill "AC_MAKINGARROW",1,SKILL_PERM;
+			skill "AC_CHARGEARROW",1,SKILL_PERM;
+			mes "[Archery Master]";
+			mes "[Archery Master]";
+			mes "reward for you this time, I hope you understand. Take care of yourself.";
+			close;
+		}
+		else {
+			mes "[Archery Master]";
+			mes "Oh...?";
+			mes "Hey, qu'est-ce que";
+			mes "tu fais ici...?";
+			next;
+			mes "[Archery Master]";
+			mes "Je peux dire que tu n'es pas taillé pour être un Archer. Ça ressemble plutôt à ce que tu es censé faire";
+			mes "autre chose...";
+			close;
+		}
+	}
+	mes "[Archery Master]";
+	mes "Bonjour. Comment puis-je vous aider?";
+	next;
+	switch(select("I want to be an Archer.:I need the requirements, please.:Nothing, thanks.")) {
+	case 1:
+		if (BaseJob == Job_Archer) {
+			mes "[Archery Master]";
+			mes "Vous êtes déjà devenu un Archer...";
+			close;
+		}
+		else if (BaseJob != Job_Archer && BaseJob != Job_Novice) {
+			mes "[Archery Master]";
+			mes "Hmm...";
+			mes "Tu ne ressembles pas vraiment à un Novice...";
+			next;
+			mes "[Archery Master]";
+			mes "De toute façon, peu importe ce que tu es, tu ne peux pas choisir un emploi d'Archer parce que tu as déjà un emploi.";
+			close;
+		}
+		if (job_archer_q == 0) {
+			mes "[Archery Master]";
+			mes "Veux-tu devenir un Archer?";
+			mes "Si oui, vous devez remplir ce formulaire de demande.";
+			next;
+			if (select("Apply.:Cancel") == 1) {
+				set job_archer_q,1;
+				setquest 1004;
+				mes "[Archery Master]";
+				mes "D'accord, signez ici. D'accord, euh, je vais vous promouvoir une fois que vous aurez rencontré les exigences.";
+				next;
+				mes "[Archery Master]";
+				mes "Si tu penses avoir déjà satisfait aux exigences, nous pouvons vérifier cela maintenant.";
+				mes "^FF0000Êtes-vous prêt(e)?";
+				next;
+				if (select("Yes, I am.:No, not yet.") == 1) {
+					mes "[Archery Master]";
+					mes "D'accord, laisse-moi vérifier.";
+					next;
+				}
+				else {
+					mes "[Archery Master]";
+					mes "Je comprends. Si vous voulez voir les exigences, allez-y.";
+					close;
+				}
+			}
+			else {
+				mes "[Archery Master]";
+				mes "D'accord, bien.";
+				mes "À la prochaine fois.";
+				close;
+			}
+		}
+		mes "[Archery Master]";
+		mes "Are you..." + strcharinfo(0) + "?";
+		next;
+		if (!callfunc("F_CanChangeJob")) {
+			mes "[Archery Master]";
+			mes "Eh bien, vous n'êtes pas au bon niveau d'emploi. Vérifiez à nouveau les exigences.";
+			next;
+			mes "[Archery Master]";
+			mes "Votre niveau d'emploi doit être au moins 10 et ne l'oubliez pas, vous devez apprendre tous les Compétences de Base. Une fois que vous aurez fait cela, revenez.";
+			close;
+		}
+		if (job_archer_q == 1) {
+			set .@archer_item1,countitem(1066) * 5;
+			set .@archer_item2,countitem(1067) * 3;
+			set .@archer_item3,countitem(1068) * 2;
+			set .@archer_item4,countitem(1019);
+			set .@total_archer,.@archer_item1 + .@archer_item2 + .@archer_item3 + .@archer_item4;
+			set .@total_archer2,(((.@archer_item2 + .@archer_item3) * 2) + .@archer_item4);
+			mes "[Archery Master]";
+			mes "Excellent!";
+			mes "Bien alors,";
+			mes "voyons...";
+			next;
+			mes "[Archery Master]";
+			mes "Je vais évaluer la valeur des différents types de Troncs, nécessaires à la production d'un Arc, que vous avez apportés.";
+			next;
+			if (countitem(1066) == 0 && countitem(1067) == 0 && countitem(1068) == 0 && countitem(1019) == 0) {
+				mes "[Archery Master]";
+				mes "Euh...";
+				mes "Malheureusement, vous n'avez pas apporté d'objets requis. Je ne peux rien évaluer.";
+				close;
+			}
+			mes "[Archery Master]";
+			if (countitem(1066) != 0) mes " Grade S : " + countitem(1066) + " ea, Grade: " + .@archer_item1 + " . ";
+			if (countitem(1067) != 0) mes " Grade A : " + countitem(1067) + " ea, Grade : " + .@archer_item2 + " . ";
+			if (countitem(1068) != 0) mes " Grade B : " + countitem(1068) + " ea, Grade : " + .@archer_item3 + " . ";
+			if (countitem(1019) != 0) mes " Grade C : " + countitem(1019) + " ea, Grade : " + .@archer_item4 + " . ";
+			if (.@total_archer < 25) {
+				mes "Total Grades: ^FF0000" + .@total_archer + "^000000 / 40";
+				next;
+				mes "[Archery Master]";
+				mes "Moins de 25! ? Vous devez obtenir un classement d'au moins 25 ! Allez, essayez plus fort !";
+				close;
+			}
+			else {
+				mes "Total Grades: ^0000FF" + .@total_archer + "^000000 / 40";
+				next;
+				mes "[Archery Master]";
+				if (.@total_archer > 40) {
+					mes "Waouh ! Plus de 40 !";
+					mes "Excellent ! Félicitations !";
+				}
+				else if (.@total_archer > 30) {
+					mes "Plus de 30 ! Bien joué !";
+					mes "Félicitations!";
+				}
+				else {
+					mes "*Sigh* Eh bien, tu as juste réussi... En tout cas, bravo.";
+				}
+			}
+			next;
+			mes "[Archery Master]";
+			mes "Je vais transférer ces Trunks à notre département de production d'arcs. Maintenant que vous avez satisfait aux exigences, laissez-moi vous promouvoir immédiatement !";
+			if (countitem(1066) != 0) delitem 1066,countitem(1066); //Tree_Of_Archer_1
+			if (countitem(1067) != 0) delitem 1067,countitem(1067); //Tree_Of_Archer_2
+			if (countitem(1068) != 0) delitem 1068,countitem(1068); //Tree_Of_Archer_3
+			if (countitem(1019) != 0) delitem 1019,countitem(1019); //Wooden_Block
+		}
+		next;
+		callfunc "Job_Change",Job_Archer;
+		callfunc "F_ClearJobVar";
+		completequest 1004;
+		mes "[Archery Master]";
+		mes "Félicitations!";
+		mes "Vous êtes maintenant un Archer !";
+		next;
+		mes "[Archery Master]";
+		mes "Bien sûr, nous attendons de vous que vous contribuiez au futur de la Guilde des Archers avec vos efforts.";
+		next;
+		mes "[Archery Master]";
+		mes "Ah, votre arc est arrivé du département de production d'arcs. Prenez-le ! C'est à vous~";
+		getitem 1702,1; //Bow_
+		getitem 1750,.@total_archer2; //Arrow
+		next;
+		mes "[Archery Master]";
+		mes "Maintenant, allez-y. Chassez avec fierté, sachant que vous avez été formé par l'un des meilleurs !";
+		close;
+	case 2:
+		mes "[Archery Master]";
+		mes "Je vais vous expliquer les exigences pour être un Archer.";
+		if (BaseJob != Job_Novice) {
+			if (BaseJob == Job_Archer) {
+				next;
+				mes "[Archery Master]";
+				mes "Mais...";
+				mes "Vous êtes déjà un Archer. Vous devriez connaître cela déjà...";
+			}
+			else {
+				next;
+				mes "[Archery Master]";
+				mes "Attendez une seconde. Vous avez déjà choisi un autre job. Vous n'avez pas besoin de savoir ça~";
+			}
+			mes "Alors... Oui... Pas vraiment de raison particulière pour vous donner les exigences...";
+		}
+		next;
+		mes "[Archery Master]";
+		mes "D'abord, il faut que vous ayez atteint le Job Level 9 en tant qu'apprenti et maîtrisiez toutes les compétences de base.";
+		next;
+		mes "[Archery Master]";
+		mes "[Archer Guildsman] A un Archer, une concentration extrêmement élevée et des réflexes sont nécessaires, donc nous ne faisons pas d'exception pour ceux qui n'ont pas beaucoup de patience.";
+		next;
+		mes "[Archery Master]";
+		mes "Vous devez également rassembler ^FF0000des troncs^000000. Il y a quatre types différents de troncs, chacun ayant une qualité différente. Vous recevrez des notes différentes pour vos troncs en fonction de leur qualité.";
+		next;
+		mes "[Archery Master]";
+		mes "Pour devenir un Archer, vous devez obtenir au moins ^0000FF25^000000 points sur 40. Vous pouvez récupérer les troncs auprès d'« Arbre Willow ». Attention cependant, ils peuvent être des monstres coriaces.";
+		close;
+	case 3:
+		close;
+	}
+}
+

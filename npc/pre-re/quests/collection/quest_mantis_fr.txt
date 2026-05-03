@@ -1,0 +1,101 @@
+//===== rAthena Script =======================================
+//= iRO Repeatable EXP Quests.
+//===== By: ==================================================
+//= Masao
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Custom Version.
+//= Repeatable EXP Quest : Kill 50 Mantis.
+//===== Additional Comments: =================================
+//= 1.0 First version.
+//============================================================
+
+lou_fild01,240,354,4	script	Mantis Researcher	878,{
+
+	if (checkquest(60179) != -1) {
+		if (checkquest(60179,HUNTING) != 2 ) {
+			mes "[Rechercheur de Mantas]";
+			mes "Avez-vous terminé la chasse aux 50 mantes ?";
+			next;
+			switch(select("Yes:No:I want to quit")) {
+			case 1:
+				mes "[Rechercheur de Mantas]";
+				mes "Hm, je ne pense pas que vous ayez encore exterminé 50 d'entre eux.";
+				close;
+			case 2:
+				mes "[Rechercheur de Mantas]";
+				mes "N'oubliez pas, j'ai besoin d'aide pour chasser les mantes. Allez donc en tuer 50.";
+				close;
+			case 3:
+				mes "[Rechercheur de Mantas]";
+				mes "Êtes-vous sûr de vouloir arrêter la chasse?";
+				mes "Tout progrès que vous avez fait sera effacé";
+				next;
+				switch(select("Yes:No")) {
+				case 1:
+					mes "[Rechercheur de Mantas]";
+					mes "D'accord, revenez ici si vous changez d'avis.";
+					erasequest 60179;
+					close;
+				case 2:
+					mes "[Rechercheur de Mantas]";
+					mes "Veuillez abattre 50 mantes afin de rendre cet endroit un lieu où les gens peuvent venir et gagner des Expérience.";
+					close;
+				}
+			}
+		}
+		mes "[Rechercheur de Mantas]";
+		mes "Impressionnant, vous l'avez fait rapidement.";
+		getexp 18818,7527;
+		erasequest 60179;
+		close;
+	}
+	if ((BaseLevel > 34) && (BaseLevel < 71)) {
+		mes "[Rechercheur de Mantas]";
+		mes "Oh super!";
+		mes "Vous êtes ici pour m'aider, n'est-ce pas?";
+		mes "Sinon, je ne sais pas quoi faire avec les monstres dans cet endroit!";
+		next;
+		switch(select("Sure:No")) {
+		case 1:
+			mes "[Rechercheur de Mantas]";
+			mes "Super! Je savais dès que je vous ai vu que je pouvais compter sur vous!";
+			mes "J'ai besoin de réduire la Quantité de monstres qui sont actuellement en train de dévaster cette carte!";
+			mes "Il y a trop de mantes dans les environs, ce qui rend impossible la collecte d'une bonne expérience pour les joueurs de niveau inférieur.";
+			next;
+			mes "[Rechercheur de Mantas]";
+			mes "Alors, voudriez-vous encore m'aider ?";
+			next;
+			switch(select("Sure:Cancel")) {
+			case 1:
+				if (BaseLevel > 70) {
+					mes "[Rechercheur de Mantas]";
+					mes "Merci beaucoup pour votre aide avec les mantes !";
+					mes "Actuellement la Situation est stable et je n'ai plus besoin de votre aide pour les tuer.";
+					close;
+				}
+				mes "[Rechercheur de Mantas]";
+				mes "Abattez 50 de ces mantes et faites-moi signe quand vous aurez terminé. Je vous récompenserai pour vos efforts.";
+				setquest 60179;
+				close;
+			case 2:
+				mes "[Rechercheur de Mantas]";
+				mes "^FF0000Si tu changes d'avis, reviens s'il te plaît.";
+				close;
+			}
+		case 2:
+			mes "[Rechercheur de Mantas]";
+			mes "^FF0000Si tu changes d'avis, reviens s'il te plaît.";
+			close;
+		}
+	}
+	mes "[Rechercheur de Mantas]";
+	mes "Oh là là, Oh là là!";
+	next;
+	mes "[Rechercheur de Mantas]";
+	mes "^FF0000Désolé, je ne peux pas parler maintenant, je suis dans un monde de douleur ici, ces maudits Mantas vont me tuer.^^";
+	close;
+}

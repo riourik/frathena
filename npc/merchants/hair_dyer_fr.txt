@@ -1,0 +1,273 @@
+//===== rAthena Script ======================================= 
+//= Hair Dyer
+//===== By: ================================================== 
+//= kobra_k88; L0ne_W0lf
+//===== Current Version: ===================================== 
+//= 1.5
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Hair Dyer with standard palletes
+//===== Additional Comments: ================================= 
+//= Fully working
+//= 1.1 Bugfix: fixed missing menu label LEnd->M_End [Lupus]
+//= 1.2 Rescripted to Aegis 10.3 standards. [L0ne_W0lf]
+//= 1.3 Fixed problem what "freezes" the NPC. (bugreport:509) [Samuray22]
+//= 1.4 Fixed getlook checking the wrong color. (bugreport:2392) [L0ne_W0lf]
+//= 1.5 Added Lighthalzen Hair Dying NPC. [L0ne_W0lf]
+//= 1.6 Moving NPC Jovovich to Pre-Renewal [JohnnyPlayy]
+//============================================================ 
+
+// Lighthalzen
+lhz_in02,100,134,3	script	Hair Dyer#lich	850,{
+	mes "[Rossa]";
+	if (Sex == SEX_MALE) {
+		mes "Bienvenue, entrez~";
+		mes "Oh, je vois que vous prenez";
+		mes "soin de vos cheveux";
+		mes "de manière bien meilleure que ces autres garçons.";
+		mes "Aimeriez-vous teindre";
+		mes "vos cheveux dans une autre couleur?";
+	}
+	else {
+		mes "Oh, wow~ Où avez-vous fait faire votre coiffure?";
+		mes "J'adore ça! Mais... Ce serait encore plus beau si";
+		mes "vous teignez vos cheveux. Quelle";
+		mes "[Rossa]";
+		mes "Ho ho ho ho~";
+		mes "tu penses à ça ?";
+	}
+	while (.@choose_success != 2) {
+		next;
+		switch(select("Dye Hair:Coloring Information:Cancel")) {
+		case 1:
+			mes "[Rossa]";
+			mes "Sexy ou mignon?";
+			mes "[Rossa]";
+			mes "Ooh, j'aime cette couleur!";
+			mes "Mais aimeriez-vous";
+			next;
+			while (.@choose_success != 2) {
+				if (.@choose_success == 1) {
+					mes "[Rossa]";
+					mes "Ooh, I like this color!";
+					mes "But would you like to";
+					mes "^FF0000Essaie un autre~";
+					next;
+					switch(select("Yes:No")) {
+					case 1:
+						mes "[Rossa]";
+						mes "Veuillez sélectionner";
+						mes "une autre couleur~";
+						next;
+						break;
+					case 2:
+						mes "[Rossa]";
+						mes "Un excellent choix~";
+						mes "Très bien, merci de";
+						mes "avoir utilisé mes services et";
+						mes "j'espère que vous reviendrez !";
+						close2;
+						set .@choose_success,2;
+						break;
+					}
+				}
+				while (.@choose_success != 2) {
+					switch(select("Red, please.:Yellow, please.:Purple, please.:Orange, please.:Green, please.:Blue, please.:White, please.:Dark Brown, please.:I like my hair color.")) {
+					case 1:
+						set .@headpalette,8;
+						break;
+					case 2:
+						set .@headpalette,1;
+						break;
+					case 3:
+						set .@headpalette,2;
+						break;
+					case 4:
+						set .@headpalette,3;
+						break;
+					case 5:
+						set .@headpalette,4;
+						break;
+					case 6:
+						set .@headpalette,5;
+						break;
+					case 7:
+						set .@headpalette,6;
+						break;
+					case 8:
+						set .@headpalette,7;
+						break;
+					case 9:
+						if (.@choose_success != 0) {
+							mes "[Rossa]";
+							mes "Es-tu sûr?";
+							mes "D'accord alors, toi";
+							mes "sais ce qui est le mieux pour";
+							mes "ta beauté et disons la vérité, je suis d'accord avec toi~";
+							mes "[Rossa]";
+							close2;
+							set .@choose_success,2;
+						}
+						else {
+							mes "[Rossa]";
+							mes "Tu serais si belle avec une autre couleur de cheveux~";
+							mes "[Rossa]";
+							mes "You'd look so good if you dyed";
+							mes "your hair a different color~";
+							close2;
+							set .@choose_success,2;
+						}
+						break;
+					}
+					if (getlook(VAR_HEADPALETTE) == .@headpalette) {
+						mes "[Rossa]";
+						mes "Hmm, ta couleur de cheveux";
+						mes "est toujours agréable, donc il n'y a pas besoin";
+						mes "de la teindre dans la même";
+						mes "teinte si c'est ce qui";
+						mes "t'inquiète.";
+						next;
+					}
+					else {
+						if ((.@headpalette == 8) && (countitem(975) == 0)) {
+							mes "[Rossa]";
+							mes "^FF0000Oh, je suis désolée chère,";
+							mes "mais je ne peux pas te teindre tes cheveux";
+							mes "si tu n'as pas apporté de";
+							mes "[Rossa]";
+							close2;
+							set .@choose_success,2;
+							break;
+						}
+						else if ((.@headpalette == 1) && (countitem(976) == 0)) {
+							mes "[Rossa]";
+							mes "^FF0000Oh, je suis désolée chère,";
+							mes "mais je ne peux pas te teindre tes cheveux";
+							mes "si tu n'as pas apporté de";
+							mes "Oh, je suis désolée chère,
+mais je ne peux pas te";
+							close2;
+							set .@choose_success,2;
+							break;
+						}
+						else if ((.@headpalette == 2) && (countitem(981) == 0)) {
+							mes "[Rossa]";
+							mes "^FF0000Oh, je suis désolée chère,";
+							mes "mais je ne peux pas te teindre tes cheveux";
+							mes "si tu n'as pas apporté de";
+							mes "Violet Dyestuffs with you...";
+							close2;
+							set .@choose_success,2;
+							break;
+						}
+						else if ((.@headpalette == 3) && (countitem(980) == 0)) {
+							mes "[Rossa]";
+							mes "^FF0000Oh, je suis désolée chère,";
+							mes "mais je ne peux pas te teindre tes cheveux";
+							mes "si tu n'as pas apporté de";
+							mes "Orange Dyestuffs...";
+							close2;
+							set .@choose_success,2;
+							break;
+						}
+						else if ((.@headpalette == 4) && (countitem(979) == 0)) {
+							mes "[Rossa]";
+							mes "^FF0000Oh, je suis désolée chère,";
+							mes "mais je ne peux pas te teindre tes cheveux";
+							mes "si tu n'as pas apporté de";
+							mes "Darkgreen Dyestuffs";
+							mes "[Rossa]";
+							mes "[Rossa]";
+							close2;
+							set .@choose_success,2;
+							break;
+						}
+						else if ((.@headpalette == 5) && (countitem(978) == 0)) {
+							mes "[Rossa]";
+							mes "^FF0000Oh, je suis désolée chère,";
+							mes "mais je ne peux pas te teindre tes cheveux";
+							mes "si tu n'as pas apporté de";
+							mes ". Viendras-tu me voir après l'avoir obtenu ?";
+							mes "[Rossa]";
+							mes "[Rossa]";
+							close2;
+							set .@choose_success,2;
+							break;
+						}
+						else if ((.@headpalette == 6) && (countitem(982) == 0)) {
+							mes "[Rossa]";
+							mes "^FF0000Oh, je suis désolée chère,";
+							mes "mais je ne peux pas te teindre tes cheveux";
+							mes "si tu n'as pas apporté de";
+							mes "White Dyestuffs avec toi...";
+							close2;
+							set .@choose_success,2;
+							break;
+						}
+						else if ((.@headpalette == 7) && (countitem(983) == 0)) {
+							mes "[Rossa]";
+							mes "^FF0000Oh, je suis désolée chère,";
+							mes "mais je ne peux pas te teindre tes cheveux";
+							mes "si tu n'as pas apporté de";
+							mes "Black Dyestuffs avec toi...";
+							close2;
+							set .@choose_success,2;
+							break;
+						}
+						if (Zeny < 1000) {
+							mes "[Rossa]";
+							mes "^FF0000Oh, je suis tellement désolée chère,";
+							mes "mais mon tarif est de";
+							mes "1 000 zeny. As-tu oublié d'apporter ton argent avec toi?";
+							mes "[Rossa]";
+							close2;
+							set .@choose_success,2;
+							break;
+						}
+						if (.@headpalette == 8) delitem 975,1; //Scarlet_Dyestuffs
+						else if (.@headpalette == 1) delitem 976,1; //Lemon_Dyestuffs
+						else if (.@headpalette == 2) delitem 981,1; //Violet_Dyestuffs
+						else if (.@headpalette == 3) delitem 980,1; //Orange_Dyestuffs
+						else if (.@headpalette == 4) delitem 979,1; //Darkgreen_Dyestuffs
+						else if (.@headpalette == 5) delitem 978,1; //Cobaltblue_Dyestuffs
+						else if (.@headpalette == 6) delitem 982,1; //White_Dyestuffs
+						else if (.@headpalette == 7) delitem 983,1; //Black_Dyestuffs
+						set Zeny, Zeny-1000;
+						setlook VAR_HEADPALETTE,.@headpalette;
+						set .@choose_success,1;
+						break;
+					}
+				}
+			}
+			break;
+		case 2:
+			mes "[Rossa]";
+			mes "triste, quand tu veux juste avoir l'air bien pour la personne que tu aimes, ou quand tu veux juste un nouveau look, pourquoi ne pas";
+			mes "changer de couleur?";
+			mes "[Rossa]";
+			mes "love, or when you just want";
+			mes "a different look, why don't";
+			mes "^FF0000te dyesh ton che'veu?";
+			next;
+			mes "[Rossa]";
+			mes "Tout ce qu't'as b'soin c't'un objet";
+			mes "d'yesture du couleur que t'veux pour";
+			mes "dyesh ton che'veu, ainsi que";
+			mes "1,000 zeny comme frais de service.";
+			mes "I'm here for your beauty needs~";
+			mes "^FF0000Sois icitte pou tes besoins d'beauté~";
+			break;
+		case 3:
+			mes "[Rossa]";
+			mes "T'sais, quand t'tu mettra du ch'seu dans";
+			mes "ta ra'son, tu vas pas seulement paraitre mieux, mais aussi";
+			mes "t'vas te sentir plus confiant en toi-même.";
+			mes "Ça a du sens, non?";
+			mes "^FF0000C'est clair, non?";
+			mes "yourself. Makes sense, right?";
+			close;
+		}
+	}
+	close;
+}

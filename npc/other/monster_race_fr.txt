@@ -1,0 +1,2978 @@
+//===== rAthena Script =======================================
+//= Hugel Monster Races
+//===== By: ==================================================
+//= L0ne_W0lf
+//===== Current Version: =====================================
+//= 2.0
+//===== Compatible With: =====================================
+//= rAthena Project; SVN r12752+
+//===== Description: =========================================
+//= [Official Conversion]
+//= - Hugel Monster Races (Single and Double)
+//= - Prize Medal Exchanging, and Monster Track NPCs.
+//= - Contains both euRO and iRO dialog.
+//===== Additional Comments: =================================
+//= 1.0 First version. Please report bugs. [L0ne_W0lf]
+//= 1.1 Corrected a minor typo. [L0ne_W0lf]
+//= 1.2 Replaced effect numerics with constants. [L0ne_W0lf]
+//= 1.3 Ei'felle now gives Exercise. (Bugreport:4092) [L0ne_W0lf]
+//= 1.4 Fixed call to a non-existant event. [L0ne_W0lf]
+//= 1.5 Updated Dialog. [L0ne_W0lf]
+//= 1.6 Updated experience rewards. [L0ne_W0lf]
+//= 1.7 Optimization, -4000 lines (more can still be done). [Euphy]
+//= 1.8 Optimized.
+//=     Fixed Medal Distributor (Dual Race) disappears accordingly. [Joseph] 
+//= 1.9 Updated RE/Pre-RE EXP. [Euphy]
+//= 2.0 Added GM management NPC. [Euphy]
+//= 2.1 Fixed prize in dual race and optimization. [Capuche]
+//============================================================
+
+// Monster Race - Single Monster Race
+//============================================================
+hugel,51,61,0	script	#race_timer1-1	-1,{
+OnEnable:
+	enablenpc "#race_timer1-1";
+OnInit:
+	$@mon_time_1_1 = 2;
+	initnpctimer;
+	end;
+
+OnTimer10000:
+	mapannounce "hugel","The Single Monster Race will soon begin. We hope to see many of you participate!",bc_map,"0x87ceeb";
+	end;
+OnTimer30000:
+	mapannounce "hugel","The Single Monster Race Arena has just opened.",bc_map,"0x87ceeb";
+	$@mon_time_1_1 = 1;
+	donpcevent "Race Progress Timer::OnEnable";
+	end;
+OnTimer90000:
+	mapannounce "hugel","The Single Monster Race arena is now open. Participants should enter the Arena as soon as they can.",bc_map,"0x87ceeb";
+	end;
+OnTimer210000:
+	mapannounce "hugel","The entrance to the Single Monster Race Arena will close shortly. Participants, please enter the arena now.",bc_map,"0x87ceeb";
+	end;
+OnTimer270000:
+	mapannounce "hugel","The Single Monster Race Arena's entrance will soon close.",bc_map,"0x87ceeb";
+	end;
+OnTimer272000:
+	mapannounce "hugel","Participants, please enter the Arena before the doors close.",bc_map,"0x87ceeb";
+	end;
+OnTimer330000:
+	mapannounce "hugel","The race is now starting. If you missed your chance to enter this race, please try again next time~!",bc_map,"0x87ceeb";
+	$@mon_time_1_1 = 0;
+	disablenpc "#race_timer1-1";
+	stopnpctimer;
+	end;
+}
+
+p_track01,58,0,0	script	Race Progress Timer	-1,{
+OnEnable:
+	initnpctimer;
+	enablenpc "Race Progress Timer";
+	for ( .@c = 1; .@c < 7; .@c++ ) {
+		.@line = rand(1,70);
+		enablenpc "starting#"+.@c;
+		enablenpc "Tire"+.@c+"#1";
+		if ( .@line <= 10 ) {
+			.@tired = rand(50,60);
+			enablenpc "Luk"+.@c+"#5";
+			enablenpc "Luk"+.@c+"#6";
+		} else if ( .@line <= 30 ) {
+			.@tired = rand(40,60);
+			enablenpc "Luk"+.@c+"#5";
+			if (.@tired >= 50) enablenpc "Tire"+.@c+"#2";
+		} else if ( .@line <= 40 ) {
+			.@tired = rand(30,50);
+			enablenpc "Luk"+.@c+"#1";
+			enablenpc "Tire"+.@c+"#2";
+			if ( .@tired < 40 ) enablenpc "Tire"+.@c+"#3";
+		} else if (.@line <= 50) {
+			.@tired = rand(20,40);
+			enablenpc "Luk"+.@c+"#1";
+			enablenpc "Luk"+.@c+"#2";
+			enablenpc "Tire"+.@c+"#2";
+			enablenpc "Tire"+.@c+"#3";
+			if (.@tired < 30) enablenpc "Tire"+.@c+"#4";
+		} else if (.@line <= 60) {
+			.@tired = rand(10,30);
+			for ( .@i = 1; .@i <= 3; .@i++ )
+				enablenpc "Luk"+.@c+"#"+.@i;
+			for ( .@i = 2; .@i <= 4; .@i++ )
+				enablenpc "Tire"+.@c+"#"+.@i;
+			if ( .@tired < 20) enablenpc "Tire"+.@c+"#5";
+		} else if (.@line <= 70) {
+			.@tired = rand(0,20);
+			for ( .@i = 1; .@i <= 4; .@i++ )
+				enablenpc "Luk"+.@c+"#"+.@i;
+			for ( .@i = 2; .@i <= 5; .@i++ )
+				enablenpc "Tire"+.@c+"#"+.@i;
+			if (.@tired < 10) enablenpc "Tire"+.@c+"#6";
+		}
+		setd "$@mr_1_luk"+.@c, .@line;
+		setd "$@mr_1_tire"+.@c, .@tired;
+	}
+	end;
+OnTimer1000:
+	enablenpc "Ticket Helper#single";
+	end;
+OnTimer7000:
+	mapannounce "p_track01","Welcome to the Monster Race Arena.",bc_map,"0xffb6c1";
+	end;
+OnTimer10000:
+	mapannounce "p_track01","Feel free to inquire at the help desk whenever you have questions.",bc_map,"0xffb6c1";
+	end;
+OnTimer120000:
+	mapannounce "p_track01","The Single Monster Race will start in 3 minutes.",bc_map,"0xffb6c1";
+	end;
+OnTimer123000:
+	mapannounce "p_track01","Please ask a Ticket Helper if you wish to wager on the race.",bc_map,"0xffb6c1";
+	end;
+OnTimer240000:
+	mapannounce "p_track01","The Single Monster Race will start shortly.",bc_map,"0xffb6c1";
+	end;
+OnTimer243000:
+	mapannounce "p_track01","Please ask a Ticket Helper if you wish to wager on the race.",bc_map,"0xffb6c1";
+	end;
+OnTimer300000:
+	mapannounce "p_track01","The Monster Race has already begun. Good luck to all the participants.",bc_map,"0xffb6c1";
+	$@monster_race = 0;
+	disablenpc "Ticket Helper#single";
+	for ( .@i = 1; .@i <= 6; .@i++ )
+		donpcevent "Runner No. "+.@i+"#"+.@i+"::OnEnable";
+	stopnpctimer;
+	end;
+
+OnDisable:
+OnInit:
+	disablenpc "Race Progress Timer";
+	end;
+}
+
+p_track01,73,22,1	script	Ticket Helper#single	899,{
+	mes "[Aide à la billetterie]";
+	mes "Bienvenue au";
+	mes "Arène de course de monstres.";
+	mes "Si vous souhaitez participer";
+	mes "dans la ^3131FFSingle Monster Race^000000,";
+	mes "alors veuillez en sélectionner 1 sur";
+	mes "les 6 monstres de la liste.";
+	next;
+	if (!checkweight("Spawn",200)) {
+		mes "[Aide à la billetterie]";
+		mes "Attends, attends...";
+		mes "je ne peux pas te donner";
+		mes "n'importe quoi en ce moment.";
+		mes "Tu portes le chemin";
+		mes "trop de choses...";
+		close;
+	}
+	.@m = select ("Monster Status", "Monster 1", "Monster 2", "Monster 3", "Monster 4", "Monster 5", "Monster 6") - 1;
+	if (.@m == 0) {
+		for ( .@i = 1; .@i <= 6; .@i++ )
+			mes "Monster "+.@i+" [^CC6600Luck^000000: " + getd("$@mr_1_luk"+.@i) + "] [^EE0000HP^000000: " + getd("$@mr_1_tire"+.@i) + "]";
+		close;
+	} else {
+		if ($@mon_time_1_1 == 1) {
+			if (monster_race_1) {
+				mes "[Aide à la billetterie]";
+				mes "Vous avez sélectionné";
+				mes "Monster ^FF0000"+ monster_race_1 +"^000000 for the";
+				mes "Course de monstres unique.";
+				mes "Le départ de la course";
+				mes "sera annoncé bientôt,";
+				mes "alors s'il vous plaît, attendez. Merci.";
+				close;
+			}
+			mes "[Aide à la billetterie]";
+			mes "You've chosen Monster "+.@m+"?";
+			mes "Très bien, veuillez patienter";
+			mes "jusqu'au départ de la course";
+			mes "annoncé. Si le monstre tu";
+			mes "les gains sélectionnés, veuillez utiliser ce ticket pour récupérer votre prix.";
+			getitem 7514,1; //Monster_Ticket
+			monster_race_1 = .@m;
+			close;
+		}
+		mes "[Aide à la billetterie]";
+		mes "Je suis désolé, mais un monstre";
+		mes "La course est maintenant en cours.";
+		mes "Si vous souhaitez participer, veuillez attendre la prochaine course.";
+		close;
+	}
+
+OnInit:
+	disablenpc "Ticket Helper#single";
+	end;
+}
+
+-	script	Runner_main	-1,{
+OnEnable:
+	emotion ET_SURPRISE;
+	enablenpc();
+	getmapxy(.@m$,.@x,.@y,BL_NPC);
+	setarray .@mob[1], 1725,1726,1727,1728,1730,1729;
+	.@n = atoi( strnpcinfo(2) );
+	monster "p_track01",58,.@y,"The "+ callfunc("F_GetNumSuffix",.@n) +" Racer",.@mob[.@n],1,strnpcinfo(0)+"::OnMyMobDead";
+	end;
+
+OnDisable:
+	disablenpc();
+	killmonster "p_track01",strnpcinfo(0)+"::OnMyMobDead";
+	end;
+
+OnTouchNPC:
+	.@n = atoi( strnpcinfo(2) );
+	$@monster_race = .@n;
+	for ( .@i = 1; .@i <= 6; .@i++ ) {
+		if (.@n == .@i) continue;
+		donpcevent "Runner No. "+.@i+"#"+.@i+"::OnDisable";
+	}
+	sleep 1000;
+	mapannounce "p_track01","We have a winner...!",bc_map,"0x33FF66";
+	sleep 1000;
+	mapannounce "p_track01","Monster "+.@n+" is the winner of this race!",bc_map,"0x33FF66";
+	sleep 4000;
+	mapannounce "p_track01","If you wagered on Monster "+.@n+" in this race, talk to the Medal Distributor to receive your prize!",bc_map,"0x33FF66";
+	sleep 2000;
+	mapannounce "p_track01","Please remember that we can distribute Prize Medals for only 5 minutes after each race.",bc_map,"0x33FF66";
+	sleep 1000;
+	donpcevent "Medal Distributor#single::OnEnable";
+	donpcevent strnpcinfo(0)+"::OnDisable";
+	killmonster "p_track01",strnpcinfo(0)+"::OnMyMobDead";
+	end;
+	
+OnInit:
+	if (strnpcinfo(2) != "" )
+		disablenpc();
+	end;
+}
+p_track01,30,38,0	duplicate(Runner_main)	Runner No. 1#1	-1,1,0
+p_track01,30,36,0	duplicate(Runner_main)	Runner No. 2#2	-1,1,0
+p_track01,30,34,0	duplicate(Runner_main)	Runner No. 3#3	-1,1,0
+p_track01,30,32,0	duplicate(Runner_main)	Runner No. 4#4	-1,1,0
+p_track01,30,30,0	duplicate(Runner_main)	Runner No. 5#5	-1,1,0
+p_track01,30,28,0	duplicate(Runner_main)	Runner No. 6#6	-1,1,0
+
+p_track01,67,45,5	script	Medal Distributor#single	845,{
+	if (!checkweight("Spawn",200)) {
+		mes "[Distributeur de médailles]";
+		mes "Je suis désolé, mais je ne peux pas";
+		mes "vous récompenser avec des médailles";
+		mes "jusqu'à ce que tu fasses plus d'espace";
+		mes "disponible dans votre inventaire.";
+		close;
+	}
+	if (countitem("Monster_Ticket")) {// 7514
+		mes "[Distributeur de médailles]";
+		mes "Bonjour ~";
+		mes "Si vous avez parié sur le";
+		mes "monstre gagnant dans un récent";
+		mes "course, alors vous pourrez échanger";
+		mes "votre ticket de jeu ici pour";
+		mes "quelques médailles de prix.";
+		next;
+		mes "[Distributeur de médailles]";
+		mes "N'oubliez pas que vous pouvez";
+		mes "échangez uniquement le jeu gagnant";
+		mes "Billets pour les médailles à droite";
+		mes "après la fin de la course. Prix";
+		mes "Des médailles pourraient être remises à Wayne";
+		mes "à Hugel en échange d'objets.";
+		next; 
+		if ($@monster_race) {
+			if (monster_race_1 == $@monster_race) {
+				mes "[Distributeur de médailles]";
+				mes "Oh, félicitations, toi";
+				mes "avoir un ticket gagnant pour";
+				mes "une course de monstres unique ! Donc";
+				mes "souhaitez-vous échanger votre";
+				mes "Un ticket de course pour des médailles ?";
+				next;
+				if (select("Yes, please.:No, thanks.") == 2) {
+					mes "[Distributeur de médailles]";
+					mes "Euh, tu es sûr ? Toi";
+					mes "ne peut échanger qu'un gain";
+					mes "Billet de course pour les médailles";
+					mes "pendant une courte période après la course. Si vous avez fait une erreur, vous";
+					mes "Je devrais me redemander rapidement.";
+					close;
+				}
+				mes "[Distributeur de médailles]";
+				mes "Montre-moi ton billet...";
+				mes "Oh! Félicitations, vous";
+				mes "gagné! Puis-je avoir votre nom ?";
+				next;
+				input .@input$;
+				if (.@input$ == strcharinfo(0)) {
+					.@insa = rand(1,1000);
+					mes "[Distributeur de médailles]";
+					mes "Ah, "+strcharinfo(0)+".";
+					mes "Vous pouvez échanger ceci";
+					mes "billet pour une médaille de prix par";
+					mes "saisir votre échange de billets";
+					mes "numéro maintenant. Votre billet";
+					mes "exchange number is ^FF0000" + .@insa + "^000000.";
+					next;
+					input .@input;
+					if (!.@input) {
+						mes "[Distributeur de médailles]";
+						mes "Oh? Tu ne veux pas";
+						mes "pour échanger votre";
+						mes "ticket gagnant ?";
+						close;
+					} else if (.@input == .@insa) {
+						mes "[Distributeur de médailles]";
+						mes "Merci! Vous êtes entré";
+						mes "le bon numéro....";
+						mes "Tout semble";
+						mes "être en ordre. Bien!";
+						next;
+						mes "[Distributeur de médailles]";
+						mes "Maintenant, s'il vous plaît, acceptez votre";
+						mes "Médailles de prix ! Tu peux";
+						mes "échangez-les avec";
+						mes "Wayne dans Hugel pour certains";
+						mes "objets intéressants. Merci ~";
+						delitem 7514,1; //Monster_Ticket
+						monster_race_1 = 0;
+						getitem 7515,4; //Marvelous_Medal
+						close;
+					}
+					mes "[Distributeur de médailles]";
+					mes "Je suis désolé, mais il semble";
+					mes "que tu es entré dans le";
+					mes "numéro de billet incorrect.";
+					mes "Cela vous dérangerait-il de venir";
+					mes "de retour dans quelques temps ?";
+					close;
+				}
+				mes "[Distributeur de médailles]";
+				mes "Qu'est-ce que c'est ça...?";
+				mes "Je pense qu'il y a un problème...";
+				mes "Avez-vous entré votre nom";
+				mes "incorrectement? Vérifiez s'il vous plaît";
+				mes "votre nom, puis réessayez.";
+				close;
+			}
+			mes "[Distributeur de médailles]";
+			mes "Vous n'avez peut-être pas parié";
+			mes "sur le monstre gagnant dans";
+			mes "la dernière course, mais j'espère que";
+			mes "tu auras de la chance la prochaine fois ~";
+			close;
+		}
+	}
+	mes "[Distributeur de médailles]";
+	mes "Bonjour ~";
+	mes "Si vous avez parié sur le";
+	mes "monstre gagnant dans un récent";
+	mes "course, alors vous pourrez échanger";
+	mes "votre ticket de jeu ici pour";
+	mes "quelques médailles de prix.";
+	next;
+	mes "[Distributeur de médailles]";
+	mes "N'oubliez pas que vous pouvez";
+	mes "échangez uniquement le jeu gagnant";
+	mes "Billets pour les médailles à droite";
+	mes "après la fin de la course. Prix";
+	mes "Des médailles pourraient être remises à Wayne";
+	mes "à Hugel en échange d'objets.";
+	close;
+
+OnEnable:
+	enablenpc "Medal Distributor#single";
+	emotion ET_SURPRISE;
+	initnpctimer;
+	end;
+
+OnTimer1000:
+	mapannounce "p_track01","The Monster Race is finished! Congratulations to all the winners!",bc_map,"0xFFFF00";
+	end;
+OnTimer4000:
+	mapannounce "p_track01","Please give your Racing Ticket to the Medal Distributor if you bet on the winning monster.",bc_map,"0xFFFF00";
+	end;
+OnTimer7000:
+	mapannounce "p_track01","You have 5 minutes to exchange a winning ticket for Prize Medals from the Medal Distributor.",bc_map,"0xFFFF00";
+	end;
+OnTimer10000:
+	mapannounce "p_track01","All tickets become void after this 5 minute period, so winners should claim their prize now.",bc_map,"0xFFFF00";
+	end;
+OnTimer13000:
+	mapannounce "p_track01","Please leave the Race Arena before this 5 minute period elapses. Thank you.",bc_map,"0xFFFF00";
+	end;
+OnTimer240000:
+	mapannounce "p_track01","Attention. We will being preparing for the next race shortly...",bc_map,"0xFFFF00";
+	end;
+OnTimer243000:
+	mapannounce "p_track01","We will close the Racing Arena in 1 minute to prepare for the next race.",bc_map,"0xFFFF00";
+	end;
+OnTimer246000:
+	mapannounce "p_track01","Participants in the last race should leave the arena as soon as possible.",bc_map,"0xFFFF00";
+	end;
+OnTimer249000:
+	mapannounce "p_track01","Thank you for your cooperation.",bc_map,"0xFFFF00";
+	end;
+OnTimer252000:
+	mapannounce "p_track01","We hope that you enjoyed the Monster Race arena. Come back again soon~",bc_map,"0xFFFF00";
+	$@mr_1_luk1 = $@mr_1_tire1 = 0;
+	for ( .@i = 1; .@i <= 6; .@i++ ) {
+		for ( .@j = 1; .@j <= 6; .@j++ ) {
+			disablenpc "Tire"+.@i+"#"+.@j;
+			disablenpc "Luk"+.@i+"#"+.@j;
+		}
+		enablenpc "Luk1#"+.@i;
+		enablenpc "Tire1#"+.@i;
+		setd "$@mr_1_luk"+.@i,0;
+		setd "$@mr_1_tire"+.@i,0;
+	}
+	end;
+OnTimer300000:
+	donpcevent "#race_timer1-1::OnEnable";
+	$@monster_race = 0;
+	mapwarp "p_track01","hugel",63,73;
+	end;
+
+OnTimer342000:
+	stopnpctimer;
+OnInit:
+	disablenpc "Medal Distributor#single";
+	end;
+}
+
+p_track01,76,36,1	script	Exit Guide#single	798,{
+	mes "[Guide de sortie]";
+	mes "Si vous avez un Racing gagnant";
+	mes "Billet, veuillez vous assurer que";
+	mes "vous l'échangez contre des médailles";
+	mes "maintenant. Tous les billets de course deviennent";
+	mes "nul une fois que la prochaine course commence.";
+	next;
+	mes "[Guide de sortie]";
+	mes "Si tu souhaites partir";
+	mes "l'arène, alors je peux guider";
+	mes "toi dehors. Aimeriez-vous";
+	mes "quitter l'arène maintenant ?";
+	next;
+	if (select("Yes:No") == 2) {
+		mes "[Guide de sortie]";
+		mes "Très bien, alors.";
+		mes "Faites-le-moi savoir";
+		mes "chaque fois que tu es";
+		mes "prêt à partir.";
+		close;
+	}
+	if (!countitem(7514)) {
+		mes "[Guide de sortie]";
+		mes "Merci pour";
+		mes "votre patronage, et";
+		mes "j'espère que tu viendras";
+		mes "rendez-nous visite bientôt~";
+	} else {
+		mes "[Guide de sortie]";
+		mes "Conformément à notre";
+		mes "politiques, je dois prendre votre";
+		mes "Racing Ticket avant votre départ.";
+		mes "Merci pour votre mécénat,";
+		mes "et j'espère que vous apprécierez votre temps";
+		mes "ici dans la Monster Race Arena.";
+		delitem 7514,1; //Monster_Ticket
+	}
+	monster_race_1 = 0;
+	close2;
+	warp "hugel",63,73;
+	end;
+}
+
+hugel,58,72,6	script	Eckar Ellebird#single	798,{
+	mes "[Eckar Ellebird]";
+	mes "Bienvenue dans le plus grand";
+	mes "attraction à Hugel, le";
+	mes "Arène de course de monstres.";
+	mes "Comment puis-je vous aider aujourd'hui ?";
+	next;
+	if (select("Monster Race Info:Enter Monster Race") == 1) {
+		mes "[Eckar Ellebird]";
+		mes "Les courses de monstres sont originaires de";
+		mes "des jeux simples pour enfants dans lesquels";
+		mes "Les animaux mignons courraient les uns contre les autres. Ceci est devenu un adulte";
+		mes "passe-temps si populaire, nous avons construit une arène de course à Hugel.";
+		next;
+		mes "[Eckar Ellebird]";
+		mes "Nos hôtes Monster Race Arena";
+		mes "deux types de courses de monstres. Tout d'abord, nous avons la Single Monster Race,";
+		mes "dans lequel ceux qui ont parié sur le monstre de la 1ère place sont récompensés.";
+		next;
+		mes "[Eckar Ellebird]";
+		mes "Ensuite, nous avons le Dual Monster";
+		mes "Course dans laquelle les cotes et les récompenses de la maison sont supérieures à celles du Single";
+		mes "Courses de monstres : vous devez miser sur 2 monstres, et ils doivent se placer dans";
+		mes "1er et 2ème pour que vous gagniez.";
+		next;
+		mes "[Eckar Ellebird]";
+		mes "Bien qu'une petite entrée";
+		mes "des frais sont requis, nous utilisons uniquement";
+		mes "l'argent pour récompenser";
+		mes "participants et maintenir ce";
+		mes "arène. Par conséquent, nous ne sommes pas";
+		mes "profiter de cette entreprise.";
+		next;
+		mes "[Eckar Ellebird]";
+		mes "Nous interdisons également aux autres";
+		mes "de faire des paris personnels";
+		mes "et les paris, en utilisant des objets et";
+		mes "zeny, based on the outcomes";
+		mes "de ces courses. Ce genre de";
+		mes "le jeu est illégal ici...";
+		next;
+		mes "[Eckar Ellebird]";
+		mes "Une fois entré dans la Race Arena, vous recevrez un Racing Ticket.";
+		mes "Gardez à l'esprit que les billets de course gagnants ne peuvent être échangés que contre";
+		mes "Médailles de prix pendant une fenêtre de 5 minutes après la fin de la course.";
+		next;
+	}
+	mes "[Eckar Ellebird]";
+	mes "Le droit d'entrée pour toutes les courses";
+	mes "dans la Monster Race Arena est";
+	mes "2 000 zeny. Si vous souhaitez parier sur une Dual Monster Race, alors";
+	mes "s'il te plaît, demande à mon frère Erenes,";
+	mes "et il vous aidera.";
+	next;
+	mes "[Eckar Ellebird]";
+	mes "Sinon, je t'aiderai";
+	mes "commencé si tu es intéressé";
+	mes "dans une course de monstres uniques.";
+	mes "Voulez-vous parier sur";
+	mes "une course de monstres unique ?";
+	next;
+	if (select("Yes, please.:No, thanks.") == 2) {
+		mes "[Eckar Ellebird]";
+		mes "Très bien. j'espère que";
+		mes "tu apprécies ton temps ici";
+		mes "dans l'arène de course de monstres ~";
+		close;
+	}
+	if (!checkweight("Spawn",700)) {
+		mes "[Eckar Ellebird]";
+		mes "Oh, wow. Tu portes";
+		mes "énormément de choses... Ouais,";
+		mes "tu ferais mieux d'en mettre un peu de côté";
+		mes "dans Kafra Storage ou quelque chose comme ça.";
+		close;
+	}
+	if (Zeny < 2000) {
+		mes "[Eckar Ellebird]";
+		mes "Je suis désolé, mais toi";
+		mes "je n'en ai pas assez";
+		mes "de l'argent pour payer le";
+		mes "2 000 zeny d'entrée.";
+		close;
+	}
+	if (countitem("Monster_Ticket")) {
+		mes "[Eckar Ellebird]";
+		mes "Hein ? Que fais-tu";
+		mes "avec un Racing Ticket expiré ?";
+		mes "Eh bien, je ferais mieux de m'en débarrasser pour toi avant que ça ne se mélange";
+		mes "avec votre nouveau Racing Ticket.";
+		delitem 7514,1; //Monster_Ticket
+		next;
+		if ($@mon_time_1_1 == 1) {
+			if (Zeny < 2000) {
+				mes "[Eckar Ellebird]";
+				mes "Je suis désolé, mais toi";
+				mes "je n'en ai pas assez";
+				mes "de l'argent pour payer le";
+				mes "2 000 zeny d'entrée.";
+				close;
+			}
+			mes "[Eckar Ellebird]";
+			mes "Très bien, je pense que tu";
+			mes "devrait être prêt. J'espère";
+			mes "que tu apprécies la course~";
+			mes "Laisse-moi te guider à l'intérieur";
+			mes "la Monster Race Arena maintenant.";
+			Zeny -= 2000;
+			monster_race_1 = 0;
+			close2;
+			warp "p_track01",75,41;
+			end;
+		}
+	} else if ($@mon_time_1_1 == 1) {
+		mes "[Eckar Ellebird]";
+		mes "Merci, j'espère que";
+		mes "tu apprécies cette course.";
+		mes "Laisse-moi te guider maintenant";
+		mes "à la Monster Race Arena.";
+		Zeny -= 2000;
+		monster_race_1 = 0;
+		close2;
+		warp "p_track01",75,41;
+		end;
+	}
+	if ($@mon_time_1_1 == 2) {
+		mes "[Eckar Ellebird]";
+		mes "Nous sommes encore en train de terminer notre";
+		mes "les préparatifs pour le prochain";
+		mes "Course de monstres unique, donc";
+		mes "nous vous demandons s'il vous plaît";
+		mes "attends encore un peu...";
+		close;
+	}
+	if ($@monster_race == 0) {
+		mes "[Eckar Ellebird]";
+		mes "En ce moment, une Monster Race";
+		mes "est en cours. Il est trop tard pour parier, mais si vous le souhaitez";
+		mes "pour regarder, les frais sont de 500 zeny";
+		mes "pour les spectateurs. Souhaitez-vous entrer dans la Monster Race Arena ?";
+		next;
+		if (select("Enter:Cancel") == 2) {
+			mes "[Eckar Ellebird]";
+			mes "Très bien, alors. Si tu veux";
+			mes "parier sur un monstre";
+			mes "course, veuillez attendre le";
+			mes "course en cours à terminer. J'espère";
+			mes "que tu apprécies ton temps ici";
+			mes "dans l'arène de course de monstres ~";
+			close;
+		}
+		if (Zeny > 499) {
+			mes "[Eckar Ellebird]";
+			mes "Merci ~";
+			mes "J'espère que tu apprécieras";
+			mes "je regarde cette course !";
+			Zeny -= 500;
+			monster_race_1 = 0;
+			close2;
+			warp "p_track01",75,41;
+			end;
+		}
+		mes "[Eckar Ellebird]";
+		mes "Je suis désolé, mais tu ne le fais pas";
+		mes "avoir assez d'argent pour payer";
+		mes "les frais de spectateur de 500 zeny.";
+		close;
+	}
+	mes "[Eckar Ellebird]";
+	mes "Je suis désolé, mais un monstre";
+	mes "la course vient de se terminer, nous sommes donc";
+	mes "avoir la période de 5 minutes";
+	mes "auquel les gagnants peuvent prétendre";
+	mes "leurs médailles. La porte";
+	mes "ouvrira bientôt, alors veuillez patienter.";
+	close;
+OnEnable:
+	enablenpc "Eckar Ellebird#single";
+	end;
+OnDisable:
+	disablenpc "Eckar Ellebird#single";
+	end;
+}
+
+p_track01,39,49,3	script	Game Guide#single	845,{
+	mes "[Guide du jeu]";
+	mes "Bienvenue au";
+	mes "Arène de course de monstres.";
+	mes "Comment puis-je t'aider?";
+	next;
+	switch(select("Monster Race Info:Wager Info:Ticket Redemption Info")) {
+	case 1:
+		mes "[Guide du jeu]";
+		mes "Les courses de monstres sont originaires de";
+		mes "des jeux simples pour enfants dans lesquels";
+		mes "Les animaux mignons courraient les uns contre les autres. Ceci est devenu un adulte";
+		mes "passe-temps si populaire, nous avons construit une arène de course à Hugel.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Nos hôtes Monster Race Arena";
+		mes "deux types de courses de monstres. Tout d'abord, nous avons la Single Monster Race,";
+		mes "dans lequel ceux qui ont parié sur le monstre de la 1ère place sont récompensés.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Ensuite, nous avons le Dual Monster";
+		mes "Course dans laquelle les cotes et les récompenses de la maison sont supérieures à celles du Single";
+		mes "Courses de monstres : vous devez miser sur 2 monstres, et ils doivent se placer dans";
+		mes "1er et 2ème pour que vous gagniez.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Bien qu'une petite entrée";
+		mes "des frais sont requis, nous utilisons uniquement";
+		mes "l'argent pour récompenser";
+		mes "participants et maintenir ce";
+		mes "arène. Par conséquent, nous ne sommes pas";
+		mes "profiter de cette entreprise.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Nous interdisons également aux autres";
+		mes "de faire des paris personnels";
+		mes "et les paris, en utilisant des objets et";
+		mes "zeny, basé sur les résultats";
+		mes "de ces courses. Ce genre de";
+		mes "le jeu est illégal ici...";
+		next;
+		mes "[Guide du jeu]";
+		mes "Une fois entré dans la Race Arena, vous recevrez un Racing Ticket.";
+		mes "Gardez à l'esprit que les billets de course gagnants ne peuvent être échangés que contre";
+		mes "Médailles de prix pendant une fenêtre de 5 minutes après la fin de la course.";
+		next;
+		break;
+	case 2:
+		mes "[Guide du jeu]";
+		mes "Avant de placer un pari, vous";
+		mes "doit obtenir un billet de course gratuit";
+		mes "du Ticket Helper. Là,";
+		mes "J'ai marqué le Ticket Helper";
+		mes "sur votre mini-carte, afin que vous puissiez";
+		mes "trouvez-le assez facilement.";
+		viewpoint 1,73,22,1,0xFF3355;
+		next;
+		break;
+	case 3:
+		mes "[Guide du jeu]";
+		mes "Si vous avez parié sur le gagnant";
+		mes "d'une Race de Monstre Unique, ou";
+		mes "sur les gagnants de la 1ère ou de la 2ème place";
+		mes "dans une Dual Monster Race, puis";
+		mes "vous pouvez échanger votre Racing";
+		mes "Billet pour les médailles.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Cependant, vous devez échanger";
+		mes "votre Racing Ticket avec le";
+		mes "Distributeur de médailles au sein du";
+		mes "Fenêtre de 5 minutes après la fin";
+		mes "de la course. ^FF0000Votre billet devient^FFFFFF ^FF0000 nul après ces 5 minutes.^000000";
+		next;
+		mes "[Guide du jeu]";
+		mes "Quand cette fenêtre de 5 minutes";
+		mes "s'écoule, vous serez téléporté à l'extérieur, et nous le ferons immédiatement";
+		mes "commencer à préparer la prochaine course. Assurez-vous de vous en souvenir";
+		mes "informations lorsque vous pariez.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Si vous n'avez pas reçu";
+		mes "votre Racing Ticket gratuit,";
+		mes "alors veuillez visiter le billet";
+		mes "Auxiliaire. Voilà, je viens de marquer";
+		mes "son emplacement sur votre mini-carte.";
+		viewpoint 1,67,45,2,0xCE6300;
+		next;
+		break;
+	}
+	mes "[Guide du jeu]";
+	mes "Merci, et";
+	mes "J'espère que tu apprécieras";
+	mes "votre temps ici dans le";
+	mes "Arène de courses de monstres.";
+	close;
+}
+
+-	script	starting_1	-1,{
+OnTouchNPC:
+	// .@speed = 10 * ( 6 + rand(100)/10 );// speed 60-150
+	.@start = rand(1,100);
+	if (.@start < 11) .@speed = 60;
+	else if (.@start < 21) .@speed = 70;
+	else if (.@start < 31) .@speed = 80;
+	else if (.@start < 41) .@speed = 90;
+	else if (.@start < 51) .@speed = 100;
+	else if (.@start < 61) .@speed = 110;
+	else if (.@start < 71) .@speed = 120;
+	else if (.@start < 81) .@speed = 130;
+	else if (.@start < 91) .@speed = 140;
+	else .@speed = 150;
+	sc_start SC_WALKSPEED,5000,.@speed;
+	end;
+	
+OnInit:
+	disablenpc();
+	end;
+}
+
+-	script	Luk_1	-1,{
+OnTouchNPC:
+	.@start = rand(1,100);
+	if (.@start < 61) .@speed = 110;
+	else if (.@start < 71) .@speed = 120;
+	else if (.@start < 81) .@speed = 130;
+	else if (.@start < 91) .@speed = 140;
+	else .@speed = 150;
+	sc_start SC_WALKSPEED,10000,.@speed;
+	end;
+	
+OnInit:
+	disablenpc();
+	end;
+}
+
+-	script	Luk_2	-1,{
+OnTouchNPC:
+	.@start = rand(1,100);
+	if (.@start < 61) .@time = 1000;
+	else if (.@start < 71) .@time = 2000;
+	else if (.@start < 81) .@time = 3000;
+	else if (.@start < 91) .@time = 4000;
+	if (.@time) sc_start SC_STUN,.@time,0;
+	end;
+	
+OnInit:
+	disablenpc();
+	end;
+}
+
+-	script	Tire_1	-1,{
+OnTouchNPC:
+	.@start = rand(1,100);
+	if (.@start < 61) .@time = 1000;
+	else if (.@start < 71) .@time = 2000;
+	else if (.@start < 81) .@time = 3000;
+	else if (.@start < 91) .@time = 4000;
+	if (.@time) sc_start SC_SLEEP,.@time,0;
+	end;
+	
+OnInit:
+	disablenpc();
+	end;
+}
+
+p_track01,56,38,0	duplicate(starting_1)	starting#1	-1,0,0
+p_track01,56,36,0	duplicate(starting_1)	starting#2	-1,0,0
+p_track01,56,34,0	duplicate(starting_1)	starting#3	-1,0,0
+p_track01,56,32,0	duplicate(starting_1)	starting#4	-1,0,0
+p_track01,56,30,0	duplicate(starting_1)	starting#5	-1,0,0
+p_track01,56,28,0	duplicate(starting_1)	starting#6	-1,0,0
+
+p_track01,33,38,0	duplicate(Luk_1)	Luk1#1	-1,0,0
+p_track01,37,38,0	duplicate(Luk_1)	Luk1#2	-1,0,0
+p_track01,53,38,0	duplicate(Luk_1)	Luk1#3	-1,0,0
+p_track01,45,38,0	duplicate(Luk_1)	Luk1#4	-1,0,0
+p_track01,33,36,0	duplicate(Luk_1)	Luk2#1	-1,0,0
+p_track01,37,36,0	duplicate(Luk_1)	Luk2#2	-1,0,0
+p_track01,53,36,0	duplicate(Luk_1)	Luk2#3	-1,0,0
+p_track01,45,36,0	duplicate(Luk_1)	Luk2#4	-1,0,0
+p_track01,33,34,0	duplicate(Luk_1)	Luk3#1	-1,0,0
+p_track01,37,34,0	duplicate(Luk_1)	Luk3#2	-1,0,0
+p_track01,53,34,0	duplicate(Luk_1)	Luk3#3	-1,0,0
+p_track01,45,34,0	duplicate(Luk_1)	Luk3#4	-1,0,0
+p_track01,33,32,0	duplicate(Luk_1)	Luk4#1	-1,0,0
+p_track01,37,32,0	duplicate(Luk_1)	Luk4#2	-1,0,0
+p_track01,53,32,0	duplicate(Luk_1)	Luk4#3	-1,0,0
+p_track01,45,32,0	duplicate(Luk_1)	Luk4#4	-1,0,0
+p_track01,33,30,0	duplicate(Luk_1)	Luk5#1	-1,0,0
+p_track01,37,30,0	duplicate(Luk_1)	Luk5#2	-1,0,0
+p_track01,53,30,0	duplicate(Luk_1)	Luk5#3	-1,0,0
+p_track01,45,30,0	duplicate(Luk_1)	Luk5#4	-1,0,0
+p_track01,33,28,0	duplicate(Luk_1)	Luk6#1	-1,0,0
+p_track01,37,28,0	duplicate(Luk_1)	Luk6#2	-1,0,0
+p_track01,53,28,0	duplicate(Luk_1)	Luk6#3	-1,0,0
+p_track01,45,28,0	duplicate(Luk_1)	Luk6#4	-1,0,0
+
+p_track01,49,38,0	duplicate(Luk_2)	Luk1#5	-1,0,0
+p_track01,41,38,0	duplicate(Luk_2)	Luk1#6	-1,0,0
+p_track01,49,36,0	duplicate(Luk_2)	Luk2#5	-1,0,0
+p_track01,41,36,0	duplicate(Luk_2)	Luk2#6	-1,0,0
+p_track01,49,34,0	duplicate(Luk_2)	Luk3#5	-1,0,0
+p_track01,41,34,0	duplicate(Luk_2)	Luk3#6	-1,0,0
+p_track01,49,32,0	duplicate(Luk_2)	Luk4#5	-1,0,0
+p_track01,41,32,0	duplicate(Luk_2)	Luk4#6	-1,0,0
+p_track01,49,30,0	duplicate(Luk_2)	Luk5#5	-1,0,0
+p_track01,41,30,0	duplicate(Luk_2)	Luk5#6	-1,0,0
+p_track01,49,28,0	duplicate(Luk_2)	Luk6#5	-1,0,0
+p_track01,41,28,0	duplicate(Luk_2)	Luk6#6	-1,0,0
+
+p_track01,43,38,0	duplicate(Tire_1)	Tire1#1	-1,0,0
+p_track01,39,38,0	duplicate(Tire_1)	Tire1#2	-1,0,0
+p_track01,35,38,0	duplicate(Tire_1)	Tire1#3	-1,0,0
+p_track01,55,38,0	duplicate(Tire_1)	Tire1#4	-1,0,0
+p_track01,51,38,0	duplicate(Tire_1)	Tire1#5	-1,0,0
+p_track01,47,38,0	duplicate(Tire_1)	Tire1#6	-1,0,0
+p_track01,43,36,0	duplicate(Tire_1)	Tire2#1	-1,0,0
+p_track01,39,36,0	duplicate(Tire_1)	Tire2#2	-1,0,0
+p_track01,35,36,0	duplicate(Tire_1)	Tire2#3	-1,0,0
+p_track01,55,36,0	duplicate(Tire_1)	Tire2#4	-1,0,0
+p_track01,51,36,0	duplicate(Tire_1)	Tire2#5	-1,0,0
+p_track01,47,36,0	duplicate(Tire_1)	Tire2#6	-1,0,0
+p_track01,43,34,0	duplicate(Tire_1)	Tire3#1	-1,0,0
+p_track01,39,34,0	duplicate(Tire_1)	Tire3#2	-1,0,0
+p_track01,35,34,0	duplicate(Tire_1)	Tire3#3	-1,0,0
+p_track01,55,34,0	duplicate(Tire_1)	Tire3#4	-1,0,0
+p_track01,51,34,0	duplicate(Tire_1)	Tire3#5	-1,0,0
+p_track01,47,34,0	duplicate(Tire_1)	Tire3#6	-1,0,0
+p_track01,43,32,0	duplicate(Tire_1)	Tire4#1	-1,0,0
+p_track01,39,32,0	duplicate(Tire_1)	Tire4#2	-1,0,0
+p_track01,35,32,0	duplicate(Tire_1)	Tire4#3	-1,0,0
+p_track01,55,32,0	duplicate(Tire_1)	Tire4#4	-1,0,0
+p_track01,51,32,0	duplicate(Tire_1)	Tire4#5	-1,0,0
+p_track01,47,32,0	duplicate(Tire_1)	Tire4#6	-1,0,0
+p_track01,43,30,0	duplicate(Tire_1)	Tire5#1	-1,0,0
+p_track01,39,30,0	duplicate(Tire_1)	Tire5#2	-1,0,0
+p_track01,35,30,0	duplicate(Tire_1)	Tire5#3	-1,0,0
+p_track01,55,30,0	duplicate(Tire_1)	Tire5#4	-1,0,0
+p_track01,51,30,0	duplicate(Tire_1)	Tire5#5	-1,0,0
+p_track01,47,30,0	duplicate(Tire_1)	Tire5#6	-1,0,0
+p_track01,43,28,0	duplicate(Tire_1)	Tire6#1	-1,0,0
+p_track01,39,28,0	duplicate(Tire_1)	Tire6#2	-1,0,0
+p_track01,35,28,0	duplicate(Tire_1)	Tire6#3	-1,0,0
+p_track01,55,28,0	duplicate(Tire_1)	Tire6#4	-1,0,0
+p_track01,51,28,0	duplicate(Tire_1)	Tire6#5	-1,0,0
+p_track01,47,28,0	duplicate(Tire_1)	Tire6#6	-1,0,0
+
+// Monster Race - Dual Monster Race
+//============================================================
+hugel,47,56,0	script	#race_timer2-1	-1,{
+OnEnable:
+	enablenpc "#race_timer2-1";
+OnInit:
+	$@mon_time_2_1 = 2;
+	initnpctimer;
+	end;
+
+OnTimer10000:
+	mapannounce "hugel","The Dual Monster Race will soon begin. We hope to see many of you participate!",bc_map,"0xffb6c1";
+	end;
+
+OnTimer30000:
+	mapannounce "hugel","The Dual Monster Race Arena has just opened.",bc_map,"0xffb6c1";
+	$@mon_time_2_1 = 1;
+	donpcevent "#race_timer2-2::OnEnable";
+	donpcevent "TrapGlobal#race02::OnEnable";
+	enablenpc "Ticket Helper#2";
+	end;
+
+OnTimer90000:
+	mapannounce "hugel","The Dual Monster Race arena is now open. Participants should enter the Arena as soon as they can.",bc_map,"0xffb6c1";
+	end;
+
+OnTimer210000:
+	mapannounce "hugel","The entrance to the Dual Monster Race Arena will close shortly. Participants, please enter the arena now.",bc_map,"0xffb6c1";
+	end;
+
+OnTimer270000:
+	mapannounce "hugel","The Dual Monster Race Arena's entrance will soon close.",bc_map,"0xffb6c1";
+	end;
+
+OnTimer272000:
+	mapannounce "hugel","Participants, please enter the Arena before the doors close.",bc_map,"0xffb6c1";
+	end;
+
+OnTimer330000:
+	mapannounce "hugel","The race is now starting. If you missed your chance to enter this race, please try again next time~!",bc_map,"0xffb6c1";
+	$@mon_time_2_1 = 0;
+	disablenpc "#race_timer2-1";
+	stopnpctimer;
+	end;
+}
+
+p_track02,42,23,0	script	#race_timer2-2	-1,{
+OnEnable:
+	enablenpc "#race_timer2-2";
+	$@mon_time_2_2 = 0;
+	initnpctimer;
+	end;
+
+OnTimer5000:
+	mapannounce "p_track02","Welcome to the Monster Race Arena.",bc_map,"0x87ceeb";
+	end;
+
+OnTimer7000:
+	mapannounce "p_track02","Feel free to inquire at the help desk whenever you have questions.",bc_map,"0x87ceeb";
+	end;
+
+OnTimer120000:
+	mapannounce "p_track02","The Dual Monster Race will start in 3 minutes.",bc_map,"0x87ceeb";
+	end;
+
+OnTimer122000:
+	mapannounce "p_track02","Please ask a Ticket Helper if you wish to wager on the race.",bc_map,"0x87ceeb";
+	end;
+
+OnTimer240000:
+	mapannounce "p_track02","The Dual Monster Race will start shortly.",bc_map,"0x87ceeb";
+	end;
+
+OnTimer242000:
+	mapannounce "p_track02","Please ask a Ticket Helper if you wish to wager on the race.",bc_map,"0x87ceeb";
+	end;
+
+OnTimer300000:
+	mapannounce "p_track02","The Monster Race is starting now. Good luck, everybody!",bc_map,"0x87ceeb";
+	$@mon_time_2_2 = 1;
+	disablenpc "Ticket Helper#2";
+	donpcevent "#poring1::OnEnable";
+	donpcevent "#lunatic1::OnEnable";
+	donpcevent "#savagebebe1::OnEnable";
+	donpcevent "#desertwolf1::OnEnable";
+	donpcevent "#deviruchi1::OnEnable";
+	donpcevent "#baphomet1::OnEnable";
+	stopnpctimer;
+	disablenpc "#race_timer2-2";
+	end;
+
+OnInit:
+	disablenpc "#race_timer2-2";
+	$@mon_time_2_2 = 0;
+	end;
+}
+
+p_track02,80,43,0	script	#race_timer2-3	-1,{
+OnEnable:
+	enablenpc "#race_timer2-3";
+	initnpctimer;
+	end;
+
+OnTimer3000:
+	mapannounce "p_track02","The Monster Race is finished! Congratulations to all the winners!",bc_map,"0xFFFF00";
+	end;
+
+OnTimer6000:
+	mapannounce "p_track02","Please give your Racing Ticket to the Medal Distributor if you bet on the winning monster.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer9000:
+	mapannounce "p_track02","You have 5 minutes to exchange a winning ticket for Prize Medals from the Medal Distributor.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer12000:
+	mapannounce "p_track02","All tickets become void after this 5 minute period, so winners should claim their prize now.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer15000:
+	mapannounce "p_track02","Please leave the Race Arena before this 5 minute period elapses. Thank you.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer240000:
+	mapannounce "p_track02","Attention. We will being preparing for the next race shortly...",bc_map,"0xFFFF00";
+	end;
+
+OnTimer243000:
+	mapannounce "p_track02","We will close the Racing Arena in 1 minute to prepare for the next race.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer246000:
+	mapannounce "p_track02","Participants in the last race should leave the arena as soon as possible.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer249000:
+	mapannounce "p_track02","Thank you for your cooperation.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer252000:
+	mapannounce "p_track02","We hope that you enjoyed the Monster Race arena. Come back again soon~",bc_map,"0xFFFF00";
+	end;
+
+OnTimer300000:
+	mapwarp "p_track02","hugel",63,73;
+	disablenpc "Medal Distributor#medal";
+	donpcevent "#race_timer2-1::OnEnable";
+	stopnpctimer;
+OnInit:
+	$@mon_race_2_1 = $@mon_race_2_2 = 0;
+	disablenpc "#race_timer2-3";
+	end;
+}
+
+hugel,62,69,1	script	Eckar Erenes#double	798,{
+	mes "[Eckar Érènes]";
+	mes "Bienvenue au";
+	mes "Arène de course de monstres,";
+	mes "la fierté et la joie de";
+	mes "le village de Hugel !";
+	mes "Comment puis-je vous aider ?";
+	next;
+	if (select("Monster Race Info:Enter Monster Race") == 1) {
+		mes "[Eckar Érènes]";
+		mes "Les courses de monstres sont originaires de";
+		mes "des jeux simples pour enfants dans lesquels";
+		mes "Les animaux mignons courraient les uns contre les autres. Ceci est devenu un adulte";
+		mes "passe-temps si populaire, nous avons construit une arène de course à Hugel.";
+		next;
+		mes "[Eckar Érènes]";
+		mes "Nos hôtes Monster Race Arena";
+		mes "deux types de courses de monstres. Tout d'abord, nous avons la Single Monster Race,";
+		mes "dans lequel ceux qui ont parié sur le monstre de la 1ère place sont récompensés.";
+		next;
+		mes "[Eckar Érènes]";
+		mes "Ensuite, nous avons le Dual Monster";
+		mes "Course dans laquelle les cotes et les récompenses de la maison sont supérieures à celles du Single";
+		mes "Courses de monstres : vous devez miser sur 2 monstres, et ils doivent se placer dans";
+		mes "1er et 2ème pour que vous gagniez.";
+		next;
+		mes "[Eckar Érènes]";
+		mes "Bien qu'une petite entrée";
+		mes "des frais sont requis, nous utilisons uniquement";
+		mes "l'argent pour récompenser";
+		mes "participants et maintenir ce";
+		mes "arène. Par conséquent, nous ne sommes pas";
+		mes "profiter de cette entreprise.";
+		next;
+		mes "[Eckar Érènes]";
+		mes "Nous interdisons également aux autres";
+		mes "de faire des paris personnels";
+		mes "et les paris, en utilisant des objets et";
+		mes "zeny, basé sur les résultats";
+		mes "de ces courses. Ce genre de";
+		mes "le jeu est illégal ici...";
+		next;
+		mes "[Eckar Érènes]";
+		mes "Une fois entré dans la Race Arena, vous recevrez un Racing Ticket.";
+		mes "Gardez à l'esprit que les billets de course gagnants ne peuvent être échangés que contre";
+		mes "Médailles de prix pendant une fenêtre de 5 minutes après la fin de la course.";
+		next;
+	}
+	mes "[Eckar Érènes]";
+	mes "Le droit d'entrée pour toutes les courses";
+	mes "dans la Monster Race Arena est";
+	mes "2 000 zeny. Si vous souhaitez parier sur une Single Monster Race,";
+	mes "alors s'il te plaît, demande à mon frère";
+	mes "Ellebird pour vous aider.";
+	next;
+	mes "[Eckar Érènes]";
+	mes "Sinon, je t'aiderai";
+	mes "commencé si tu es intéressé";
+	mes "dans une course Dual Monster.";
+	mes "Voulez-vous parier";
+	mes "sur une Dual Monster Race ?";
+	next;
+	if (select("Yes, please.:No, thanks.") == 2) {
+		mes "[Eckar Érènes]";
+		mes "Très bien. j'espère que";
+		mes "tu apprécies ton temps ici";
+		mes "dans l'arène de course de monstres ~";
+		close;
+	}
+	if (!checkweight("Jellopy",700)) {
+		mes "[Eckar Érènes]";
+		mes "Hmm... tu es en train de transporter";
+		mes "trop de choses avec toi";
+		mes "tout de suite. Tu ferais mieux de mettre";
+		mes "certaines de tes affaires sont rangées";
+		mes "Kafra Storage avant de pouvoir";
+		mes "pariez sur n'importe quelle course de monstres...";
+		close;
+	}
+	if (Zeny < 2000) {
+		mes "[Eckar Érènes]";
+		mes "Je suis désolé, mais toi";
+		mes "je n'en ai pas assez";
+		mes "de l'argent pour payer le";
+		mes "2 000 zeny d'entrée.";
+		close;
+	}
+	if (countitem(7514)) {
+		mes "[Eckar Érènes]";
+		mes "Hein ? Que fais-tu";
+		mes "avec un Racing Ticket expiré ?";
+		mes "Eh bien, je ferais mieux de m'en débarrasser pour toi avant que ça ne se mélange";
+		mes "avec votre nouveau Racing Ticket.";
+		delitem 7514,1; //Monster_Ticket
+		next;
+		if ($@mon_time_2_1 == 1) {
+			mes "[Eckar Érènes]";
+			mes "Très bien, je pense que tu";
+			mes "devrait être prêt. J'espère";
+			mes "que tu apprécies la course~";
+			mes "Laisse-moi te guider à l'intérieur";
+			mes "la Monster Race Arena maintenant.";
+			Zeny -= 2000;
+			monster_race_2_1 = monster_race_2_2 = 0;
+			close2;
+			warp "p_track02",75,41;
+			end;
+		}
+		else if ($@mon_time_2_1 == 2) {
+			mes "[Eckar Érènes]";
+			mes "Nous sommes encore en train de terminer notre";
+			mes "les préparatifs pour le prochain";
+			mes "Double course de monstres, donc";
+			mes "nous vous demandons s'il vous plaît";
+			mes "attends encore un peu...";
+			close;
+		}
+	} else {
+		if ($@mon_time_2_1 == 1) {
+			mes "[Eckar Érènes]";
+			mes "Merci, j'espère que";
+			mes "tu apprécies cette course.";
+			mes "Laisse-moi te guider maintenant";
+			mes "à la Monster Race Arena.";
+			Zeny -= 2000;
+			monster_race_2_1 = monster_race_2_2 = 0;
+			close2;
+			warp "p_track02",75,41;
+			end;
+		} else if ($@mon_time_2_1 == 2) {
+			mes "[Eckar Érènes]";
+			mes "Nous sommes encore en train de terminer notre";
+			mes "les préparatifs pour le prochain";
+			mes "Double course de monstres, donc";
+			mes "nous vous demandons s'il vous plaît";
+			mes "attends encore un peu...";
+			close;
+		}
+	}
+	if ($@mon_time_2_2 == 1) {
+		mes "[Eckar Érènes]";
+		mes "En ce moment, une Monster Race";
+		mes "est en cours. Il est trop tard pour parier, mais si vous le souhaitez";
+		mes "pour regarder, les frais sont de 500 zeny";
+		mes "pour les spectateurs. Souhaitez-vous entrer dans la Monster Race Arena ?";
+		next;
+		if (select("Enter:Cancel") == 2) {
+			mes "[Eckar Érènes]";
+			mes "Très bien, alors. Si tu veux";
+			mes "parier sur un monstre";
+			mes "course, veuillez attendre le";
+			mes "course en cours à terminer. J'espère";
+			mes "que tu apprécies ton temps ici";
+			mes "dans l'arène de course de monstres ~";
+			close;
+		}
+		if (Zeny > 499) {
+			mes "[Eckar Érènes]";
+			mes "Merci ~";
+			mes "J'espère que tu apprécieras";
+			mes "je regarde cette course !";
+			Zeny -= 500;
+			monster_race_2_1 = monster_race_2_2 = 0;
+			close2;
+			warp "p_track02",75,41;
+			end;
+		}
+		mes "[Eckar Érènes]";
+		mes "Je suis désolé, mais tu ne le fais pas";
+		mes "avoir assez d'argent pour payer";
+		mes "les frais de spectateur de 500 zeny.";
+		close;
+	}
+	mes "[Eckar Érènes]";
+	mes "Je suis désolé, mais un monstre";
+	mes "la course vient de se terminer, nous sommes donc";
+	mes "avoir la période de 5 minutes";
+	mes "auquel les gagnants peuvent prétendre";
+	mes "leurs médailles. La porte";
+	mes "ouvrira bientôt, alors veuillez patienter.";
+	close;
+OnEnable:
+	enablenpc "Eckar Erenes#double";
+	end;
+OnDisable:
+	disablenpc "Eckar Erenes#double";
+	end;
+}
+
+p_track02,73,22,1	script	Ticket Helper#2	899,{
+	if (!checkweight("Spawn",200)) {
+		mes "[Aide à la billetterie]";
+		mes "Bienvenue au";
+		mes "Arène de course de monstres.";
+		mes "Si vous souhaitez participer";
+		mes "dans la ^3131FFDouble Monster Race^000000,";
+		mes "alors veuillez en sélectionner 1 sur";
+		mes "les 6 monstres de la liste.";
+		next;
+		mes "[Aide à la billetterie]";
+		mes "Attends, attends...";
+		mes "je ne peux pas te donner";
+		mes "n'importe quoi en ce moment.";
+		mes "Tu portes le chemin";
+		mes "trop de choses...";
+		close;
+	}
+	if (!monster_race_2_1 && !monster_race_2_2) {
+		mes "[Aide à la billetterie]";
+		mes "Bonjour!";
+		mes "Intéressé à parier sur";
+		mes "la Dual Monster Race ?";
+		mes "Je suis là pour vous aider si vous l'avez";
+		mes "vous avez des questions, ou si vous";
+		mes "souhaitez placer votre pari.";
+		next;
+		switch(select("Check Monster Status:Wager on Race:Monster Race?:Cancel")) {
+		case 1:
+			for ( .@i = 1; .@i <= 6; .@i++ )
+				mes "Monster "+.@i+" [^CC6600Luck^000000: " + getd("$@mon_r02_Luk"+.@i) + "] [^EE0000HP^000000: " + getd("$@mon_r02_tire"+.@i) + "]";
+			close;
+		case 2:
+			mes "[Aide à la billetterie]";
+			mes "Très bien, veuillez choisir lequel";
+			mes "deux monstres que tu penses";
+			mes "remportera la 1ère et la 2ème place.";
+			mes "Si tes deux monstres viennent";
+			mes "en 1er et 2ème, dans n'importe quel ordre,";
+			mes "vous gagnerez le pari.";
+			next;
+			mes "[Aide à la billetterie]";
+			mes "Maintenant, s'il te plaît, dis-moi";
+			mes "votre premier choix pour un";
+			mes "des monstres qui";
+			mes "gagnera cette course.";
+			next;
+			for ( .@i = 1; .@i <= 6; .@i++ )
+				.@menu$ = .@menu$ + "Monster "+ .@i +":";
+			while (1) {
+				if ( .@m1 > 0 )
+					.@menu$ = replacestr( .@menu$, "Monster "+ .@m1, "" );
+				.@m = select (.@menu$);
+				switch (.@m) {
+					case 1: setarray .@string$, "a friendly","Poring type monster"; break;
+					case 2: setarray .@string$, "an adorable","Lunatic type monster"; break;
+					case 3: setarray .@string$, "a darling","Savage Babe monster"; break;
+					case 4: setarray .@string$, "a gentle baby","Desert Wolf monster"; break;
+					case 5: setarray .@string$, "a small, yet","demonic, Deviruchi"; break;
+					case 6: setarray .@string$, "a naughty","Baphomet Jr. monster"; break;
+				}
+				mes "[Aide à la billetterie]";
+				mes "Vous avez choisi";
+				mes "^0000FFMonster "+.@m+"^000000, "+.@string$[0];
+				mes .@string$[1]+".";
+				mes "Etes-vous sûr de vouloir";
+				mes "choisir ce monstre ?";
+				next;
+				if (select("Yes:No") == 2) {
+					mes "[Aide à la billetterie]";
+					mes "Vous avez annulé";
+					mes "votre pari. D'accord,";
+					mes "Je comprends. Peut-être";
+					mes "tu te sentirais plus à l'aise";
+					mes "vérifier les monstres d'abord ?";
+					close;			
+				}
+				if (.@m1 == 0) {
+					mes "[Aide à la billetterie]";
+					mes "Maintenant, s'il te plaît, fais";
+					mes "votre deuxième choix";
+					mes "pour le monstre qui";
+					mes "tu penses qu'il placera";
+					mes "1er ou 2ème de cette course.";
+					next;
+					.@m1 = .@m;
+				} else {
+					if (!$@mon_time_2_2) {
+						mes "[Aide à la billetterie]";
+						mes "Vous avez parié sur";
+						mes "^0000FFMonster "+.@m1+"^000000 and ^0000FFMonster "+.@m+"^000000";
+						mes "pour gagner cette course. Bonne chance!";
+						mes "J'espère vraiment que les chances";
+						mes "travaillez en votre faveur ~";
+						emotion ET_CHUP;
+						monster_race_2_1 = .@m1;
+						monster_race_2_2 = .@m;
+						getitem 7514,1; //Monster_Ticket
+					} else {
+						mes "[Aide à la billetterie]";
+						mes "Je suis vraiment désolé, mais un";
+						mes "la course aux monstres est en cours.";
+						mes "Veuillez patienter, puis placez";
+						mes "votre pari pour la prochaine course.";
+					}
+					close;
+				}
+			}
+		case 3:
+			mes "[Aide à la billetterie]";
+			mes "Les courses de monstres sont originaires de";
+			mes "des jeux simples pour enfants dans lesquels";
+			mes "Les animaux mignons courraient les uns contre les autres. Ceci est devenu un adulte";
+			mes "passe-temps si populaire, nous avons construit une arène de course à Hugel.";
+			next;
+			mes "[Aide à la billetterie]";
+			mes "Nos hôtes Monster Race Arena";
+			mes "deux types de courses de monstres. Tout d'abord, nous avons la Single Monster Race,";
+			mes "dans lequel ceux qui ont parié sur le monstre de la 1ère place sont récompensés.";
+			next;
+			mes "[Éclar Ellbird]";
+			mes "Ensuite, nous avons le Dual Monster";
+			mes "Course dans laquelle ceux qui ont parié sur les monstres de la 1ère et de la 2ème place";
+			mes "sont également récompensés. La maison";
+			mes "les cotes et les récompenses des paris sont plus élevées dans les courses doubles que dans les courses simples.";
+			next;
+			mes "[Aide à la billetterie]";
+			mes "Bien qu'une petite entrée";
+			mes "des frais sont requis, nous utilisons uniquement";
+			mes "l'argent pour récompenser";
+			mes "participants et maintenir ce";
+			mes "arène. Par conséquent, nous ne sommes pas";
+			mes "profiter de cette entreprise.";
+			next;
+			mes "[Aide à la billetterie]";
+			mes "Nous interdisons également aux autres";
+			mes "de faire des paris personnels";
+			mes "et les paris, en utilisant des objets et";
+			mes "zeny, basé sur les résultats";
+			mes "de ces courses. Ce genre de";
+			mes "le jeu est illégal ici...";
+			next;
+			mes "[Aide à la billetterie]";
+			mes "Une fois entré dans la Race Arena, vous recevrez un Racing Ticket.";
+			mes "Gardez à l'esprit que les billets de course gagnants ne peuvent être échangés que contre";
+			mes "Médailles de prix pendant une fenêtre de 5 minutes après la fin de la course.";
+			next;
+			mes "[Aide à la billetterie]";
+			mes "Tu es déjà là";
+			mes "à l'intérieur de la Monster Race";
+			mes "Arena, alors autant";
+			mes "essayez de placer un pari. C'est";
+			mes "plus amusant que vous ne le pensez ~";
+			close;
+		case 4:
+			mes "[Aide à la billetterie]";
+			mes "Vous avez annulé";
+			mes "votre pari. D'accord,";
+			mes "Je comprends. Peut-être";
+			mes "tu te sentirais plus à l'aise";
+			mes "vérifier les monstres d'abord ?";
+			close;
+		}
+	} else {
+		if (countitem(7514)) {
+			mes "[Aide à la billetterie]";
+			mes "Vous avez parié sur";
+			mes "^0000FFMonster " + monster_race_2_1 + "^000000 and ^0000FFMonster " + monster_race_2_2 + "^000000";
+			mes "pour cette Dual Monster Race.";
+			next;
+		} 
+		mes "[Aide à la billetterie]";
+		mes "Le départ de la course sera";
+		mes "annoncé par une émission.";
+		mes "Vous pouvez vous référer à votre mini-carte";
+		mes "pour suivre la course des monstres";
+		mes "postes. Merci, et";
+		mes "Amusez-vous bien!";
+		viewpoint 1,43,35,0,0xFF0000;
+		close;	
+	}
+
+OnInit:
+	disablenpc "Ticket Helper#2";
+	end;
+}
+
+p_track02,39,49,3	script	Game Guide#double	845,{
+	mes "[Guide du jeu]";
+	mes "Bienvenue au";
+	mes "Arène de course de monstres.";
+	mes "Comment puis-je t'aider?";
+	next;
+	switch(select("Monster Race Info:Wager Info:Ticket Redemption Info")) {
+	case 1:
+		mes "[Guide du jeu]";
+		mes "Les courses de monstres sont originaires de";
+		mes "des jeux simples pour enfants dans lesquels";
+		mes "Les animaux mignons courraient les uns contre les autres. Ceci est devenu un adulte";
+		mes "passe-temps si populaire, nous avons construit une arène de course à Hugel.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Nos hôtes Monster Race Arena";
+		mes "deux types de courses de monstres. Tout d'abord, nous avons la Single Monster Race,";
+		mes "dans lequel ceux qui ont parié sur le monstre de la 1ère place sont récompensés.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Ensuite, nous avons le Dual Monster";
+		mes "Course dans laquelle les cotes et les récompenses de la maison sont supérieures à celles du Single";
+		mes "Courses de monstres : vous devez miser sur 2 monstres, et ils doivent se placer dans";
+		mes "1er et 2ème pour que vous gagniez.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Bien qu'une petite entrée";
+		mes "des frais sont requis, nous utilisons uniquement";
+		mes "l'argent pour récompenser";
+		mes "participants et maintenir ce";
+		mes "arène. Par conséquent, nous ne sommes pas";
+		mes "profiter de cette entreprise.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Nous interdisons également aux autres";
+		mes "de faire des paris personnels";
+		mes "et les paris, en utilisant des objets et";
+		mes "zeny, basé sur les résultats";
+		mes "de ces courses. Ce genre de";
+		mes "le jeu est illégal ici...";
+		next;
+		mes "[Guide du jeu]";
+		mes "Une fois entré dans la Race Arena, vous recevrez un Racing Ticket.";
+		mes "Gardez à l'esprit que les billets de course gagnants ne peuvent être échangés que contre";
+		mes "Médailles de prix pendant une fenêtre de 5 minutes après la fin de la course.";
+		next;
+		break;
+	case 2:
+		mes "[Guide du jeu]";
+		mes "Avant de placer un pari, vous";
+		mes "doit obtenir un billet de course gratuit";
+		mes "du Ticket Helper. Là,";
+		mes "J'ai marqué le Ticket Helper";
+		mes "sur votre mini-carte, afin que vous puissiez";
+		mes "trouvez-le assez facilement.";
+		viewpoint 1,73,22,1,0xFF3355;
+		next;
+		break;
+	case 3:
+		mes "[Guide du jeu]";
+		mes "Si vous avez parié sur le gagnant";
+		mes "d'une Race de Monstre Unique, ou";
+		mes "sur les gagnants de la 1ère ou de la 2ème place";
+		mes "dans une Dual Monster Race, puis";
+		mes "vous pouvez échanger votre Racing";
+		mes "Billet pour les médailles.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Cependant, vous devez échanger";
+		mes "votre Racing Ticket avec le";
+		mes "Distributeur de médailles au sein du";
+		mes "Fenêtre de 5 minutes après la fin";
+		mes "de la course. ^FF0000Votre billet devient^FFFFFF ^FF0000 nul après ces 5 minutes.^000000";
+		next;
+		mes "[Guide du jeu]";
+		mes "Quand cette fenêtre de 5 minutes";
+		mes "s'écoule, vous serez téléporté à l'extérieur, et nous le ferons immédiatement";
+		mes "commencer à préparer la prochaine course. Assurez-vous de vous en souvenir";
+		mes "informations lorsque vous pariez.";
+		next;
+		mes "[Guide du jeu]";
+		mes "Si vous n'avez pas reçu";
+		mes "votre Racing Ticket gratuit,";
+		mes "alors veuillez visiter le billet";
+		mes "Auxiliaire. Voilà, je viens de marquer";
+		mes "son emplacement sur votre mini-carte.";
+		viewpoint 1,67,45,2,0xCE6300;
+		next;
+		break;
+	}
+	mes "[Guide du jeu]";
+	mes "Merci, et";
+	mes "J'espère que tu apprécieras";
+	mes "votre temps ici dans le";
+	mes "Arène de courses de monstres.";
+	close;
+}
+
+p_track02,67,45,5	script	Medal Distributor#medal	845,{
+	if (!checkweight("Jellopy",20)) {
+		mes "[Distributeur de médailles]";
+		mes "Je suis désolé, mais je ne peux pas";
+		mes "vous récompenser avec des médailles";
+		mes "jusqu'à ce que tu fasses plus d'espace";
+		mes "disponible dans votre inventaire.";
+		close;
+	}
+	mes "[Distributeur de médailles]";
+	mes "Bonjour ~";
+	mes "Si vous avez parié sur le";
+	mes "monstre gagnant dans un récent";
+	mes "course, alors vous pourrez échanger";
+	mes "votre ticket de jeu ici pour";
+	mes "quelques médailles de prix.";
+	next;
+	if (!countitem(7514)) {
+		mes "[Distributeur de médailles]";
+		mes "N'oubliez pas que vous pouvez";
+		mes "échangez uniquement le jeu gagnant";
+		mes "Billets pour les médailles à droite";
+		mes "après la fin de la course. Prix";
+		mes "Des médailles pourraient être remises à Wayne";
+		mes "à Hugel en échange d'objets.";
+		close;
+	}
+	mes "[Distributeur de médailles]";
+	mes "N'oubliez pas que vous pouvez";
+	mes "échangez uniquement le jeu gagnant";
+	mes "Billets pour les médailles à droite";
+	mes "après la fin de la course. Prix";
+	mes "Des médailles pourraient être remises à Wayne";
+	mes "à Hugel en échange d'objets.";
+	next;
+	if ((monster_race_2_1 == $@mon_race_2_1 && monster_race_2_2 == $@mon_race_2_2) || (monster_race_2_1 == $@mon_race_2_2 && monster_race_2_2 == $@mon_race_2_1)) {
+		mes "[Distributeur de médailles]";
+		mes "Félicitations! C'est vraiment";
+		mes "difficile de deviner les gagnants";
+		mes "d'une Dual Monster Race, donc vous";
+		mes "il faut vraiment avoir de la chance ! Voudriez-vous";
+		mes "j'aimerais échanger vos gains";
+		mes "Un ticket de course pour des médailles ?";
+		next;
+		if (select("Yes, please.:No, thanks.") == 1) {
+			mes "[Distributeur de médailles]";
+			mes "Okay, tout a l'air bien,";
+			mes "alors voici vos médailles ~";
+			mes "Si vous voulez les échanger";
+			mes "médailles pour les objets, s'il vous plaît";
+			mes "rendre visite à Wayne à Hugel. Nous espérons";
+			mes "tu as apprécié la Monster Race~";
+			monster_race_2_1 = monster_race_2_2 = 7;
+			delitem 7514,1; //Monster_Ticket
+			getitem 7515,15; //Marvelous_Medal
+			close;
+		}
+		mes "[Distributeur de médailles]";
+		mes "Euh, tu es sûr ? Toi";
+		mes "ne peut échanger qu'un gain";
+		mes "Billet de course pour les médailles";
+		mes "pendant une courte période après la course. Si vous avez fait une erreur, vous";
+		mes "Je devrais me redemander rapidement.";
+		close;
+	} else if (!monster_race_2_1 && !monster_race_2_2) {
+		mes "[Distributeur de médailles]";
+		mes "Eh bien, plus de chance la prochaine fois...";
+		mes "Même si tu ne peux pas toujours";
+		mes "sois chanceux, c'est toujours amusant de";
+		mes "pariez sur les courses de monstres !";
+		close;
+	} else if (monster_race_2_1 == 7 && monster_race_2_2 == 7) {
+		mes "[Distributeur de médailles]";
+		mes "Merci d'avoir visité le";
+		mes "Arène de course de monstres, et";
+		mes "J'espère que vous apprécierez votre temps";
+		mes "ici. Je te verrai la prochaine fois ~";
+		close;
+	} else if (monster_race_2_1 != $@mon_race_2_1 || monster_race_2_2 != $@mon_race_2_2) {
+		mes "[Distributeur de médailles]";
+		mes "Vous n'avez peut-être pas parié";
+		mes "sur le monstre gagnant dans";
+		mes "la dernière course, mais j'espère que";
+		mes "tu auras de la chance la prochaine fois ~";
+		close;
+	}
+
+OnInit:
+	disablenpc "Medal Distributor#medal";
+	end;
+}
+
+p_track02,76,38,1	script	Exit Guide#double	798,{
+	mes "[Guide de sortie]";
+	mes "Si vous avez un Racing gagnant";
+	mes "Billet, veuillez vous assurer que";
+	mes "vous l'échangez contre des médailles";
+	mes "maintenant. Tous les billets de course deviennent";
+	mes "nul une fois que la prochaine course commence.";
+	next;
+	mes "[Guide de sortie]";
+	mes "Si tu souhaites partir";
+	mes "l'arène, alors je peux guider";
+	mes "toi dehors. Aimeriez-vous";
+	mes "quitter l'arène maintenant ?";
+	next;
+	if (select("Yes:No") == 2) {
+		mes "[Guide de sortie]";
+		mes "Très bien, alors.";
+		mes "Faites-le-moi savoir";
+		mes "chaque fois que tu es";
+		mes "prêt à partir.";
+		close;
+	}
+	if (!countitem(7514)) {
+		mes "[Guide de sortie]";
+		mes "Merci pour";
+		mes "votre patronage, et";
+		mes "j'espère que tu viendras";
+		mes "rendez-nous visite bientôt~";
+	} else {
+		mes "[Guide de sortie]";
+		mes "Conformément à notre";
+		mes "politiques, je dois prendre votre";
+		mes "Racing Ticket avant votre départ.";
+		mes "Merci pour votre mécénat,";
+		mes "et j'espère que vous apprécierez votre temps";
+		mes "ici dans la Monster Race Arena.";
+		delitem 7514,1; //Monster_Ticket
+	}
+	monster_race_2_1 = monster_race_2_2 = 0;
+	close2;
+	warp "hugel",63,73;
+	end;
+}
+
+-	script	mob1#main	-1,{
+function	MN	{
+	setarray .@n$[1], "poring","lunatic","savagebebe","desertwolf","deviruchi","baphomet";
+	for ( .@i = 1; .@i <= 6; .@i++ ) {
+		if (compare(strnpcinfo(0),.@n$[.@i])) 
+			break;
+	}
+	return .@i;	
+}
+
+OnEnable:
+	enablenpc();
+	setarray .@n[1], 1725,1726,1727,1728,1730,1729;
+	getmapxy(.@m$,.@x,.@y,BL_NPC);
+	.@i = MN;
+	monster "p_track02",58,.@y,"Monster "+.@i,.@n[.@i],1,strnpcinfo(0)+"::OnMyMobDead";
+	end;
+
+OnTouchNPC:
+	.@i = MN;
+	if (!$@mon_race_2_1) {
+		emotion ET_THROB;
+		specialeffect EF_MVP;
+		mapannounce "p_track02","Monster "+.@i+" has reached the Finish Line!",bc_map,"0x66FFCC";
+		$@mon_race_2_1 = .@i;
+		donpcevent strnpcinfo(0)+"::OnDisable";
+	} else {
+		emotion ET_THROB;
+		specialeffect EF_MVP;
+		mapannounce "p_track02","The race is over! Monster "+.@i+" has reached the Finish Line!",bc_map,"0x66FFCC";
+		$@mon_race_2_2 = .@i;
+		donpcevent "#poring1::OnDisable";
+		donpcevent "#lunatic1::OnDisable";
+		donpcevent "#savagebebe1::OnDisable";
+		donpcevent "#desertwolf1::OnDisable";
+		donpcevent "#deviruchi1::OnDisable";
+		donpcevent "#baphomet1::OnDisable";
+		donpcevent "TrapGlobal#race02::OnDisable";
+		enablenpc "Medal Distributor#medal";
+		donpcevent "#race_timer2-3::OnEnable";
+	}
+OnMyMobDead:
+	end;
+
+OnDisable:
+	killmonster "p_track02",strnpcinfo(0)+"::OnMyMobDead";
+
+OnInit:
+	if ( strnpcinfo(2) != "main" )
+		disablenpc();
+	end;
+}
+p_track02,30,38,0	duplicate(mob1#main)	#poring1	139,0,0
+p_track02,30,36,0	duplicate(mob1#main)	#lunatic1	139,0,0
+p_track02,30,34,0	duplicate(mob1#main)	#savagebebe1	139,0,0
+p_track02,30,32,0	duplicate(mob1#main)	#desertwolf1	139,0,0
+p_track02,30,30,0	duplicate(mob1#main)	#deviruchi1	139,0,0
+p_track02,30,28,0	duplicate(mob1#main)	#baphomet1	139,0,0
+
+p_track02,19,48,0	script	TrapGlobal#race02	-1,{
+OnEnable:
+	enablenpc "TrapGlobal#race02";	
+	for ( .@c = 1; .@c <= 6; .@c++ ) {
+		.@line = rand(1,70);
+		enablenpc "starting#race02_"+.@c;
+		enablenpc "Tire#race02_"+.@c+"_1";
+		if (.@line <= 10) {
+			.@tired = rand(50,60);
+			enablenpc "Luk#race02_"+.@c+"_5";
+			enablenpc "Luk#race02_"+.@c+"_6";
+		} else if (.@line <= 30) {
+			.@tired = rand(40,60);
+			enablenpc "Luk#race02_"+.@c+"_5";
+			if ( .@tired < 50 ) enablenpc "Tire#race02_"+.@c+"_2";
+		} else if (.@line <= 40) {
+			.@tired = rand(30,50);
+			enablenpc "Luk#race02_"+.@c+"_1";
+			enablenpc "Tire#race02_"+.@c+"_2";
+			if ( .@tired < 40 ) enablenpc "Tire#race02_"+.@c+"_3";
+		} else if (.@line <= 50) {
+			.@tired = rand(20,40);
+			enablenpc "Luk#race02_"+.@c+"_1";
+			enablenpc "Luk#race02_"+.@c+"_2";
+			enablenpc "Tire#race02_"+.@c+"_2";
+			enablenpc "Tire#race02_"+.@c+"_3";
+			if ( .@tired < 30 ) enablenpc "Tire#race02_"+.@c+"_4";
+		} else if (.@line <= 60) {
+			.@tired = rand(10,30);
+			for ( .@i = 1; .@i <= 3; .@i++ )
+				enablenpc "Luk#race02_"+.@c+"_"+.@i;
+			for ( .@i = 2; .@i <= 4; .@i++ )
+				enablenpc "Tire#race02_"+.@c+"_"+.@i;
+			if ( .@tired < 20 ) enablenpc "Tire#race02_"+.@c+"_5";
+		}	else if (.@line <= 70) {
+			.@tired = rand(0,20);
+			for ( .@i = 1; .@i <= 4; .@i++ )
+				enablenpc "Luk#race02_"+.@c+"_"+.@i;
+			for ( .@i = 2; .@i <= 5; .@i++ )
+				enablenpc "Tire#race02_"+.@c+"_"+.@i;
+			if ( .@tired < 10 ) enablenpc "Tire#race02_"+.@c+"_6";
+		}
+		setd "$@mon_r02_luk"+.@c, .@line;
+		setd "$@mon_r02_tire"+.@c, .@tired;
+	}
+	end;
+
+OnDisable:
+	disablenpc "TrapGlobal#race02";
+	for ( .@i = 1; .@i <= 6; .@i++ )
+		donpcevent "starting#race02_"+.@i+"::OnDisable";
+	end;
+	
+OnInit:
+	for ( .@i = 1; .@i <= 6; .@i++ ) {
+		setd "$@mon_r02_luk"+.@i,0;
+		setd "$@mon_r02_tire"+.@i,0;
+	}
+	end;
+}
+
+-	script	starting_2	-1,{
+OnTouchNPC:
+	.@start = rand(1,100);
+	if (.@start < 11) .@speed = 60;
+	else if (.@start < 21) .@speed = 70;
+	else if (.@start < 31) .@speed = 80;
+	else if (.@start < 41) .@speed = 90;
+	else if (.@start < 51) .@speed = 100;
+	else if (.@start < 61) .@speed = 110;
+	else if (.@start < 71) .@speed = 120;
+	else if (.@start < 81) .@speed = 130;
+	else if (.@start < 91) .@speed = 140;
+	else .@speed = 150;
+	sc_start SC_WALKSPEED,5000,.@speed;
+	end;
+
+OnDisable:
+	for( .@i = 1; .@i < 7; .@i++ ) {
+		disablenpc "Luk#"+strnpcinfo(2)+"_"+.@i;
+		disablenpc "Tire#"+strnpcinfo(2)+"_"+.@i;
+	}
+	
+OnInit:
+	disablenpc();
+	end;
+}
+
+p_track02,56,38,0	duplicate(starting_2)	starting#race02_1	-1,0,0
+p_track02,56,36,0	duplicate(starting_2)	starting#race02_2	-1,0,0
+p_track02,56,34,0	duplicate(starting_2)	starting#race02_3	-1,0,0
+p_track02,56,32,0	duplicate(starting_2)	starting#race02_4	-1,0,0
+p_track02,56,30,0	duplicate(starting_2)	starting#race02_5	-1,0,0
+p_track02,56,28,0	duplicate(starting_2)	starting#race02_6	-1,0,0
+
+p_track02,33,38,0	duplicate(Luk_1)	Luk#race02_1_1	-1,0,0
+p_track02,37,38,0	duplicate(Luk_1)	Luk#race02_1_2	-1,0,0
+p_track02,53,38,0	duplicate(Luk_1)	Luk#race02_1_3	-1,0,0
+p_track02,45,38,0	duplicate(Luk_1)	Luk#race02_1_4	-1,0,0
+p_track02,33,36,0	duplicate(Luk_1)	Luk#race02_2_1	-1,0,0
+p_track02,37,36,0	duplicate(Luk_1)	Luk#race02_2_2	-1,0,0
+p_track02,53,36,0	duplicate(Luk_1)	Luk#race02_2_3	-1,0,0
+p_track02,45,36,0	duplicate(Luk_1)	Luk#race02_2_4	-1,0,0
+p_track02,33,34,0	duplicate(Luk_1)	Luk#race02_3_1	-1,0,0
+p_track02,37,34,0	duplicate(Luk_1)	Luk#race02_3_2	-1,0,0
+p_track02,53,34,0	duplicate(Luk_1)	Luk#race02_3_3	-1,0,0
+p_track02,45,34,0	duplicate(Luk_1)	Luk#race02_3_4	-1,0,0
+p_track02,33,32,0	duplicate(Luk_1)	Luk#race02_4_1	-1,0,0
+p_track02,37,32,0	duplicate(Luk_1)	Luk#race02_4_2	-1,0,0
+p_track02,53,32,0	duplicate(Luk_1)	Luk#race02_4_3	-1,0,0
+p_track02,45,32,0	duplicate(Luk_1)	Luk#race02_4_4	-1,0,0
+p_track02,33,30,0	duplicate(Luk_1)	Luk#race02_5_1	-1,0,0
+p_track02,37,30,0	duplicate(Luk_1)	Luk#race02_5_2	-1,0,0
+p_track02,53,30,0	duplicate(Luk_1)	Luk#race02_5_3	-1,0,0
+p_track02,45,30,0	duplicate(Luk_1)	Luk#race02_5_4	-1,0,0
+p_track02,33,28,0	duplicate(Luk_1)	Luk#race02_6_1	-1,0,0
+p_track02,37,28,0	duplicate(Luk_1)	Luk#race02_6_2	-1,0,0
+p_track02,53,28,0	duplicate(Luk_1)	Luk#race02_6_3	-1,0,0
+p_track02,45,28,0	duplicate(Luk_1)	Luk#race02_6_4	-1,0,0
+
+p_track02,49,38,0	duplicate(Luk_2)	Luk#race02_1_5	-1,0,0
+p_track02,41,38,0	duplicate(Luk_2)	Luk#race02_1_6	-1,0,0
+p_track02,49,36,0	duplicate(Luk_2)	Luk#race02_2_5	-1,0,0
+p_track02,41,36,0	duplicate(Luk_2)	Luk#race02_2_6	-1,0,0
+p_track02,49,34,0	duplicate(Luk_2)	Luk#race02_3_5	-1,0,0
+p_track02,41,34,0	duplicate(Luk_2)	Luk#race02_3_6	-1,0,0
+p_track02,49,32,0	duplicate(Luk_2)	Luk#race02_4_5	-1,0,0
+p_track02,41,32,0	duplicate(Luk_2)	Luk#race02_4_6	-1,0,0
+p_track02,49,30,0	duplicate(Luk_2)	Luk#race02_5_5	-1,0,0
+p_track02,41,30,0	duplicate(Luk_2)	Luk#race02_5_6	-1,0,0
+p_track02,49,28,0	duplicate(Luk_2)	Luk#race02_6_5	-1,0,0
+p_track02,41,28,0	duplicate(Luk_2)	Luk#race02_6_6	-1,0,0
+
+p_track02,43,38,0	duplicate(Tire_1)	Tire#race02_1_1	-1,0,0
+p_track02,39,38,0	duplicate(Tire_1)	Tire#race02_1_2	-1,0,0
+p_track02,35,38,0	duplicate(Tire_1)	Tire#race02_1_3	-1,0,0
+p_track02,55,38,0	duplicate(Tire_1)	Tire#race02_1_4	-1,0,0
+p_track02,51,38,0	duplicate(Tire_1)	Tire#race02_1_5	-1,0,0
+p_track02,47,38,0	duplicate(Tire_1)	Tire#race02_1_6	-1,0,0
+p_track02,43,36,0	duplicate(Tire_1)	Tire#race02_2_1	-1,0,0
+p_track02,39,36,0	duplicate(Tire_1)	Tire#race02_2_2	-1,0,0
+p_track02,35,36,0	duplicate(Tire_1)	Tire#race02_2_3	-1,0,0
+p_track02,55,36,0	duplicate(Tire_1)	Tire#race02_2_4	-1,0,0
+p_track02,51,36,0	duplicate(Tire_1)	Tire#race02_2_5	-1,0,0
+p_track02,47,36,0	duplicate(Tire_1)	Tire#race02_2_6	-1,0,0
+p_track02,43,34,0	duplicate(Tire_1)	Tire#race02_3_1	-1,0,0
+p_track02,39,34,0	duplicate(Tire_1)	Tire#race02_3_2	-1,0,0
+p_track02,35,34,0	duplicate(Tire_1)	Tire#race02_3_3	-1,0,0
+p_track02,55,34,0	duplicate(Tire_1)	Tire#race02_3_4	-1,0,0
+p_track02,51,34,0	duplicate(Tire_1)	Tire#race02_3_5	-1,0,0
+p_track02,47,34,0	duplicate(Tire_1)	Tire#race02_3_6	-1,0,0
+p_track02,43,32,0	duplicate(Tire_1)	Tire#race02_4_1	-1,0,0
+p_track02,39,32,0	duplicate(Tire_1)	Tire#race02_4_2	-1,0,0
+p_track02,35,32,0	duplicate(Tire_1)	Tire#race02_4_3	-1,0,0
+p_track02,55,32,0	duplicate(Tire_1)	Tire#race02_4_4	-1,0,0
+p_track02,51,32,0	duplicate(Tire_1)	Tire#race02_4_5	-1,0,0
+p_track02,47,32,0	duplicate(Tire_1)	Tire#race02_4_6	-1,0,0
+p_track02,43,30,0	duplicate(Tire_1)	Tire#race02_5_1	-1,0,0
+p_track02,39,30,0	duplicate(Tire_1)	Tire#race02_5_2	-1,0,0
+p_track02,35,30,0	duplicate(Tire_1)	Tire#race02_5_3	-1,0,0
+p_track02,55,30,0	duplicate(Tire_1)	Tire#race02_5_4	-1,0,0
+p_track02,51,30,0	duplicate(Tire_1)	Tire#race02_5_5	-1,0,0
+p_track02,47,30,0	duplicate(Tire_1)	Tire#race02_5_6	-1,0,0
+p_track02,43,28,0	duplicate(Tire_1)	Tire#race02_6_1	-1,0,0
+p_track02,39,28,0	duplicate(Tire_1)	Tire#race02_6_2	-1,0,0
+p_track02,35,28,0	duplicate(Tire_1)	Tire#race02_6_3	-1,0,0
+p_track02,55,28,0	duplicate(Tire_1)	Tire#race02_6_4	-1,0,0
+p_track02,51,28,0	duplicate(Tire_1)	Tire#race02_6_5	-1,0,0
+p_track02,47,28,0	duplicate(Tire_1)	Tire#race02_6_6	-1,0,0
+
+// NPCs for Redeeming Prize Medals (Einbroch and Hugel)
+//============================================================
+ein_in01,85,208,5	script	Ei'felle#repay01	854,{
+	if (!ein_medal01) {
+		mes "[Ei'felle]";
+		mes "Malédictions ! Nous devons livrer";
+		mes "ce que nos clients ont commandé,";
+		mes "mais nous n'avons rien gagné";
+		mes "mais des produits de merde ! Si nous";
+		mes "seulement si nous avions ce métal, nous pourrions";
+		mes "Améliorez la qualité de nos produits !";
+		next;
+		select("What metal are you talking about?");
+		mes "[Ei'felle]";
+		mes "Il y a un petit village";
+		mes "à la périphérie du";
+		mes "République de Schwarzwald qui";
+		mes "donne ces médailles spéciales";
+		mes "qui sont faits de ce métal";
+		mes "dont nous avons désespérément besoin...";
+		next;
+		mes "[Ei'felle]";
+		mes "Nous avons envoyé l'un de nos meilleurs";
+		mes "les hommes de guilde pour en obtenir quelques-uns";
+		mes "des médailles pour nous, mais il ne l'a pas fait";
+		mes "nous en a encore parlé.";
+		mes "Je deviens assez anxieux...";
+		next;
+		mes "[Ei'felle]";
+		mes "Je veux dire, nous avons besoin d'un tout";
+		mes "beaucoup de métal à remplir";
+		mes "nos commandes et terminer notre";
+		mes "recherche sur la fabrication,";
+		mes "mais jusqu'à présent, aucun de nous n'a";
+		mes "j'ai pu obtenir des médailles...";
+		next;
+		if (countitem("Marvelous_Medal")) {//7515
+			mes "["+ strcharinfo(0) +"]";
+			mes "Oh! Est-ce que tu parles";
+			mes "sur les médailles que";
+			mes "ils donnent en récompense";
+			mes "l'arène de course de monstres ?";
+			mes "J'en ai quelques-uns.";
+			next;
+			mes "[Ei'felle]";
+			mes "Hein? Montre-les-moi...";
+			mes "Oui! C'est exactement ce que";
+			mes "nous avons besoin! Voudriez-vous s'il vous plaît";
+			mes "faites don de vos médailles pour que nous";
+			mes "je peux enfin faire de la qualité";
+			mes "produits pour nos clients ?";
+			next;
+			callsub S_Reward;
+			end;
+		}
+		mes "[Ei'felle]";
+		mes "S'il vous arrive d'en obtenir";
+		mes "médailles du Monstre";
+		mes "Race Arena à Hugel, puis";
+		mes "s'il vous plaît, apportez-en quelques-uns";
+		mes "pour moi. je serai sûr de rembourser";
+		mes "à toi pour ta gentillesse...";
+		close;
+	} else if (ein_medal01 < 500) {
+		mes "[Ei'felle]";
+		mes "Oh, comment vas-tu ?";
+		mes "Merci beaucoup pour";
+		mes "en faisant don de tant de médailles,";
+		mes "ils m'ont été utiles dans mon";
+		mes "recherche. Pourtant, j'ai besoin de plus";
+		mes "et il y en a toujours plus chaque jour...";
+		next;
+		if (countitem("Marvelous_Medal")) {
+			mes "[Ei'felle]";
+			mes "L'autre forgeron";
+			mes "Les membres de la guilde font leur";
+			mes "il est préférable de collecter des médailles";
+			mes "à Hugel, mais ils continuent d'échouer";
+			mes "pour les gagner ! Si vous en avez";
+			mes "des médailles, puis-je en avoir ?";
+			next;
+			callsub S_Reward;
+			end;
+		}
+		mes "[Ei'felle]";
+		mes "S'il vous arrive d'en obtenir";
+		mes "médailles du Monstre";
+		mes "Race Arena à Hugel, puis";
+		mes "s'il vous plaît, apportez-en quelques-uns";
+		mes "pour moi. je serai sûr de rembourser";
+		mes "à toi pour ta gentillesse...";
+		close;
+	}
+	if (!checkweight("Knife",1)) {//1201
+		mes "[Ei'felle]";
+		mes "Mon Dieu, tu portes";
+		mes "tant de choses avec toi !";
+		mes "Tu ferais mieux d'en mettre un peu";
+		mes "rangez-le dans Kafra Storage";
+		mes "avant d'être submergé";
+		mes "par le gros de vos articles !";
+		close;
+	}
+	if (ein_medal01 > 499 && ein_medal01 < 1500) {
+		if (ein_medal01 < 1000) {
+			mes "[Ei'felle]";
+			mes "Ah, bon retour ! J'ai enfin";
+			mes "fait une percée dans mon";
+			mes "recherche sur les métaux ! Écoute, j'ai";
+			mes "développé ce Glittering";
+			mes "Veste! Il est léger et";
+			mes "très résistant, tu vois ?";
+			next;
+			mes "[Ei'felle]";
+			mes "je ne pourrais pas avoir";
+			mes "terminé ceci sans votre";
+			mes "aide. Maintenant, voudriez-vous";
+			mes "recevez cette veste scintillante";
+			mes "comme ma façon de te récompenser ?";
+			next;
+			if (select("Accept:Wait for Further Development") == 1) {
+				callsub S_BonusReward,500,2319;//Glittering_Clothes
+				end;
+			}
+			mes "[Ei'felle]";
+			mes "Ah, je vois. Tu préfères attendre";
+			mes "jusqu'à ce que nous développions quelque chose";
+			mes "plus à votre goût. En cela";
+			mes "Dans ce cas, pourriez-vous s'il vous plaît faire un don";
+			mes "plus de médailles pour ma recherche ?";
+			mes "Nous sommes toujours à court d'eux...";
+			next;
+		} else if (ein_medal01 < 1500) {
+			mes "[Ei'felle]";
+			mes "Oh, tu es de retour !";
+			mes "Merci à toutes les médailles";
+			mes "que tu as fait, je le suis maintenant";
+			mes "capable de fabriquer un ensemble";
+			mes "d'armure à fentes imprégnée";
+			mes "avec un bien de votre choix.";
+			next;
+			mes "[Ei'felle]";
+			mes "Si tu le souhaites, je peux te rembourser";
+			mes "maintenant en créant un ensemble d'armures élémentaires à fentes pour vous, ou nous";
+			mes "j'attends que vous fassiez un don supplémentaire";
+			mes "médailles jusqu'à ce que je puisse développer";
+			mes "autre chose pour toi.";
+			next;
+			switch(select("Accept Armor:Can I have something else?:Wait for Further Development")) {
+				case 1:
+					mes "[Ei'felle]";
+					mes "Je peux fabriquer un ensemble de";
+					mes "Armure à fentes imprégnée du";
+					mes "Feu, Terre, Vent ou Eau";
+					mes "propriété. Quelle propriété serait";
+					mes "tu aimes avoir ton armure ?";
+					next;
+					switch(select("Fire Property:Earth Property:Wind Property:Water Property")) {
+						case 1: callsub S_BonusReward,1000,2345; end;// Flame_Sprits_Armor_
+						case 2: callsub S_BonusReward,1000,2351; end;// Earth_Sprits_Armor_
+						case 3: callsub S_BonusReward,1000,2349; end;// Wind_Sprits_Armor_
+						case 4: callsub S_BonusReward,1000,2347; end;// Water_Sprits_Armor_
+					}
+				case 2:
+					mes "[Ei'felle]";
+					mes "Autre chose...?";
+					mes "Oh, tu dois dire";
+					mes "la veste scintillante qui";
+					mes "J'ai développé plus tôt. Après";
+					mes "tout, j'ai d'autres objets";
+					mes "à vous offrir pour l'instant...";
+					next;
+					callsub S_BonusReward,500,2319;
+					end;
+				case 3:
+					mes "[Ei'felle]";
+					mes "Ah, je vois. Tu préfères attendre";
+					mes "jusqu'à ce que nous développions quelque chose";
+					mes "plus à votre goût. En cela";
+					mes "Dans ce cas, pourriez-vous s'il vous plaît faire un don";
+					mes "plus de médailles pour ma recherche ?";
+					mes "Nous sommes toujours à court d'eux...";
+					next;
+					break;
+			}
+		}
+		if (countitem("Marvelous_Medal")) {
+			mes "[Ei'felle]";
+			mes "L'autre forgeron";
+			mes "Les membres de la guilde font leur";
+			mes "il est préférable de collecter des médailles";
+			mes "à Hugel, mais ils continuent d'échouer";
+			mes "pour les gagner ! Si vous en avez";
+			mes "des médailles, puis-je en avoir ?";
+			next;
+			callsub S_Reward;
+			end;
+		}
+		mes "[Ei'felle]";
+		mes "S'il vous arrive d'en obtenir";
+		mes "médailles du Monstre";
+		mes "Race Arena à Hugel, puis";
+		mes "s'il vous plaît, apportez-en quelques-uns";
+		mes "pour moi. je serai sûr de rembourser";
+		mes "à toi pour ta gentillesse...";
+		close;
+	} else if (ein_medal01 > 1499) {
+		mes "[Ei'felle]";
+		mes "Ah, tu es de retour ! j'ai";
+		mes "extrait tout le métal";
+		mes "des médailles que vous avez";
+		mes "m'a été donné, et je pense que j'ai";
+		mes "assez pour créer un niveau 4";
+		mes "Arme. N'est-ce pas incroyable ?";
+		next;
+		mes "[Ei'felle]";
+		mes "Si tu veux, je peux créer";
+		mes "une de ces armes pour toi";
+		mes "comme ma façon de te remercier pour";
+		mes "votre aide. Qu'en penses-tu?";
+		next;
+		if (select("Yes, I want a Level 4 Weapon.:Can I have something else?") == 2) {
+			mes "[Ei'felle]";
+			mes "Autre chose ?";
+			mes "Oh, très bien alors, est-ce que";
+			mes "tu aimes avoir un scintillant";
+			mes "Veste, ou un ensemble de fentes";
+			mes "Armure élémentaire ? S'il te plaît, vas-y";
+			mes "avance et fais ton choix ~";
+			next;
+			switch (select("Glittering Jacket:Fire Property Armor:Earth Property Armor:Wind Property Armor:Water Property Armor:Cancel")) {
+				case 1: callsub S_BonusReward,500,2319; end;
+				case 2: callsub S_BonusReward,1000,2345; end;
+				case 3: callsub S_BonusReward,1000,2351; end;
+				case 4: callsub S_BonusReward,1000,2349; end;
+				case 5: callsub S_BonusReward,1000,2347; end;
+				case 6: end;
+			}
+		}
+		setarray .@type$, "Dagger","One Handed Sword","Two Handed Sword","Axe","Mace","Bow","Staff","Book","Spear","Katar","Knuckle","Whip","Musical Instrument";
+		.@m = select( implode(.@type$,":") ) - 1;
+		mes "[Ei'felle]";
+		mes "Alors vous aimeriez avoir un";
+		mes .@type$[.@m]+"? Please choose";
+		mes "quelle arme de niveau 4";
+		mes "que tu veux que je crée.";
+		next;
+		switch(.@m) {
+			case 0:
+				.@weapon$ = "Ginnungagap:Grimtooth:Dragon Killer:Mail Breaker:Bazerald:Sword Breaker:Ice Pick:Sucsamad:Kitchen Knife:Azoth:Exorciser:Assassin Dagger:Moonlight Dagger:Weeder Knife:Cursed Dagger:Dagger of Counter:Combat Knife:Fortune Sword";
+				setarray .@weapon_id, 13002,1237,13001,1225,1231,1224,1230,1236,1229,1235,1233,1232,1234,1227,1241,1242,1228,1223;
+				break;
+			case 1:
+				.@weapon$ = "Nagan:Immaterial Sword:Mysteltainn:Byeollungum:Star Dust Blade:Caesar's Sword:Ice Falchion:Excalibur:Edge:Cutlus:Solar Sword:Tirfing:Fireblend";
+				setarray .@weapon_id, 1130,1141,1138,1140,1148,1134,1131,1137,1132,1135,1136,1139,1133;
+				break;
+			case 2:	
+				.@weapon$ = "Dragon Slayer:Masamune:Muramasa:Schweizersabel:Executioner:Zweihander:Katzbalger";
+				setarray .@weapon_id, 1166,1165,1164,1167,1169,1168,1170;
+				break;
+			case 3:
+				.@weapon$ = "Great Axe:Guillotine:Light Epsilon:Bloody Axe:Sabbath:Slaughter:Cleaver:Tomahawk";
+				setarray .@weapon_id, 1364,1369,1366,1363,1365,1367,1305,1368;
+				break;
+			case 4:
+				.@weapon$ = "Golden Mace:Grand Cross:Long Mace:Spike:Slash:Quadrille";
+				setarray .@weapon_id, 1524,1528,1525,1523,1526,1527;
+				break;
+			case 5:
+				.@weapon$ = "Roguemaster's Bow:Dragon Wing:Rudra's Bow:Ballista";
+				setarray .@weapon_id, 1719,1724,1720,1722;
+				break;
+			case 6:
+				.@weapon$ = "Wing Staff:Wizardry Staff";
+				setarray .@weapon_id, 1616,1473;
+			case 7:
+				.@weapon$ = "Legacy of Dragon:Book of the Apocalypse:Girl's Diary:Hardcover Book";
+				setarray .@weapon_id, 1559,1557,1558,1561;
+				break;
+			case 8:
+				.@weapon$ = "Gae Bolg:Gelerdria:Gungnir:Skewer:Longinus's Spear:Brionac:Bill Guisarme:Zephyrus:Crescent Scythe:Tjungkuletti:Hellfire";
+				setarray .@weapon_id, 1474,1414,1413,1415,1469,1470,1467,1468,1466,1416,1471;
+				break;
+			case 9:
+				.@weapon$ = "Infiltrator:Bloody Roar:Unholy Touch";
+				setarray .@weapon_id, 1261,1265,1263;
+				break;
+			case 10:
+				.@weapon$ = "Hatii Claw:Berserk:Kaiser Knuckle";
+				setarray .@weapon_id, 1815,1814,1813;
+				break;
+			case 11:
+				.@weapon$ = "Lariat:Rapture Rose:Blade Whip:Chemeti:Queen's Whip";
+				setarray .@weapon_id, 1962,1963,1969,1964,1970;
+				break;
+			case 12:
+				.@weapon$ = "Oriental Lute:Electric Guitar";
+				setarray .@weapon_id, 1918,1913;
+				break;		
+		}
+		.@j = select (.@weapon$+":Cancel") - 1;
+		explode(.@weapon$,.@weapon$,":");
+		if (.@j == getarraysize(.@weapon$)) close;
+		callsub S_BonusReward,1500,.@weapon_id[.@j];
+		end;
+	}
+	
+S_Reward:
+	if (select("Sure:No") == 2) {
+		mes "[Ei'felle]";
+		mes "Ah, d'accord...";
+		mes "Pourtant, j'ai vraiment besoin";
+		mes "ces médailles, donc si vous";
+		mes "change d'avis, s'il te plaît";
+		mes "reviens dès que tu peux.";
+		emotion ET_CRY;
+		close;
+	}
+	mes "[Ei'felle]";
+	mes "Oh, merci beaucoup !";
+	mes "Je peux utiliser le métal dans ceux-là";
+	mes "médailles pour produire des hauts";
+	mes "produits de qualité. Maintenant, comment";
+	mes "dois-je te rembourser de m'avoir donné";
+	mes "certaines de vos médailles ?";
+	next;
+	switch(select("Base Experience:Job Experience:No, I'm just glad to help.:How's your research progressing?")) {
+		case 1:
+			mes "[Ei'felle]";
+			mes "Tu veux juste t'améliorer";
+			mes "toi-même, hein ? Eh bien, je ne sais pas";
+			mes "si tu veux devenir plus fort,";
+			mes "plus intelligent ou plus rapide, mais je peux";
+			mes "vous coacher sur une visualisation si vous le souhaitez. Maintenant, détends-toi avec moi~";
+			mes "développement physique.";
+			next;
+			mes "[Ei'felle]";
+			mes "Concentrez-vous... et croyez.";
+			mes "Crois que tu es";
+			mes "devenir ce que tu veux";
+			mes "être! B-crois... avec";
+			mes "tout ton putain de cœur !";
+			emotion ET_HUK, playerattached();
+			emotion ET_HUK;
+			next;
+			mes "[Ei'felle]";
+			mes "*Ouf* Comment ça ?";
+			mes "Maintenant, voyez-vous le";
+			mes "le pouvoir de l'espoir ?";
+			delitem 7515,1; //Marvelous_Medal
+			if (checkre(3)) {
+				if (BaseLevel < 21) getexp 110,0;
+				else if ((BaseLevel > 20) && (BaseLevel < 31)) getexp 280,0;
+				else if ((BaseLevel > 30) && (BaseLevel < 41)) getexp 1000,0;
+				else if ((BaseLevel > 40) && (BaseLevel < 51)) getexp 1200,0;
+				else if ((BaseLevel > 50) && (BaseLevel < 61)) getexp 1500,0;
+				else if ((BaseLevel > 60) && (BaseLevel < 71)) getexp 2800,0;
+				else if ((BaseLevel > 70) && (BaseLevel < 81)) getexp 4500,0;
+				else getexp 8500,0;
+
+			/* iRO EXP Table:
+				if (BaseLevel < 21) getexp 200,0;
+				else if ((BaseLevel > 20) && (BaseLevel < 31)) getexp 300,0;
+				else if ((BaseLevel > 30) && (BaseLevel < 41)) getexp 1000,0;
+				else if ((BaseLevel > 40) && (BaseLevel < 51)) getexp 1800,0;
+				else if ((BaseLevel > 50) && (BaseLevel < 61)) getexp 2500,0;
+				else if ((BaseLevel > 60) && (BaseLevel < 71)) getexp 4700,0;
+				else if ((BaseLevel > 70) && (BaseLevel < 81)) getexp 5500,0;
+				else if ((BaseLevel > 80) && (BaseLevel < 96)) getexp 7000,0;
+				else if ((BaseLevel > 95) && (BaseLevel < 111)) getexp 8800,0;
+				else if ((BaseLevel > 110) && (BaseLevel < 126)) getexp 10900,0;
+				else if ((BaseLevel > 125) && (BaseLevel < 141)) getexp 13300,0;
+				else getexp 16000,0;
+			*/
+
+			} else {
+				if (BaseLevel < 21) getexp 150,0;
+				else if ((BaseLevel > 20) && (BaseLevel < 31)) getexp 300,0;
+				else if ((BaseLevel > 30) && (BaseLevel < 41)) getexp 2000,0;
+				else if ((BaseLevel > 40) && (BaseLevel < 51)) getexp 8000,0;
+				else if ((BaseLevel > 50) && (BaseLevel < 61)) getexp 25000,0;
+				else if ((BaseLevel > 60) && (BaseLevel < 71)) getexp 47000,0;
+				else if ((BaseLevel > 70) && (BaseLevel < 81)) getexp 55000,0;
+				else getexp 65000,0;
+			}
+			close;
+		case 2:
+			mes "[Ei'felle]";
+			mes "Tu veux devenir plus";
+			mes "compétent dans votre travail ? Euh...";
+			mes "Très bien, nous pouvons le faire. Juste";
+			mes "médite avec moi et nous irons";
+			mes "faites du travail d'imagerie ensemble.";
+			mes "Je suis vraiment doué pour ça, tu sais.";
+			next;
+			mes "[Ei'felle]";
+			mes "J-juste... visualise";
+			mes "vous-même... étant...";
+			mes "t-totalement... génial !";
+			mes "Tu dois le voir, et";
+			mes "tu dois le sentir dans ton";
+			mes "putain de cœur et d'esprit !";
+			emotion ET_HUK, playerattached();
+			emotion ET_HUK;
+			next;
+			mes "[Ei'felle]";
+			mes "Ouais, ça n'a pas d'importance";
+			mes "si c'est réel ou imaginaire...";
+			mes "Votre esprit travaillera sur";
+			mes "peu importe ce que vous lui donnez.";
+			mes "Placebos et symptômes psychosomatiques... tout est lié.";
+			delitem 7515,1; //Marvelous_Medal
+			if (checkre(3)) {
+				if (Class == Job_Novice) {
+					getexp 0,15;
+				} else if (Class == Job_Novice_High) {
+					getexp 0,25;
+				} else if ((Class >= Job_Swordman && Class <= Job_Thief) || Class == Job_Taekwon) {
+					if (JobLevel < 11) getexp 0,25;
+					else if ((JobLevel > 10) && (JobLevel < 21)) getexp 0,200;
+					else if ((JobLevel > 20) && (JobLevel < 31)) getexp 0,300;
+					else if ((JobLevel > 30) && (JobLevel < 41)) getexp 0,950;
+					else getexp 0,1800;
+				} else if ((Class >= Job_Knight && Class <= Job_Crusader2) || (Class >= Job_Swordman_High && Class <= Job_Thief_High)) {
+					if (JobLevel < 11) getexp 0,40;
+					else if ((JobLevel > 10) && (JobLevel < 21)) getexp 0,300;
+					else if ((JobLevel > 20) && (JobLevel < 31)) getexp 0,550;
+					else if ((JobLevel > 30) && (JobLevel < 41)) getexp 0,1080;
+					else getexp 0,2150;
+				} else {
+					if (JobLevel < 11) getexp 0,55;
+					else if ((JobLevel > 10) && (JobLevel < 21)) getexp 0,330;
+					else if ((JobLevel > 20) && (JobLevel < 31)) getexp 0,600;
+					else if ((JobLevel > 30) && (JobLevel < 41)) getexp 0,1200;
+					else if ((JobLevel > 40) && (JobLevel < 51)) getexp 0,1750;
+					else getexp 0,2950;
+				}
+
+			/* iRO JEXP Table:
+				if (BaseLevel < 21) getexp 0,150;
+				else if ((BaseLevel > 20) && (BaseLevel < 31)) getexp 0,200;
+				else if ((BaseLevel > 30) && (BaseLevel < 41)) getexp 0,750;
+				else if ((BaseLevel > 40) && (BaseLevel < 51)) getexp 0,1800;
+				else if ((BaseLevel > 50) && (BaseLevel < 61)) getexp 0,2500;
+				else if ((BaseLevel > 60) && (BaseLevel < 71)) getexp 0,3525;
+				else if ((BaseLevel > 70) && (BaseLevel < 81)) getexp 0,4125;
+				else if ((BaseLevel > 80) && (BaseLevel < 96)) getexp 0,5250;
+				else if ((BaseLevel > 95) && (BaseLevel < 111)) getexp 0,6600;
+				else if ((BaseLevel > 110) && (BaseLevel < 126)) getexp 0,8175;
+				else if ((BaseLevel > 125) && (BaseLevel < 141)) getexp 0,9975;
+				else getexp 0,12000;
+			*/
+
+			} else {
+				if (Class == Job_Novice) {
+					getexp 0,30;
+				} else if ((Class >= Job_Swordman && Class <= Job_Thief) || Class == Job_Taekwon) {
+					if (JobLevel < 11) getexp 0,50;
+					else if ((JobLevel > 10) && (JobLevel < 21)) getexp 0,250;
+					else if ((JobLevel > 20) && (JobLevel < 31)) getexp 0,1500;
+					else if ((JobLevel > 30) && (JobLevel < 41)) getexp 0,7000;
+					else getexp 0,20000;
+				} else if (Class >= Job_Knight && Class <= Job_Crusader2) {
+					if (JobLevel < 11) getexp 0,80;
+					else if ((JobLevel > 10) && (JobLevel < 21)) getexp 0,2000;
+					else if ((JobLevel > 20) && (JobLevel < 31)) getexp 0,10000;
+					else if ((JobLevel > 30) && (JobLevel < 41)) getexp 0,25000;
+					else getexp 0,38000;
+				} else if (Class == Job_Novice_High) {
+					getexp 0,40;
+				} else if (Class >= Job_Swordman_High && Class <= Job_Thief_High) {
+					if (JobLevel < 11) getexp 0,65;
+					else if ((JobLevel > 10) && (JobLevel < 21)) getexp 0,300;
+					else if ((JobLevel > 20) && (JobLevel < 31)) getexp 0,2500;
+					else if ((JobLevel > 30) && (JobLevel < 41)) getexp 0,10000;
+					else getexp 0,25000;
+				} else if (Class >= Job_Lord_Knight && Class <= Job_Paladin_2) {
+					if (JobLevel < 11) getexp 0,150;
+					else if ((JobLevel > 10) && (JobLevel < 21)) getexp 0,2200;
+					else if ((JobLevel > 20) && (JobLevel < 31)) getexp 0,13000;
+					else if ((JobLevel > 30) && (JobLevel < 41)) getexp 0,27000;
+					else if ((JobLevel > 40) && (JobLevel < 51)) getexp 0,38000;
+					else getexp 0,40000;
+				} else {
+					if (JobLevel < 11) getexp 0,50;
+					else if ((JobLevel > 10) && (JobLevel < 21)) getexp 0,250;
+					else if ((JobLevel > 20) && (JobLevel < 31)) getexp 0,1500;
+					else if ((JobLevel > 30) && (JobLevel < 41)) getexp 0,7000;
+					else if ((JobLevel > 40) && (JobLevel < 51)) getexp 0,20000;
+					else if ((JobLevel > 50) && (JobLevel < 61)) getexp 0,30000;
+					else getexp 0,38000;
+				}
+			}
+			close;
+		case 3:
+			mes "[Ei'felle]";
+			mes "Qu'est-ce que... ?! Vous êtes sûr";
+			mes "tu ne veux rien ?";
+			mes "Hm, eh bien, je pense que c'est gentil";
+			mes "de mauvais karma si je ne donne pas";
+			mes "tu as quelque chose en retour, alors...";
+			mes "Pensez à quelque chose. Rapide.";
+			next;
+			mes "["+ strcharinfo(0) +"]";
+			mes "Euh, utilise juste les médailles";
+			mes "pour faire avancer votre fabrication";
+			mes "faites des recherches, et vous pourrez alors";
+			mes "remboursez-moi si vous développez";
+			mes "quelque chose de nouveau. C'est, euh, comme";
+			mes "un investissement dans votre travail!";
+			next;
+			mes "[Ei'felle]";
+			mes "Ouais... Ouais.";
+			mes "Ok, je vois où";
+			mes "d'où tu viens.";
+			mes "C'est plutôt intelligent.";
+			mes "D'accord, je te rembourserai quand";
+			mes "nous développons quelque chose de nouveau !";
+			next;
+			mes "[Ei'felle]";
+			mes "Quoi qu'il en soit, j'en ai besoin d'autant";
+			mes "médailles que je peux obtenir comme";
+			mes "dès que je peux. Combien";
+			mes "médailles, penses-tu que tu";
+			mes "peux-tu me le donner maintenant ?";
+			next;
+			switch(select("Take them all.:How about this much?:No, I changed my mind.")) {
+			case 1:
+				mes "[Ei'felle]";
+				mes "Merci !";
+				mes "Merci beaucoup!";
+				mes "Votre aide sera grandement";
+				mes "faire avancer mes recherches,";
+				mes "et je promets de rembourser";
+				mes "dès que je peux !";
+				.@medals = countitem("Marvelous_Medal");
+				delitem 7515, .@medals; //Marvelous_Medal
+				ein_medal01 += .@medals;
+				close;
+			case 2:
+				mes "[Ei'felle]";
+				mes "Très bien, veuillez entrer le";
+				mes "nombre de médailles que";
+				mes "tu es prêt à me donner.";
+				mes "Merci de ne rien saisir";
+				mes "nombre supérieur à 100.";
+				next;
+				while(1) {
+					input .@input;
+					if (!.@input) {
+						mes "[Ei'felle]";
+						mes "Aw, alors tu as décidé";
+						mes "annuler ? Eh bien, c'est votre";
+						mes "choix, mais je le suis toujours";
+						mes "déçu. S'il te plaît, viens";
+						mes "revenez si vous changez d'avis...";
+						close;
+					} else if (.@input < 1 || .@input > 100) {
+						mes "[Ei'felle]";
+						mes "N'oubliez pas que vous ne pouvez";
+						mes "entrez un nombre de 1 à 100.";
+						mes "Si tu veux m'en donner plus";
+						mes "médailles, alors peut-être que vous";
+						mes "je devrais juste me les donner tous ~";
+						next;
+					} else break;
+				}
+				if (countitem("Marvelous_Medal") < .@input) {
+					mes "[Ei'felle]";
+					mes "Je suis désolé, mais je ne le fais pas";
+					mes "je pense que tu en as autant";
+					mes "médailles avec vous. S'assurer";
+					mes "que tu m'offres un montant de";
+					mes "médailles que vous possédez réellement.";
+					emotion ET_SMILE;
+					close;
+				} else {
+					mes "[Ei'felle]";
+					mes "Merci !";
+					mes "Merci beaucoup!";
+					mes "Votre aide sera grandement";
+					mes "faire avancer mes recherches,";
+					mes "et je promets de rembourser";
+					mes "dès que je peux !";
+					delitem 7515, .@input; //Marvelous_Medal
+					ein_medal01 += .@input;
+					close;
+				}
+			case 3:
+				mes "[Ei'felle]";
+				mes "Ah, d'accord...";
+				mes "Pourtant, j'ai vraiment besoin";
+				mes "ces médailles, donc si vous";
+				mes "change d'avis, s'il te plaît";
+				mes "reviens dès que tu peux.";
+				close;
+			}
+		case 4:
+			mes "[Ei'felle]";
+			mes "Eh bien, j'ai pu";
+			mes "créer une veste scintillante";
+			mes "en utilisant les médailles que vous avez";
+			mes "m'a été apporté. Mais je sais juste";
+			mes "Je peux faire quelque chose de mieux";
+			mes "si tu m'en apportais plus !";
+			next;
+			mes "[Ei'felle]";
+			mes "Pour l'instant, j'ai le métal";
+			mes "from ^FF0000"+ ein_medal01 +"^000000 Prizes Medals that";
+			mes "vous m'avez fait un don. Plus";
+			mes "que vous m'apportez, plus je peux me rapprocher d'une nouvelle percée !";
+			close;
+	}
+
+S_BonusReward:
+	mes "[Ei'felle]";
+	.@arg1 = getarg(1);
+	if (.@arg1 == 2319) {
+		mes "Veux-tu vraiment";
+		mes "this "+getitemname(.@arg1)+"?";
+		mes "Vous voudrez peut-être y renoncer";
+		mes "récompense en faveur de l'obtention";
+		mes "quelque chose de mieux plus tard...";
+	} else if (.@arg1 == 2345 || .@arg1 == 2347 || .@arg1 == 2349 || .@arg1 == 2351) {
+		mes "Etes-vous sûr de vouloir";
+		mes "pour accepter cet ensemble de fentes";
+		if (.@arg1 == 2345) mes "Armure de propriété d'incendie ? Si vous le faites,";
+		else if (.@arg1 == 2351) mes "Armure de propriété terrestre ? Si vous le faites,";
+		else if (.@arg1 == 2349) mes "Armure de propriété éolienne? Si vous le faites,";
+		else if (.@arg1 == 2347) mes "Propriété de l'eau Armor ? Si vous le faites,";
+		mes "J'aurai besoin de plus de médailles de ta part";
+		mes "faire de nouveaux progrès";
+		mes "dans mes recherches sur la fabrication.";
+	} else {
+		mes "Vous souhaitez donc avoir un";
+		mes getitemname(.@arg1)+"? If you choose";
+		mes "avoir cette arme de niveau 4,";
+		mes "Je vais devoir faire fondre beaucoup de";
+		mes "les médailles que vous avez données";
+		mes "pour moi. Devons-nous continuer ?";
+	}
+	next;
+	if (select("Decline:Accept") == 1) {
+		mes "["+ strcharinfo(0) +"]";
+		mes "Attends, j'ai changé mon";
+		mes "esprit. Est-ce que ça irait bien";
+		mes "si je te demandais de donner";
+		mes "moi une récompense plus tard ?";
+		next;
+		mes "[Ei'felle]";
+		if (getiteminfo( .@arg1, ITEMINFO_TYPE ) == IT_ARMOR) {
+			mes "Bien sûr, bien sûr.";
+			mes "N'oubliez pas que si vous faites un don";
+			mes "plus de médailles pour moi, alors";
+			mes "Je pourrai créer des éléments";
+			mes "de meilleure qualité pour vous ~";
+		} else {
+			mes "Je ne pense pas pouvoir développer";
+			mes "rien de mieux que ces armes de niveau 4, mais après avoir fabriqué";
+			mes "un investissement aussi important, vous devez décider soigneusement de ce que vous voulez.";
+		}
+		close;
+	}
+	mes "[Ei'felle]";
+	if (.@arg1 == 2319) {
+		mes "Voilà, j'ai confiance en ça";
+		mes "this "+getitemname(.@arg1)+" will";
+		mes "bien vous servir. Merci";
+		mes "pour votre aide, et j'espère que";
+		mes "vous continuerez à faire don de votre";
+		mes "médailles pour mes recherches sur les métaux~";
+	} else if (.@arg1 == 2345 || .@arg1 == 2347 || .@arg1 == 2349 || .@arg1 == 2351) {
+		mes "Excellent choix ! Je suis sûr";
+		if (.@arg1 == 2345) mes "que cet ensemble de Fire à fente";
+		else if (.@arg1 == 2351) mes "que cet ensemble de Terre fendue";
+		else if (.@arg1 == 2349) mes "que cet ensemble de Vent à fente";
+		else if (.@arg1 == 2347) mes "que cet ensemble d'eau à fente";
+		mes "property Armor vous servira";
+		mes "Bien. Merci pour votre aide,";
+		mes "et si tu obtiens plus de médailles,";
+		mes "s'il vous plaît, donnez-les-moi ~";
+	} else {
+		mes "Encore une fois, j'aimerais";
+		mes "merci d'avoir fourni";
+		mes "moi avec toutes ces médailles.";
+		mes "J'imagine que ça a dû être";
+		mes "difficile. En tout cas, je le ferais";
+		mes "j'apprécie votre aide continue ~";
+	}
+	ein_medal01 -= getarg(0);
+	getitem .@arg1,1;
+	close;
+}
+
+hugel,71,83,4	script	Wayne	900,{
+	if (!checkweight("Knife",1)) {
+		mes "[Wayne]";
+		mes "Attends une seconde...";
+		mes "Si vous souhaitez échanger";
+		mes "vos médailles de prix pour des objets,";
+		mes "tu ferais mieux de libérer plus d'espace";
+		mes "dans votre inventaire en premier. Pourquoi n'utilisez-vous pas votre stockage Kafra ?";
+		close;
+	}
+	mes "[Wayne]";
+	mes "Bonjour! Vous êtes-vous déjà demandé";
+	mes "ce que tu pourrais faire avec tout";
+	mes "les médailles que vous pouvez gagner";
+	mes "dans Monster Race Arena? Toi";
+	mes "vous pouvez en faire don à Einbroch";
+	mes "à la guilde des forgerons...";
+	next;
+	mes "[Wayne]";
+	mes "...Ou vous pouvez les échanger";
+	mes "pour les articles, ici et à droite";
+	mes "maintenant, avec moi. Comme toujours, le";
+	mes "le choix dépend vraiment de vous.";
+	next;
+	if (select("Prize Medal Exchange:Cancel") == 2) {
+		mes "[Wayne]";
+		mes "Eh bien, garde juste à l'esprit";
+		mes "que tu peux toujours venir";
+		mes "à moi d'échanger ton prix";
+		mes "Médailles pour objets consommables.";
+		mes "Ce type à Einbroch ? Pas sûr";
+		mes "ce qu'il te donnerait pour eux...";
+		next;
+		mes "[Wayne]";
+		mes "Tout ce que je sais, c'est qu'il";
+		mes "a besoin de beaucoup de médailles";
+		mes "pour le travail qu'il fait.";
+		mes "Pourtant, j'ai entendu dire qu'il pourrait bien";
+		mes "valorisez vos dons";
+		mes "tous tes efforts, tu sais ?";
+		close;
+	}
+	if (!checkweight("Jellopy",550)) {
+		mes "[Wayne]";
+		mes "Attends une seconde...";
+		mes "Si vous souhaitez échanger";
+		mes "vos médailles de prix pour des objets,";
+		mes "tu ferais mieux de libérer plus d'espace";
+		mes "dans votre inventaire en premier. Pourquoi n'utilisez-vous pas votre stockage Kafra ?";
+		close;
+	} else {
+		mes "[Wayne]";
+		mes "Maintenant, combien de médailles";
+		mes "tu souhaites échanger ?";
+		mes "Il ne faut pas un génie pour";
+		mes "Comprenez que vous pouvez obtenir";
+		mes "objets plus précieux en échangeant";
+		mes "plus de médailles à la fois.";
+		next;
+		setarray .@pm, 1,3,7,8,16,25,42,59;
+		.@total_pm = getarraysize(.@pm);
+		for ( .@i = 0; .@i < .@total_pm; .@i++ )
+			.@menu$ = .@menu$ + .@pm[.@i] + " Prize medal:";
+		.@m = select(.@menu$) - 1;
+		switch (.@m) {
+			case 0: 
+				.@items$ = "2 Hinale Leaflets:2 Aloe Leaflets:1 Mastela Fruit:5 Witch Starsands:4 Condensed Red Potions";
+				setarray .@item_array, 520,2,521,2,522,1,1061,5,545,4;
+				break;
+			case 1:
+				.@items$ = "1 Royal Jelly:6 Holy Waters";
+				setarray .@item_array, 526,1,523,6;
+				break;
+			case 2:
+				.@items$ = "1 Cookie Bag:1 First Aid Kit";
+				setarray .@item_array, 12130,1,12110,1;
+				break;
+			case 3:
+				.@items$ = "1 Gift Box";
+				setarray .@item_array, 644,1;
+				break;
+			case 4:
+				.@items$ = "1 Old Blue Box";
+				setarray .@item_array, 603,1;
+				break;
+			case 5:
+				.@items$ = "1 Taming Gift Set";
+				setarray .@item_array, 12105,1;
+				break;
+			case 6:
+				.@items$ = "1 Old Purple Box";
+				setarray .@item_array, 617,1;
+				break;
+			case 7:
+				.@items$ = "1 Poring Box";
+				setarray .@item_array, 12109,1;
+				break;
+		}
+		mes "[Wayne]";
+		mes "Maintenant, veuillez choisir";
+		mes "lequel des éléments suivants";
+		mes "les ensembles que vous aimeriez recevoir";
+		mes "in exchange for "+.@pm[.@m]+" Prize Medal."+((getarraysize(.@item_array)<3)?" Well, we have only 1 set, but...":"");
+		next;
+		.@m2 = ( select(.@items$) -1 ) *2;
+		if (countitem("Marvelous_Medal") < .@pm[.@m]) {
+			mes "[Wayne]";
+			mes "Hé, tu n'as pas";
+			mes "assez de médailles avec";
+			mes "toi. Allez en chercher d'autres";
+			mes "si tu veux échanger";
+			mes "avec moi pour n'importe quoi.";
+			close;
+		}
+		mes "[Wayne]";
+		mes "Et voilà ~";
+		mes "Merci d'avoir utilisé mon";
+		mes "service, et j'espère que";
+		mes "tu reviens me rendre visite";
+		mes "bientôt. Profitez du monstre";
+		mes "courses, juste aventurier ~";
+		delitem 7515,.@pm[.@m];// Marvelous_Medal
+		getitem .@item_array[.@m2], .@item_array[(.@m2+1)];
+		close;		
+	}
+}
+
+// Monster Race Affiliated NPCs
+//============================================================
+airplane,246,47,1	script	Eocatt#decoy01	878,{
+	mes "[Éocatt]";
+	mes "Il y a un vieux, humble";
+	mes "village à la périphérie de";
+	mes "la République de Schwarzwald.";
+	mes "C'était juste un petit incident sur le";
+	mes "carte jusqu'à ce qu'ils s'ouvrent";
+	mes "leur Monster Race Arena !";
+	next;
+	mes "[Éocatt]";
+	mes "If you win wagers on the";
+	mes "jeux de course de monstres, vous";
+	mes "être récompensé par ces prix";
+	mes "Médailles faites de certains";
+	mes "métal vraiment rare. J'ai entendu dire que ce métal était demandé à Einbroch...";
+	next;
+	mes "[Éocatt]";
+	mes "C'est vrai, c'est vrai...";
+	mes "Je me souviens maintenant, le";
+	mes "la ville s'appelait Hugel.";
+	mes "Je suis sûr qu'il y a d'autres plaisirs";
+	mes "des choses à faire là-bas, mais je suis sûr que la Race Arena est un incontournable !";
+	close;
+}
+
+hugel,85,93,5	script	Mudie#dummy01	866,{
+	mes "[Mudie]";
+	mes "Les courses de monstres";
+	mes "sont probablement les plus gros";
+	mes "attraction ici à Hugel.";
+	mes "Nous n'avons pas grand chose d'autre";
+	mes "ce qui se passe ici, j'en ai peur.";
+	next;
+	mes "[Mudie]";
+	mes "Si tu veux aller visiter";
+	mes "la Monster Race Arena,";
+	mes "dirigez-vous simplement vers le";
+	mes "7 heures sur la direction";
+	mes "votre mini-carte et recherchez";
+	mes "la colline entourée d'une clôture.";
+	next;
+	mes "[Mudie]";
+	mes "Tu devrais trouver l'arène";
+	mes "quelque part dans cette zone.";
+	mes "Quoi qu'il en soit, si vous voulez parier";
+	mes "ou juste regarder les courses, juste";
+	mes "demandez à l'un des frères Eckar. J'espère que vous apprécierez notre petite ville~";
+	close;
+}
+
+p_track02,32,45,5	script	Eccentric Scholar#double	755,{
+	mes "[Érudit excentrique]";
+	mes "Voyons maintenant...";
+	mes "Vitesse moyenne du monstre 1";
+	mes "et la chance, affectée par";
+	mes "résistance au vent, fatigue...";
+	mes "Quelle est la valeur approximative";
+	mes "probabilité de gagner...?";
+	next;
+	mes "[Érudit excentrique]";
+	mes "Croque-le dans mon";
+	mes "algorithme... Portez les deux...";
+	mes "Attends, combien d'importants";
+	mes "les chiffres dois-je utiliser ?";
+	mes "Ah, c'est vrai, 7, pour tenir compte de x,";
+	mes "une valeur représentant--";
+	next;
+	mes "["+ strcharinfo(0) +"]";
+	mes "Excusez-moi, mais";
+	mes "que fais-tu ?";
+	next;
+	mes "[Érudit excentrique]";
+	mes "S-silence !";
+	mes "je dois compléter";
+	mes "mes calculs !";
+	mes "Maintenant, où étais-je... ?";
+	specialeffect EF_CLAYMORE;
+	emotion ET_FRET;
+	close;
+}
+
+p_track02,69,31,1	script	Blacksmith Guildsman#dou	726,{
+	if (!$@mon_time_2_2) {
+		mes "[Homme de guilde forgeron]";
+		mes "Combien de fois faut-il";
+		mes "Je parie sur ces courses ?!";
+		mes "Je n'ai pas gagné une seule fois !";
+		mes "Oh, je dois avoir le pire";
+		mes "chance dans l'historique des paris !";
+		emotion ET_CRY;
+		next;
+		mes "[Homme de guilde forgeron]";
+		mes "J'ai été assigné par mon";
+		mes "guilde pour en rapporter";
+		mes "Médailles de prix à Einbroch...";
+		mes "Ils sont apparemment faits";
+		mes "avec du métal rare, mais...";
+		mes "C'est trop dur pour moi de gagner ~ !";
+		emotion ET_PROFUSELY_SWEAT;
+		close;
+	} 
+	mes "[Homme de guilde forgeron]";
+	mes "Courir! Allez! Allez! Allez!";
+	mes "J'ai besoin d'en gagner";
+	mes "des médailles ! Sinon, je vais";
+	mes "avoir trop honte de revenir";
+	mes "la maison d'Einbroch! F-plus vite !";
+	emotion ET_FLAG;
+	close;
+}
+
+p_track02,53,45,3	script	Valiant Knight#double	733,{
+	mes "[Valiant Chevalier]";
+	mes "Hé, as-tu été";
+	mes "parier sur les courses ?";
+	mes "Si vous avez un bon conseil, alors";
+	mes "Voudrais-tu le partager avec moi ?";
+	mes "J'ai gagné des paris... Mais";
+	mes "Je veux vraiment gagner plus !";
+	next;
+	mes "[Valiant Chevalier]";
+	mes "Hahahah ! C'est comme si je disais";
+	mes "ces forgerons ! S'ils";
+	mes "je ne veux pas perdre tout le temps,";
+	mes "alors ils devraient simplement parier sur le même monstre. Moi? J'ai toujours";
+	mes "parier sur le Deviruchi noir~";
+	next;
+	mes "[Valiant Chevalier]";
+	mes "Toi aussi...!";
+	mes "Pariez toujours";
+	mes "sur Deviruchi !";
+	emotion ET_BEST;
+	close;
+}
+
+p_track01,27,47,5	script	Drunkard#single	853,{
+	mes "[Ivrogne familier]";
+	mes "Grrr...! ^333333*Hoquet*^000000";
+	mes "Je dois juste gagner ça";
+	mes "prochain match ! Je dois le faire !";
+	mes "Hey vous! Quel numéro est";
+	mes "ton numéro porte bonheur ? Hein?";
+	next;
+	mes "["+ strcharinfo(0) +"]";
+	mes "Je, euh...";
+	next;
+	mes "[Ivrogne familier]";
+	mes "Allez, j'ai besoin de toi";
+	mes "numéro porte-bonheur parce que j'ai couru";
+	mes "hors du mien ! Dites-moi!";
+	mes "Dites-moi! ^333333*Hoquet~*^000000";
+	close;
+}
+
+p_track01,69,31,1	script	Blacksmith Guildsman#sin	107,{
+	mes "[Homme de guilde forgeron]";
+	mes "Comment cela peut-il être si difficile ?";
+	mes "Pourquoi ne puis-je pas gagner au moins";
+	mes "une de ces courses ? Argh !";
+	mes "Je ne peux pas y retourner avant d'avoir";
+	mes "au moins une Médaille !";
+	next;
+	mes "[Homme de guilde forgeron]";
+	mes "Ouais, j'ai été assigné";
+	mes "par l'usine Einbroch pour";
+	mes "obtenir des médailles depuis";
+	mes "ils sont faits de cette médaille rare. Mais on dirait qu'ils ont choisi";
+	mes "ce n'est pas la bonne personne pour ce travail...";
+	next;
+	mes "[Homme de guilde forgeron]";
+	mes "Je veux dire, je suis venu ici";
+	mes "pour toujours et je n'ai pas gagné";
+	mes "rien encore ! Hé, fais-moi";
+	mes "une faveur et donner un supplément";
+	mes "Prix ​​Médailles que vous pourriez avoir";
+	mes "à l'usine Einbroch, d'accord ?";
+	close;
+}
+
+p_track01,45,42,3	script	Absent Minded Man#single	881,{
+	mes "[Homme distrait]";
+	mes "Dis, es-tu ici pour parier";
+	mes "sur les courses de monstres ? j'ai";
+	mes "viens jusqu'ici, juste";
+	mes "parce qu'un homme étrange";
+	mes "m'a demandé de gagner des médailles. C'est";
+	mes "la seule raison pour laquelle je suis à Hugel...";
+	next;
+	mes "[Homme distrait]";
+	mes "Mais j'ai fait plus que";
+	mes "100 paris et je n'ai pas gagné";
+	mes "n'importe lequel d'entre eux ! Je veux dire, si je parie";
+	mes "sur le même monstre 6 fois,";
+	mes "Je devrais gagner au moins une fois,";
+	mes "droite? Que se passe-t-il?!";
+	close;
+}
+
+hugel,5,5,3	script	Monster Race Manager	868,{
+	callfunc "F_GM_NPC";
+	mes "[Gestionnaire de course de monstres]";
+	mes "Je peux activer et";
+	mes "désactiver l'arène";
+	mes "PNJ d'entrée pour le célibataire";
+	mes "et courses de doubles monstres.";
+	next;
+	.@select = select("Single Race Entry - ON:Dual Race Entry - ON:Single Race Entry - OFF:Dual Race Entry - OFF");
+	mes "[Gestionnaire de course de monstres]";
+	mes "Veuillez entrer";
+	mes "le mot de passe.";
+	next;
+	.@i = callfunc("F_GM_NPC",1854,0,0,2000);
+	if (.@i == -2) {
+		mes "[Gestionnaire de course de monstres]";
+		mes "Erreur.";
+	} else if (.@i == -1) {
+		mes "[Gestionnaire de course de monstres]";
+		mes "Mot de passe incorrect.";
+	} else if (.@i == 1) {
+		mes "[Gestionnaire de course de monstres]";
+		switch(.@select) {
+		case 1:
+			mes "Le monstre unique";
+			mes "Le PNJ d’entrée à la course est activé.";
+			donpcevent "Eckar Ellebird#single::OnEnable";
+			close;
+		case 2:
+			mes "Le double monstre";
+			mes "Le PNJ d’entrée à la course est activé.";
+			donpcevent "Eckar Erenes#double::OnEnable";
+			close;
+		case 3:
+			mes "Le monstre unique";
+			mes "Le PNJ d’entrée à la course est désactivé.";
+			donpcevent "Eckar Ellebird#single::OnDisable";
+			close;
+		case 4:
+			mes "Le double monstre";
+			mes "Le PNJ d’entrée à la course est désactivé.";
+			donpcevent "Eckar Erenes#double::OnDisable";
+			close;
+		}
+	}
+	close;
+}

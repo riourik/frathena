@@ -1,0 +1,144 @@
+//===== rAthena Script =======================================
+//= Hypnotist
+//===== By: ==================================================
+//= L0ne_W0lf
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Permenent first class, base level 40 and under skill resetter.
+//= First Class characters and expanded classes only.
+//= Baby Classes and First Class trans can't use this service.
+//===== Additional Comments: =================================
+//= 1.0 First version. [L0ne_W0lf]
+//============================================================
+
+prontera,146,232,4	script	Hypnotist#2	124,{
+	mes "[Hypnotiste]";
+	mes "Salutations, aventurier.";
+	mes "Je suis membre du Hypnotiste";
+	mes "L'Académie m'a envoyé ici à Prontera";
+	mes "pour fournir des services de Réinitialisation de Compétences.";
+	mes "à certains personnages de Classe Primaire pour un prix vraiment excellent : gratuit !";
+	next;
+	mes "[Hypnotiste]";
+	mes "Bien que je propose une réinitialisation illimitée";
+	mes "des compétences pour l'instant, j'ai";
+	mes "deux conditions qui doivent être";
+	mes "remplies. Tout d'abord, vous devez être";
+	mes "inférieurs à ^FF0000Niveau de Base 40^000000.";
+	next;
+	mes "[Hypnotiste]";
+	mes "Deuxièmement, vous devez être un";
+	mes "^FF0000Guerrier, Religieux, Mage, Voleur, Archer, Commerçant, Garçon de Taekwon, Fille de Taekwon, Tireur d'élite et Ninja^000000";
+	mes "Personnage de Métier pour être éligible.";
+	mes "Maintenant, avez-vous des questions?";
+	mes "[Hypnotiste]";
+	mes "Les Réinitialisations de Compétences permettent aux aventuriers";
+	next;
+	switch(select("Skill Reset?:I want a Skill Reset:Nothing")) {
+
+	case 1:
+		mes "[Hypnotiste]";
+		mes "Skill Resets allow adventuers";
+		mes "pour redistribuer leurs Points de Compétence";
+		mes "de Compétence s'ils ne sont pas contents";
+		mes "avec leurs compétences actuelles.";
+		next;
+		mes "[Hypnotiste]";
+		mes "Avant de procéder à";
+		mes "une Réinitialisation des Compétences, vous devez";
+		mes "réduire le poids total";
+		mes "de tous les objets que vous portez sur votre";
+		mes "personnage à 0. Vous pouvez déposer";
+		mes "des objets supplémentaires dans le Dépôt de Kafra.";
+		next;
+		mes "[Hypnotiste]";
+		mes "Ah, il est aussi important";
+		mes "de retirer votre ^FF0000Caddie^000000";
+		mes "si vous en avez un équipé.";
+		mes "Sinon, l'hypnose ne";
+		mes "fonctionnera pas, ou se retournera contre vous...";
+		close;
+
+	case 2:
+		mes "[Hypnotiste]";
+		mes "Êtes-vous sûr que vous";
+		mes "voulez procéder avec";
+		mes "mon service de ^FF0000Réinitialisation des Compétences^000000 ?";
+		next;
+		if (select("Yes:Cancel") == 1) {
+			if (BaseLevel > 40) {
+				mes "[Hypnotiste]";
+				mes "Désolé, mais les personnages";
+				mes "ayant un Niveau de Base supérieur à";
+				mes "40 ne sont pas éligibles pour le service de Réinitialisation des Compétences que je propose.";
+				mes "[Hypnotiste]";
+				close;
+			}
+			if ((Class > 0 && Class < 7 && Upper == 0) || (Class == Job_Gunslinger) || (Class == Job_Ninja) || (Class == Job_Taekwon)) {
+				if (checkcart()) {
+					mes "[Hypnotiste]";
+					mes "chariot avant de procéder à la réinitialisation des compétences.";
+					mes "Merci de coopérer~";
+					mes "[Hypnotiste]";
+					mes "Si vous êtes ici pour mon service de Réinitialisation des Compétences, veuillez";
+					close;
+				}
+				if (Weight) {
+					mes "[Hypnotiste]";
+					mes "^FF0000poids de vos objets transportés dans votre Inventaire soit réduit à 0^000000.";
+					mes "[Hypnotiste]";
+					mes "Pourquoi ne pas placer vos";
+					mes "affaires dans le Kafra Storage";
+					mes "^FF0000weight of your carried items in";
+					mes "your Inventory is reduced to 0^000000.";
+					next;
+					mes "[Hypnotiste]";
+					mes "Why don't you place your";
+					mes "things into the Kafra Storage";
+					mes "pour l'instant ? De cette façon, vous pourrez";
+					mes "garder en sécurité tous vos biens.";
+					close;
+				}
+				mes "[Hypnotiste]";
+				mes "Merci d'avoir utilisé";
+				mes "mes services de Répartition des Compétences";
+				mes ". Oh, et bonne chance dans vos";
+				mes "voyages, aventurier.";
+				mes "[Hypnotiste]";
+				ResetSkill;
+				close;
+			}
+			mes "[Hypnotiste]";
+			mes "Classe Professionnelle ne correspond pas";
+			mes "aux exigences du service de Réinitialisation des Compétences";
+			mes "que je propose. Je peux offrir des Réinitialisations de Compétences uniquement aux";
+			mes "professions suivantes...";
+			mes "[Hypnotiste]";
+			mes "^FF0000Guerrier, Acolyte, Sorcier, Voleur, Artilleur, Marchand, Garçon de Taekwon, Fille de Taekwon, Tireur d'élite et Ninja^000000.";
+			next;
+			mes "[Hypnotiste]";
+			mes "^FF0000Swordman, Acolyte,";
+			mes "Mage, Thief, Archer,";
+			mes "Merchant, Taekwon";
+			mes "Boy, Taekwon Girl, Gunslinger and Ninja^000000.";
+			close;
+		}
+		mes "[Hypnotiste]";
+		mes "^FF0000Merci, et bonne";
+		mes "^FF0000chance sur vos aventures.";
+		mes "^FF0000Voyagez en sécurité~";
+		close;
+
+	case 3:
+		mes "[Hypnotiste]";
+		mes "^FF0000Merci, et bonne";
+		mes "^FF0000chance sur vos aventures.";
+		mes "^FF0000Voyagez en sécurité~";
+		close;
+	}
+
+}

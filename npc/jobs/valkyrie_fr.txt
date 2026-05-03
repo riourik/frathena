@@ -1,0 +1,403 @@
+//===== rAthena Script ======================================= 
+//= Valkyrie Realm
+//===== By: ==================================================
+//= Nana, fixes by Poki
+//= finished, optimized and tested by Lupus
+//= L0ne_W0lf
+//===== Current Version: ===================================== 
+//= 3.1
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Quest to become a Tranceded Class. (Advanced/Rebirthed)
+//===== Additional Comments: ================================= 
+//= 1.1 Made all into functions,additional checks,quest skills,now Valhallana can return you back. She also makes reborn process only when you got no Zeny/items (as in kRO) [Lupus]
+//= 1.2 now alternative classes can use their 1-1 job NPC to become Advanced 1st Class [Lupus]
+//= 1.4 added Baby Class support [Lupus]
+//= 1.5 Fixed loads of gramatical errors. [Mass Zero]
+//= 1.6 Added a func which prevent advanced classes passing 2nd Job Quests again. It also guides adv classes where to go. [Lupus]
+//= 1.7 On reborn reset some Job Quest Vars and Reset Girls Counter [Lupus]
+//= 1.8 Added Taekwondo classes check [Lupus]
+//= 1.9 Added support for Job NPC Fase pics, sorrected one dialogue stuff [Lupus]
+//= 2.0 Removed callfunc Is_####_Class in favor of baseClass [Silentdragon]
+//= 2.1 Changed all numbers into constants. [Vicious]
+//= 2.2 Now ALL quests skills are saved/restored [Lupus]
+//= 2.3 Removed Duplicates [Silent]
+//= 2.4 Fixed typos, optimized [Lupus]
+//= 2.5 Fixed a stuck bug [Lupus]
+//= 2.6a Adding proper dialogues [Lupus]
+//= 2.7 Rescripted to Aegis 10.3 standards. [L0ne_W0;f]
+//=     Removed all functions as they are no longer required.
+//=     Correct job level requirements for 1-1 -> 2-x.
+//= 2.7a Added Function "F_BlockHigh" back in until rewriteing of the 2-x [L0ne_W0lf]
+//=     scripts are comepleted.
+//= 2.7b Removed function "F_BlockHigh" as it's no longer used. [L0ne_W0lf]
+//= 2.8 Corrected NPC names to fall within proper restrictions. [L0ne_W0lf]
+//= 2.9 Corrected Valkyrie case spicifying where to warp after rebirthing. [L0ne_W0lf]
+//= 2.9b Fixed Verdandi typo, fixed resetting vars [Lupus]
+//= 3.0 Added quest log commands. [L0ne_W0lf]
+//= 3.1 Added Izlude Renewal coordinates.
+//============================================================ 
+
+valkyrie,48,86,4	script	Valkyrie#	811,{
+	if (ADVJOB != 0 || Upper == 1) {
+		mes "[Valkyrie]";
+		mes "Accueillir";
+		mes "vers Valhalla,";
+		mes "la Salle de l'Honneur.";
+		next;
+		mes "[Valkyrie]";
+		mes "S'il vous plaît faites-vous";
+		mes "confortable";
+		mes "pendant votre séjour ici.";
+		mes "^FF0000"Honneur aux guerriers !"";
+		close;
+	}
+	else if (BaseLevel > 98 && JobLevel > 49 && Class >= Job_Knight && Class <= Job_Crusader2) {
+		mes "[Valkyrie]";
+		mes "Accueillir";
+		mes "vers Valhalla,";
+		mes "la Salle de l'Honneur.";
+		next;
+		mes "[Valkyrie]";
+		mes "Vous allez maintenant mettre";
+		mes "fin à votre vie actuelle et";
+		mes "commencer une nouvelle vie entièrement nouvelle.";
+		mes "^FF0000"Honneur aux guerriers !"";
+		next;
+		if (Weight > 0 || Zeny > 0 || checkcart() != 0 || checkfalcon() != 0 || checkriding() != 0) {
+			mes "[Valkyrie]";
+			mes "Il y a quelques choses que vous devez faire avant de commencer. Vous devez";
+			mes "d'abord vider votre esprit et votre corps.";
+			mes "first empty your mind and body.";
+			mes "^FF0000L'honneur arrive quand vous abandonnez";
+			mes "^FF0000 tous vos désirs égoïstes...";
+			next;
+			mes "[Valkyrie]";
+			mes "Vous ne pouvez rien emporter avec vous dans l'au-delà. Vos objets, votre zeny, vos compagnons et votre Caddie doivent être laissés derrière.";
+			next;
+			mes "[Valkyrie]";
+			mes "Quand vous serez prêt";
+			mes "revenez vers moi,";
+			mes "brave aventurier.";
+			close2;
+			warp "yuno_in02",93,205;
+			end;
+		}
+		else {
+			mes "[Valkyrie]";
+			mes "Je vois que vous avez déjà";
+			mes "libéré-vous des";
+			mes "toutes vos attaches terrestres,";
+			mes ""+ strcharinfo(0) +".";
+			next;
+			mes "[Valkyrie]";
+			mes "C'est une attitude admirable pour un aventurier tel que vous. L'honneur arrive quand vous abandonnez tous les désirs personnels au profit de l'humanité.";
+			next;
+			if (SkillPoint) {
+				mes "[Valkyrie]";
+				mes "^FF0000Hmm... Je sens que vous avez";
+				mes "^FF0000une attache persistante ou";
+				mes "^FF0000des affaires inachevées dans votre";
+				mes "^FF0000vie actuelle. Traitez cela,";
+				mes "^FF0000et apportez une conclusion à votre vie présente.";
+				close2;
+				warp "yuno_in02",93,205;
+				end;
+			}
+			mes "[Valkyrie]";
+			mes "Maintenant, je vais éliminer tous";
+			mes "vos souvenirs actuels...";
+			mes "Cependant, vous pourrez";
+			mes "vous souvenir des moments les plus honorables";
+			mes "de cette vie.";
+			next;
+			mes "[Valkyrie]";
+			mes "Avec un coup d’œil,";
+			mes "et de noter les moments les plus honorables de votre vie actuelle.";
+			mes "tous vos souvenirs actuels.";
+			mes "vos souvenirs actuels.";
+			mes "[Valkyrîe]";
+			next;
+			mes "[Valkyrie]";
+			mes "je vais demander à la déesse Verdandi de conserver";
+			mes "et de noter les moments les plus honorables de votre vie actuelle.";
+			mes "[Valkyrîe]";
+			mes "Avec trois coups d’œil,";
+			next;
+			mes "[Valkyrie]";
+			mes "With three,";
+			mes "et de noter les moments les plus honorables de votre vie actuelle.";
+			mes "déesse Skuld à";
+			mes "vous guider vers votre";
+			mes "prochaine vie.";
+			next;
+			mes "[Valkyrie]";
+			mes "Un...";
+			callfunc "F_ClearJobVar";
+			next;
+			mes "[Valkyrie]";
+			mes "Un...";
+			mes "Deux......";
+			next;
+			mes "[Valkyrie]";
+			mes "Un...";
+			mes "Deux......";
+			mes "Et Trois.";
+			set ADVJOB, Class+Job_Novice_High; //memo the target 3rd Job ID
+			if(ADVJOB == Job_Lord_Knight2) set ADVJOB,Job_Lord_Knight;
+			if(ADVJOB == Job_Paladin2) set ADVJOB,Job_Paladin;
+			jobchange Job_Novice_High;
+			resetlvl(1);
+			set MISC_QUEST,MISC_QUEST & ~1024;//<-reset Skill Reset Event
+			skill "NV_FIRSTAID",1,SKILL_PERM;
+			skill "NV_TRICKDEAD",1,SKILL_PERM;
+			completequest 1000;
+			next;
+			mes "[Valkyrie]";
+			mes "^FF0000"Félicitations."";
+			mes "Vous êtes maintenant renaît";
+			mes "dans une toute nouvelle vie.";
+			mes "Prenez ces petits cadeaux";
+			mes "en préparation pour vos nouvelles aventures.";
+			getitem 1202,1; //Knife_
+			getitem 2302,1; //Cotton_Shirt_
+			next;
+			mes "[Valkyrie]";
+			mes "Je souhaite que la libération que la déesse Urd vous a accordée se révèle être une bénédiction. J'espère que les souvenirs que Verdandi a enregistrés vous honoreront toujours.";
+			next;
+			mes "[Valkyrie]";
+			mes "Et j'espère que la nouvelle vie à laquelle la déesse Skuld vous guidera sera encore plus honorable que celle qui a précédemment été la vôtre.";
+			close2;
+			switch (ADVJOB) {
+			case 4008:
+			case 4015:
+				if (checkre(0)) warp "izlude",129,97;
+				else warp "izlude",94,103;
+				break;
+			case 4009:
+			case 4016:
+				warp "prontera",273,354; break;
+			case 4010:
+			case 4017:
+				warp "geffen",120,60; break;
+			case 4011:
+			case 4019:
+				warp "alberta",116,57; break;
+			case 4012:
+			case 4020:
+			case 4021:
+				warp "payon",69,100; break;
+			case 4013:
+			case 4018:
+				warp "morocc",154,50; break;
+			default:
+				warp "yuno_in02",93,205; break;
+			}
+			end;
+		}
+	}
+	else {
+		mes "[Valkyrie]";
+		mes "Accueillir";
+		mes "vers Valhalla,";
+		mes "la Salle de l'Honneur.";
+		next;
+		mes "[Valkyrie]";
+		mes "Malheureusement, vous n'avez pas encore été invité ici. Je vous demande de partir immédiatement. Honneur aux guerriers !";
+		close2;
+		warp "yuno_in02",93,205;
+		end;
+	}
+}
+
+yuno_in02,88,164,5	script	Metheus Sylphe#Library	742,{
+	if (BaseLevel > 98 && JobLevel > 49 && Class >= Job_Knight && Class <= Job_Crusader2) {
+		if (valkyrie_Q == 0) {
+			mes "[Metheus Sylphe]";
+			mes "^FF0000Bienvenue dans la Bibliothèque de l'Académie Magique Schweicherbil.";
+			mes "Je suppose que vous êtes ici";
+			mes "pour lire le 'Livre d'Ymir.'";
+			next;
+			mes "[Metheus Sylphe]";
+			mes "Malheureusement, l'exemplaire original du livre a été endommagé avec le temps. Nous autorisons actuellement le public à consulter une copie de ce livre.";
+			next;
+			mes "[Metheus Sylphe]";
+			mes "De plus, afin de préserver l’exemplaire original du 'Livre d'Ymir,' nous avons décidé d’accepter les dons des personnes qui souhaitent lire la copie que nous avons fournie.";
+			next;
+			mes "[Metheus Sylphe]";
+			mes "Le montant";
+			mes "recommandé de don est";
+			mes "1 285 000 zeny.";
+			next;
+			if (select("Donate.:Cancel.") == 1) {
+				if (Zeny >= 1285000) {
+					set Zeny, Zeny-1285000;
+					set valkyrie_Q,1;
+					mes "[Metheus Sylphe]";
+					mes "^FF0000Merci, votre don sera utilisé pour une bonne cause. Vous pouvez maintenant entrer et lire le livre.";
+					mes "^FF0000Prenez votre temps et profitez de vos voyages.";
+					close;
+				}
+				mes "[Metheus Sylphe]";
+				mes "^FF0000Malheureusement, vous ne semblez pas posséder assez de zeny en ce moment. Vérifiez vos fonds et revenez plus tard.";
+				close;
+			}
+			mes "[Metheus Sylphe]";
+			mes "^FF0000Prenez votre temps, et";
+			mes "^FF0000profitez de vos voyages.";
+			close;
+		}
+		mes "[Metheus Sylphe]";
+		mes "^FF0000Encore une fois, merci pour votre généreux don. N'hésitez pas à lire une copie carbonée du 'Livre d'Ymir' à votre convenance.";
+		close;
+	}
+	mes "[Metheus Sylphe]";
+	mes "^FF0000Bienvenue dans la Bibliothèque de l'Académie Magique Schweicherbil.";
+	mes "^FF0000Ici, nous avons un nombre incalculable d'ouvrages. Prenez votre temps et explorez les lieux.";
+	close;
+}
+
+yuno_in02,93,207,1	script	Book of Ymir	111,{
+	if (ADVJOB != 0 || Upper == 1) {
+		mes "[Le Livre d'Ymir]";
+		mes "...L'entrée du Hall de l'Honneur est ouverte à quiconque a avancé dans sa prochaine vie. C'est là pour aider les héros à décider ce qu'ils veulent faire, et peut les mener n'importe où dans ce monde.";
+		next;
+		mes "[Le Livre d'Ymir]";
+		mes "^FF0000Dans le Hall de l'Honneur, tout est préparé pour les héros. Il est dit que tous les souhaits qui ne peuvent pas être réalisés dans notre réalité peuvent se réaliser dans le Hall de l'Honneur.";
+		next;
+		if (select("Stop reading.:Continue reading.") == 1) {
+			mes "[Le Livre d'Ymir]";
+			mes "^FF0000....";
+			close;
+		}
+		mes "[Le Livre d'Ymir]";
+		mes "^FF0000Il existe un chemin oublié qui mène au Hall de l'Honneur, le lieu le plus proche des cieux. Les gens ordinaires ne découvriront jamais cet endroit...";
+		close2;
+		warp "valkyrie",48,8;
+		end;
+	}
+	else if (BaseLevel > 98 && JobLevel > 49 && Class >= Job_Knight && Class <= Job_Crusader2) {
+		if (valkyrie_Q != 0) {
+			mes "[Le Livre d'Ymir]";
+			mes "...Donc, les héros anciens étaient...";
+			mes "toujours dans l’angoisse, sachant qu'ils";
+			mes "seraient finalement mortels et que";
+			mes "ils passeraient de ce monde...";
+			next;
+			mes "[Le Livre d'Ymir]";
+			mes "Il n'y avait pas de documents,";
+			mes "de chansons ou de traditions orales conservées qui contenaient des informations sur la vie après la mort. Cependant, j'ai récemment découvert un vieux rouleau";
+			mes "sur les Valkyries...";
+			next;
+			mes "[Le Livre d'Ymir]";
+			mes "Valkyrie...";
+			mes "La légendaire";
+			mes "gardienne des anges.";
+			mes "Ange de Ragnarok.";
+			next;
+			mes "[Le Livre d'Ymir]";
+			mes "Les aventuriers de grande force";
+			mes "et de courage seront conduits par";
+			mes "Valkyrie au Valhalla, le Hall";
+			mes "de l’Honneur. Là-bas, ils recevront une nouvelle vie.";
+			mes "^FF0000";
+			next;
+			mes "[Le Livre d'Ymir]";
+			mes "Reconstruits, ils renaîtront comme";
+			mes "des héros encore plus grands qui";
+			mes "illumineront le monde. Des corps";
+			mes "épuisés seront remplis";
+			mes "d'énergie...";
+			next;
+			mes "[Le Livre d'Ymir]";
+			mes "Et leurs âmes recevront des pouvoirs avec le cœur d'Ymir. Cependant, le cœur d'Ymir a été totalement détruit et dispersé dans le monde après la bataille de Rune-Midgarts.";
+			next;
+			mes "[Le Livre d'Ymir]";
+			mes "J'ai trouvé une petite quantité";
+			mes "de morceaux du cœur d'Ymir au fil du temps, sur";
+			mes "une longue période. Mais je ne peux pas";
+			mes "confirmer si l'histoire de la Valkyrie et Valhalla est vraie juste";
+			mes "par des tests scientifiques.";
+			mes "[Le Livre d'Ymir]";
+			next;
+			mes "[Le Livre d'Ymir]";
+			mes "quelqu'un pourra confirmer que la Valkyrie et Valhalla existent réellement...";
+			mes "[Le Livre d'Ymir]";
+			next;
+			set valkyrie_Q,2;
+			if(checkquest(1000) == -1) {
+				setquest 1000;
+			}
+			mes "[Le Livre d'Ymir]";
+			mes "Let the heroes live new lives";
+			mes "^FF0000"ainsi qu'ils puissent protéger le monde"";
+			mes "^FF0000"du danger. Et puis..."";
+			close;
+		}
+		mes "[Le Livre d'Ymir]";
+		mes "...";
+		close;
+	}
+	mes "[Le Livre d'Ymir]";
+	mes "...";
+	close;
+}
+
+yuno_in05,49,43,1	script	Heart of Ymir	111,{
+	if (BaseLevel > 98 && JobLevel > 49 && Class >= Job_Knight && Class <= Job_Crusader2) {
+		if (valkyrie_Q == 2) warp "valkyrie",48,8;
+	}
+	end;
+}
+
+valkyrie,44,33,5	script	Teleporter	124,{
+	if (Upper != 1) {
+		set .@karma_d,rand(1,10);
+		if (.@karma_d > 4) {
+			mes "[Téléporteur]";
+			mes "^FF0000"Félicitations."";
+			mes "^FF0000"Honneur aux guerriers !"";
+			close;
+		}
+		mes "[Téléporteur]";
+		mes "^FF0000"Veuillez ne pas toucher"";
+		mes "^FF0000"à aucune"";
+		mes "^FF0000"des expositions."";
+		mes "^FF0000".........."";
+		close;
+	}
+	else {
+		mes "[Téléporteur]";
+		mes "^FF0000"Digne guerrier,"";
+		mes "^FF0000"quelle destination souhaitez-vous prendre ?"";
+		next;
+		switch(select("Prontera:Morocc:Payon:Geffen:Alberta:Izlude:Al De Baran:Comodo:Juno")) {
+		case 1: callsub S_Warpchar,"prontera",116,72;
+		case 2: callsub S_Warpchar,"morocc",156,46;
+		case 3: callsub S_Warpchar,"payon",69,100;
+		case 4: callsub S_Warpchar,"geffen",120,39;
+		case 5: callsub S_Warpchar,"alberta",117,56;
+		case 6:
+			if (checkre(0)) callsub S_Warpchar,"izlude",129,97;
+			else callsub S_Warpchar,"izlude",94,103;
+		case 7: callsub S_Warpchar,"aldebaran",91,105;
+		case 8: callsub S_Warpchar,"comodo",209,143;
+		case 9: callsub S_Warpchar,"yuno",328,101;
+		}
+	}
+S_WarpChar:
+	mes "[Téléporteur]";
+	mes "^FF0000"Bonne chance sur votre voyage."";
+	close2;
+	savepoint getarg(0),getarg(1),getarg(2),1,1;
+	warp getarg(0),getarg(1),getarg(2);
+	end;
+}
+
+// Warps
+//============================================================ 
+valkyrie,48,73,0	warp	valk01#1	1,1,valkyrie,48,64
+valkyrie,48,66,0	warp	valk01#2	1,1,valkyrie,48,75
+

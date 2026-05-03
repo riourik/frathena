@@ -1,0 +1,53 @@
+//===== rAthena Script ======================================= 
+//= Izlude Airport NPCs
+//===== By: ================================================== 
+//= rAthena Dev Team
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Izlude Airport NPCs
+//===== Additional Comments: ================================= 
+//= 1.0 First version.
+//============================================================ 
+
+-	script	::Airship_Staff_izlude	-1,{
+	mes "[Personnel du dirigeable]";
+	mes "Accueillir! Aimeriez-vous";
+	mes "monter à bord du dirigeable qui";
+	mes "part sur le vol qui s'arrête";
+	mes "dans Junon et Rachel ?";
+	next;
+	if (select("Board the Airship to Juno/Rachel.:Cancel.") == 1) {
+		mes "[Personnel du dirigeable]";
+		mes "Les frais d'embarquement sont";
+		mes "1 200 zeny. Cependant, ceci";
+		mes "facturé est annulé si vous utilisez";
+		mes "un billet gratuit pour le dirigeable. Maintenant,";
+		mes "Voudriez-vous toujours embarquer ?";
+		next;
+		if (select("Yes:No") == 1) {
+			if (countitem(7311) > 0) {
+				delitem 7311,1; //Free_Flying_Ship_Ticket
+				warp "airplane_01",244,58;
+				end;
+			}
+			if (Zeny >= 1200) {
+				set Zeny, Zeny - 1200;
+				warp "airplane_01",244,58;
+				end;
+			}
+			mes "[Personnel du dirigeable]";
+			mes "Je suis désolé, mais tu ne le fais pas";
+			mes "j'ai 1 200 zeny à payer";
+			mes "pour les frais d'embarquement.";
+			close;
+		}
+	}
+	mes "[Personnel du dirigeable]";
+	mes "Merci et";
+	mes "s'il te plaît, reviens.";
+	mes "Bonne journée ~";
+	close;
+}

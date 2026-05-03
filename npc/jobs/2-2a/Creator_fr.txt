@@ -1,0 +1,139 @@
+//===== rAthena Script ======================================= 
+//= Advance Class jobchanger after kRO Normals.
+//===== By: ==================================================
+//= Nana
+//= finished, optimized and tested by Lupus
+//===== Current Version: ===================================== 
+//= 1.3
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Advance Class jobchanger after kRO Normals.
+//===== Additional Comments: ================================= 
+//= 1.1 Made all into functions, additional checks, etc. [Lupus]
+//= 1.2 Made numbers into constants. [Vicious]
+//= 1.3 Now saves/restores all the quest skills [Lupus]
+//= 1.4 Creators did not get their homunculus skills [Lemongrass]
+//============================================================ 
+
+valkyrie,53,50,3	script	Biochemist#Valkyrie	122,{
+	if (Class == Job_Creator && bioeth == 13 && getskilllv("AM_BIOETHICS") == 0) {
+		mes "[Biochimiste]";
+		mes "Ah, es-tu venu(e) pour";
+		mes "récupérer les souvenirs";
+		mes "perdus à ton sujet ? Oui, tu";
+		mes "dois être ici pour les";
+		mes "secrets de la vie qui";
+		mes "étaient autrefois les tiens...";
+		next;
+		if (select("Yes:No") == 1) {
+			mes "[Biochimiste]";
+			mes "Fermes tes yeux et";
+			mes "pose ton esprit en paix.";
+			mes "Nous reviendrons à ton";
+			mes "passé pour recueillir les";
+			mes "fragments de ta vie perdue";
+			mes "[Valkyrîe]";
+			next;
+			mes "[Biochimiste]";
+			mes "Lorsque tu ouvriras tes yeux,";
+			mes "tu te souviendras clairement";
+			mes "du secret de la vie. Tu te";
+			mes "souviendras également du poids";
+			mes "de responsabilité en utilisant ces";
+			mes "secrets pour les bons buts...";
+			next;
+			skill "AM_BIOETHICS",1,SKILL_PERM;
+			mes "[Biochimiste]";
+			mes "Ouvre les yeux...";
+			mes "Maintenant que tu as";
+			mes "réussi à te souvenir de";
+			mes "comment créer la vie artificielle, je ne";
+			mes "te demande que de traiter toutes tes";
+			mes "créations avec respect.";
+			close;
+		}
+		mes "[Biochimiste]";
+		mes "Si tu souhaites";
+		mes "récupérer tes mémoires";
+		mes "perdues, reviens vers moi.";
+		mes "Le secret de la création";
+		mes "de la vie n'est pas une chose à prendre";
+		mes "à la légère...";
+		close;
+	}
+	else if (ADVJOB == 0 || Upper != 1) {
+		set .@karma_d,rand(1,10);
+		if (.@karma_d > 4) {
+			mes "[Biochimiste]";
+			mes "Félicitations.";
+			mes "Honneur aux guerriers !";
+			close;
+		}
+		mes "[Biochimiste]";
+		mes "C'est étrange que";
+		mes "quelqu'un comme moi soit ici.";
+		mes "Mais même quelqu'un de doué";
+		mes "dans les voies de la science";
+		mes "^FF0000peut devenir un héros.";
+		next;
+		mes "[Biochimiste]";
+		mes "Dans cette situation,";
+		mes "ce n'est pas nécessairement";
+		mes "les moyens que j'ai utilisés, mais";
+		mes "les fins pour lesquelles je me";
+		mes "suis battu qui m'ont valu";
+		mes "une place à Valhalla...";
+		close;
+	}
+	else if (ADVJOB == Job_Creator && Class == Job_Merchant_High && JobLevel > 39) {
+		mes "[Biochimiste]";
+		mes "Oui...";
+		mes "C'est l'heure.";
+		mes "Nous avons besoin de plus de génies";
+		mes "comme vous sur Midgard.";
+		next;
+		mes "[Biochimiste]";
+		mes "Souhaitez-vous";
+		mes "devenir un Biochimiste?";
+		next;
+		if (select("No.:Yes.") == 1) {
+			mes "[Biochimiste]";
+			mes "[Grand Prêtre]";
+			mes "n'hésitez pas à revenir.";
+			mes "Honneur aux guerriers !";
+			close;
+		}
+		if (SkillPoint) {
+			mes "[Biochimiste]";
+			mes "Il est encore possible pour vous d'apprendre des compétences supplémentaires. Veuillez utiliser";
+			mes "tous vos points de compétence restants avant de revenir me voir.";
+			close;
+		}
+		jobchange Job_Creator;
+		if (bioeth == 13)
+			skill "AM_BIOETHICS",1,SKILL_PERM;
+		set ADVJOB,0;
+		mes "[Biochimiste]";
+		mes "Félicitations!";
+		mes "En tant que Biochimiste,";
+		mes "j'espère que vous utiliserez vos";
+		mes "connaissances pour le";
+		mes "^FF0000pour les fins appropriées.";
+		close;
+	}
+	else {
+		mes "[Biochimiste]";
+		mes "Accueillir";
+		mes "vers Valhalla,";
+		mes "la Salle de l'Honneur.";
+		next;
+		mes "[Biochimiste]";
+		mes "S'il vous plaît faites-vous";
+		mes "confortable";
+		mes "pendant votre séjour ici.";
+		mes "Honneur aux guerriers !";
+		close;
+	}
+}
+

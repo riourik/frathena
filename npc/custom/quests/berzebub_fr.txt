@@ -1,0 +1,64 @@
+//===== rAthena Script =======================================
+//= Berzebub Card Quest
+//===== By: ==================================================
+//= jabs
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Quest to get the Berzebub Card
+//===== Additional Comments: =================================
+//= 1.1 Fixed ingredients. Was too exploitable [Lupus]
+//= 1.2 Optimized. [Euphy]
+//============================================================
+
+prontera,165,178,8	script	Old Woman	103,{
+
+	setarray .@Items[0],714,25,1061,100,1095,200,618,10,1551,2,1614,1,727,20;
+	set .@n$,"[Old Woman]";
+
+	mes .@n$;
+	if(BerzQuest == 1) {
+		mes "^FF0000[Guérisseur de la Forêt]^r : Hé, je te reconnais ! Je t'ai déjà dit que tu ne pouvais accomplir cette quête qu'une seule fois.";
+		close; }
+	mes "Salut, gamin. J'ai trouvé un objet vraiment astucieux alors que je ramassais des champignons près de Glast Heim.";
+	next;
+	if(select("Keep Talking:Leave")==2) goto M_Leave;
+
+	mes .@n$;
+	mes "Je n'ai jamais vu un objet comme celui-ci avant. On m'a dit qu'il peut être placé dans tout accessoire ayant une case disponible.";
+	next;
+	mes .@n$;
+	mes "Si vous êtes intéressé par cet objet, je vous dirai ce dont j'ai besoin pour en fabriquer un pour vous. Je ne peux donner qu'un seul de ces objets à chaque joueur, donc une fois que vous aurez terminé cette quête, vous ne pourrez pas le refaire.";
+	next;
+	if(select("Tell me more about it:Nah, I don't care about it")==2) goto M_Leave;
+
+	mes .@n$;
+	mes "Je pense que l'objet s'appelle une ^FF0000Berzebub Card^000000. Elle vous permet de lancer des sorts très rapidement !";
+	next;
+	mes .@n$;
+	mes "J'ai besoin de tous les objets suivants :";
+	for(set .@i,0; .@i<getarraysize(.@Items); set .@i,.@i+2) {
+		mes " ~ "+.@Items[.@i+1]+"x "+getitemname(.@Items[.@i]);
+		if (countitem(.@Items[.@i]) < .@Items[.@i+1]) set .@nr,1; }
+	next;
+	if(select("I have all of that!:I'll get those ASAP")==2) goto M_Leave;
+
+	mes .@n$;
+	if (.@nr) {
+		mes "Tu mens ! Sors d'ici et récupère ces objets, toi pauvre excuse de rock star.";
+		close; }
+	for(set .@i,0; .@i<getarraysize(.@Items); set .@i,.@i+2)
+		delitem .@Items[.@i], .@Items[.@i+1];
+	getitem 4145,1;
+	set BerzQuest, 1;
+	mes "Félicitations ! Vous avez tous les objets. Voici votre Carte Berzebub ^FF0000Berzebub Card^000000, comme promis.";
+	emotion ET_CONGRATULATION;
+	close;
+
+M_Leave:
+	mes .@n$;
+	mes "Un tel objet merveilleux que j'ai juste ici...";
+	close;
+}

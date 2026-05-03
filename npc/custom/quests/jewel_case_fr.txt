@@ -1,0 +1,66 @@
+//===== rAthena Script =======================================
+//= Jewel Case Quest
+//===== By: ==================================================
+//= Lupus
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= A quest for players at base level 99,
+//= with Jewel Case as a reward.
+//===== Additional Comments: =================================
+//= 1.0 First Version.
+//============================================================
+
+lighthalzen,108,229,2	script	La Fenn	766,{
+	mes "[La Fenn]";
+	if(BaseLevel<99) {
+		if(Q_99LVL) {
+			mes "Vous... Vous êtes devenu plus jeune!!! Mais vous êtes bien VOUS!";
+			mes "Je ne pensais pas que vous seriez capable de remplir mes conditions...";
+			emotion ET_SCRATCH;
+			next;
+			mes "[La Fenn]";
+			mes "Voici votre récompense. Elle est à vous pour toujours.";
+			set Q_99LVL,0;
+			getitem 12106,1; //Jewel Case
+			emotion ET_CONGRATULATION;
+		} else {
+			mes callfunc("F_Hi");
+			mes "...";
+			emotion ET_SLEEPY;
+			next;
+			mes "[La Fenn]";
+			mes "J'ai une énigme pour un homme fort de la 2ème classe et d'un niveau base de 99.";
+			mes "*Bâille* Si vous en rencontrez, veuillez leur parler de mon énigme.";
+		}
+		close;
+	}
+	if(BaseLevel==99 && Upper==0) {
+		if(Q_99LVL) {
+			mes "Allez maintenant et devenez plus jeune!";
+			mes "Si vous résolvez mon énigme, alors je vous donnerai un Coffre Magique contenant une accessoire rare.";
+		} else {
+			mes callfunc("F_Hi")+" The Hero!";
+			if(BaseExp<1000000) {
+				mes "Maintenant, vous êtes fort.";
+				mes "Mais... pas assez fort pour ma devinette.";
+				if(rand(2)) {
+					mes "Kill "+((1000000-BaseExp)/3765+1)+" more Seals and return.";
+				} else {
+					mes "Kill "+((1000000-BaseExp)/81+1)+" more Poporings and come back.";
+				}
+			} else {
+				mes "Maintenant, vous êtes VRAIMENT fort.";
+				mes "Et si vous devenez plus jeune qu'à présent, je vous donnerai mon trésor.";
+				set Q_99LVL,1;
+				emotion ET_BEST;
+			}
+		}
+		close;
+	}
+	emotion ET_SCRATCH;
+	mes "...";
+	close;
+}

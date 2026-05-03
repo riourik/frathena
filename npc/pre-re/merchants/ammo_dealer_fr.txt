@@ -1,0 +1,120 @@
+//===== rAthena Script =======================================
+//= Bullet Dealers
+//===== Description: =========================================
+//= Bullet trader.
+//===== Changelogs: ==========================================
+//= 1.0 First version [Playtester]
+//= 1.1 Converted from Aegis [Paradox924X]
+//= 1.2 More optimized conversion [Legionaire]
+//= 1.2a Removed .GATs [Lupus]
+//= 1.3 Fixed [Playtester] Optimized. Got rid of @vars [Lupus]
+//= 1.4 Updated to match AEGIS script. [Kisuka]
+//= 1.5 Updated to match AEGIS script again. [Masao]
+//= 1.6 Moved Izlude duplicate to pre-re/re paths. [Euphy]
+//= 2.0 Clean-up. [Capuche]
+//= 2.1 Fixes Issue #1482, where Rebellion jobs cannot use this npc. [Limestone]
+//============================================================
+
+alberta,118,160,3	script	Bullet Dealer Tony#alb::bdt	4_M_04,{
+	mes "[Tony]";
+	if (BaseClass == Job_Gunslinger) {
+		mes "[Tony] Je suis Tony, le Vendeur de Balles.";
+		mes "Viens me voir quand tu es";
+		mes "à court de munitions. Apporte-moi simplement";
+		mes "les matériaux nécessaires et je te fabriquerai";
+		mes "les balles dont tu as besoin.";
+		next;
+		switch(select("Poison Sphere:Flare Sphere:Lighting Sphere:Blind Sphere:Freezing Sphere:Cancel")) {
+		case 1: callsub S_BulletTrade,937,10,13205;// <item required>, <amount req>, <bullet id>
+		case 2: callsub S_BulletTrade,7097,2,13203;
+		case 3: callsub S_BulletTrade,7053,3,13204;
+		case 4: callsub S_BulletTrade,1024,5,13206;
+		case 5: callsub S_BulletTrade,7054,2,13207;
+		case 6:
+			mes "[Tony]";
+			mes "Vous avez changé d'avis ?";
+			mes "Bien, si tu as un jour besoin";
+			mes "de balles, je serai juste";
+			mes "ici. Viens me voir quand tu crois";
+			mes "que tu en auras besoin de plus, Tireur à la Salle.";
+			mes "ammunition, Tireur à la Salle.";
+			close;
+		}
+	}
+	mes "Salut, je suis Tony. Je m'occupe";
+	mes "de la distribution et de la fabrication";
+	mes "des balles pour les Tireurs à la Salle. C'est juste";
+	mes "ainsi que notre guilde aime faire.";
+	mes "ça.";
+	mes "C'est ainsi que notre guilde a l'habitude de faire.";
+	next;
+	mes "[Tony]";
+	mes "Je suis désolé si tu es venu";
+	mes "ici pour acheter des balles.";
+	mes "Je ne peux faire affaire qu'avec des Tireurs à la Salle accomplis.";
+	mes "des tireurs de niveau complet.";
+	close;
+
+S_BulletTrade:
+	.@required_id = getarg(0);
+	.@required_amount = getarg(1);
+	.@bullet_id = getarg(2);
+
+	mes "[Tony]";
+	mes "Pour chaque ensemble de";
+	mes callfunc("F_InsertPlural",30,getitemname(.@bullet_id))+",";
+	mes "vous devez me donner";
+	mes "1 Emveretarcon,";
+	mes "1 Phracon, et";
+	mes callfunc("F_InsertPlural",.@required_amount,getitemname(.@required_id))+".";
+	next;
+	mes "[Tony]";
+	mes "N'oubliez pas que je peux vous donner";
+	mes "un maximum de 500 ensembles de";
+	mes "30 balles à la fois. Veuillez";
+	mes "entrer le nombre d'ensembles de balles";
+	mes "que vous souhaitez. Si vous voulez";
+	mes "annuler, entrez simplement ''0.''";
+	next;
+	input .@amount;
+	mes "[Tony]";
+	if (.@amount < 1 || .@amount > 500) {
+		mes "Hey, je ne peux pas vous donner autant de balles.";
+		mes "Ne vous oubliez pas d'entrer un nombre";
+		mes "qui n'est pas plus élevé que 500 si vous souhaitez échanger vos";
+		mes "objets contre des balles.";
+		mes "Eh ? Votre Inventaire ne";
+		mes "a pas assez d'espace pour autant de balles. Revenez plus tard";
+	}
+	else if (countitem(1010) >= .@amount && countitem(1011) >= .@amount && countitem(.@required_id) >= (.@amount*.@required_amount)) {
+		if (checkweight(.@bullet_id,.@amount * 30) == 0) {
+			mes "après avoir libéré plus d'espace.";
+			mes "Essayez de déplacer certains des";
+			mes "many bullets. Come back later";
+			mes "after you make more space";
+			mes "available. Try putting some of";
+			mes "vos objets dans le Kafra Storage.";
+		} else {
+			mes "Parfait, tout semble";
+			mes "d’être en ordre. Laissez-moi prendre";
+			mes "ces matériaux, et voici";
+			mes "votre(s) balle(s). C'est un plaisir";
+			mes "de faire affaire avec vous~";
+			delitem 1010,.@amount; //Phracon
+			delitem 1011,.@amount; //Emveretarcon
+			delitem .@required_id,.@amount * .@required_amount;
+			getitem .@bullet_id,.@amount * 30;
+		}
+	} else {
+		mes "Hm. Il semble que vous";
+		mes "n'ayez pas assez de matériaux";
+		mes "pour autant de balles. Eh bien,";
+		mes "ce n'est pas un problème. Revenez";
+		mes "après avoir rassemblé tout";
+		mes "ce dont vous avez besoin, d'accord?";
+	}
+	close;
+}
+
+que_ng,187,156,3	duplicate(bdt)	Bullet Dealer Tony#ng	86
+izlude,171,133,3	duplicate(bdt)	Bullet Dealer Tony#iz	86

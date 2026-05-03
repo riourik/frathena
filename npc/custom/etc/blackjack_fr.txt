@@ -1,0 +1,347 @@
+//===== rAthena Script =======================================
+//= Black Jack
+//===== By: ==================================================
+//= kobra_k88
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Black Jack card game.  Gameplay based off standard casino
+//= black jack rules.  Dealer must have at least 17 to stay and will
+//= automatically stay at 17 and up.  Player must have at least
+//= 13 to stay.  Aces counted as 11 or 1.  Option to "Double Down".
+//= Currently does not allow for "insurance", or "splitting"
+//= of pairs.
+//===== Additional Comments: =================================
+//= 1.0 First version.
+//============================================================
+
+cmd_in02,188,89,1	script	Black Jack Dealer	57,{
+	mes "[Vendeur]";
+	mes "Bonjour ! Voulez-vous jouer à un jeu de Blackjack ?";
+M_Menu:
+	next;
+	menu "What are the rules?",M_0, "I want to play.",L_Play, "No thanks.",M_End;
+
+M_0:
+	mes "[Vendeur]";
+	mes "Que souhaitez-vous savoir ?";
+sM_Menu0:
+	next;
+	menu "The basics.",sM_0a, "Winning and loosing.",sM_0b, "'Double Down'.",sM_0c,
+	"Ace value.",sM_0d, "Nothing.",M_Menu;
+
+sM_0a:
+	mes "[Vendeur]";
+	mes "^FF0000Black Jack^FF0000 est un jeu de cartes dont l'objectif est d'obtenir 21, ou aussi près que possible.";
+	mes "^FF0000[Guildeur]^FF0000: Vous avez presque atteint 21 points ! Continuez à gagner des points sans dépasser la limite de 21.";
+	next;
+	mes "[Vendeur]";
+	mes "Avant le début du jeu, le joueur doit faire un pari. Une fois le pari";
+	mes "a été effectué, le marchand et le joueur reçoivent chacun 2 cartes";
+	mes "chacune. Selon les cartes que vous possédez, vous pouvez choisir de ^5533FFrester^000000,";
+	mes "ou vous pouvez choisir de ^5533FF'tirer'^000000.";
+	next;
+	mes "[Vendeur]";
+	mes "Lorsque vous choisissez de « rester », vous indiquez au marchand que vous ne voulez pas";
+	mes "Vous avez besoin de plus de cartes. Cela permet au marchand de tirer s'il/elle";
+	mes "veut le faire. Pour rester, vous devez avoir au moins 13 points de ^FF3355vitalité^000000. Le";
+	mes "Le marchand ne peut rester que s'il a^FF3355 17 points ou plus^000000.";
+	next;
+	mes "[Vendeur]";
+	mes "Lorsque vous choisissez « tirer », vous indiquez au marchand que vous souhaitez";
+	mes "une autre carte. En tirant plus de cartes, vous pouvez augmenter vos points";
+	mes "Au total, tant que vous avez moins de 21 points, vous pouvez faire un tirage.";
+	mes "carte du jeu.";
+	goto sM_Menu0;
+sM_0b:
+	mes "[Vendeur]";
+	mes "Il y a trois façons de gagner et de perdre au Blackjack.";
+	next;
+	mes "[Vendeur]";
+	mes "1.) À la fin d'une partie de Blackjack, si vous avez plus de points";
+	mes "^FF0000plus que le marchand, vous gagnerez la manche. À l'inverse, si vous avez";
+	mes "Vous perdrez moins de points que le marchand.";
+	next;
+	mes "[Vendeur]";
+	mes "2.) Si vous tirez une carte qui fait dépasser votre total à 21, vous";
+	mes "perdra automatiquement la manche. Cela s'appelle une ^5533FF'faute'^000000. Si";
+	mes "Si le marchand fait faillite, vous gagnerez la manche.";
+	next;
+	mes "[Vendeur]";
+	mes "3.) Si vous avez un score total de 21 avec les deux premières cartes, vous";
+	mes "gagnera automatiquement la manche. On appelle cela un ^5533FF'Black Jack'^000000";
+	mes "et cela se produit lorsque vous obtenez une carte 'As' et une carte d'une valeur de '10'. Si le";
+	mes "Si le dealer obtient un Blackjack, il/elle gagnera automatiquement la manche.";
+	next;
+	mes "[Vendeur]";
+	mes "4.) En plus de gagner et de perdre, vous pouvez faire match nul avec le banquier. Si";
+	mes "ni vous ni le marchand n'avez pas le même score total à la fin d'une";
+	mes "Cette année-là, cela résultera en un match nul sans vainqueur et sans perte ni gain";
+	mes "en argent.";
+	next;
+	mes "[Vendeur]";
+	mes "Ceci s'appelle un ^5533FF"poussée"^000000 avec le négociant. Cela aussi";
+	mes "s'applique à la fois à vous et au marchand qui a le Blackjack en même temps";
+	mes "^FF0000[Time]^FF0000";
+	goto sM_Menu0;
+sM_0c:
+	mes "[Vendeur]";
+	mes "L'option « Double Down » vous permet de doubler votre mise actuelle,";
+	mes "mais avec l'inconvénient que vous ne pourrez attirer qu'un seul";
+	mes "carte supplémentaire. Cette option n'est disponible qu'au début de";
+	mes "chaque tour.";
+	next;
+	mes "[Vendeur]";
+	mes "Un exemple où doubler la mise est utile, c'est quand";
+	mes "vos deux premières cartes vous donnent un score total de 11. Vous avez une bonne";
+	mes "chance d'obtenir un 21 ou un 20 avec la prochaine carte que vous tirez. Ceci";
+	mes "serait une bonne main pour doubler la mise.";
+	goto sM_Menu0;
+sM_0d:
+	mes "[Vendeur]";
+	mes "La carte "As" est une carte unique dans le jeu de Blackjack car";
+	mes "il peut avoir 2 valeurs. Un As peut être compté soit pour 11 points,";
+	mes "ou simplement 1 point. Par exemple, si vous aviez un As et un 4, cela ferait";
+	mes "Je vous donne soit 15 ou 5 points.";
+	next;
+	mes "[Vendeur]";
+	mes "Si vous avez décidé de rester, le titre d'As serait automatiquement attribué à";
+	mes "11 points pour vous donner un total de 15 points.";
+	next;
+	mes "[Vendeur]";
+	mes "Si vous aviez décidé de tirer et obtenu un 9, l'as aurait";
+	mes "seront automatiquement comptés comme 1 point pour vous donner un total de 14";
+	mes "points. Si l'As était compté pour 11 points, vous auriez un";
+	mes "total de points supérieur à 21 et aurait perdu.";
+	next;
+	mes "[Vendeur]";
+	mes "C'est grâce à la flexibilité dont vous disposez avec l'"Ace" que cela devient possible";
+	mes "C'est la carte la plus puissante du jeu.";
+	goto sM_Menu0;
+M_End:
+	mes "[Vendeur]";
+	mes "N'hésitez pas à revenir quand vous le souhaitez pour un nouveau coupe de cheveux. Hohohohohoho~";
+	close;
+
+//================
+L_Play:
+	mes "[Vendeur]";
+	mes "^FF0000[Faites vos paris...]";
+	next;
+	menu "2z",M_1a, "10z",M_1b, "20z",M_1c, "100z",M_1d, "Too rich for my blood....",M_End;
+
+M_1a:
+	if(Zeny < 2) goto sL_NotEnuf;
+	set @bet, 2;
+	goto L_Cont0;
+M_1b:
+	if(Zeny < 10) goto sL_NotEnuf;
+	set @bet, 10;
+	goto L_Cont0;
+M_1c:
+	if(Zeny < 20) goto sL_NotEnuf;
+	set @bet, 20;
+	goto L_Cont0;
+M_1d:
+	if(Zeny < 100) goto sL_NotEnuf;
+	set @bet, 100;
+	goto L_Cont0;
+
+sL_NotEnuf:
+	mes "[Vendeur]";
+	mes "Désolé mais vous n'avez pas assez de zeny pour faire ce pari.";
+	close;
+
+L_Cont0:
+	mes "(les cartes sont distribuées)";
+	next;
+	deletearray $@card[0],13;
+	set @dealerTurn, 0;
+	set @numP, 0;
+	set @numD, 0;
+	set @pAce, 0;
+	set @dAce, 0;
+	callsub sF_GetCards, @numP, @playCard[@numP], @playCard$[@numP], @pAce;
+	callsub sF_GetCards, @numP, @playCard[@numP], @playCard$[@numP], @pAce;
+	callsub sF_GetCards, @numD, @dealCard[@numD], @dealCard$[@numD], @dAce;
+	callsub sF_GetCards, @numD, @dealCard[@numD], @dealCard$[@numD], @dAce;
+
+//==============
+L_Start:
+	callsub sF_GetTot;
+
+	mes "- Voici les cartes du ^FF5533VENDÉUR^000000 :";
+	if (@numD==2) callsub sF_D2cards;
+	if (@numD==3) callsub sF_D3cards;
+	if (@numD==4) callsub sF_D4cards;
+	if (@numD==5) callsub sF_D5cards;
+	mes "    The DEALER has: ^FF5533"+@dealTot+"^000000";
+	mes " ";
+	mes "- Voici vos cartes : ^5533FFVÔTRES^000000";
+	if (@numP==2) callsub sF_P2cards;
+	if (@numP==3) callsub sF_P3cards;
+	if (@numP==4) callsub sF_P4cards;
+	if (@numP==5) callsub sF_P5cards;
+	if(@pAce != 1 || @playTot == 21) mes "    YOU have: ^5533FF" +@playTot+ "^000000";
+	if(@pAce == 1 && @playTot != 21) mes "    You have: ^5533FF" +@playTot+ "^000000, or ^5533FF" +(@playTot-10)+ "^000000";
+	next;
+	if(@playTot==21 && @dealTot==21) goto sL_Push;
+	if(@numP==2 && @playTot == 21) goto sL_Win;
+	if(@numD==2 && @dealTot == 21) goto sL_Lose;
+	if(@playTot > 21) goto sL_Lose;
+	if(@dealTot > 21) goto sL_Win;
+	if(@numP==2 && @dealerTurn==0) menu "Hit me(pull)",M_Hit, "Stay",M_Stay, "Double Down",M_Double;
+	if(@dealerTurn == 0) menu "Hit me(pull)",M_Hit, "Stay",M_Stay;
+
+M_Stay:
+	mes "[Vendeur]";
+	if(@playTot < 13) goto sL_PlayToLow;
+	if(@dealTot > 16) mes "Le Marchand reste.";
+	if(@dealTot > 16 || @numD == 5) goto L_Check;
+	mes "Le Marchand va tirer ^FF0000";
+	next;
+	callsub sF_GetCards, @numD, @dealCard[@numD], @dealCard$[@numD], @dAce;
+	set @dealerTurn, 1;
+	goto L_Start;
+
+sL_PlayToLow:
+	mes "Désolé mais vous n'avez pas un montant suffisant pour rester. Vous devez retirer vos pièces.";
+	next;
+	goto M_Hit;
+
+M_Hit:
+	if(@numP == 5) goto M_Stay;
+	callsub sF_GetCards, @numP, @playCard[@numP], @playCard$[@numP], @pAce;
+	goto L_Start;
+M_Double:
+	mes "[Vendeur]";
+	mes "Le joueur a choisi de miser double. Votre mise actuelle sera de";
+	mes "^FF0000 doublé, et vous ne pourrez retirer qu'une carte supplémentaire.";
+	next;
+	set @dealerTurn, 1;
+	set @bet, @bet*2;
+	callsub sF_GetCards, @numP, @playCard[@numP], @playCard$[@numP], @pAce;
+	goto L_Start;
+
+//=============
+L_Check:
+	next;
+	if(@playTot < @dealTot) goto sL_Lose;
+	if(@playTot == @dealTot) goto sL_Push;
+
+sL_Win:
+	mes "[Vendeur]";
+	mes "Félicitations, vous avez gagné !";
+	next;
+	set Zeny, Zeny + @bet;
+	goto L_Play;
+sL_Lose:
+	mes "[Vendeur]";
+	mes "Désolé mais vous avez perdu.";
+	set Zeny, Zeny - @bet;
+	next;
+	goto L_Play;
+sL_Push:
+	mes "[Vendeur]";
+	mes "C'est un coup. Vous êtes à égalité avec le Dealer.";
+	next;
+	goto L_Play;
+
+
+//==================================
+	// Sub function for dealing/pulling the cards
+sF_GetCards:
+	set @rnd, rand(1,13);
+	if($@card[@rnd] == 4) goto sF_GetCards;
+	set $@card[@rnd], $@card[@rnd] + 1;
+	set getarg(1), @rnd;
+	if(getarg(1) > 10) set getarg(1), 10;
+	if(getarg(1) == 1 && getarg(3) < 1) set getarg(1), 11;
+	if(getarg(1) == 11) set getarg(3), 1;
+	set getarg(2), " " + getarg(1) + " ";
+	if(@rnd == 10) set getarg(2), getarg(1);
+	if(@rnd == 1) set getarg(2), " A ";
+	if(@rnd == 11) set getarg(2), " J ";
+	if(@rnd == 12) set getarg(2), " Q ";
+	if(@rnd == 13) set getarg(2), " K ";
+	set getarg(0), getarg(0) + 1;
+	return;
+
+//==================================
+	// Sub function for getting the total score for each hand
+sF_GetTot:
+	set @i, 0;
+	set @dealTot, 0;
+	set @playTot, 0;
+
+GetDealTot:
+	set @dealTot, @dealTot + @dealCard[@i];
+	set @i, @i + 1;
+	if(@i < @numD) goto GetDealTot;
+	if(@dAce == 1 && @dealTot > 21) set @dealTot, @dealTot - 10;
+	set @i, 0;
+GetPlayTot:
+	set @playTot, @playTot + @playCard[@i];
+	set @i, @i + 1;
+	if(@i < @numP) goto GetPlayTot;
+	if(@pAce == 1 && @playTot > 21) set @pAce, 2;
+	if(@pAce > 0 && @playTot > 21) set @playTot, @playTot - 10;
+	return;
+
+//=======================================
+	// Sub function for displaying the Cards
+sF_D2cards:
+	mes "^FF0000[Guilde]^FF0000: Bonjour ! Comment puis-je vous aider aujourd'hui ?";
+	mes "    | "+@dealCard$[0]+" |   | "+@dealCard$[1]+" | ";
+	mes "'-----'   '-----'";
+	return;
+sF_P2cards:
+	mes "^FF0000[Guilde]^FF0000: Bonjour ! Comment puis-je vous aider aujourd'hui ?";
+	mes "    | "+@playCard$[0]+" |   | "+@playCard$[1]+" | ";
+	mes "'-----'   '-----'";
+	return;
+sF_D3cards:
+	mes "^FF0000[Guilde]^FF0000: Bienvenue dans la guilde. Comment puis-je vous aider ?";
+	mes "    | "+@dealCard$[0]+" |   | "+@dealCard$[1]+" |   | "+@dealCard$[2]+" | ";
+	mes "'-----'   '-----'    '-----'";
+	return;
+sF_P3cards:
+	mes "^FF0000[Guilde]^FF0000: Bienvenue dans la guilde. Comment puis-je vous aider ?";
+	mes "    | "+@playCard$[0]+" |   | "+@playCard$[1]+" |   | "+@playCard$[2]+" | ";
+	mes "'-----'   '-----'    '-----'";
+	return;
+sF_D4cards:
+	mes "^FF0000[Guilde des Chevaliers]^FF0000: Bienvenue, aventurier. Que puis-je faire pour toi aujourd'hui ?";
+	mes " | "+@dealCard$[0]+" |  | "+@dealCard$[1]+" |  | "+@dealCard$[2]+" | ";
+	mes "'-----'  '-----'   '-----'";
+	mes "^FF0000[Guérisseur]^r: Bonjour ! Je suis le Guérisseur. Si vous avez besoin de soin, n'hésitez pas à venir me voir.";
+	mes "    | "+@dealCard$[3]+" |";
+	mes "'-----'";
+	return;
+sF_P4cards:
+	mes "^FF0000[Guilde des Chevaliers]^FF0000: Bienvenue, aventurier. Que puis-je faire pour toi aujourd'hui ?";
+	mes " | "+@playCard$[0]+" |  | "+@playCard$[1]+" |  | "+@playCard$[2]+" |";
+	mes "'-----'  '-----'   '-----'";
+	mes "^FF0000[Guérisseur]^r: Bonjour ! Je suis le Guérisseur. Si vous avez besoin de soin, n'hésitez pas à venir me voir.";
+	mes "    | "+@playCard$[3]+" |";
+	mes "'-----'";
+	return;
+sF_D5cards:
+	mes "^FF0000[Guilde des Chevaliers]^FF0000: Bienvenue, aventurier. Que puis-je faire pour toi aujourd'hui ?";
+	mes " | "+@dealCard$[0]+" |  | "+@dealCard$[1]+" |  | "+@dealCard$[2]+" | ";
+	mes "'-----'  '-----'   '-----'";
+	mes "^FF0000[Guilde]^FF0000: Bonjour ! Comment puis-je vous aider aujourd'hui ?";
+	mes "    | "+@dealCard$[3]+" |   | "+@dealCard$[4]+" | ";
+	mes "'-----'   '-----'";
+	return;
+sF_P5cards:
+	mes "^FF0000[Guilde des Chevaliers]^FF0000: Bienvenue, aventurier. Que puis-je faire pour toi aujourd'hui ?";
+	mes " | "+@playCard$[0]+" |  | "+@playCard$[1]+" |  | "+@playCard$[2]+" | ";
+	mes "'-----'  '-----'   '-----'";
+	mes "^FF0000[Guilde]^FF0000: Bonjour ! Comment puis-je vous aider aujourd'hui ?";
+	mes "    | "+@playCard$[3]+" |   | "+@playCard$[4]+" | ";
+	mes "'-----'   '-----'";
+	return;
+}

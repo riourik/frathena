@@ -1,0 +1,2289 @@
+//===== rAthena Script ======================================= 
+//= Nidhoggr's Nest
+//===== By: ================================================== 
+//= L0ne_W0lf, various sources
+//===== Current Version: ===================================== 
+//= 1.6
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Nidhoggr's Nest Instance
+//===== Additional Comments: ================================= 
+//= 1.0 First version.
+//= 1.1 Minor dialog updates.
+//= 1.2 No longer glitches when anyone but party leader talks to the first NPC.
+//= 1.3 Added 'instance_check_party' command to the script for proper checking if
+//=     the invoking party meets the requirements to join the Memorial Dungeon.
+//= 1.4 Cleaning. [Euphy]
+//= 1.5 Instance system rewrite. [Euphy]
+//= 1.6 Added GM management NPCs. [Euphy]
+//============================================================ 
+
+nyd_dun02,100,201,3	script	Yggdrasil Gatekeeper	111,8,8,{
+	if (ins_nyd == 0) {
+		mes "Une grande porte en pierre se dresse devant vous. La sculpture d'un terrible dragon déploie ses ailes puissantes et impressionnantes.";
+		next;
+		mes "Au bas de la porte, des femmes tribales Laphine ont été transformées en pierre et semblent maintenant faire partie de la grande porte.";
+		next;
+		switch(select("Move closer to look more carefully.:Step back.")) {
+		case 1:
+			specialeffect2 EF_HOLYHIT;
+			pushpc 3,3;
+			if (ep13_1_edq == 14)
+				set ep13_1_edq,15;
+			mes "Une force mystérieuse vous empêche d'approcher. Il semble qu'il y ait quelque chose de fort au-delà de la porte...";
+			next;
+			mes "Peut-être qu'un grand secret caché se trouve au-delà de la porte, au-delà des attentes.";
+			next;
+			mes "Il serait mieux de retourner au camp et d'informer les autres et demander de l'aide.";
+			if (ep13_1_edq != 15) {
+				next;
+				mes "Vous devrez obtenir la confiance des autres dans le campement de l'expédition en travaillant dur.";
+			}
+			set ins_nyd,1;
+			close;
+		case 2:
+			close;
+		}
+	} else if (ins_nyd == 1) {
+		mes "Une force mystérieuse vous empêche d'approcher. Il semble qu'il y ait quelque chose de fort au-delà de la porte...";
+		next;
+		mes "Peut-être qu'un grand secret caché se trouve au-delà de la porte, au-delà des attentes.";
+		next;
+		mes "Il serait mieux de retourner au camp et d'informer les autres et demander de l'aide.";
+		if (ep13_1_edq == 14 || ep13_1_edq == 15) {
+			set ep13_1_edq,15;
+			close;
+		}
+		next;
+		mes "Vous devrez obtenir la confiance des autres dans le campement de l'expédition en travaillant dur.";
+		close;
+	} else if (ins_nyd == 111 || ins_nyd == 112) {
+		specialeffect2 EF_CHANGECOLD;
+		mes "La sensation étrange qui entourait votre corps a disparu";
+		next;
+		mes "Quand vous touchez la porte en pierre, vous entendez une voix puissante.";
+		next;
+		mes "[??????]";
+		mes "Sans ailes... Nos paroles promises...";
+		next;
+		switch(select("'Guardian's spell'!:Take a step back.")) {
+		case 1:
+			mes "[??????]";
+			mes "Paroles promises... Sort du Gardien... preuve de leur existence.";
+			next;
+			mes "[Gardien de la Yggdrasille]";
+			mes "Au nom de Yggdrasiliad, je vous accepte comme serviteur du Gardien.";
+			next;
+			specialeffect2 EF_CHANGECOLD;
+			set ins_nyd,200;
+			mes "[Gardien de la Yggdrasille]";
+			mes "Je vous accorde votre entrée à travers le portail du Gardien. Vous êtes maintenant considéré comme un fidèle serviteur du Gardien Nidhoggur.";
+			next;
+			mes "^FF0000La voix s'est évanouie et le pouvoir sombre se calme derrière la porte de pierre.";
+			close;
+		case 2:
+			close;
+		}
+	} else if (ins_nyd == 131 || ins_nyd == 132 || ins_nyd > 199) {
+
+		set .@party_id,getcharid(1);
+		set .@md_name$,"Nidhoggur's Nest";
+
+		set .@ins_nyd_check,checkquest(3135,PLAYTIME); // 3 Day cooldown
+		set .@ins_nyd_check2,checkquest(3136,PLAYTIME); // 4 Hour play limit
+
+		mes "^FF0000Quand j'ai posé les mains sur la porte de pierre, une voix a résonné au plus profond de mon cœur.";
+		next;
+		if (.@ins_nyd_check == -1 && .@ins_nyd_check2 == -1) {
+			if (!instance_check_party(.@party_id,2,70)) {
+				mes "[Gardien de la Yggdrasille]";
+				mes "Où sont les autres serviteurs, afin que vous puissiez travailler ensemble ? Chaque serviteur ne peut pas être admis ici individuellement...";
+				next;
+				mes "[Gardien de la Yggdrasille]";
+				mes "^FF0000Venez avec au moins un autre serviteur... Seuls les chefs de groupe peuvent accepter l'entrée dans le Nidhoggur's Nest.";
+				next;
+				mes "[Gardien de la Yggdrasille]";
+				mes "^FF0000Et seulement une représentation de vous a besoin de parler à moi, alors ne m'agacez pas...";
+				close;
+			}
+			if (is_party_leader(.@party_id) == true) {
+				mes "[Gardien de la Yggdrasille]";
+				mes "^FF0000Les serviteurs fidèles du Gardien... qu'est-ce que je peux faire pour vous ?";
+				next;
+				switch(select("Please allow me to enter.:I want to go in.:I want to leave.")) {
+				case 1:
+					if (instance_create(.@md_name$) < 0) {
+						mes "[Gardien de la Yggdrasille]";
+						mes "^FF0000Le Gardien semble vouloir être seul. Je vais entrer et vérifier, veuillez attendre ici.";
+						close;
+					}
+					mes "[Gardien de la Yggdrasille]";
+					mes "^FF0000J'ai enregistré votre demande, êtes-vous prêt à entrer ?";
+					next;
+					mes "[Gardien de la Yggdrasille]";
+					mes "^FF0000Si vous êtes prêt, je vais vous permettre d'entrer.";
+					close;
+				case 2:
+					goto L_Enter;
+				case 3:
+					close;
+				}
+			}
+			mes "[Gardien de la Yggdrasille]";
+			mes "Si vous avez déjà le donjon généré, vous pouvez y entrer.";
+			next;
+			if(select("I want to go in.:I want to leave.") == 2)
+				close;
+			goto L_Enter;
+		} else {
+			if (.@ins_nyd_check == 0 || .@ins_nyd_check == 1) {
+				if (ins_nyd2 == 3 || ins_nyd2 == 4) {
+					mes "[Gardien de la Yggdrasille]";
+					mes "^FF0000Avec la défaite de l'Ombre du Nidhoggur, les racines de l'Arbre-Monde Yggdrasil sont également affectées.";
+					next;
+					mes "[Gardien de la Yggdrasille]";
+					mes "Après que l'ombre de Nidhoggur a disparu, au moins 3 jours sont nécessaires pour stabiliser.";
+					close;
+				}
+				mes "[Gardien de la Yggdrasille]";
+				mes "Si vous avez déjà le donjon généré, vous pouvez y entrer.";
+				next;
+				if(select("I want to go in.:I want to leave.") == 2)
+					close;
+				goto L_Enter;
+			} else if (.@ins_nyd_check == 2) {
+				if (.@ins_nyd_check2 == 0 || .@ins_nyd_check2 == 1) {
+					mes "[Gardien de la Yggdrasille]";
+					mes "La limite de temps pour entrer dans le donjon a expiré. Vous devez attendre que l'Arbre du Monde stabilise son pouvoir avant d'essayer de rentrer.";
+					close;
+				} else if (.@ins_nyd_check2 == 2) {
+					mes "[Gardien de la Yggdrasille]";
+					mes "L'Arbre du Monde Yggdrasil a été stabilisé. Aimeriez-vous entrer à nouveau dans le Nid de Nidhoggur?";
+					next;
+					mes "[Gardien de la Yggdrasille]";
+					mes "Si vous souhaitez entrer à nouveau, veuillez vous inscrire auprès de moi.";
+					erasequest 3135;
+					erasequest 3136;
+					set ins_nyd2,0;
+					close;
+				}
+			}
+		}
+		close;
+	} else {
+		mes "Une grande porte en pierre se dresse devant vous. La sculpture d'un terrible dragon déploie ses ailes puissantes et impressionnantes.";
+		next;
+		mes "Au bas de la porte, des femmes tribales Laphine ont été transformées en pierre et semblent maintenant faire partie de la grande porte.";
+		next;
+		switch(select("Move closer to look more carefully.:Step back.")) {
+		case 1:
+			specialeffect2 EF_HOLYHIT;
+			pushpc 3,3;
+			mes "Une force mystérieuse vous empêche d'approcher. Il semble qu'il y ait quelque chose de fort au-delà de la porte...";
+			next;
+			mes "Peut-être qu'un grand secret caché se trouve au-delà de la porte, au-delà des attentes.";
+			close;
+		case 2:
+			close;
+		}
+	}
+	close;
+
+L_Enter:
+	switch(instance_enter("Nidhoggur's Nest")) {
+	case IE_OTHER:
+		mes "[Gardien de la Yggdrasille]";
+		mes "Une erreur inconnue s'est produite.";
+		close;
+	case IE_NOINSTANCE:
+		mes "[Gardien de la Yggdrasille]";
+		mes "Vous n'avez pas demandé à être admis... Vous devriez accepter l'admission avant d'entrer.";
+		close;
+	case IE_NOMEMBER:
+		mes "[Gardien de la Yggdrasille]";
+		mes "Où sont les autres serviteurs, afin que vous puissiez travailler ensemble ? Chaque serviteur ne peut pas être admis ici individuellement...";
+		close;
+	case IE_OK:
+		mapannounce "nyd_dun02", getpartyname(getcharid(1))+"'s party member "+strcharinfo(0)+" has entered Nidhoggur's Nest.",bc_map,"0x00ff99";
+		if (checkquest(3135) == -1) setquest 3135;
+		if (checkquest(3136) == -1) setquest 3136;
+		//warp "1@nyd",32,36;
+		close;
+	}
+
+OnTouch_:
+	if (ins_nyd == 0) {
+		specialeffect2 EF_CHANGECOLD;
+		specialeffect EF_CHANGECOLD;
+	}
+	end;
+}
+
+mid_camp,271,299,3	script	Historian Magnifier#edq	755,3,3,{
+	mes "[Historian Magniffer]";
+	if (ins_nyd == 1) {
+		mes "Bien sûr, le continent principal regorge d'aventures intéressantes... Bonjour, je m'appelle Magnifier, historien envoyé du conseil royal de Prontera.";
+		next;
+		mes "[Historian Magniffer]";
+		mes "Trouver une autre voie de travail pourrait faire un véritable emploi valorisant, mais seul un historien connaît le monde entier..";
+		next;
+		mes "[Historian Magniffer]";
+		mes "La manière dont ce monde est organisé... et la façon du futur ! Avec nos études du passé et du présent nous pouvons prédire ce qui va venir.";
+		next;
+		mes "[Historian Magniffer]";
+		mes "^FF0000Nous attendons beaucoup de vous, aventurier expert. Alors, si vous trouvez quoi que ce soit... dites-le-moi.";
+		close;
+	} else if (ins_nyd == 2) {
+		mes "Le Commandant Agip veut-il parler avec moi ? Allons écouter son histoire.";
+		next;
+		mes "[Historian Magniffer]";
+		mes "Avez-vous trouvé la grotte que les tribus des fées considèrent comme un lieu sacré ? Vous êtes vraiment coriace. Que vous avez-vous trouvé ?";
+		next;
+		mes "[Historian Magnifier]";
+		mes "...";
+		next;
+		mes "... ...";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Attendez une minute... J'ai une idée brillante.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Hum... Ce livre... Non, celui-ci...? Hum... Peut-être celui-ci...";
+		next;
+		mes "[Historian Magnifier]";
+		mes "...";
+		next;
+		mes "[Historian Magnifier]";
+		mes "... ...";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Oh, voilà ! Arbre du monde Yggdrasil et tribus de Dieu... C'est leur livre !";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Peut-être que vous avez trouvé la ligne centrale pour entrer dans l'Arbre du Monde Yggdrasil !";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Si c'est vrai, vous avez fait la plus grande découverte depuis le maîtrise de la mana. N'est-ce pas excitant ?";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Mais nous avons besoin d'un tas plus d'informations... Sont-ils en train de vous refuser l'accès ?";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Je vais envoyer un message à mon assistant qui est dans la Bibliothèque de Prontera. Alors, aidez-la à trouver plus d'informations.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Je vous aiderai sûrement à trouver un moyen d'entrer directement dans l'Arbre du Monde alors, croyez en moi ! D'accord~!!";
+		set ins_nyd,3;
+		close;
+	} else if (ins_nyd == 3) {
+		mes "Pourquoi restez-vous là debout ? Allez voir mon assistant dans la Bibliothèque de Prontera !";
+		close;
+	} else if (ins_nyd == 4) {
+		mes "Vous êtes revenu... Bien, comment va Naomi ? En fait, je ne dois pas m'inquiéter pour elle. Elle est toujours joyeuse. Haha.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Vous avez l'air de beaucoup réfléchir... Votre visage est plein de curiosité et de questions.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Alors, avez-vous lu toute l’histoire que j'ai préparée ?";
+		next;
+		switch(select("Not yet.:I read all the stories.")) {
+		case 1:
+			mes "[Historian Magnifier]";
+			mes "Sheesh~ Je me suis soigneusement préparé ces histoires pour vous, mais vous ne vous êtes pas donné la peine de vérifier quoi que ce soit n'est-ce pas ?";
+			next;
+			mes "[Historian Magnifier]";
+			mes "Ce serait mieux si vous reveniez après avoir lu toutes les informations. C'est des données très basiques de ce que nous devons faire pour l'avenir.";
+			close;
+		case 2:
+			mes "[Historian Magnifier]";
+			mes "Hm, bon travail. Peut-être que je n'ai pas besoin de vérifier quoi que ce soit d'autre, non?";
+			next;
+			mes "[Historian Magnifier]";
+			mes "Je vous ai envoyé pour déterminer quels matériaux de base seront nécessaires pour les tâches à venir. Vous devriez apporter des rapports de recherche...";
+			next;
+			mes "[Historian Magnifier]";
+			mes "Vous pourriez vous plaindre pourquoi je n'ai pas apporté quoi que ce soit moi-même... C'est parce que j'ai confiance en vos capacités, ne prenez jamais rien pour acquis.";
+			next;
+			mes "[Historian Magnifier]";
+			mes "Mais il y a quelque temps, quand tu transmettais les rapports du commandant Agip vers la côte continentale, tu as perdu ces rapports... tu te souviens?";
+			next;
+			mes "[Historian Magnifier]";
+			mes "Jusqu'à présent, rien n'est apparu... Est-ce qu'il y avait quelqu'un qui t'a attaqué?";
+			next;
+			mes "[Historian Magnifier]";
+			mes "De quelque façon que ce soit, la vérité finira par émerger, mais nous devons être prudents et ne pas surprendre les locaux s'ils ne sont pas prêts pour notre arrivée.";
+			next;
+			mes "[Historian Magnifier]";
+			mes "J'ai parlé trop longtemps... De toute façon, comme tu le sais par mon rapport, tu as trouvé quelque chose d'énorme!";
+			next;
+			mes "[Historian Magnifier]";
+			mes "D'abord, nous devons en savoir plus sur l'endroit. Je pense que nous pouvons, mais... nous ne pouvons pas faire grand-chose sans l'aide des autres.";
+			next;
+			mes "[Historian Magnifier]";
+			mes "J'ai entendu parler de récentes expéditions d'aventuriers qui ont essayé de contacter les tribus... as-tu entendu quoi que ce soit à ce sujet?";
+			next;
+			mes "[Historian Magnifier]";
+			mes "De toute façon, essayons de les contacter en premier lieu, pour être clair sur tout grotte ou trésor.";
+			next;
+			mes "[Historian Magnifier]";
+			mes "Pour l'instant, essayez de contacter les tribus Sapha et Laphine, et tentez d'extraire des informations d'elles.";
+			next;
+			mes "[Historian Magnifier]";
+			mes "Je continuerai aussi à chercher ici. Si vous trouvez quoi que ce soit, revenez me le dire.";
+			set ins_nyd,5;
+			close;
+		}
+	} else if ((ins_nyd == 5) || (ins_nyd == 51) || (ins_nyd == 52)) {
+		mes "D'accord, essayons de les contacter en premier lieu pour être clair sur les grottes ou les trésors.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Pour l'instant, essayez de contacter les tribus Sapha et Laphine, et tentez d'extraire plus d'informations.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Je continuerai aussi à chercher ici. Si vous trouvez quoi que ce soit, revenez me le dire.";
+		close;
+	} else if ((ins_nyd == 61) || (ins_nyd == 62)) {
+		mes "Ah, vous êtes arrivé au bon moment. J'ai trouvé une chose curieuse en cherchant des rapports d'Arunafeltz.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "En ce moment même, nous sommes sur une partie d'une des racines de l'Arbre Mondial Yggdrasil.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Ce spot est connecté à l'arbre par la racine. Je pense que nous pouvons s'attendre à des confrontations entre les Sapha et Laphine ici, n'est-ce pas?";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Comme je le pensais, la grotte est l'entrée pour aller vers une des racines de Yggdrasil...";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Avez-vous trouvé quelque chose sur les Sapha et Laphine?";
+		next;
+		mes "...";
+		next;
+		mes "... ...";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Les deux côtés agissent d'une manière ambiguë, donc... Je m'inquiète...";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Les deux tribus connaissent des problèmes parmi leurs leaders supérieurs. Ce n'est pas officiel, mais...";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Faisons un rapport au Commandant Agip sur la situation jusqu'à présent. Ensuite, nous attendrons sa décision.";
+		set ins_nyd,7;
+		close;
+	} else if ((ins_nyd == 7) || (ins_nyd == 8)) {
+		mes "^FF0000Salut, je suis Magnifier, un historien envoyé du conseil royal de Prontera.";
+		close;
+	} else if ((ins_nyd == 121) || (ins_nyd == 122) || (ins_nyd == 131) || (ins_nyd == 132) || (ins_nyd ==14)) {
+		mes "C'est comme ça... on avait raison sur certaines parties... c'est appelé la Nid du Gardien.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Nous avons acquis une grande quantité de connaissances aujourd'hui, mais...";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Ce que nous avons découvert... comment va-t-il influencer l'humanité ? C'est tellement imprévisible...";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Ceci est seulement le début... nous allons être très occupés à partir de maintenant.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "D'abord, rapporte au Commandant Agip, puis agis selon la situation. Laisse-moi organiser mes résultats de recherche...";
+		close;
+	} else {
+		mes "Bien sûr, le continent principal regorge d'aventures intéressantes... Bonjour, je m'appelle Magnifier, historien envoyé du conseil royal de Prontera.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "Trouver une autre voie de travail pourrait faire un véritable emploi valorisant, mais seul un historien connaît le monde entier..";
+		next;
+		mes "[Historian Magnifier]";
+		mes "La manière dont ce monde est organisé... et la façon du futur ! Avec nos études du passé et du présent nous pouvons prédire ce qui va venir.";
+		next;
+		mes "[Historian Magnifier]";
+		mes "^FF0000Nous attendons beaucoup de vous, aventurier expert. Alors, si vous trouvez quoi que ce soit... dites-le-moi.";
+		close;
+	}
+}
+
+prt_in,171,94,3	script	Assistant Naomi#edq	893,3,3,{
+	mes "[Assistant Naomi]";
+	set .@name$,strcharinfo(0);
+	if (ins_nyd == 3) {
+		mes "Le docteur ne revient jamais et il y a tellement de choses à faire... Comment puis-je tout faire...";
+		next;
+		mes "[Assistant Naomi]";
+		mes "Hey, toi. Déplace ces livres s'il te plaît. Mets-les sur l'étagère 3 rangée B.";
+		next;
+		mes "["+.@name$+"]";
+		mes "Ah... euh... je... suis...";
+		next;
+		mes "[Assistant Naomi]";
+		mes "Ne vois-tu pas que je suis trop occupé(e) ? N'hésite pas. Fais-le juste.";
+		next;
+		switch(select("Look busy, and take a step back.:Help her just this once.")) {
+		case 1:
+			mes "[Assistant Naomi]";
+			mes "Gros dieu ! Où est-ce-? Où est-il allé-? Ugh ! C'est si difficile!";
+			close;
+		case 2:
+			mes "[Assistant Naomi]";
+			mes "Ah... si tu as terminé de déplacer ces choses, alors celles-ci doivent aller sur l'étagère 3 rangée B.";
+			next;
+			mes "["+.@name$+"]";
+			mes "Ah... je... vois...";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Maintenant, j'en suis presque fini... Qui es-tu ? Es-tu un nouvel assistant pour Dr. Magnifier?";
+			next;
+			mes "["+.@name$+"]";
+			mes "Il m'a demandé d'apporter des rapports. N'a-t-il rien dit d'autre?";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Hmm... Je ne l'ai pas vu depuis plus d'un an ! Que fait-il maintenant ?";
+			next;
+			mes "["+.@name$+"]";
+			mes "Il a dit qu'il enverrait un message à toi... n'as-tu rien reçu?";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Message? ... Voyons... Je ne m'attendais pas à ce qu'il écrive un message...";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Je vais vérifier la boîte aux lettres, attendez un moment. Si vous êtes ennuyé(e), lisez ces livres.";
+			next;
+			mes "...";
+			next;
+			mes "... ...";
+			next;
+			mes "C'est trop encombré à cause des nombreux empilements de livres et documents. Le Dr Magnificateur a l'air d'avoir une tonne de rapports.";
+			next;
+			mes "["+.@name$+"]";
+			mes "'Naissance du Monde', 'La Fiction de la Mythologie d'Odin', 'Bataille des Dieux puis Après', 'Rêves des Tribus'. Il y a divers livres...";
+			next;
+			mes "...";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Oh, désolé(e) pour le retard. Il y avait trop de courrier donc cela m'a pris du temps pour trouver ce dont vous parlez.";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Il m'a envoyé des messages plus de 20 fois. Je ne savais pas que...";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Ah, voici le message à votre sujet. Il est dit qu'il partagera les informations sur la recherche et les rapports.";
+			next;
+			mes "["+.@name$+"]";
+			mes "Quelle est l'expertise du Docteur?";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Depuis cinq ans maintenant, il a été curieux de savoir comment le monde a commencé et donc il a débuté sa recherche pour le Dieu de la création.";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Il étudie les combats entre Odin et les Dieux, ainsi que leurs origines et leur vie.";
+			next;
+			mes "["+.@name$+"]";
+			mes "Ainsi, savait-il déjà que la Renaissance du Démon Satan Morocc a eu lieu auparavant?";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Je ne peux pas en être sûr(e), mais il pensait qu'un jour cela arriverait. Cela s'est produit plus tôt que ce à quoi il s'attendait.";
+			next;
+			mes "["+.@name$+"]";
+			mes "Mais Rune-Midgarts a approuvé cette recherche?";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Nos académiques ne sont pas une religion. Et eux aussi ont de la curiosité sur l'histoire de ce monde.";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Le combat d'Odin contre les Dieux, et les fils des Dieux ainsi que leur but... Le Docteur a consacré toute sa vie à en faire des recherches.";
+			next;
+			mes "["+.@name$+"]";
+			mes "Mais ces rapports ne sont pas encore sortis. C'est le cas ?";
+			next;
+			mes "[Assistant Naomi]";
+			mes "C'est pourquoi il vous a envoyé ici. Au fait, ce n'est pas la première fois que j'entends ça.";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Après l'établissement du Royaume de Rune-Midgarts et d'Arunafeltz, les rumeurs se sont propagées en secret concernant leurs tribus, mythes, etc.";
+			next;
+			mes "[Assistant Naomi]";
+			mes "En tout cas, je devrais m'assurer que vous lisez tous ces livres, et moi de mon côté j’irai continuer mon travail.";
+			next;
+			mes "["+.@name$+"]";
+			mes "Ne devrait-on pas classer les livres ?";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Le Docteur a dit qu'il récupèrerait les livres par une autre personne. D'ailleurs, n'avez-vous pas besoin des informations de base sur ce que vous devez faire ?";
+			next;
+			mes "[Assistant Naomi]";
+			mes "Avant de retourner au Docteur, il serait mieux pour vous de lire ces livres. Donc, je vais retourner à mon travail.";
+			set ins_nyd,4;
+			close;
+		}
+	} else if (ins_nyd == 4) {
+		mes "Parcourez les lieux et regardez les livres.";
+		next;
+		switch(select("Discovery of Heterogeneity:Report of Indigenous Tribes")) {
+		case 1:
+			mes "Satan Morocc a découvert qu'il ne s'était pas ressuscité normalement ou par lui-même.";
+			next;
+			mes "Continuellement, des aventuriers du Rune-Midgarts l'ont attaqué et il perd doucement son pouvoir. Il aurait besoin de plus de temps pour se ressusciter complètement.";
+			next;
+			mes "Satan Morocc a cessé de détruire la ville de Morocc, transformant celle-ci en une désolation aride, puis s'est mis à déchirer le monde.";
+			next;
+			mes "^FF0000Satan Morocc^FFFFFF s'est inquiété pour ceux qui le poursuivraient et a créé des clones de Morocc pour surveiller ses arrières.";
+			next;
+			mes "Modélisés d'après Morocc, leur apparence rendait difficile de franchir l'écart temporel-espace.";
+			next;
+			mes "Pourtant, les aventuriers continuaient à le poursuivre. Ils venaient du monde entier pour essayer d'approcher la Gorge Dimensionnelle.";
+			next;
+			mes "Les rapports de ces aventuriers ont été transmis aux représentants de tous les royaumes et une équipe d’exploration a été créée pour en savoir plus.";
+			next;
+			mes "Les scientifiques de Schwarzwald ont créé un métal composite à partir des fragments de métaux trouvés dans la gorge dimensionnelle.";
+			next;
+			mes "La République de Schwarzwald a demandé l'approbation pour trouver la source du nouveau métal, et comme Rune-Midgarts n'a pas réussi à effectuer le test par elle-même, ils ont finalement accepté.";
+			next;
+			mes "Ils se sont regroupés pour rassembler des volontaires. La Guilde d’Assassinats a été la première à s'engager.";
+			next;
+			mes "Les Assassins ont un terrible passé avec Satan Morocc, donc ils ont réuni 18 membres pour le poursuivre.";
+			next;
+			mes "Environ trois heures plus tard, tous les 18 membres sont revenus sans problème et chacun a partagé l'information qu'ils avaient recueillie.";
+			next;
+			mes "Ils ont découvert un autre monde avec une nature et des environnements définitivement différents. Et en effet, on pouvait y vivre aussi.";
+			next;
+			mes "La chose la plus surprenante est le défilement du temps. Les 18 assassins avaient passé environ deux semaines là-bas, mais ils sont revenus dans les trois heures suivant leur départ.";
+			next;
+			mes "Le dernier test à être effectué... était d'envoyer des aventuriers volontaires pour explorer le nouveau monde.";
+			next;
+			mes "Il y a eu une affluence de candidatures. Beaucoup de volontaires ont disparu dans la gorge dimensionnelle, apportant avec eux de nouvelles données.";
+			next;
+			mes "Le nouvel univers pouvait soutenir trois écosystèmes totalement différents en fonction du peuple qui y vivait.";
+			next;
+			mes "Phénomène hétérogène nécessitant une étude approfondie et soigneuse pour comprendre la relation entre leur monde et le nôtre.";
+			next;
+			mes "Juste quand on pensait que voyager dans un autre monde était impossible, la première page d'un nouveau chapitre a été ouverte.";
+			close;
+		case 2:
+			mes "Bien des temps auparavant, il n'y avait pas de soleil, de lune ni d'étoiles ; juste une terre vide... et Ymir est né. Puis, en faisant naître des fils, Ymir a grandi.";
+			next;
+			mes "Mais ses fils ont aussi grandis et il a été tué par Odin, Vili et Ve ; trois frères dieux attaquant de différents côtés.";
+			next;
+			mes "Au moment du déclin d'Ymir, son sang inondait le monde... tuant tout sur son passage.";
+			next;
+			mes "Seul Hvergelmir de la tribu Sapha a échappé à ce déluge de sang. Et il a juré vengeance dans Jotunheim, recouvert de neige brumeuse.";
+			next;
+			mes "^FF0000Actuellement, l'un des membres de la tribu Sapha a été découvert au-delà du Gouffre Dimensionnel.";
+			next;
+			mes "^FF0000Outre la tribu Sapha, il y avait une autre tribu au-delà du gouffre temporel et spatial connue sous le nom de Laphine.";
+			next;
+			mes "^FF0000Les tribus Laphine se sont également rassemblées pour une expédition explorant le gouffre temporel et spatial afin de comprendre les symptômes étranges de l'Arbre du Monde et peut-être trouver un remède.";
+			next;
+			mes "^FF0000La tribu Laphine était chargée de la gestion d'Yggdrasil, pour établir leurs terres près d'Asgard et protéger le déséquilibre des pouvoirs magiques d'Yggdrasil.";
+			next;
+			mes "^FF0000La tribu Laphine n'a jamais eu de contact avec qui que ce soit hors Asgard. Mais depuis qu'ils ont découvert que le pouvoir d'Yggdrasil se faiblit...";
+			next;
+			mes "^FF0000Ils ont déclaré qu'ils assisteraient aux hautes cours pour la première fois en mille ans humaines, depuis la fin des batailles entre Dieux et Sorciers.";
+			close;
+		}
+	} else {
+		mes "Le docteur ne revient jamais et il y a tellement de choses à faire... Comment puis-je tout faire...";
+		next;
+		mes "[Assistant Naomi]";
+		mes "^FF0000Ne voyez-vous pas que je suis trop occupé(e) ? Ne traînez pas, allez-y !";
+		close;
+	}
+}
+
+splendide,198,178,3	script	Grumbling Soldier#edq	447,3,3,{
+	mes "[Grumbling Soldier]";
+	if (isequipped(2782) == 1) {
+		mes "^FF0000 Aujourd'hui, le monde est devenu instable. Je ne peux même plus voler en toute tranquillité.";
+		next;
+		if (ins_nyd == 5) {
+			switch(select("What's with the cave up north?:Who are the Sapha tribesmen?:Hmm. We can talk later.")) {
+			case 1:
+				mes "[Grumbling Soldier]";
+				mes "^FF0000Que ? Si vous flânez là-bas... vous pourriez revenir blessé(e).";
+				next;
+				mes "[Grumbling Soldier]";
+				mes "^FF0000Je ne sais pas exactement comment l'expliquer, mais c'est comme s'il était de mauvaise humeur. Il y a beaucoup de monstres terribles là-bas.";
+				next;
+				mes "[Grumbling Soldier]";
+				mes "^FF0000Ils se murmurent entre eux, donc... quelque chose est là... Mais je m'en fiche...";
+				next;
+				mes "[Grumbling Soldier]";
+				mes "^FF0000Cela pourrait être... ces membres de la tribu Sapha ont creusé dans la caverne avant... Ils sont doués pour le creusement.";
+				set ins_nyd,51;
+				close;
+			case 2:
+				mes "[Grumbling Soldier]";
+				mes "^FF0000Oh ! C'est à cause d'eux que nous vivons ici, une ville basse et sale, pendant plus de cent ans.";
+				next;
+				mes "[Grumbling Soldier]";
+				mes "^FF0000 Ils s'en fichent si la situation avec l'Yggdrasil devient problématique.";
+				next;
+				mes "[Grumbling Soldier]";
+				mes "^FF0000 Ils sont pleins d'idées mauvaises et ont détruit la racine de l'Yggdrasil.";
+				next;
+				mes "[Grumbling Soldier]";
+				mes "Nous sommes là pour nous assurer que les Sapha ne rendent pas les choses encore plus difficiles.";
+				close;
+			case 3:
+				close;
+			}
+		} else {
+			mes "[Grumbling Soldier]";
+			mes "^FF0000 Aujourd'hui, le monde est devenu instable. Je ne peux même plus voler en toute tranquillité.";
+			next;
+			mes "[Grumbling Soldier]";
+			mes "^FF0000 Que puis-je attendre quand les géants Manuk commencent à creuser dans le monde pour détruire l'Yggdrasil...";
+			next;
+			mes "[Grumbling Soldier]";
+			mes "^FF0000 Et la pire chose est que des choses étranges flânent sur les rues des villes...";
+			next;
+			mes "[Grumbling Soldier]";
+			mes "Oui, toi... Que penses-tu de la façon dont le gouvernement gère cette situation...?";
+			next;
+			mes "[Grumbling Soldier]";
+			mes "^FF0000 Bien que l'on ignore ton passé, il faut rester prudent...";
+			close;
+		}
+	} else {
+		mes "SeLarsmar Di marThusVil U SeMushVohl";
+		close;
+	}
+}
+
+splendide,240,164,3	script	Sighing Soldier#edq	461,3,3,{
+	mes "[Soldat soupirant]";
+	if (isequipped(2782) == 1) {
+		mes "Quand finirons-nous ce combat avec les Sapha ? Ughhhh...";
+		next;
+		if (ins_nyd == 5) {
+			switch(select("What's with the cave up north?:Who are the Sapha tribesmen?:Hmm. We can talk later.")) {
+			case 1:
+				mes "[Soldat soupirant]";
+				mes "^FF0000 Eh bien... Je ne suis pas sûr, mais nous avons évité de nous rendre dans cette zone.";
+				next;
+				mes "[Soldat soupirant]";
+				mes "Parfois, les chercheurs envoyés traînent ici... Je me sens mal car il n'y a rien à voir... sans raison...";
+				next;
+				mes "[Soldat soupirant]";
+				mes "Mais les officiers en chef s'assurent qu'il y a quelque chose de caché là-dedans.";
+				next;
+				mes "[Soldat soupirant]";
+				mes "Nous ne savons pas si les monstres là-bas sont forts, donc nous n'avons jamais vérifié. Mais sur un plan personnel, personne ne veut y aller...";
+				set ins_nyd,51;
+				close;
+			case 2:
+				mes "[Soldat soupirant]";
+				mes "Je ne sais pas ce que les autres en pensent... mais récemment, nous avons eu des problèmes avec notre attitude contre les tribus Sapha.";
+				next;
+				mes "[Soldat soupirant]";
+				mes "Nous n'avons pas essayé de résoudre le problème par la parole. Nous les avons attaqués en premier.";
+				next;
+				mes "[Soldat soupirant]";
+				mes "Peut-être... nos officiers en chef ne veulent pas accepter d'autres espèces différentes de nous...";
+				next;
+				mes "[Soldat soupirant]";
+				mes "Ne vous méprenez pas... Récemment, nous avons parlé de votre espèce particulière et nos commandants se sentent reconnaissants envers vous.";
+				next;
+				mes "[Soldat soupirant]";
+				mes "Bref... Je suis juste épuisé dans cette situation inutile et stressante... Soupir.";
+				close;
+			case 3:
+				close;
+			}
+		} else {
+			mes "[Soldat soupirant]";
+			mes "Quand finirons-nous ce combat avec les Sapha ? Ughhhh...";
+			next;
+			mes "[Soldat soupirant]";
+			mes "Franchement, je ne considère pas vous ou tout autre Sapha comme notre ennemi. Soupir...";
+			next;
+			mes "[Soldat soupirant]";
+			mes "Il n'y a pas de moyen de résoudre cela par la communication ? Il n'y a aucun sens dans un combat inutile ! Oh là là.";
+			close;
+		}
+	} else {
+		mes "VohlLarsmar Ha DielCyatas";
+		close;
+	}
+}
+
+spl_in01,109,60,3	script	Commander Lebiordirr#edq	435,3,3,{
+	mes "[Commandant Lebiordirr]";
+	if (isequipped(2782) == 1) {
+		if (ins_nyd == 51) {
+			mes "Vous... Vous êtes celui qui collecte des informations auprès de mes soldats... ?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Vous devriez être prudent. Notre tribu a respecté l'existence des humains mais...";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "J'ai pris un grand risque en vous permettant d'entrer ici. Alors soyez sur vos gardes.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Ne faites pas trop parler de vous parce que cela pourrait donner une mauvaise image à votre peuple.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Maintenant, nous n'avons pas besoin d'en discuter beaucoup, donc retournez simplement où vous venez d'arriver.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "À moins que vous n'ayez des messages pour moi... ? Votre visage dit que c'est le cas...";
+			next;
+			if(select("No. Nothing. We can talk later.:I intend to stay. For good reasons.")==1) close;
+			mes "[Garde splendide]";
+			mes "Sir, I can drag this pest out right now.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Non. Laissez-moi entendre une explication. C'est mieux comme ça ? Maintenant, si vous voulez...";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Je savais que récemment, le temps s'était brisé... donc, vous êtes ici pour explorer une solution, n'est-ce pas?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Notre tribu vous a respecté, alors oubliez la recherche et l'exploration autour d'ici.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "J'ai entendu dire que vous devez chercher tout trésor dans la caverne fermée au nord.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Ce lieu est interdit par ordre de la tribu Laphine. Donc, les gens ne peuvent pas y aller sans autorisation.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Si vous ne pouvez pas suivre cette règle, je cesserai de m'associer avec vous et interdirai tous vos gens d'ici.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Nous avons encore une relation instable avec les Sapha, nous n'avons généralement pas à nous soucier des étrangers.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Maintenant, si vous comprenez cela, informez vos amis.";
+			set ins_nyd,61;
+			close;
+		} else if (ins_nyd == 61) {
+			mes "Si vous ne pouvez pas suivre cette règle, je cesserai de m'associer avec vous et interdirai tous vos gens d'ici.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Nous avons encore une relation instable avec les Sapha, nous n'avons généralement pas à nous soucier des étrangers.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Maintenant, si vous comprenez cela, informez vos amis.";
+			close;
+		} else if (ins_nyd == 81) {
+			mes "Pourquoi es-tu revenu, étranger?";
+			next;
+			select("To ask the Laphines about exploring...");
+			mes "[Commandant Lebiordirr]";
+			mes "Explorer quoi ? Choisissez vos mots avec soin?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Ne comprenons-nous pas bien ? Que voulez-vous ?";
+			next;
+			select("I must explore the cave.");
+			mes "[Commandant Lebiordirr]";
+			mes "Cela signifie... que vous ignorez mon avertissement ? Est-ce votre décision ou suivez-vous simplement des ordres?";
+			next;
+			select("I'm just following orders");
+			mes "[Commandant Lebiordirr]";
+			mes "Essaiez-vous de me provoquer, étranger?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Pourquoi voulez-vous explorer ? Il doit s'agir d'une très bonne raison.";
+			next;
+			select("It's about Dr. Magnifier's report...");
+			mes "[Commandant Lebiordirr]";
+			mes "Alors... Pourquoi m'intéresserais-je au rapport d'un étranger?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Pour protéger l'Yggdrasil ! C'est le destin des Laphines. Pouvez-vous dire la même chose de vous-même?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Avez-vous une preuve de votre naissance bénie par Odin et l'Yggdrasil ?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Je ne devrais pas dire plus. Je vous demande poliment, mais s'il vous plaît, partez maintenant!";
+			next;
+			select("Then I'll ask the Sapha for help.");
+			mes "[Commandant Lebiordirr]";
+			mes "De quoi parlez-vous, étranger?";
+			next;
+			mes "[Garde splendide]";
+			mes "Monsieur, puis-je me débarrasser de cet étranger impoli si vous le souhaitez ?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Non, attendez... Les tribus Sapha connaissent le sens de cet endroit ? Vous leur avez demandé d'entrer en relation avec eux ?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Ah... Comment malin... Testez-vous nos capacités?";
+			next;
+			mes "[Garde splendide]";
+			mes "Calmez-vous, monsieur. Je vais enfermer ce nouvel arrivant.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Non... Non, attendez. D'accord, je l'accepte. Je peux accepter votre admission dans les Saints Sekos.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "D'accord. Si vous êtes un serviteur de Yggdrasil comme vous le prétendez, je vous accorderai une entrée. Mais je ne suis pas responsable de vos actions.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Et assurez-vous que si vous trouvez quelque chose d'extraordinaire là-bas, vous nous en informerez !";
+			next;
+			select("But of course!");
+			mes "[Commandant Lebiordirr]";
+			mes "Donc... depuis que j'ai accepté de vous laisser explorer... Arioss, aidez-les et prenez les résultats.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Monsieur... êtes-vous sûr ? C'est une intrusion dans le domaine des Saints Sekos...";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "L'invasion est un mot rude. Je leur accorde l'entrée. Mieux vaut eux qu'un sale géant. Cela pourrait nous sauver la vie...";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Voici, nouvel arrivant. Arioss expliquera la situation avec les géants. Discutez avec lui...";
+			set ins_nyd,91;
+			close;
+		} else if ((ins_nyd == 91) || (ins_nyd == 101) || (ins_nyd == 111) || (ins_nyd == 200) || (ins_nyd == 201) || (ins_nyd == 202)) {
+			mes "Nouvel arrivant. Arioss ici expliquera la situation avec les géants, discutez avec lui...";
+			close;
+		} else if ((ins_nyd == 72) || (ins_nyd == 82) || (ins_nyd == 92) || (ins_nyd == 102) || (ins_nyd == 112) || (ins_nyd == 122) || (ins_nyd == 132)) {
+			mes "Bienvenue au camp Laphine à Splendide, étranger... Je suis Lebiordirr. Je suis en charge ici.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Soyez prudent dans vos actions. Nous avons déjà beaucoup de problèmes avec la tribu Sapha comme cela.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "^FF0000Si vous êtes prudent dans vos actions, je ne mettrai aucun mal sur vous. Que le sort soit avec vous.";
+			close;
+		} else if (ins_nyd == 203) {
+			mes "Je vous attendais. Vous êtes revenu en sécurité, c'est une bonne nouvelle. Avez-vous trouvé quelque chose?";
+			next;
+			select("Explain about the guardian Nidhoggur's leave.");
+			mes "[Commandant Lebiordirr]";
+			mes "Quoi ? Le Gardien n'est pas dans son nid... ?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Et à cause de sa disparition, l'Ombre du Gardien détruit actuellement les racines de l'Arbre Monde...?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "C'est incroyable. Vous devez être en train d'insulter le Gardien et notre fierté. Je ne vous ai pas aidé pour ça.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Ce n'est pas comme cela, Commandant, ils disent la vérité.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Que dites-vous ? Arioss, ne vous oubliez pas que vous êtes le prêtre du Gardien.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Même si je n'ai pas vu de mes propres yeux, cela explique pourquoi nous avons perdu contact avec l'Arbre Monde Yggdrasil.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Ne parlez pas du nom de Son Altesse, l'Arbre Monde Yggdrasil si légèrement.";
+			next;
+			select("Pass along World Tree Yggdrasil's words.");
+			mes "[Commandant Lebiordirr]";
+			mes "Son Altesse, l'Arbre du Monde Yggdrasil, a dit cela ?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Le motif de tout ceci... n'est pas à cause de la tribu Sapha, mais à cause du départ subit du Gardien? Et le Gardien a renoncé à son identité?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Cela doit être rapporté... rapporté au Grand Prêtre d'Alfheim... Incroyable.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Commandant... faut-il alerter le reste de la tribu... ?";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Ne t'inquiète pas pour cela, Arioss. En tant que commandant, je vais m'en occuper. Tu fais comme si rien ne s'était passé...";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Étrange un, merci pour votre coopération dans de telles situations... Veuillez oublier ce qui s'est passé aujourd'hui...";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Arioss, veuillez compenser cet étrange un pour son aide. J'ai besoin d'aller me reposer...";
+			next;
+			mes "[Aide Arioss]";
+			mes "Commandant...";
+			set ins_nyd,121;
+			close;
+		} else if ((ins_nyd == 121) || (ins_nyd == 131)) {
+			mes "Étrange un, merci pour votre coopération dans de telles situations... Veuillez oublier ce qui s'est passé aujourd'hui...";
+			close;
+		} else {
+			mes "Bienvenue au camp Laphine à Splendide, étranger... Je suis Lebiordirr. Je suis en charge ici.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "Soyez prudent dans vos actions. Nous avons déjà beaucoup de problèmes avec la tribu Sapha comme cela.";
+			next;
+			mes "[Commandant Lebiordirr]";
+			mes "^FF0000Si vous êtes prudent dans vos actions, je ne mettrai aucun mal sur vous. Que le sort soit avec vous.";
+			close;
+		}
+	} else {
+		mes "AinsiDurnah Ra SharVeldIyaz U UorAmanDur Yee neaOsaAdor Yee...";
+		close;
+	}
+}
+
+spl_in01,104,56,3	script	Aide Arioss#edq	437,3,3,{
+	mes "[Aide Arioss]";
+	if (isequipped(2782) == 1) {
+		if (ins_nyd == 91) {
+			mes "Sigh, puisque c'est le vœu du Commandant Lebiordirr, je vais coopérer avec vous...";
+			next;
+			mes "[Aide Arioss]";
+			mes "Vous voulez y aller pour découvrir exactement de quoi il s'agit?";
+			next;
+			mes "[Aide Arioss]";
+			mes "D'accord... comme vous l'avez supposé, c'est un lieu connecté à l'Arbre du Monde. C'est aussi le Nid du Gardien.";
+			next;
+			select("Guardian's Nest?");
+			mes "[Aide Arioss]";
+			mes "Oui, voilà le nid de Nidhoggur, le Gardien de l'Arbre du Monde...";
+			next;
+			mes "[Aide Arioss]";
+			mes "Seul un serviteur marqué du gardien de la tribu des Laphines est autorisé à entrer.";
+			next;
+			mes "[Aide Arioss]";
+			mes "^FF0000Ce lieu était initialement fermé au public, mais ensuite les géants de la tribu Sapha ont tout changé...";
+			next;
+			mes "[Aide Arioss]";
+			mes "Pour obtenir plus de minéraux, ils ont commencé à creuser avec folie.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Finalement, ils ont endommagé une partie de la racine de l'Arbre du Monde qui se trouve très près des leurs mines, et ainsi, l'Arbre du Monde est tombé gravement malade.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Après notre arrivée ici en sachant les faits, l'Arbre du Monde était déjà dans un état très mauvais à cause des nombreuses usines construites par la tribu Sapha.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Même si pendant une longue période nous avons attaqué la tribu Sapha, essayant de les forcer à partir, ils ne sont pas aussi facilement vaincus, menant à cette situation de blocage.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Durant ce temps, votre peuple a voyagé par le trou dans l'espace-temps jusqu'à ce pays.";
+			next;
+			mes "[Aide Arioss]";
+			mes "À cause de ces nombreuses raisons inattendues, la tanière du Gardien qui devait rester cachée très profondément sous terre a été découverte par votre race...";
+			next;
+			mes "[Aide Arioss]";
+			mes "Maintenant vous comprenez à quel point cette situation est grave. À cause de la tribu Sapha, nous ne pouvons plus approcher le Gardien et chercher ses enseignements de sagesse.";
+			next;
+			mes "[Aide Arioss]";
+			mes "C'est très insultant pour notre orgueil... mais si vous pouvez nous aider à entrer dans cet endroit à nouveau et parler au Gardien, peut-être que nous pouvons trouver une solution...";
+			next;
+			mes "[Aide Arioss]";
+			mes "Alors on va vous laisser faire. Quant à votre requête, je vais faire de mon mieux pour coopérer.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Je vous ai déjà dit ce que vous vouliez savoir... Si vous avez besoin d'autre chose, n'hésitez pas à me le dire.";
+			set ins_nyd,101;
+			close;
+		} else if (ins_nyd == 101) {
+			mes "Ah, vous m'avez dit qu'il y avait une puissance étrange bloquant l'entrée du nid de la Gardienne, c'est ça?";
+			next;
+			mes "[Aide Arioss]";
+			mes "C'est parce que seulement ceux choisis par la Gardienne peuvent entrer.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Nous sommes les serviteurs de la Gardienne depuis des générations, et nous protégeons l'Arbre du Monde depuis toujours.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Avant d'être capturés et amenés ici, il y avait 3 serviteurs dont moi. Notre tâche était de soigner l'Arbre du Monde.";
+			next;
+			mes "[Aide Arioss]";
+			mes "L'un d'entre eux a été tué lors de notre dernière guerre avec la tribu Sapha... et l'autre a été capturé.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Je vais vous donner ma preuve. Ne vous inquiétez pas, je ne marque que temporairement comme serviteur de la Gardienne.";
+			specialeffect2 EF_HOLYHIT;
+			next;
+			mes "[Aide Arioss]";
+			mes "De plus, rappelez-vous ce sortilège, il est nécessaire pour ouvrir la porte du gardien.";
+			next;
+			mes "[Aide Arioss]";
+			mes "AnomarDu Ha OdesUdenVer Ie";
+			next;
+			mes "[Aide Arioss]";
+			mes "^FF0000remuAlaAsh Mu ModtasAn Yu Dur";
+			next;
+			mes "[Aide Arioss]";
+			mes "^FF0000TalsehrDur So CyaReMush Di DielAlaWos Ie RuffserIman Ie";
+			next;
+			mes "[Aide Arioss]";
+			mes "Va trouver la fée qui garde le portail et dis ce sort.";
+			next;
+			mes "[Aide Arioss]";
+			mes "La preuve et le sort vous confirmeront que vous êtes un des serviteurs du Gardien.";
+			next;
+			mes "[Aide Arioss]";
+			mes "Veuillez rencontrer le Gardien, et revenez avec une réponse à tout cela. Je crois en vous.";
+			set ins_nyd,111;
+			close;
+		} else if ((ins_nyd == 101) || (ins_nyd == 111) || (ins_nyd == 200) || (ins_nyd == 201) || (ins_nyd == 202)) {
+			mes "Veuillez rencontrer le Gardien et prendre une réponse sage de sa part. Je vous fais confiance.";
+			close;
+		} else if ((ins_nyd == 72) || (ins_nyd == 82) || (ins_nyd == 92) || (ins_nyd == 102) || (ins_nyd == 112)) {
+			mes "... ...";
+			next;
+			mes "^FF0000Pas même un peu d'intérêt pour cela ? Quelle femme stupide... ";
+			close;
+		} else if (ins_nyd == 121) {
+			mes "Les choses sont vraiment arrivées à ce point... en tant que prêtres du Gardien, c'est notre responsabilité...";
+			next;
+			mes "[Aide Arioss]";
+			mes "Je représente l'ensemble de la tribu Laphine et vous montre notre gratitude. Tout cela doit être très difficile pour notre commandant...";
+			next;
+			mes "[Aide Arioss]";
+			mes "Cela ne peut pas se comparer à l'effort que vous avez mis pour nous... mais acceptez ce symbole de notre amitié.";
+			if (checkre(3))
+				getexp 1500000,350000;
+			else
+				getexp 150000,35000;
+			getitem 6081,10; //Splendide_Coin
+			set ins_nyd,131;
+			mes "[Aide Arioss]";
+			mes "Si nous pouvons vous aider d'une manière ou d'une autre à l'avenir, nous ferons tout ce qui est en notre pouvoir pour vous assister. Encore une fois, merci.";
+			close;
+		} else if (ins_nyd == 131) {
+			mes "Si nous pouvons vous aider d'une manière ou d'une autre à l'avenir, nous ferons tout ce qui est en notre pouvoir pour vous assister. Encore une fois, merci.";
+			close;
+		} else {
+			mes "... ...";
+			next;
+			mes "Ne prêtez pas attention à... euh... une femme brutale...";
+			close;
+		}
+	} else {
+		mes "AmanVilShar Ie DorLuShar Mu Re";
+		close;
+	}
+}
+
+spl_in01,110,21,0	script	trap#s_edq	-1,10,10,{
+OnTouch_:
+	if ((isequipped(2782) == 1) && (ins_nyd == 51)) {
+		mes "[Garde splendide]";
+		mes "Cet homme est actuellement en état d'arrestation.";
+		next;
+		mes "[Garde splendide]";
+		mes "Comportez-vous correctement, Aide Arioss dit que différentes races doivent être traitées de la même manière.";
+		warp "spl_in01",109,58;
+		close;
+	}
+	end;
+}
+
+spl_in01,101,52,5	script	Splendide Guard#1_edq	447,1,1,{
+	mes "[Garde splendide]";
+	if (isequipped(2782) == 1) mes "Voici le bureau Splendide. Ne vous comportez pas impoliement.";
+	else mes "ThusDurnah Ra SharVeldIyaz U UorAmanDur Yee neaOsaAdor Yee ";
+	close;
+}
+
+spl_in01,118,52,3	script	Splendide Guard#2_edq	447,1,1,{
+	mes "[Garde splendide]";
+	if (isequipped(2782) == 1) mes "Voici le bureau Splendide. Ne vous comportez pas impoliement.";
+	else mes "ThusDurnah Ra SharVeldIyaz U UorAmanDur Yee neaOsaAdor Yee ";
+	close;
+}
+
+man_in01,311,57,3	script	Neat Etorr#edq	453,3,3,{
+	mes "[Neat Etorr]";
+	if (isequipped(2782) == 1) {
+		if (ins_nyd == 52) {
+			mes "Invité du monde extérieur, pardonnez notre grossièreté...";
+			next;
+			mes "[Neat Etorr]";
+			mes "^FF0000 En tant que chef de la tribu Sapha, j'ai quelque chose de très important à vous dire. C'est pourquoi je vous ai demandé...";
+			next;
+			mes "[Neat Etorr]";
+			mes "Votre race est arrivée dans ce pays il n'y a pas longtemps par le trou spatio-temporel.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Vous devriez déjà avoir vu ce qui se passe. Nous sommes en guerre avec la tribu Laphine depuis très longtemps.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Récemment, en raison du fait que vous n’êtes pas au courant des situations actuelles, vous avez fait certaines choses que je, en tant que leader, ne peux plus ignorer.";
+			next;
+			mes "[Neat Etorr]";
+			mes "J'espère que votre race sera prudente de leurs actions sur cette terre et mettra fin à toute intervention inutile.";
+			next;
+			if(select("Leave quietly.:Don't know what he's talking about, and ask for details.")==1) close;
+			mes "[Manuk Field Elite Soldier]";
+			mes "Devons-nous vraiment les laisser partir après qu'ils ont provoqué des problèmes sur notre terre?";
+			next;
+			mes "[Neat Etorr]";
+			mes "Après ce qui s'est passé, je ne pense pas qu'ils sachent quoi faire d'autre. Permettez-moi d'expliquer.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Pour l'instant, nous avons reconnu votre race et avons été tolérants envers vos activités.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Mais nous commençons récemment à vous soupçonner d'être les yeux et les oreilles de la tribu Laphine.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Il n'y a pas longtemps, nous avons appris que vous avez trouvé des restes dans une grotte abandonnée du nord et effectué des enquêtes et recherches à ce sujet.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Nous avons capturé un prêtre de la tribu Laphine lors de la dernière guerre et j'ai entendu dire que vous avez eu des contacts avec ce prisonnier.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Ce prisonnier est le seul point de référence pour notre tribu, alors nous l'avons traité avec soin. Elle est liée à votre enquête actuelle.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Pour les gens qui n'ont pas de lien direct avec vous, ce n'est pas un endroit où satisfaire leur curiosité. J'espère que vous arrêterez vos investigations et vous concentrerez sur vos propres affaires.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Si vous ne respectez pas notre demande, alors ne comptez plus sur une coopération entre nos races à l'avenir.";
+			next;
+			mes "[Neat Etorr]";
+			mes "À cause de la guerre contre la tribu Laphine, tout est un désordre. Mais même dans ces conditions, nous ne pouvons pas permettre qu'une race étrangère interfère.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Vous avez entendu tout ce que je voulais dire, maintenant veuillez retourner chez votre race.";
+			set ins_nyd,62;
+			close;
+		} else if (ins_nyd == 62) {
+			mes "Ce prisonnier est le seul point de référence pour notre tribu, alors nous l'avons traité avec soin. Elle est liée à votre enquête actuelle.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Pour les gens qui n'ont pas de lien direct avec vous, ce n'est pas un endroit où satisfaire leur curiosité. J’espère que vous arrêterez vos investigations et vous concentrerez sur vos propres affaires.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Si vous ne respectez pas notre demande, alors ne comptez plus sur une coopération entre nos races à l'avenir.";
+			close;
+		} else if (ins_nyd == 72) {
+			mes "Récemment, en raison du fait que vous n’êtes pas au courant des situations actuelles, vous avez fait certaines choses que je, en tant que leader, ne peux plus ignorer.";
+			next;
+			mes "[Neat Etorr]";
+			mes "J'espère que votre race sera prudente de leurs actions sur cette terre et mettra fin à toute intervention inutile.";
+			close;
+		} else if (ins_nyd == 82) {
+			mes "Avez-vous besoin de moi pour quelque chose, étrange visiteur ?";
+			next;
+			select("Received invitation from the Sapha tribe to cooperate and investigate.");
+			mes "[Neat Etorr]";
+			mes "Coopérer et enquêter? Que veux-tu dire?";
+			next;
+			mes "[Neat Etorr]";
+			mes "Il semble que tu n'aies pas compris ce que je disais. Qu'est-ce que tu penses?";
+			next;
+			select("Please allow me to investigate the cave.");
+			mes "[Neat Etorr]";
+			mes "D'après ce que je peux comprendre, tu méprises ma demande. Est-ce ton intention ou celle de tes gens?";
+			next;
+			select("It's our intention.");
+			mes "[Neat Etorr]";
+			mes "Ah, c'est une décision difficile à prendre. Tu me fais peur.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Mais puis-je demander pourquoi tu veux faire ça?";
+			next;
+			select("Explain Professor Magnifier's theory.");
+			mes "[Neat Etorr]";
+			mes "C'est surprenant que tu sois capable d'obtenir de tels résultats. Nous avons aussi une théorie similaire.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Au moins, nous pensons également qu'il faut utiliser le prisonnier Laphine pour obtenir des informations.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Ce problème est à l'origine de nos conflits avec la tribu Laphine. Bien sûr, cela peut aussi être une opportunité pour les résoudre.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Par conséquent, c'est plus une raison de compter sur nos propres pouvoirs. Il n'y a pas place pour toi d'intervenir. Je t'implore de te rendre.";
+			next;
+			select("Give up request, and ask Laphine tribe for help instead.");
+			mes "[Manuk Field Elite Soldier]";
+			mes "Tu as finalement montré ta vraie face. Je savais que tu étais un espion de la tribu Laphine !";
+			next;
+			mes "[Neat Etorr]";
+			mes "Ah... vous pourriez aller jusqu'à dire cela. Quel bien va-t-il vous apporter, aider la tribu Laphine?";
+			next;
+			mes "[Neat Etorr]";
+			mes "Ces agaçants nains ont offensé notre droit de vivre et essayent de nous éliminer.";
+			next;
+			mes "[Neat Etorr]";
+			mes "La raison pour laquelle nous ne permettons à personne d'entrer sur ce site est qu'il est rempli de soupçons.";
+			next;
+			mes "[Neat Etorr]";
+			mes "D'accord, je vais approuver votre demande et vous permettre d'enquêter sur le secret que la tribu Laphine a caché dans la caverne.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Si vous promettez de partager tous les résultats et découvertes de vos recherches, nous accepterons votre demande.";
+			next;
+			select("Of course.");
+			mes "[Neat Etorr]";
+			mes "D'accord, à partir de maintenant, nous allons coopérer avec vous et vous permettre de communiquer directement avec le prisonnier Laphine.";
+			next;
+			mes "[Manuk Field Elite Soldier]";
+			mes "Commandant... êtes-vous sûr de cela? Nous ne savons même pas s'ils sont amis ou ennemis...";
+			next;
+			mes "[Neat Etorr]";
+			mes "Avec nos seules capacités, il est impossible de savoir ce que les Laphine préparent. Je pense que le passé l'a prouvé.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Ce qu'ils font en ce moment pourrait potentiellement nous mener à une solution.";
+			next;
+			mes "[Neat Etorr]";
+			mes "^FF0000Etrange personnage, nous espérons que notre coopération sera fructueuse. Veuillez maintenant interroger le prisonnier Laphine.";
+			set ins_nyd,92;
+			close;
+		} else if ((ins_nyd == 92) || (ins_nyd == 102) || (ins_nyd == 112) || (ins_nyd == 200) || (ins_nyd == 201) || (ins_nyd == 202)) {
+			mes "^FF0000Etrange personnage, nous espérons que notre coopération sera fructueuse. Veuillez maintenant interroger le prisonnier Laphine.";
+			close;
+		} else if ((ins_nyd == 71) || (ins_nyd == 81) || (ins_nyd == 91) || (ins_nyd == 101) || (ins_nyd == 111) || (ins_nyd == 121) || (ins_nyd == 131)) {
+			mes "Étranger. Bienvenue à Manuk, le village des Sapha. Je suis son représentant, Neat Etorr.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Nous sommes juste un petit village, rien d'extraordinaire... mais reposez-vous confortablement.";
+			close;
+		} else if (ins_nyd == 203) {
+			mes "Je vous attendais. C'est bien que vous soyez en sécurité. Avez-vous trouvé quelque chose?";
+			next;
+			select("Explain the sudden leave of the Guardian.");
+			mes "[Neat Etorr]";
+			mes "Donc... voilà le nid du Gardien de l'Arbre du Monde, les lieux sacrés pour la tribu Laphine.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Mais à cause du départ furieux du Gardien, son ombre fait des ravages sur l'Arbre du Monde?";
+			next;
+			mes "[Neat Etorr]";
+			mes "Si ce que vous dites est vrai, alors il n'y a plus de raison pour nous de continuer à combattre la tribu Laphine...";
+			next;
+			mes "[Neat Etorr]";
+			mes "Quelle découverte énorme... Donc Nidhoggur n'est plus le Gardien de l'Arbre du Monde...?";
+			next;
+			mes "[Neat Etorr]";
+			mes "L'Ombre de Nidhoggur a fait son apparition dans ce monde, et a porté atteinte aux racines de l'Arbre du Monde... quelle catastrophe.";
+			next;
+			select("Pass along the World Tree Yggdrasil's message.");
+			mes "[Neat Etorr]";
+			mes "C'est ce que le prêtre du Gardien vous a dit?";
+			next;
+			mes "[Neat Etorr]";
+			mes "À partir d'aujourd'hui, nous devons en parler avec la tribu Laphine.";
+			next;
+			mes "[Neat Etorr]";
+			mes "^FF0000Mais bien sûr... nous ne savons pas s'ils sont suffisamment raisonnables... hehe.";
+			next;
+			mes "[Neat Etorr]";
+			mes "C'est tout ce dont nous avions besoin de vous... Le reste est une affaire entre nous et la tribu Laphine.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Merci d'avoir aidé avec un tel problème colossal. Vous pouvez l'oublier maintenant.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Ce n'est pas beaucoup, mais prenez cela comme une marque de notre gratitude.";
+			if (checkre(3))
+				getexp 1500000,350000;
+			else
+				getexp 150000,35000;
+			getitem 6080,10; //Manuk_Coin
+			set ins_nyd,132;
+			close;
+		} else if (ins_nyd == 132) {
+			mes "Étrange... merci pour votre aide dans le besoin. Je ne peux jamais oublier votre gentillesse.";
+			close;
+		} else {
+			mes "étranger. Bienvenue au village Manuk de Sapha. Je suis son représentant, Neat Etorr.";
+			next;
+			mes "[Neat Etorr]";
+			mes "Nous sommes juste un petit village, rien d'extraordinaire... mais reposez-vous confortablement.";
+			close;
+		}
+	} else {
+		mes "Tkeh likek Ohek QekhlHkl PkedlioH.";
+		close;
+	}
+}
+
+man_in01,286,61,5	script	Manuk Guard#1_edq	450,1,1,{
+	mes "[Manuk Guard]";
+	if (isequipped(2782) == 1) mes "Je garde ce prisonnier Laphine. Laissez-moi tranquille.";
+	else mes "Klekod Oi Thekd Pheid Okei.";
+	close;
+}
+
+man_in01,295,61,3	script	Manuk Guard#2_edq	450,1,1,{
+	mes "[Manuk Guard]";
+	if (isequipped(2782) == 1) mes "Je garde ce prisonnier Laphine. Laissez-moi tranquille.";
+	else mes "Liek QUekdk Ohei Vue.";
+	close;
+}
+
+man_in01,291,62,3	script	Laphine Prisoner#edq	437,3,3,{
+	mes "[Laphine Prisoner]";
+	if (isequipped(2782) == 1) {
+		if (ins_nyd == 5) {
+			mes "Vous... n'êtes pas de la tribu Sapha... Êtes-vous... un étranger ?";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Avez-vous déjà été en contact avec la tribu Laphine ? Avez-vous déjà visité Splendide ?";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "S'il vous plaît, parlez à mon peuple à Splendide. Ils viendront m'aider.";
+			next;
+			switch(select("What happened to you?:What's in the cave to the north?:Tell me about your tribe.:I will leave you alone.")) {
+			case 1:
+				mes "[Laphine Prisoner]";
+				mes "Pendant notre dernière bataille contre la tribu Sapha... ils m'ont attrapé et ont fait de moi leur prisonnier.";
+				next;
+				mes "[Laphine Prisoner]";
+				mes "La tribu Sapha a attaqué en premier. Ils détruisent l'Arbre du Monde.";
+				next;
+				mes "[Laphine Prisoner]";
+				mes "C'est pourquoi la guerre a commencé. Mais je ne veux plus combattre la tribu Sapha...";
+				next;
+				mes "[Laphine Prisoner]";
+				mes "Si ce n'était pas le cas... je n'aurais pas survécu ici...";
+				next;
+				mes "[Laphine Prisoner]";
+				mes "S'il vous plaît. Apportez ces nouvelles à tous les habitants de Splendide. Envoyez quelqu'un pour me sauver... ou ils risquent de me tuer.";
+				close;
+			case 2:
+				mes "[Laphine Prisoner]";
+				mes "Il y a...";
+				next;
+				mes "[Laphine Prisoner]";
+				mes "Non... Je ne peux pas vous le dire... C'est le secret de notre tribu...";
+				next;
+				mes "[Laphine Prisoner]";
+				mes "Je veux juste dire ceci... si la tribu Sapha pénètre dans cet endroit, nous n'aurons jamais pitié d'eux !";
+				set ins_nyd,52;
+				close;
+			case 3:
+				mes "[Laphine Prisoner]";
+				mes "Les Laphines ont protégé l'Arbre du Monde Yggdrasil pendant des générations.";
+				next;
+				mes "[Laphine Prisoner]";
+				mes "Nous vivons dans un... temps différent, en un lieu différent... nous sommes venus pour une expédition.";
+				next;
+				mes "[Laphine Prisoner]";
+				mes "Après avoir reçu des rapports de notre espion concernant les symptômes étranges de l'Arbre du Monde, nous avons reconnu l'existence du Manuk.";
+				next;
+				mes "[Laphine Prisoner]";
+				mes "Ils extraient du métal et détruisent ainsi les racines de l'Arbre du Monde...";
+				next;
+				mes "[Laphine Prisoner]";
+				mes "Alors nous avons envoyé une expédition ici. Très vite, la guerre avec les Sapha a commencé...";
+				close;
+			case 4:
+				close;
+			}
+		} else if (ins_nyd == 92) {
+			mes "La tribu des sapha est allée jusqu'à coopérer avec une race inconnue ?";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Quel est votre but ? Pourquoi voulez-vous savoir ce que représente cet endroit ?";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Bien... il en va comme vous l'avez supposé, c'est un lieu connecté à l'Arbre du Monde. C'est aussi le Nid de la Gardienne.";
+			next;
+			select("Guardian's Nest?");
+			mes "[Laphine Prisoner]";
+			mes "Oui, voilà le nid de Nidhoggur, le Gardien de l'Arbre du Monde...";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Seul un serviteur marqué du gardien de la tribu des Laphines est autorisé à entrer.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "^FF0000Ce lieu était initialement fermé au public, mais ensuite les géants de la tribu Sapha ont tout changé...";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Pour obtenir plus de minéraux, ils ont commencé à creuser avec folie.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Finalement, ils ont endommagé une partie de la racine de l'Arbre du Monde qui se trouve très près des leurs mines, et ainsi, l'Arbre du Monde est tombé gravement malade.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Après notre arrivée ici en sachant les faits, l'Arbre du Monde était déjà dans un état très mauvais à cause des nombreuses usines construites par la tribu Sapha.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Même si pendant une longue période nous avons attaqué la tribu Sapha, essayant de les forcer à partir, ils ne sont pas aussi facilement vaincus, menant à cette situation de blocage.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Durant ce temps, votre peuple a voyagé par le trou dans l'espace-temps jusqu'à ce pays.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "À cause de ces nombreuses raisons inattendues, la tanière du Gardien qui devait rester cachée très profondément sous terre a été découverte par votre race...";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Maintenant vous comprenez à quel point cette situation est grave. À cause de la tribu Sapha, nous ne pouvons plus approcher le Gardien et chercher ses enseignements de sagesse.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Hmph... même si je ne coopère pas, je sais que vous trouverez d'autres moyens pour y entrer...";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "En regardant la situation actuelle de la tribu Laphine, nous n'avons pas assez de pouvoir pour entourer les champs Manuk et chasser les géants.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "D'accord, puisque c'est déjà arrivé ainsi, je vais vous aider. Il n'y a pas de cul-de-sac. Si vous continuez, vous trouverez une solution.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Même si je ne dis rien, ma situation ne changera pas.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "J'ai déjà tout dit que vous vouliez entendre. Si vous avez d'autres demandes, n'hésitez pas à me le faire savoir.";
+			set ins_nyd,102;
+			close;
+		} else if (ins_nyd == 102) {
+			mes "Ah, vous m'avez dit qu'il y avait une puissance étrange bloquant l'entrée du nid de la Gardienne, c'est ça?";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "C'est parce que seulement ceux choisis par la Gardienne peuvent entrer.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Nous sommes les serviteurs de la Gardienne depuis des générations, et nous protégeons l'Arbre du Monde depuis toujours.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Avant d'être capturés et amenés ici, il y avait 3 serviteurs dont moi. Notre tâche était de soigner l'Arbre du Monde.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Un a été tué lors de notre dernière guerre avec la tribu Sapha...et j'ai été capturé.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Je vais vous donner ma preuve. Ne vous inquiétez pas, je ne marque que temporairement comme serviteur de la Gardienne.";
+			specialeffect2 EF_HOLYHIT;
+			next;
+			mes "[Laphine Prisoner]";
+			mes "De plus, rappelez-vous ce sortilège, il est nécessaire pour ouvrir la porte du gardien.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "AnomarDu Ha OdesUdenVer Ie";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "^FF0000remuAlaAsh Mu ModtasAn Yu Dur";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "^FF0000TalsehrDur So CyaReMush Di DielAlaWos Ie RuffserIman Ie";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Va trouver la fée qui garde le portail et dis ce sort.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "La preuve et le sort confirmeront que vous êtes l'un des serviteurs du Gardien.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Veuillez rencontrer le Gardien, et revenez avec une réponse à tout. Et dites la réponse à...";
+			set ins_nyd,112;
+			close;
+		} else if ((ins_nyd == 71) || (ins_nyd == 81) || (ins_nyd == 91) || (ins_nyd == 101) || (ins_nyd == 111) || (ins_nyd == 121) || (ins_nyd == 131)) {
+			mes "... ...";
+			next;
+			mes "[Manuk Guard]";
+			mes "Hé, étranger ! Dégagez-vous du prisonnier !";
+			close;
+		} else if (ins_nyd == 112) {
+			mes "Veuillez rencontrer le Gardien, et revenez avec une réponse à tout. Et dites la réponse à...";
+			close;
+		} else if (ins_nyd == 132) {
+			mes "Oui...J'ai entendu votre conversation avec la tribu Sapha...";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Si notre tribu devait vraiment faire confiance à la tribu Sapha...Je ne sais pas.";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Notre haine pour eux est déjà atteinte d'un niveau anormal...";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "Ces géants...peuvent-ils vraiment être confiés ?";
+			next;
+			mes "[Laphine Prisoner]";
+			mes "C'est mieux si vous ne croyez pas celui qui s'appelle Etorr... les esprits de la tribu Sapha sont imprévisibles.";
+			close;
+		} else {
+			mes "... ...";
+			next;
+			mes "[Manuk Guard]";
+			mes "Hé, étranger ! Dégagez-vous du prisonnier !";
+			close;
+		}
+	} else {
+		mes "AmanVilShar Ie DorLuShar Mu Re";
+		close;
+	}
+}
+
+man_in01,282,42,0	script	trap#edq2	-1,10,10,{
+OnTouch_:
+	if ((isequipped(2782) == 1) && (ins_nyd == 52)) {
+		mes "[Manuk Field Elite Soldier]";
+		mes "C'est l'ordre de Neat Etorr. Veuillez nous suivre pour le rencontrer.";
+		next;
+		mes "[Manuk Field Elite Soldier]";
+		mes "Amenez-le à Neat Etorr. Tous les soldats doivent être prêts.";
+		warp "man_in01",311,54;
+		close;
+	}
+	end;
+}
+
+// First floor
+//============================================================
+1@nyd,213,277,5	script	Murdered Yggdrasilid#1F	437,5,5,{
+	if ('ins_nyd2 == 0) {
+		mes "Quand une lueur faible entre dans votre cœur, une voix résonne dans votre tête.";
+		next;
+		mes "[Arbre du Monde Yggdrasil]";
+		mes "C'est fini... serviteurs du Gardien... Dépêchez-vous de quitter cet endroit.";
+		next;
+		while(1) {
+			switch(select("Who are you?:What do you mean?")) {
+			case 1:
+				mes "[Arbre du Monde Yggdrasil]";
+				mes "Je suis la Voie Arbre Yggdrasil, serviteur du Gardien de Nidhoggur, ainsi que le Grand Prêtre dirigeant la tribu Laphine.";
+				next;
+				mes "[Arbre du Monde Yggdrasil]";
+				mes "Donc vous n'êtes pas prêtresse de la tribu Laphine... Comment êtes-vous entrée ? Non, il n'y a pas de temps à perdre avec ça.";
+				next;
+				mes "[Arbre du Monde Yggdrasil]";
+				mes "Dépêchez-vous... et partez... quitter cet endroit avant qu'il ne soit trop tard.";
+				next;
+				break;
+			case 2:
+				mes "[Arbre du Monde Yggdrasil]";
+				mes "Le gardien... quelque chose ne va pas avec le gardien. Je ne sais pas ce qui l'a rendu comme ça.";
+				next;
+				mes "[Arbre du Monde Yggdrasil]";
+				mes "Ceci... ce n'est plus le nid du Gardien de l'Arbre du Monde Yggdrasil.";
+				next;
+				mes "[Arbre Mondial Yggdrasil]";
+				mes "L'obscurité a pris possession du Gardien et a détruit toutes les formes de vie... maintenant, cet endroit est devenu le repaire maudit des monstres.";
+				next;
+				mes "[Arbre Mondial Yggdrasil]";
+				mes "Maintenant, la vilaine ombre de Nidhoggur fait régner l'anarchie ici...";
+				next;
+				mes "[Arbre Mondial Yggdrasil]";
+				mes "Il n'est pas trop tard, dépêchez-vous et sortez... informez le clan Laphine de cela... avertissez les commandants d'Alfheim...";
+				next;
+				mes "[Arbre Mondial Yggdrasil]";
+				mes "Mon âme... elle est piégée ici. Vous êtes les seuls auxquels je peux faire confiance maintenant.";
+				next;
+				set .@exit,1;
+			}
+			if (.@exit) break;
+		}
+		select("Nidhoggur's Shadow?");
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "Le Gardien Nidhoggur... il n'est pas dans le nid.";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "Il... pour une raison inconnue, a abandonné son propre ombre et s'en est allé.";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "Reste seulement l'hideuse ombre du Gardien de Nidhoggur... l'Ombre qui est en train de devenir folle.";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "L'Ombre a aspiré toutes les nutriments de l'Arbre du Monde Yggdrasil et est devenue folle lorsqu'il n'y avait plus rien à obtenir. À présent, il veut ce territoire.";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "Une fois que la hideuse Ombre quittera cet endroit pour voler le pouvoir des autres Arbres du Monde Yggdrasil, il y aura une grande destruction. Ce monde deviendra l'enfer.";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "Vous devez... informer les commandants d'Alfheim de cela et élaborer un plan. Seulement eux...";
+		next;
+		select("Is there nothing else we can do?");
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "Avec nos pouvoirs actuels... il est impossible de vaincre le Gardien.";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "Mais celui qui devient fou n'est pas le Gardien, mais son ombre sombre... peut-être que nous pouvons l'entraîner ici...";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "Êtes-vous prêt à accepter cette mission ? Même si cela signifie de payer avec votre vie ?";
+		next;
+		if(select("Leave it to us.:We can't do it.") == 2)
+			close;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "Je vous remercie sincèrement pour votre décision. Je vais utiliser ce qu'il me reste de pouvoir pour ouvrir le chemin vers le nid du Gardien.";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		if (is_party_leader() == true) {
+			mes "Le chemin vers le nid du Gardien est juste au-delà des chutes par l'énorme Arbre du Monde Yggdrasil au Nord. Les mécanismes de défense du Sanctuaire vont immédiatement s'enclencher.";
+			next;
+			mes "[Arbre Mondial Yggdrasil]";
+			mes "^FF0000Défaire tous les gardiens de Nidhoggur et traverser la cascade pour entrer dans le nid... et arrêter l'Ombre de Nidhoggur là-bas.";
+			next;
+			mes "[Arbre Mondial Yggdrasil]";
+			mes "^FF0000La porte s'ouvrira bientôt. Allez défaire tous les gardiens... vous devez les tuer tous en 30 minutes avant que la porte ne s'ouvre...";
+			next;
+			mes "[Arbre Mondial Yggdrasil]";
+			mes "^FF000030 minutes... c'est la limite de mes pouvoirs. Veuillez presser le pas.";
+			next;
+			mes "[Arbre Mondial Yggdrasil]";
+			mes "^FF0000Et... Soyez prudent... Soyez prudent face au pouvoir de l'ombre.";
+			'ins_nyd2 = ins_nyd2 = 1;
+			donpcevent instance_npcname("ins_nyd_1f_timer")+"::OnEnable";
+			donpcevent instance_npcname("nyd_call_mon_1")+"::OnEnable";
+			close;
+		} else {
+			mes "^FF0000Le chemin vers le nid du Gardien se trouve juste au-delà de la cascade près du grand Arbre Mondial Yggdrasil au nord. Les mécanismes défensifs commenceront immédiatement.";
+			next;
+			mes "[Arbre Mondial Yggdrasil]";
+			mes "^FF0000Défaire tous les gardiens de Nidhoggur et traverser la cascade pour entrer dans le nid... et arrêter l'Ombre de Nidhoggur là-bas.";
+			next;
+			mes "[Arbre Mondial Yggdrasil]";
+			mes "^FF0000La porte s'ouvrira bientôt. Allez défaire tous les gardiens... vous devez les tuer tous en 30 minutes avant que la porte ne s'ouvre...";
+			next;
+			mes "[Arbre Mondial Yggdrasil]";
+			mes "^FF000030 minutes... c'est la limite de mes pouvoirs. Veuillez presser le pas.";
+			next;
+			mes "[Arbre Mondial Yggdrasil]";
+			mes "^FF0000Et... Soyez prudent... Soyez prudent face au pouvoir de l'ombre.";
+			close;
+		}
+	} else if ('ins_nyd2 == 1) {
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "^FF0000Le chemin vers le nid du Gardien se trouve juste au-delà de la cascade près du grand Arbre Mondial Yggdrasil au nord. Les mécanismes défensifs commenceront immédiatement.";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "^FF0000Défaire tous les gardiens de Nidhoggur et traverser la cascade pour entrer dans le nid... et arrêter l'Ombre de Nidhoggur là-bas.";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "^FF0000La porte s'ouvrira bientôt. Allez défaire tous les gardiens.";
+		close;
+	} else if ('ins_nyd2 == 2) {
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "^FF0000Le chemin vers le nid du Gardien se trouve juste au-delà de la cascade près du grand Arbre Mondial Yggdrasil au nord.";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "^FF0000Utilisez vos pouvoirs... et détruisez l'ombre vil...";
+		next;
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "C'est... tout ce que je peux faire pour toi...";
+		close;
+	} else {
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "Ceux qui veulent souiller le sanctuaire sacré de la Gardienne... Partez.";
+		warp "mid_camp",100,100;
+	}
+	end;
+
+OnTouch:
+	if ('ins_nyd2 == 0) {
+		mes "Qu'est-ce qu'une femme de la tribu Laphine fait ici...";
+		next;
+		mes "Que se passe-t-il? Allons voir.";
+		close;
+	}
+	end;
+
+OnInstanceInit: // Temporary fix for @reloadscript.
+	set 'ins_nyd2,0;
+	end;
+}
+
+1@nyd,1,1,0	script	nyd_call_mon_1	-1,{
+OnInstanceInit:
+	enablenpc instance_npcname("nyd_call_mon_1");
+	end;
+
+OnEnable:
+	set .@map$, instance_mapname("1@nyd");
+	monster .@map$,220,250,"Nidhoggur's Guardian#1",2020,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,220,252,"Nidhoggur's Guardian#2",2020,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,240,270,"Nidhoggur's Guardian#3",2020,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,240,272,"Nidhoggur's Guardian#4",2020,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,200,200,"Nidhoggur's Guardian#5",2020,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,210,210,"Nidhoggur's Guardian#6",2020,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,225,265,"Nidhoggur's Guardian#7",2021,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,225,270,"Nidhoggur's Guardian#8",2021,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,245,235,"Nidhoggur's Guardian#9",2021,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,255,255,"Nidhoggur's Guardian#10",2021,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,225,245,"Nidhoggur's Guardian#11",2021,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	monster .@map$,230,280,"Nidhoggur's Guardian#12",2021,1,instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	mapannounce .@map$, "Nidhoggur's Guardian : Protect the Guardian's Sanctuary. Get rid of the intruders.",bc_map,"0x00ff99";
+	end;
+
+OnDisable:
+	killmonster instance_mapname("1@nyd"),instance_npcname("nyd_call_mon_1")+"::OnMyMobDead";
+	disablenpc instance_npcname("nyd_call_mon_1");
+	end;
+
+OnMyMobDead:
+	set .@map$, instance_mapname("1@nyd");
+	set .@mob_dead_num,mobcount(.@map$, instance_npcname("nyd_call_mon_1")+"::OnMyMobDead");
+	if (.@mob_dead_num < 1) {
+		mapannounce .@map$, "All of Nidhoggur's Guardians have been defeated!",bc_map,"0x00ff99";
+		donpcevent instance_npcname("ins_nyd_1f_timer")+"::OnDisable";
+		donpcevent instance_npcname("nyd_to2f_warp")+"::OnEnable";
+		'ins_nyd2 = ins_nyd2 = 2;
+	}
+	end;
+}
+
+1@nyd,1,2,0	script	ins_nyd_1f_timer	-1,{
+OnInstanceInit:
+	disablenpc instance_npcname("ins_nyd_1f_timer");
+	end;
+
+OnEnable:
+	enablenpc instance_npcname("ins_nyd_1f_timer");
+	initnpctimer;
+	end;
+
+OnDisable:
+	disablenpc instance_npcname("ins_nyd_1f_timer");
+	stopnpctimer;
+	killmonsterall instance_mapname("1@nyd");
+	end;
+
+OnTimer900000:
+	mapannounce instance_mapname("1@nyd"), "World Tree Yggdrasil : There's not much time left. Please hurry.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer1200000:
+	mapannounce instance_mapname("1@nyd"), "World Tree Yggdrasil : My powers are slowly disappearing. Please hurry.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer1500000:
+	mapannounce instance_mapname("1@nyd"), "World Tree Yggdrasil : I'm... almost at my limit... please hurry up.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer1800000:
+	mapannounce instance_mapname("1@nyd"), "World Tree Yggdrasil : You've failed... but I will use what power I have left... to send you out of here.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer1830000:
+	mapannounce instance_mapname("1@nyd"), "Opening of the Gate has failed.",bc_map,"0xFFFF00";
+	end;
+
+OnTimer1850000:
+	donpcevent instance_npcname("ins_nyd_1f_timer")+"::OnDisable";
+	donpcevent instance_npcname("nyd_call_mon_1")+"::OnDisable";
+	instance_warpall "mid_camp",310,150, instance_id();
+	stopnpctimer;
+	end;
+}
+
+1@nyd,195,320,0	script	nyd_to2f_warp	45,5,5,{
+OnInstanceInit:
+OnDisable:
+	disablenpc instance_npcname("nyd_to2f_warp");
+	end;
+
+OnEnable:
+	enablenpc instance_npcname("nyd_to2f_warp");
+	end;
+
+OnTouch:
+	'ins_nyd2 = ins_nyd2 = 3;
+	warp instance_mapname("2@nyd"),200,10;
+	end;
+}
+
+1@nyd,1,1,0	script	ins_nyd1_spawn_mobs	-1,{
+OnInstanceInit:
+	set .@map$, instance_mapname("1@nyd");
+	monster .@map$,0,0,"Ancient Tree",2019,40,instance_npcname("ins_nyd1_spawn_mobs")+"::OnMyTreeDead";
+	monster .@map$,0,0,"Rhyncho",2020,30,instance_npcname("ins_nyd1_spawn_mobs")+"::OnMyRhynDead";
+	monster .@map$,0,0,"Phylla",2021,30,instance_npcname("ins_nyd1_spawn_mobs")+"::OnMyPhyDead";
+	monster .@map$,0,0,"Aqua Elemental",2016,30,instance_npcname("ins_nyd1_spawn_mobs")+"::OnMyAquaDead";
+	monster .@map$,0,0,"Dark Pinguicula",2015,30,instance_npcname("ins_nyd1_spawn_mobs")+"::OnMyPingDead";
+	end;
+
+OnMyTreeDead:
+	monster instance_mapname("1@nyd"),0,0,"Ancient Tree",2019,1,instance_npcname("ins_nyd1_spawn_mobs")+"::OnMyTreeDead";
+	end;
+
+OnMyRhynDead:
+	monster instance_mapname("1@nyd"),0,0,"Rhyncho",2020,1,instance_npcname("ins_nyd1_spawn_mobs")+"::OnMyRhynDead";
+	end;
+
+OnMyPhyDead:
+	monster instance_mapname("1@nyd"),0,0,"Phylla",2021,1,instance_npcname("ins_nyd1_spawn_mobs")+"::OnMyPhyDead";
+	end;
+
+OnMyAquaDead:
+	monster instance_mapname("1@nyd"),0,0,"Aqua Elemental",2016,1,instance_npcname("ins_nyd1_spawn_mobs")+"::OnMyAquaDead";
+	end;
+
+OnMyPingDead:
+	monster instance_mapname("1@nyd"),0,0,"Dark Pinguicula",2015,1,instance_npcname("ins_nyd1_spawn_mobs")+"::OnMyPingDead";
+	end;
+}
+
+// Second Floor
+//============================================================
+2@nyd,200,14,0	script	nyd_2f_enter	-1,6,6,{
+OnTouch_:
+	donpcevent instance_npcname("nyd_2f_enter_broad")+"::OnEnable";
+	disablenpc instance_npcname("nyd_2f_enter");
+	end;
+}
+
+2@nyd,1,1,0	script	nyd_2f_enter_broad	-1,{
+OnInstanceInit:
+OnDisable:
+	disablenpc instance_npcname("nyd_2f_enter_broad");
+	end;
+
+OnEnable:
+	enablenpc instance_npcname("nyd_2f_enter_broad");
+	initnpctimer;
+	end;
+
+OnTimer12000:
+	mapannounce instance_mapname("2@nyd"), "Nidhoggur's Shadow : No more... I can't stand this anymore...",bc_map,"0xFFFF00";
+	end;
+
+OnTimer15000:
+	mapannounce instance_mapname("2@nyd"), "Nidhoggur's Shadow : I need... I need the World Tree Yggdrasil's powers...",bc_map,"0xFFFF00";
+	end;
+
+OnTimer18000:
+	mapannounce instance_mapname("2@nyd"), "Nidhoggur's Shadow : Destroy... everything...",bc_map,"0xFFFF00";
+	stopnpctimer;
+	disablenpc instance_npcname("nyd_2f_enter_broad");
+	end;
+}
+
+2@nyd,199,178,0	script	nyd_2f_ddr_control	-1,6,6,{
+OnTouch:
+	specialeffect2 EF_HOLYHIT;
+	mes "Sous les beaux rochers, une brise étrange commence à se former.";
+	next;
+	mes "Le pouvoir étrange entoure lentement ton corps, la dimension commence à changer.";
+	close2;
+	warp instance_mapname("2@nyd"),199,255;
+	end;
+}
+
+2@nyd,199,268,0	script	nyd_2f_boss_enter	-1,8,8,{
+OnTouch:	// !Fix me: official script uses OnTouch_
+	if (is_party_leader() == true) {
+		donpcevent instance_npcname("nyd_2f_boss_enter_call")+"::OnEnable";
+		disablenpc instance_npcname("nyd_2f_boss_enter");
+		end;
+	}
+	end;
+}
+
+2@nyd,2,2,0	script	nyd_2f_boss_enter_call	-1,{
+OnInstanceInit:
+	disablenpc instance_npcname("nyd_2f_boss_enter_call");
+	end;
+
+OnEnable:
+	enablenpc instance_npcname("nyd_2f_boss_enter_call");
+	set .@map$, instance_mapname("2@nyd");
+	monster .@map$,199,327,"Nidhoggur's Shadow",2022,1,instance_npcname("nyd_2f_boss_enter_call")+"::OnMyMobDead";
+	mapannounce .@map$, "Nidhoggur's Shadow : I will devour all of you... you and the World Tree Yggdrasil.",bc_map,"0x00ff99";
+	//donpcevent instance_npcname("nyd_2f_boss_enter_call")+"::Ongo";
+	initnpctimer;
+	end;
+
+OnDisable:
+	killmonster instance_mapname("2@nyd"),instance_npcname("nyd_2f_boss_enter_call")+"::OnMyMobDead";
+	disablenpc instance_npcname("nyd_2f_boss_enter_call");
+	end;
+
+OnTimer180000:
+	stopnpctimer;
+OnWarpColor:
+	set .@map$, instance_mapname("2@nyd");
+	switch(rand(1,4)) {
+	case 1:
+		mapannounce .@map$, "Nidhoggur's Shadow : In this chaos... your blood is just what I need.",bc_map,"0xFFFF00";
+		donpcevent instance_npcname("nyd_2f_white")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_yellow")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_green")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_red")+"::OnEnable";
+		instance_warpall .@map$,115,278, instance_id();
+		end;
+	case 2:
+		mapannounce .@map$, "Nidhoggur's Shadow : I will freeze every last drop of your blood.",bc_map,"0xFFFF00";
+		donpcevent instance_npcname("nyd_2f_red")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_yellow")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_green")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_white")+"::OnEnable";
+		instance_warpall .@map$,115,373, instance_id();
+		end;
+	case 3:
+		mapannounce .@map$, "Nidhoggur's Shadow : Sleep for eternity in an empty illusion.",bc_map,"0xFFFF00";
+		donpcevent instance_npcname("nyd_2f_red")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_white")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_green")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_yellow")+"::OnEnable";
+		instance_warpall .@map$,284,278, instance_id();
+		end;
+	case 4:
+		mapannounce .@map$, "Nidhoggur's Shadow : I'll let you enjoy the pain of dying slowly.",bc_map,"0xFFFF00";
+		donpcevent instance_npcname("nyd_2f_red")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_white")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_yellow")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_green")+"::OnEnable";
+		instance_warpall .@map$,284,374, instance_id();
+		end;
+	}
+	end;
+
+OnMyMobDead:
+	set .@map$, instance_mapname("2@nyd");
+	if (mobcount(.@map$,instance_npcname("nyd_2f_boss_enter_call")+"::OnMyMobDead") < 1) {
+		mapannounce .@map$, "Nidhoggur's Shadow : World Tree Yggdrasil's guardian... his powers are disappearing...",bc_map,"0x00ff99";
+		donpcevent instance_npcname("World Tree Yggdrasil#2F")+"::OnEnable";
+		donpcevent instance_npcname("nyd_2f_boss_enter_call")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_boss_enter_logic")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_red_c")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_white_c")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_yellow_c")+"::OnDisable";
+		donpcevent instance_npcname("nyd_2f_green_c")+"::OnDisable";
+		'ins_nyd2 = ins_nyd2 = 4;
+		end;
+	}
+	end;
+}
+
+2@nyd,2,4,0	script	nyd_2f_boss_enter_logic	-1,{
+OnInstanceInit:
+	disablenpc instance_npcname("nyd_2f_boss_enter_logic");
+	end;
+
+OnEnable:
+	stopnpctimer;
+	initnpctimer;
+	end;
+
+OnDisable:
+	stopnpctimer;
+	disablenpc instance_npcname("nyd_2f_boss_enter_logic");
+	end;
+
+OnTimer180000:
+	stopnpctimer;
+	donpcevent instance_npcname("nyd_2f_boss_enter_call")+"::OnWarpColor";
+	end;
+}
+
+2@nyd,202,324,5	script	World Tree Yggdrasil#2F	437,3,3,{
+	mes "[Arbre Mondial Yggdrasil]";
+	mes "Merci. Tu es le sauveur des humains et de la tribu Laphine.";
+	next;
+	mes "[Arbre Mondial Yggdrasil]";
+	mes "Tu as vaincu l'Ombre de Nidhoggur. Mais... Ce n'est pas fini. Ses pouvoirs sont simplement endormis.";
+	next;
+	mes "[Arbre Mondial Yggdrasil]";
+	mes "Mais tu nous as gagné beaucoup de temps. C'est formidable.";
+	next;
+	mes "[Arbre Mondial Yggdrasil]";
+	mes "Veuillez aller informer ceux en charge de Splendide et Manuk de ce qui s'est passé.";
+	next;
+	mes "[Arbre Mondial Yggdrasil]";
+	mes "Comme tu as pu le voir, ni la tribu Sapha, ni la tribu Laphine ne sont responsables de l'affaiblissement de l'Arbre du Monde. C'est à cause de l'Ombre de la Gardienne...";
+	next;
+	mes "[Arbre Mondial Yggdrasil]";
+	mes "La folie de la Gardienne... est causée par des pouvoirs inconnus pour nous... Tu dois le dire à tout le monde.";
+	next;
+	mes "[Arbre Mondial Yggdrasil]";
+	mes "Maintenant... Permettez-moi de vous accompagner hors du nid maudit.";
+	next;
+	switch(select("Please let me out.:I want to look around for a while.")) {
+	case 1:
+		'ins_nyd2 = 0;
+		// ins_nyd2 = 0;
+		set ins_nyd,203;
+		//setquest 3135;
+		warp "nyd_dun02",98,196;
+		end;
+	case 2:
+		mes "[Arbre Mondial Yggdrasil]";
+		mes "C'est ainsi... Je serai là si vous voulez partir.";
+		close;
+	}
+
+OnInstanceInit:
+OnDisable:
+	disablenpc instance_npcname("World Tree Yggdrasil#2F");
+	end;
+
+OnEnable:
+	enablenpc instance_npcname("World Tree Yggdrasil#2F");
+	mapannounce instance_mapname("2@nyd"), "World Tree Yggdrasil : You did good. Have everyone go to the Magic Circle in the middle, and get ready for the destruction of the nest.",bc_map,"0x00ff99";
+	end;
+}
+
+2@nyd,115,278,0	script	nyd_2f_red	-1,5,5,{
+OnInstanceInit:
+	disablenpc();
+	end;
+
+OnEnable:
+	enablenpc();
+	donpcevent instance_npcname(strnpcinfo(0)+"_warp1")+"::OnEnable";
+	donpcevent instance_npcname(strnpcinfo(0)+"_warp2")+"::OnEnable";
+	donpcevent instance_npcname(strnpcinfo(0)+"_warp3")+"::OnEnable";
+	donpcevent instance_npcname(strnpcinfo(0)+"_c")+"::OnEnable";
+	initnpctimer;
+	end;
+
+OnDisable:
+	donpcevent instance_npcname(strnpcinfo(0)+"_warp1")+"::OnDisable";
+	donpcevent instance_npcname(strnpcinfo(0)+"_warp2")+"::OnDisable";
+	donpcevent instance_npcname(strnpcinfo(0)+"_warp3")+"::OnDisable";
+	disablenpc();
+	end;
+
+OnTouch:
+	if (compare(strnpcinfo(0),"red")) {
+		percentheal -50,0;
+		percentheal -30,0;
+		sc_start SC_BLEEDING,60000,0;
+	} else if (compare(strnpcinfo(0),"white")) {
+		percentheal -50,0;
+		sc_start SC_FREEZE,20000,0;
+	} else if (compare(strnpcinfo(0),"yellow")) {
+		percentheal 0,-50;
+		sc_start SC_SLEEP,20000,0;
+		sc_start SC_CONFUSION,60000,0;
+	} else if (compare(strnpcinfo(0),"green")) {
+		percentheal -50,-50;
+		sc_start SC_POISON,60000,0;
+	}
+	end;
+
+OnTimer10000:
+	disablenpc();
+	stopnpctimer;
+	end;
+}
+
+2@nyd,6,6,0	script	nyd_2f_red_c	-1,{
+OnInstanceInit:
+	disablenpc();
+	end;
+
+OnEnable:
+	enablenpc();
+	initnpctimer;
+	set .@map$, instance_mapname("2@nyd");
+	set .@label$, instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
+	if (compare(strnpcinfo(0),"red")) {
+		monster .@map$,120,285,"Nidhoggur's Guardian#1",2020,1,.@label$;
+		monster .@map$,119,286,"Nidhoggur's Guardian#2",2020,1,.@label$;
+		monster .@map$,120,270,"Nidhoggur's Guardian#3",2020,1,.@label$;
+		monster .@map$,119,269,"Nidhoggur's Guardian#4",2021,1,.@label$;
+		monster .@map$,118,270,"Nidhoggur's Guardian#5",2021,1,.@label$;
+	} else if (compare(strnpcinfo(0),"white")) {
+		monster .@map$,120,380,"Nidhoggur's Guardian#1",2020,1,.@label$;
+		monster .@map$,119,381,"Nidhoggur's Guardian#2",2020,1,.@label$;
+		monster .@map$,120,367,"Nidhoggur's Guardian#3",2020,1,.@label$;
+		monster .@map$,119,366,"Nidhoggur's Guardian#4",2021,1,.@label$;
+		monster .@map$,118,365,"Nidhoggur's Guardian#5",2021,1,.@label$;
+	} else if (compare(strnpcinfo(0),"yellow")) {
+		monster .@map$,282,284,"Nidhoggur's Guardian#1",2020,1,.@label$;
+		monster .@map$,283,283,"Nidhoggur's Guardian#2",2020,1,.@label$;
+		monster .@map$,280,275,"Nidhoggur's Guardian#3",2020,1,.@label$;
+		monster .@map$,281,276,"Nidhoggur's Guardian#4",2021,1,.@label$;
+		monster .@map$,281,277,"Nidhoggur's Guardian#5",2021,1,.@label$;
+	} else if (compare(strnpcinfo(0),"green")) {
+		monster .@map$,282,378,"Nidhoggur's Guardian#1",2020,1,.@label$;
+		monster .@map$,283,377,"Nidhoggur's Guardian#2",2020,1,.@label$;
+		monster .@map$,280,368,"Nidhoggur's Guardian#3",2020,1,.@label$;
+		monster .@map$,281,368,"Nidhoggur's Guardian#4",2021,1,.@label$;
+		monster .@map$,281,367,"Nidhoggur's Guardian#5",2021,1,.@label$;
+	}
+	end;
+
+OnMyMobDead:
+	set .@map$, instance_mapname("2@nyd");
+	if (mobcount(.@map$,instance_npcname(strnpcinfo(0))+"::OnMyMobDead") < 1) {
+		mapannounce .@map$, "Nidhoggur's Shadow : You're not bad... but I will be your opponent this time.",bc_map,"0x00ff99";
+		donpcevent instance_npcname("nyd_2f_boss_enter_logic")+"::OnEnable";
+		donpcevent instance_npcname(strnpcinfo(0))+"::OnDisable";
+		end;
+	}
+	end;
+
+/*
+OnReset:	// Label not called.
+	killmonster instance_mapname("2@nyd"),instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
+	donpcevent instance_npcname(strnpcinfo(0))+"::OnDisable";
+	end;
+*/
+
+OnDisable:
+	stopnpctimer;
+	killmonster instance_mapname("2@nyd"),instance_npcname(strnpcinfo(0))+"::OnMyMobDead"; //custom
+	donpcevent instance_npcname(substr(strnpcinfo(0),0,getstrlen(strnpcinfo(0))-3))+"::OnDisable";
+	disablenpc();
+	end;
+
+OnTimer180000:
+	killmonster instance_mapname("2@nyd"),instance_npcname(strnpcinfo(0))+"::OnMyMobDead";
+	stopnpctimer;
+	donpcevent instance_npcname("nyd_2f_boss_enter_call")+"::OnWarpColor";
+	end;
+}
+
+2@nyd,130,298,0	script	nyd_2f_red_warp1	-1,6,6,{
+OnInstanceInit:
+OnDisable:
+	disablenpc();
+	end;
+
+OnEnable:
+	enablenpc();
+	end;
+
+OnTouch:
+	if (compare(strnpcinfo(0),"red"))
+		warp instance_mapname("2@nyd"),115,278;
+	else if (compare(strnpcinfo(0),"white"))
+		warp instance_mapname("2@nyd"),115,373;
+	else if (compare(strnpcinfo(0),"yellow"))
+		warp instance_mapname("2@nyd"),284,278;
+	else if (compare(strnpcinfo(0),"green"))
+		warp instance_mapname("2@nyd"),284,374;
+	end;
+}
+2@nyd,142,296,0	duplicate(nyd_2f_red_warp1)	nyd_2f_red_warp2	-1,6,6
+2@nyd,145,283,0	duplicate(nyd_2f_red_warp1)	nyd_2f_red_warp3	-1,6,6
+
+2@nyd,115,373,0	duplicate(nyd_2f_red)	nyd_2f_white	-1,5,5
+2@nyd,6,7,0	duplicate(nyd_2f_red_c)	nyd_2f_white_c	-1
+2@nyd,127,354,0	duplicate(nyd_2f_red_warp1)	nyd_2f_white_warp1	-1,6,6,
+2@nyd,140,357,0	duplicate(nyd_2f_red_warp1)	nyd_2f_white_warp2	-1,6,6
+2@nyd,145,367,0	duplicate(nyd_2f_red_warp1)	nyd_2f_white_warp3	-1,6,6
+
+2@nyd,284,278,0	duplicate(nyd_2f_red)	nyd_2f_yellow	-1,5,5
+2@nyd,6,8,0	duplicate(nyd_2f_red_c)	nyd_2f_yellow_c	-1
+2@nyd,255,285,0	duplicate(nyd_2f_red_warp1)	nyd_2f_yellow_warp1	-1,6,6
+2@nyd,257,296,0	duplicate(nyd_2f_red_warp1)	nyd_2f_yellow_warp2	-1,6,6
+2@nyd,268,300,0	duplicate(nyd_2f_red_warp1)	nyd_2f_yellow_warp3	-1,6,6
+
+2@nyd,284,374,0	duplicate(nyd_2f_red)	nyd_2f_green	-1,5,5
+2@nyd,6,9,0	duplicate(nyd_2f_red_c)	nyd_2f_green_c	-1
+2@nyd,274,356,0	duplicate(nyd_2f_red_warp1)	nyd_2f_green_warp1	-1,6,6
+2@nyd,260,356,0	duplicate(nyd_2f_red_warp1)	nyd_2f_green_warp2	-1,6,6
+2@nyd,258,368,0	duplicate(nyd_2f_red_warp1)	nyd_2f_green_warp3	-1,6,6
+
+2@nyd,1,1,0	script	ins_nyd2_spawn_mobs	-1,{
+OnInstanceInit:
+	set .@map$, instance_mapname("2@nyd");
+	areamonster .@map$,20,12,380,172,"Rhyncho",2020,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyRhynDead";
+	areamonster .@map$,20,12,380,172,"Phylla",2021,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPhyDead";
+	areamonster .@map$,20,12,380,172,"Dark Shadow",2023,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyDarkshaDead";
+	areamonster .@map$,20,12,380,172,"Dark Pinguicula",2015,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPingDead";
+	end;
+
+OnMyRhynDead:
+	areamonster instance_mapname("2@nyd"),20,12,380,172,"Rhyncho",2020,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyRhynDead";
+	end;
+
+OnMyPhyDead:
+	areamonster instance_mapname("2@nyd"),20,12,380,172,"Phylla",2021,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPhyDead";
+	end;
+
+OnMyDarkshaDead:
+	areamonster instance_mapname("2@nyd"),20,12,380,172,"Dark Shadow",2023,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyDarkshaDead";
+	end;
+
+OnMyPingDead:
+	areamonster instance_mapname("2@nyd"),20,12,380,172,"Dark Pinguicula",2015,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPingDead";
+	end;
+}
+
+// GM Management NPCs
+//============================================================
+sec_in02,36,167,3	script	Nidhoggur Manager	447,1,1,{
+	callfunc "F_GM_NPC";
+	mes "Entrez le mot de passe.";
+	next;
+	if (callfunc("F_GM_NPC","1854",1) == 0) {
+		mes "Mot de passe incorrect.";
+		close;
+	}
+	mes "Qu'avez-vous besoin de faire?";
+	next;
+	switch(select("Reset variables to allow entrance to Nidhoggur:change variable 'ins_nyd':Remove 3 day timer 3135:Confirm variable number")) {
+	case 1:
+		set ins_nyd,200;
+		set ins_nyd2,0;
+		erasequest 3135;
+		mes "ins_nyd défini sur 200 ins_nyd2 défini sur 0";
+		mes "la quête 3135 a été effacée.";
+		close;
+	case 2:
+		mes "Laquelle des variables voulez-vous changer?";
+		next;
+		switch(select("ins_nyd:ins_nyd2")) {
+			case 1: set .@var$,"ins_nyd"; break;
+			case 2: set .@var$,"ins_nyd2"; break;
+		}
+		mes "Entrez le numéro de la variable";
+		next;
+		input .@input;
+		setd .@var$, .@input;
+		mes .@var$+" has been set to "+.@input+" .";
+		close;
+	case 3:
+		mes "Le chronomètre de 3 jours sera retiré lorsque vous fermez cette fenêtre de dialogue.";
+		next;
+		erasequest 3135;
+		mes "Suppression du Chronomètre de Quête terminée.";
+		close;
+	case 4:
+		mes "ins_nyd is at "+ins_nyd+".";
+		mes "ins_nyd2 is at "+ins_nyd2+".";
+		close;
+	}
+}
+
+nyd_dun02,7,7,2	script	Purification Admin#nyd2	844,2,0,{
+	callfunc "F_GM_NPC";
+	mes "Veuillez entrer le mot de passe.";
+	set .@i, callfunc("F_GM_NPC","dragonslayer",1);
+	next;
+	if (.@i == 0) {
+		mes "Entrez le mot de passe exactement.";
+		close;
+	}
+	switch(select("Generate Purification Stone:Remove Purification Stone:Turn Entrance NPC OFF:Turn Entrance NPC On:Cancel")) {
+	case 1:
+		mes "La Pierre Purificatrice a été créée et restera active pendant 30 minutes.";
+		donpcevent "Purification Stone#nyd2::OnEnable";
+		close;
+	case 2:
+		mes "La Pierre Purificatrice a été détruite.";
+		donpcevent "Purification Stone#nyd2::OnDisable";
+		close;
+	case 3:
+		mes "Le Gardien de la Yggdrasil à nyd_dun02 100 201 est maintenant ÉTEINT.";
+		disablenpc "Yggdrasil Gatekeeper";
+		close;
+	case 4:
+		mes "Le Gardien de la Yggdrasil à nyd_dun02 100 201 est maintenant ALLUMÉ.";
+		enablenpc "Yggdrasil Gatekeeper";
+		close;
+	case 5:
+		close;
+	}
+}
+
+nyd_dun02,88,195,4	script	Purification Stone#nyd2	406,{
+	erasequest 3135;
+	erasequest 3136;
+	set ins_nyd,200;
+	set ins_nyd2,0;
+	mes "^0000FFLes enregistrements et les effets secondaires liés au nid du Nidhoggur ont été supprimés. Vous pouvez générer et entrer à nouveau le donjon.^000000";
+	close;
+OnInit:
+	disablenpc "Purification Stone#nyd2";
+	end;
+OnEnable:
+	initnpctimer;
+	end;
+OnDisable:
+	stopnpctimer;
+	disablenpc "Purification Stone#nyd2";
+	end;
+OnTimer1000:
+	enablenpc "Purification Stone#nyd2";
+	end;
+OnTimer1740000:
+	mapannounce "nyd_dun02","La Pierre d'Épuraton sera détruite dans une minute.",bc_map,"0x00FF99",FW_NORMAL,12;
+	end;
+OnTimer1800000:
+	disablenpc "Purification Stone#nyd2";
+	end;
+}

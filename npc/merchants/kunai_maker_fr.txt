@@ -1,0 +1,108 @@
+//===== rAthena Script =======================================
+//= Kunai Merchant Kashin
+//===== By: ==================================================
+//= rAthena Dev Team
+//===== Current Version: =====================================
+//= 1.3a
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Trades a few shurikens + ninja stones for elemental kunai.
+//===== Additional Comments: =================================
+//= 1.0 Added the npc. It uses a function that sends the item 
+//=     id of the 2 required items plus the amount. Can trade
+//=     up to 500 units (5,000 kunais) at once. [erKURITA]
+//= 1.1 Officialized script [Playtester]
+//= 1.2a Optimized/cleaned up a bit [ultramage]
+//= 1.3 Updated to match AEGIS script. [Kisuka]
+//= 1.3a Kagerou/Oboro support (BaseJob -> BaseClass) [Euphy]
+//============================================================
+
+que_ng,72,29,3	script	Kunai Merchant Kashin	83,{
+	if(BaseClass == Job_Ninja) {
+		mes "[Kashin]";
+		mes "[Kashin]";
+		mes "Prenez un tour d'horizon et faites-moi savoir si vous êtes intéressé(e) par l'un de mes articles.";
+		mes "^FF0000Regardez autour de vous et laissez-moi savoir si vous êtes intéressé(e) par certains de mes produits.^000000";
+		mes "^FF0000Faites-moi part de votre intérêt pour l'un des articles que je propose.^000000";
+		mes "Si vous en avez la curiosité, bien sûr.";
+		next;
+		switch(select("10 Fell Poison Kunai:10 Icicle Kunai:10 High Wind Kunai:10 Black Earth Kunai:10 Heat Wave Kunai:Cancel")) {
+		case 1: callfunc "Kunai_Trade",13250,20,7524,1,13259; break;
+		case 2: callfunc "Kunai_Trade",13251,8,7522,2,13255; break;
+		case 3: callfunc "Kunai_Trade",13252,4,7523,2,13257; break;
+		case 4: callfunc "Kunai_Trade",13253,2,7524,1,13256; break;
+		case 5: callfunc "Kunai_Trade",13254,1,7521,2,13258; break;
+		case 6:
+			mes "[Kashin]";
+			mes "^FF0000Merci d'avoir visité mon magasin. Revenez me voir si vous souhaitez acheter des Kunais.^000000";
+			mes "^FF0000Je vous remercie pour votre visite. N'hésitez pas à revenir quand vous aurez besoin d'acheter des Kunais.^000000";
+			mes "^FF0000Au revoir pour l'instant~^000000";
+			mes "[Kashin]";
+			mes "^FF0000Je suis Kashin, distributeur de Kunais pour les Ninjas. Si vous avez des amis qui sont des Ninjas, pensez à me leur recommander.^000000";
+			close;
+		}
+	}
+	mes "[Kashin]";
+	mes "[Kashin]";
+	mes "^FF0000Vous pouvez échanger^000000";
+	mes "have any friends that are";
+	mes "Ninjas, then you might";
+	mes "want to tell them about me.";
+	close;
+}
+
+function	script	Kunai_Trade	{
+	setarray .@item_req[0], getarg(0), getarg(2);
+	setarray .@req_amount[0], getarg(1), getarg(3);
+	.@item_id = getarg(4);
+
+	mes "[Kashin]";
+	mes "You can exchange";
+	mes .@req_amount[0] +" "+ getitemname(.@item_req[0]) +" and";
+	mes .@req_amount[1] +" "+ getitemname(.@item_req[1]) +" for every";
+	mes "set of 10 "+ getitemname(.@item_id) +".";
+	next;
+	mes "[Kashin]";
+	mes "Je ne peux vous donner qu'un maximum de 500 ensembles de Kunais à la fois.";
+	mes "Si vous souhaitez annuler la transaction, veuillez entrer ''0''. Combien d'ensembles de";
+	mes "Kunai aimeriez-vous recevoir?";
+	next;
+	input .@amount;
+	if(.@amount < 1 || .@amount > 500) {
+		mes "[Kashin]";
+		mes "Eh? Désolé, mais je ne peux pas vous donner";
+		mes "ce nombre d'ensembles de Kunais. Veuillez entrer une valeur inférieure à 500.";
+		mes "[Kashin]";
+		mes "Hmm, vous n'avez pas assez d'articles pour cet échange de Kunai. Veuillez vérifier vos articles à nouveau.";
+		close;
+	}
+	if (countitem(.@item_req[0]) < .@amount*.@req_amount[0] || countitem(.@item_req[1]) < .@amount*.@req_amount[1]) {
+		mes "[Kashin]";
+		mes "Hmm, il semble que votre Inventaire ne dispose pas";
+		mes "d'un espace suffisant pour stocker plus d'articles. Il vaut mieux libérer de l'espace d'abord.";
+		mes "Kunai exchange. Please";
+		mes "check your items again.";
+		close;
+ 	}
+	if (checkweight(.@item_id, .@amount*10) == 0) {
+		mes "[Kashin]";
+		mes "Hmm, it seems like your";
+		mes "Inventory doesn't have";
+		mes "enough space to store";
+		mes "more items. You better";
+		mes "free up some space first.";
+		close;
+	}
+	mes "[Kashin]";
+	mes "Génial, tout est en ordre, donc passons aux choses sérieuses et terminons cette transaction.";
+	mes "order, so let's go ahead";
+	mes "and complete this trade.";
+	mes "Je suis sûr que vous serez";
+	mes "très satisfait de";
+	mes "ces Kunais.";
+	delitem .@item_req[0],.@req_amount[0]*.@amount;
+	delitem .@item_req[1],.@req_amount[1]*.@amount;
+	getitem .@item_id,10*.@amount;
+	close;
+}

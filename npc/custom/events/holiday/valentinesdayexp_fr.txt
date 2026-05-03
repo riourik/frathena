@@ -1,0 +1,285 @@
+//===== rAthena Script =======================================
+//= Valentine Event Script + EXP bonus
+//===== By: ==================================================
+//= Lupus (based on Muad_Dib's work)
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project; SVN r4500+
+//===== Description: =========================================
+// Close to other official stValentine event (added white chocolate)
+// Custom: Handmade choco gives some EXP bonuses to married people
+//===== Additional Comments: =================================
+//= WARNING!! To use this event, disable original valentinesday.txt
+//= You can use this event from 12 till 16 February 8) [Lupus]
+//= 1.1 Removed Duplicates [Silent]
+//============================================================
+
+// Tine - Valentine Event Chocolate Even Guide ------------------
+prontera,156,172,4	script	Tine	58,{
+//  Debug info for item effects and tricky conditions 8)
+//	mes "@dsv: "+@dsv;
+//	mes "ispartneron()=="+ispartneron();
+//	mes "Sex == "+Sex;
+//	if(@dsv == gettime(DT_HOUR)+1) mes "@dsv == gettime(DT_HOUR)+1";
+
+	mes "[Tine]";
+	mes "La légende dit que le 14 février... le jour de Saint Valentin...";
+	mes "Seulement dans le Royaume de Run-Midgard...";
+	next;
+	specialeffect EF_HITBODY;
+	mes "[Tine]";
+	mes "Certains amoureux mariés doublent leur expérience lors des entraînements presque!";
+	mes "Mais tout n'est pas si simple...";
+	next;
+	menu "Wow! Tell me more!",M_INFO,"Marri... what?",-;
+
+	mes "[Tine]";
+	mes "Êtes-vous célibataire?";
+	mes "Aujourd'hui est une excellente date pour demander ta moitié en mariage !";
+	next;
+	mes "[Tine]";
+	mes "La taxe de mariage est ridiculement basse ces jours-ci!";
+	close;
+
+M_INFO:
+	mes "[Tine]";
+	mes "L'effet magique n'existe que pour les chocolats faits main à partir des recettes transmises de génération en génération !";
+	next;
+	mes "[Tine]";
+	mes "Il est connu que le Chocolat Main Crafté Noir fonctionne sur les hommes mariés... Et celui Blanc sur les femmes mariées!";
+	mes "Si vous perdez votre alliance de mariage... alors hélas, il ne pourra pas agir sur vous.";
+	next;
+	mes "[Tine]";
+	mes "En ayant un Chocolat, vous devriez enlever puis remettre votre alliance... Et si votre partenaire est connecté, alors la magie durera jusqu'à la prochaine heure!";
+	next;
+	mes "[Tine]";
+	mes "^FF0000On entend dire que les gars et les filles ont un bonus de +50% d'EXP sur CINQ races différentes de monstres... sans compter les maudits boss, bien sûr.";
+	next;
+	mes "[Tine]";
+	mes "Il y a un célèbre confiseur au Château de Prontera ! C'est lui que vous devez trouver.";
+	close;
+
+OnInit:
+	//559,Hand-made_Chocolate
+	setitemscript 559,"{ itemheal 50,50; if(Sex==SEX_FEMALE || @dsv == gettime(DT_HOUR)+1 || ispartneron()==0)end; set @dsv,gettime(DT_HOUR)+1; misceffect EF_MAGNUS; }";
+	//560,Hand-made_White_Chocolate
+	setitemscript 560,"{ itemheal 50,50; if(Sex==SEX_MALE || @dsv == gettime(DT_HOUR)+1 || ispartneron()==0)end; set @dsv,gettime(DT_HOUR)+1; misceffect EF_MAGNUS; }";
+
+	//2634,Wedding_Ring_M,Wedding Ring,5,,10,0,,0,,0,127918079,7,1,136,,0,0,0,{ skill 334,1; skill 335,1; skill 336,1; }
+	setitemscript 2634,"{ skill 334,1; skill 335,1; skill 336,1; if(@dsv == gettime(DT_HOUR)+1 && ispartneron()){ bonus2 bExpAddRace,5,50; bonus2 bExpAddRace,6,50; bonus2 bExpAddRace,7,50; bonus2 bExpAddRace,8,50; bonus2 bExpAddRace,1,50; } }";
+	//2635,Wedding_Ring_F,Wedding Ring,5,,10,0,,0,,0,127918079,7,0,136,,0,0,0,{ skill 334,1; skill 335,1; skill 336,1; }
+	setitemscript 2635,"{ skill 334,1; skill 335,1; skill 336,1; if(@dsv == gettime(DT_HOUR)+1 && ispartneron()){ bonus2 bExpAddRace,0,50; bonus2 bExpAddRace,9,50; bonus2 bExpAddRace,2,50; bonus2 bExpAddRace,3,50; bonus2 bExpAddRace,4,50; } }";
+	end;
+}
+
+// Stephen - Valentine Event Chocolate seller ------------------
+alberta,26,243,4	script	Stephen#val1	58,{
+	mes "[Stephen]";
+	mes "Devinez quoi ? J'ai quelque chose à vous offrir !";
+	mes "Un délicieux régal qu'on ne trouve pas facilement en Midgard....";
+	next;
+	mes "[Stephen]";
+	mes "Du chocolat!";
+	mes "^FF0000C'est exact, tu adores le chocolat... et moi aussi.";
+	mes "Et tu es chanceux car je les vends pour seulement 5 000 zeny l'unité !";
+	next;
+	menu "I want some chocolate!",M_CHOCO,"No thanks.",-;
+
+	mes "[Stephen]";
+	mes "Tu ne veux pas de chocolat ?";
+	mes "Je te le dis ! Tu vas regretter ça!";
+	mes "^FF0000Il faut que tu t'en procures maintenant... tu n'auras jamais à nouveau l'occasion d'avoir du chocolat comme celui-ci !";
+	mes "Réfléchis-y et reviens me voir un jour.";
+	close;
+
+M_CHOCO:
+	mes "[Stephen]";
+	mes "^FF0000Hah!";
+	mes "Je le savais !";
+	mes "Mais je ne peux pas te vendre plus de 5 à la fois....mais, si tu en as vraiment besoin...";
+	mes "vous pouvez revenir un autre jour.";
+	mes "Alors, combien en veux-tu?";
+	next;
+	set @needmon,0;
+	input @flag_num;
+	if (@flag_num <= 0) goto L_NONE;
+	if (@flag_num > 5) goto L_ERR;
+	set @needmon,@flag_num*5000;
+	if (Zeny < @needmon) goto L_NOTENO;
+	set Zeny,Zeny - @needmon;
+	getitem 558,@flag_num;
+	mes "[Stephen]";
+	mes "Et voilà !";
+	mes "Vous pouvez offrir ça à quelqu'un comme cadeau, ou le déguster vous-même !";
+	mes "Hmm... du délicieux chocolat...";
+	mes "N'hésitez pas à me rendre visite quand vous voulez...!";
+	close;
+
+L_ERR:
+	mes "[Stephen]";
+	mes "Désolé, mais je ne peux pas vous en donner autant.";
+L_NONE:
+	close;
+
+L_NOTENO:
+	mes "[Stephen]";
+	mes "Je suis désolé, mais il semble que vous ne puissiez pas vous permettre d'en acheter chez moi.";
+	close;
+}
+
+// Jainie -- Gives information about Valentine Event ------------------------
+alberta,29,243,4	script	Jainie#val1	53,{
+	mes "[Jainie]";
+	mes "Sais-tu ce qui est arrivé? Le chocolat que mon petit ami vend vient de moi!";
+	mes "Je l'ai fait moi-même. Maintenant, j'ai besoin de lait pour faire mon chocolat blanc spécial.";
+	next;
+	mes "[Jainie]";
+	mes "Sais-tu... Dans certains pays, il y a une tradition d'offrir des chocolats à la personne que tu aimes...";
+	mes "Ils l'appellent ^3355FFla Saint-Valentin^000000.";
+	next;
+	mes "[Jainie]";
+	mes "Alors, je lui ai donné mon délicieux chocolat...";
+	mes "Et puis il m'a obligée à en faire encore plus...";
+	mes "Et maintenant, il les vend à tout le monde.";
+	mes "Il semble qu'il l'ait vraiment aimé.";
+	mes "Mais j'ai le sentiment de bien-être quand les gens achètent quelque chose que je fabrique.";
+	next;
+	mes "[Jainie]";
+	mes "Ce serait génial si vous en achetiez aussi...";
+	mes "Je vais faire des chocolats blancs pendant un certain temps donc...";
+	next;
+	menu "I want some white chocolate!",M_CHOCO,"No thanks.",-;
+
+	mes "[Jainie]";
+	mes "Vous n'aimez pas le chocolat blanc ?";
+	mes "Alors achetez-en de Stephen, en version noire !";
+	close;
+
+M_CHOCO:
+	mes "[Jainie]";
+	mes "Je ne peux pas vous vendre plus de 5 à la fois... mais si vous en avez vraiment besoin...";
+	mes "vous pouvez revenir un autre jour.";
+	mes "Donc combien voulez-vous ? Une portion coûte 4500z + 1 Lait.";
+	next;
+	set @needmon,0;
+	input @flag_num;
+	if (@flag_num == 0) goto L_NONE;
+	if (@flag_num > 5) goto L_ERR;
+	set @needmon,@flag_num*4500;
+	if (Zeny < @needmon) goto L_NOTENO;
+	if (countitem(519) < @flag_num) goto L_NOMILK;
+	set Zeny,Zeny - @needmon;
+	delitem 519,@flag_num;
+	getitem 561,@flag_num;
+	mes "[Jainie]";
+	mes "Et voilà !";
+	mes "Vous pouvez offrir ça à quelqu'un comme cadeau, ou le déguster vous-même !";
+	mes "Mmm... un chocolat sucré...";
+	mes "N'hésitez pas à me rendre visite quand vous voulez...!";
+	close;
+
+L_ERR:
+	mes "[Jainie]";
+	mes "Désolé, mais je ne peux pas vous en donner autant.";
+L_NONE:
+	close;
+
+L_NOTENO:
+	mes "[Jainie]";
+	mes "Je suis désolé, mais il semble que vous ne puissiez pas vous permettre d'en acheter chez moi.";
+	close;
+
+L_NOMILK:
+	mes "[Jainie]";
+	mes "You need "+@flag_num+" Milk for "+@flag_num+" portions of my special White Chocolate...";
+	close;
+}
+
+// Carl Orleans -- Valentine Event Chocolate maker ------------------
+prt_castle,54,34,4	script	Carl Orleans#val1	47,{
+	mes "[Carl Orleans]";
+	mes "Oui ? Que puis-je vous cuisiner ?";
+	next;
+	menu "Black handmade Chocolate, please",-,"I want a White handmade Chocolate...",M_WHITE,"I'm lost, sorry to bother you.",M_END;
+     
+	mes "[Carl Orleans]";
+	mes "Bien, je pourrais peut-être satisfaire vos besoins...";
+	next;
+	if (countitem(558)<3) {
+		mes "[Carl Orleans]";
+		mes "Je suis désolé, vous n'avez pas assez de Barres de Choco pour faire cela.";
+		if(rand(2))mes "On dit que Stephen d'Alberta vendait du bon Choco auparavant.";
+		close;
+	}
+	delitem 558,3;
+	mes "[Carl Orleans]";
+	mes "Vous avez obtenu 3 morceaux de chocolat pur, je vois.";
+	mes "Donnez-les-moi...";
+	next;
+	mes "[Carl Orleans]";
+	mes "D'accord, maintenant je ne créerai mes chocolats manucures spéciaux que si vous promettez d'en faire un usage sage.";
+	next;
+	mes "[Carl Orleans]";
+	mes "...Hmmmmmmm....";
+	mes "Bien...";
+	next;
+	getitem 559,1;
+	mes "[Carl Orleans]";
+	mes "Voilà.";
+	if(rand(2))close;
+	mes "J'espère que vous le donnerez à quelqu'un de spécial, car c'est un chocolat spécial.";
+	mes "Comme vous le savez... seulement moi peux créer cela.";
+	next;
+	mes "[Carl Orleans]";
+	mes "Profitez-en.";
+	close;
+
+M_WHITE:
+	mes "[Carl Orleans]";
+	mes "Bien, je pourrais peut-être satisfaire vos besoins...";
+	next;
+	if (countitem(561)<3) {
+		mes "[Carl Orleans]";
+		mes "Je suis désolé, vous n'avez pas assez de Barres de Choco Blanc pour faire cela.";
+		if(rand(2))mes "On dit que Jainie d'Alberta vendait du bon Choco Blanc autrefois.";
+		close;
+	}
+	delitem 561,3;
+	mes "[Carl Orleans]";
+	mes "Vous avez obtenu trois morceaux de chocolat blanc pur, je vois.";
+	mes "Donnez-les-moi...";
+	next;
+	mes "[Carl Orleans]";
+	mes "D'accord, maintenant je ne créerai mes chocolats manucures spéciaux que si vous promettez d'en faire un usage sage.";
+	next;
+	mes "[Carl Orleans]";
+	mes "...Hmmmmmmm....";
+	mes "Bien...";
+	next;
+	getitem 560,1;
+	mes "[Carl Orleans]";
+	mes "Voilà.";
+	if(rand(2))close;
+	mes "J'espère que vous le donnerez à quelqu'un de spécial, car c'est un chocolat spécial.";
+	mes "Comme vous le savez... seulement moi peux créer cela.";
+	next;
+	mes "[Carl Orleans]";
+	mes "Profitez-en.";
+	close;
+
+M_END:
+	mes "[Carl Orleans]";
+	mes "Oh.. bien, si vous voulez que je fasse de mon chocolat manucures spécial...";
+	mes "Vous devrez me donner au moins ^0000FF 3 Chocolats^000000 ou ^0000FF 3 Chocolats Blancs^000000.";
+	if(rand(2))close;
+	next;
+	mes "[Carl Orleans]";
+	mes "C'est exact, seulement ^0000FF 3 Chocolats^000000 ou ^0000FF 3 Chocolats Blancs^000000.";
+	mes "Apportez-les-moi et vous obtiendrez ce pour quoi vous êtes venu.";
+	if(rand(2))close;
+	next;
+	mes "[Carl Orleans]";
+	mes "Au revoir.";
+	close;
+}

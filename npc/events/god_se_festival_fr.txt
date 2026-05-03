@@ -1,0 +1,773 @@
+//===== rAthena Script ======================================= 
+//= Valkyrie's Gift NPCs
+//===== By: ================================================== 
+//= L0ne_W0lf
+//===== Current Version: ===================================== 
+//= 1.1
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Post-God Item SE Creation Summoning Event 
+//= Second Sister is a custom translation.
+//===== Additional Comments: ================================= 
+//= 1.0 First version. [L0ne_W0lf]
+//= 1.1 Added GM management function. [Euphy]
+//============================================================ 
+
+// Original name: "Festival Manager#god_se_fes00"
+yuno,1,1,0	script	Festival Manager#gq_fes0	891,{
+	callfunc "F_GM_NPC";
+	mes "[Festival Manager]";
+	mes "Je suis le gestionnaire du PNJ pour la quête SE des Dieux.";
+	mes "Veuillez entrer votre mot de passe.";
+	next;
+	if (callfunc("F_GM_NPC","07godsefes",1) == 0) {
+		mes "[Festival Manager]";
+		mes "Le mot de passe est incorrect.";
+		close;
+	}
+	mes "[Festival Manager]";
+	mes "Qu'aimeriez-vous faire ?";
+	next;
+	switch(select("Disable festival NPCs:Enable festival NPCs")) {
+	case 1:
+		mes "[Festival Manager]";
+		mes "Arrêt des festivals et désactivation des PNJ.";
+		donpcevent "Rmimi Ravies#gq_fes01::Onover";
+		donpcevent "Rmimi Ravies#gq_fes01::Onover";
+		close;
+	case 2:
+		mes "[Festival Manager]";
+		mes "Réinitialisation des festivals et activation des PNJ.";
+		donpcevent "Rmimi Ravies#gq_fes01::Onover";
+		donpcevent "Rmimi Ravies#gq_fes01::OnEnable";
+		close;
+	}
+}
+
+yuno,118,192,5	script	Rmimi Ravies#gq_fes01	891,{
+	if (countitem(7840) > 0) {
+		mes "[Rmimi Ravies]";
+		mes "C'est la fleur.";
+		mes "Ce n'est qu'une formalité, mais laissez-moi vérifier vos qualifications.";
+		next;
+		if (is_guild_leader() == true) {
+			mes "[Rmimi Ravies]";
+			mes "Votre qualification est vérifiée comme étant celle d'un Maître de Guilde.";
+			next;
+			mes "[Rmimi Ravies]";
+			mes "Je me demande si vous savez à quoi sert cette fleur... Laissez-moi vous l'expliquer.";
+			next;
+			mes "[Rmimi Ravies]";
+			mes "C'est la fleur sacrée donnée par la Fiancée des Vœux dans Valkyrie, elle peut invoquer certains monstres par certains invoqueurs.";
+			next;
+			mes "[Rmimi Ravies]";
+			mes "^FF0000Il n'y a que deux invoqueurs dans ce monde... ";
+			mes "^FF0000Moîi et ma sœur Rhehe... ";
+			next;
+			mes "[Rmimi Ravies]";
+			mes "^FF0000Nous sommes complètement différentes, mais nous pouvons... ";
+			next;
+			mes "[Rmimi Ravies]";
+			mes "^FF0000...................................";
+			next;
+			mes "[Rmimi Ravies]";
+			mes "Enfin bref,";
+			mes "^FF0000Voulez-vous invoquer des monstres?";
+			next;
+			switch(select("Do not summon:Summon, please")) {
+			case 1:
+				mes "[Rmimi Ravies]";
+				mes "^FF0000Je n'aime pas être interrompue par les autres... ";
+				next;
+				mes "[Rmimi Ravies]";
+				mes "^FF0000Mais c'est juste pour affaires.";
+				close;
+			case 2:
+				break;
+			}
+			mes "[Rmimi Ravies]";
+			mes "^FF0000Je vais vous expliquer comment invoquer des monstres.";
+			mes "^FF0000Cette fleur peut invoquer les monstres 'Valkyrie's Blessing' et 'Valkyrie's Present' pendant une heure ici à Juno.";
+			next;
+			mes "[Rmimi Ravies]";
+			mes "^FF0000Un annonce sera faite indiquant quel monstre a été invoqué.";
+			mes "^FF0000Ce festival est donné par la Fée des vœux pour tous les aventuriers du monde entier de profiter.";
+			next;
+			mes "[Rmimi Ravies]";
+			mes "^FF0000Maintenant, êtes-vous prêt à invoquer des monstres?";
+			next;
+			switch(select("No, I'm not ready now.:Yes! I'm ready for that.")) {
+			case 1:
+				mes "[Rmimi Ravies]";
+				mes "Si vous n'êtes pas prêts, pourquoi êtes-vous venu jusqu'à moi ?";
+				next;
+				mes "[Rmimi Ravies]";
+				mes "Je vais attendre que vous soyez prêts.";
+				mes "Après tout, c'est juste un affaire d’argent.";
+				close;
+			case 2:
+				break;
+			}
+			mes "[Rmimi Ravies]";
+			mes "Maintenant nous sommes prêts.";
+			next;
+			if ($@gqse_festival == 0) {
+				mes "[Rmimi Ravies]";
+				mes "D'accord, nous allons commencer à invoquer les monstres.";
+				delitem 7840,1; //Valkyrie's_Gift
+				next;
+				mes "[Rmimi Ravies]";
+				mes "Amusez-vous bien.";
+				donpcevent "Rmimi Ravies#gq_fes01::OnStart";
+				
+				announce "["+ strcharinfo(0) +"] member of ["+ GetGuildName( getcharid(2) ) +"] is summoning a 'Valkyrie's Present' in 'Juno'.",bc_all,"0x70dbdb";
+				close;
+			}
+			else {
+				mes "[Rmimi Ravies]";
+				mes "Il semble qu'un rituel d'invoocation de la Bénédiction de Valkyrie soit déjà en cours ailleurs.";
+				next;
+				mes "[Rmimi Ravies]";
+				mes "Veuillez réessayer plus tard.";
+				close;
+			}
+		}
+		else {
+			mes "[Rmimi Ravies]";
+			mes "Il semble que vous n'ayez pas les qualités requises.";
+			next;
+			mes "[Rmimi Ravies]";
+			mes "Je ne sais pas comment tu as obtenu cette fleur, mais si tu n’es pas capable de mener les autres... alors tu ne peux pas continuer.";
+			next;
+			mes "[Rmimi Ravies]";
+			mes "Trop difficile ?";
+			mes "Eh bien, que puis-je faire d'autre, c'est une partie du travail.";
+			close;
+		}
+	}
+	else {
+		mes "[Rmimi Ravies]";
+		mes "N'as-tu pas de bon coupon?";
+		close;
+	}
+
+OnInit:
+	enablenpc "Rmimi Ravies#gq_fes01";
+	end;
+
+OnEnable:
+	enablenpc "Rmimi Ravies#gq_fes01";
+	end;
+
+OnDisable:
+	disablenpc "Rmimi Ravies#gq_fes01";
+	end;
+
+OnStart:
+	initnpctimer;
+	set $@gqse_festival,1;
+	end;
+
+Oncall:
+	if (mobcount("yuno","Rmimi Ravies#gq_fes01::OnMyMobDead") < 31) {
+		monster "yuno",0,0,"Valkyrie's Blessing",1083,100,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1951,25,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1952,25,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1953,25,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1954,25,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Prank",1002,10,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+	}
+	else if (mobcount("yuno","Rmimi Ravies#gq_fes01::OnMyMobDead") > 149) {
+		monster "yuno",0,0,"Valkyrie's Blessing",1083,1,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1951,1,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1952,1,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1953,1,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1954,1,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+	}
+	else {
+		monster "yuno",0,0,"Valkyrie's Blessing",1083,50,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1951,10,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1952,10,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1953,10,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Gift",1954,10,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+		monster "yuno",0,0,"Valkyrie's Prank",1002,5,"Rmimi Ravies#gq_fes01::OnMyMobDead";
+	}
+	end;
+
+Onover:
+	killmonster "yuno","Rmimi Ravies#gq_fes01::OnMyMobDead";
+	set $@gqse_festival,0;
+	stopnpctimer;
+	end;
+
+OnMyMobDead:
+	end;
+
+OnTimer10000:
+	announce "La cérémonie d'appel commencera dans 5 min à Juno.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer13000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer120000:
+	announce "La cérémonie d'appel commencera dans 3 min à Juno.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer123000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer240000:
+	announce "La cérémonie d'appel commencera dans 1 min à Juno.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer243000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer300000:
+	announce "Le premier 'Prix de la Valkyrie' a été appelé ici par la Fiancée des voeux à Juno.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer303000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer308000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer600000:
+	announce "Le second 'Prix de la Valkyrie' a été appelé ici par la Fiancée des voeux à Juno.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::oncall";
+	end;
+
+OnTimer603000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer608000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer900000:
+	announce "Le troisième 'Prix de la Valkyrie' a été appelé ici par la Fiancée des voeux à Juno.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer903000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer908000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1200000:
+	announce "Le quatrième 'Prix de la Valkyrie' a été appelé ici par la Fiancée des voeux à Juno.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer1203000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1208000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1500000:
+	announce "^FF0000[Valkyrie's Present] n°5 a été appelé ici à Juno par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer1503000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1508000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1800000:
+	announce "^FF0000[Valkyrie's Present] n°6 a été appelé ici à Juno par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer1803000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1808000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2100000:
+	announce "^FF0000[Valkyrie's Present] n°7 a été appelé ici à Juno par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer2103000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2108000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2400000:
+	announce "^FF0000[Valkyrie's Present] n°8 a été appelé ici à Juno par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer2403000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2408000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2700000:
+	announce "^FF0000[Valkyrie's Present] n°9 a été appelé ici à Juno par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer2703000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2708000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3000000:
+	announce "^FF0000[Valkyrie's Present] n°0 a été appelé ici à Juno par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer3003000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3008000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3300000:
+	announce "Le onzième 'Pèlerinage des Valkyries' a été invoqué ici à Juno par la Vierge Souhaits.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer3303000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3308000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3600000:
+	announce "Le douzième 'Pèlerinage des Valkyries' a été invoqué ici à Juno par la Vierge Souhaits.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Oncall";
+	end;
+
+OnTimer3603000:
+	announce "^FF0000La dernière cérémonie se déroulera pendant 5 minutes.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3608000:
+	announce "Veuillez vous rendre à Juno pour assister à la cérémonie d'invoquation.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3900000:
+	announce "^FF0000Le cérémonial est terminé, j'en suis certain, vous avez tous passé un bon moment.",bc_all,"0x70dbdb";
+	donpcevent "Rmimi Ravies#gq_fes01::Onover";
+	end;
+}
+
+
+// Original name: "Festival Manager#god_se_fes02"
+rachel,1,1,0	script	Festival Manager#gq_fes2	891,{
+	callfunc "F_GM_NPC";
+	mes "[Festival Manager]";
+	mes "Je suis le gestionnaire du PNJ pour la quête SE des Dieux.";
+	mes "Veuillez entrer votre mot de passe.";
+	next;
+	if (callfunc("F_GM_NPC","07godsefes",1) == 0) {
+		mes "[Festival Manager]";
+		mes "Le mot de passe est incorrect.";
+		close;
+	}
+	mes "[Festival Manager]";
+	mes "Qu'aimeriez-vous faire ?";
+	next;
+	switch(select("Disable festival NPCs:Enable festival NPCs")) {
+	case 1:
+		mes "[Festival Manager]";
+		mes "Arrêt des festivals et désactivation des PNJ.";
+		donpcevent "Rhehe Ravies#gq_fes03::Onover";
+		donpcevent "Rhehe Ravies#gq_fes03::Ondisable";
+		close;
+	case 2:
+		mes "[Festival Manager]";
+		mes "Réinitialisation des festivals et activation des PNJ.";
+		donpcevent "Rhehe Ravies#gq_fes03::Onover";
+		donpcevent "Rhehe Ravies#gq_fes03::OnEnable";
+		close;
+	}
+}
+
+rachel,132,117,3	script	Rhehe Ravies#gq_fes03	891,{
+	if (countitem(7840) > 0) {
+		mes "[Rhehe Ravies]";
+		mes "Une fleur!!";
+		mes "Voulons-nous procéder?";
+		next;
+		if (is_guild_leader() == true) {
+			mes "[Rhehe Ravies]";
+			mes "Eeeeh, si jeune et pourtant vous êtes le maître d'une guilde ? Vos guildmates doivent être jaloux.";
+			next;
+			mes "[Reumimi Ravies]";
+			mes "Je ne suis pas sûre que vous compreniez les usages de cette fleur, alors je vais vous expliquer brièvement.";
+			next;
+			mes "[Reumimi Ravies]";
+			mes "Cette fleur a été transmise comme un cadeau de la Valkyrie Wish Maiden elle-même.";
+			mes "Elle peut être utilisée pour invoquer des monstres spéciaux par les invocateurs dans des zones spéciales.";
+			next;
+			mes "[Rhehe Ravies]";
+			mes "Il n'existe que deux invocateurs capables d'utiliser cette fleur.";
+			mes "L'un est moi-même, et l'autre est ma sœur jumelle Reumimi.";
+			next;
+			mes "[Rhehe Ravies]";
+			mes "Jumelles, mais nous ne sommes pas beaucoup pareilles, petites doigts devant vous ...";
+			next;
+			mes "[Rhehe Ravies]";
+			mes "..............................";
+			mes "...Oops ! Je n'étais pas censée le dire...";
+			next;
+			mes "[Rhehe Ravies]";
+			mes "... Hehehe, bref passons à autre chose.";
+			mes "Alors souhaitez-vous invoquer ou non !?";
+			next;
+			switch(select("Do not summon:Summon")) {
+			case 1:
+				mes "[Rhehe Ravies]";
+				mes "...*Pleure*. ";
+				next;
+				mes "[Rhehe Ravies]";
+				mes "Si vous n'avez rien à me demander, ne commencez pas une conversation.";
+				mes "S'il s'était agi de ma sœur, elle vous aurait humilié pour ça.";
+				close;
+			case 2:
+				break;
+			}
+			mes "[Rhehe Ravies]";
+			mes "D'accord, je vais expliquer un peu le rituel d'appel.";
+			mes "Ici à Juno, le rituel d'appel en utilisant cette fleur fera apparaître la Bénédiction de Valkyrie et le Don de Valkyrie.";
+			mes "Les effets du rituel d'appel dureront environ une heure.";
+			next;
+			mes "[Rhehe Ravies]";
+			mes "Durant le rituel d'appel, des annonces continues seront faites.";
+			mes "C'est une courtoisie de la Fille Souhaits Valkyrie afin de rassembler les aventuriers du monde entier pour participer au festival.";
+			next;
+			mes "[Rhehe Ravies]";
+			mes "Êtes-vous prêt à commencer le rituel d'appel~?";
+			next;
+			switch(select("No, not yet.:Yes! I'm ready!")) {
+			case 1:
+				mes "[Rhehe Ravies]";
+				mes "Vous n'êtes même pas prêt, pourquoi me parler ?";
+				next;
+				mes "[Rhehe Ravies]";
+				mes "Ah bien, si vous avez autre chose à faire alors je vais patienter.";
+				mes "Après tout, c'est aussi dans mon travail.";
+				close;
+			case 2:
+				break;
+			}
+			mes "[Rhehe Ravies]";
+			mes "D'accord, alors je vais vérifier pendant un moment raisonnable pour commencer le rituel d'appel.";
+			next;
+			if ($@gqse_festival == 0) {
+				mes "[Rhehe Ravies]";
+				mes "^FF0000Génial ! C'est le moment idéal pour commencer !";
+				delitem 7840,1; //Valkyrie_Gift
+				next;
+				mes "[Rhehe Ravies]";
+				mes "J'espère que tu vas t'amuser !";
+				donpcevent "Rhehe Ravies#gq_fes03::OnStart";
+				announce "["+ strcharinfo(0) +"] member of ["+ GetGuildName( getcharid(2) ) +"] is summoning a 'Valkyrie's Present' in 'Rachel'.",bc_all,"0x70dbdb";
+				close;
+			}
+			else {
+				mes "[Rhehe Ravies]";
+				mes "*Pleure*";
+				mes "Il ne semble pas être le bon moment.";
+				next;
+				mes "[Rhehe Ravies]";
+				mes "Veuillez réessayer plus tard.";
+				close;
+			}
+		}
+		else {
+			mes "[Rhehe Ravies]";
+			mes "...Il semble que tu n'es pas dans une position digne pour que je te parle ?";
+			next;
+			mes "[Rhehe Ravies]";
+			mes "Je ne sais pas comment tu as obtenu cette fleur, mais si tu n’es pas capable de mener les autres... alors tu ne peux pas continuer.";
+			next;
+			mes "[Rhehe Ravies]";
+			mes "Trop difficile ?";
+			mes "Eh bien, que puis-je faire d'autre, c'est une partie du travail.";
+			close;
+		}
+	}
+	else {
+		mes "[Rhehe Ravies]";
+		mes "N'as-tu rien à me donner pour prouver ta valeur ?";
+		close;
+	}
+
+OnInit:
+	enablenpc "Rhehe Ravies#gq_fes03";
+	end;
+
+OnEnable:
+	enablenpc "Rhehe Ravies#gq_fes03";
+	end;
+
+OnDisable:
+	disablenpc "Rhehe Ravies#gq_fes03";
+	end;
+
+OnStart:
+	initnpctimer;
+	set $@gqse_festival,1;
+	end;
+
+Oncall:
+	if (mobcount("rachel","Rhehe Ravies#gq_fes03::OnMyMobDead") < 31) {
+		monster "rachel",0,0,"Valkyrie's Blessing",1083,100,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1951,25,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1952,25,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1953,25,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1954,25,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Prank",1002,10,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+	}
+	else if (mobcount("rachel","Rhehe Ravies#gq_fes03::OnMyMobDead") > 149) {
+		monster "rachel",0,0,"Valkyrie's Blessing",1083,1,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1951,1,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1952,1,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1953,1,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1954,1,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+	}
+	else {
+		monster "rachel",0,0,"Valkyrie's Blessing",1083,50,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1951,10,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1952,10,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1953,10,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Gift",1954,10,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+		monster "rachel",0,0,"Valkyrie's Prank",1002,5,"Rhehe Ravies#gq_fes03::OnMyMobDead";
+	}
+	end;
+
+Onover:
+	killmonster "rachel","Rhehe Ravies#gq_fes03::OnMyMobDead";
+	set $@gqse_festival,0;
+	stopnpctimer;
+	end;
+
+OnMyMobDead:
+	end;
+
+OnTimer10000:
+	announce "La cérémonie d'appel commencera dans 5 min à Rachel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer13000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer120000:
+	announce "L’appel du Don de Valkyrie débutera approximativement dans 3 min à Rachel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer123000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer240000:
+	announce "La cérémonie d'appel débutera dans 1 min chez ^FF0000Rachel^0000.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer243000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer300000:
+	announce "Le premier 'Cadeau de Valkyrie' a été appelé ici chez ^FF0000Rachel^0000 par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer303000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer308000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer600000:
+	announce "Le second 'Cadeau de Valkyrie' a été appelé ici chez ^FF0000Rachel^0000 par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer603000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer608000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer900000:
+	announce "Le troisième 'Cadeau de Valkyrie' a été appelé ici chez ^FF0000Rachel^0000 par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer903000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer908000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1200000:
+	announce "Le quatrième 'Cadeau de Valkyrie' a été appelé ici chez ^FF0000Rachel^0000 par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer1203000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1208000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1500000:
+	announce "Le cinquième 'Cadeau de Valkyrie' a été appelé ici chez ^FF0000Rachel^0000 par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer1503000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1508000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1800000:
+	announce "Le sixième 'Cadeau de Valkyrie' a été appelé ici chez ^FF0000Rachel^0000 par la Fille des Vœux.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer1803000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer1808000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2100000:
+	announce "^FF0000Le septième 'Cadeau de Valkyrie' a été invoqué ici par la Fille aux souhaits dans Rachel.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer2103000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2108000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2400000:
+	announce "^FF0000Le huitième 'Cadeau de Valkyrie' a été invoqué ici par la Fille aux souhaits dans Rachel.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer2403000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2408000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2700000:
+	announce "^FF0000Le neuvième 'Cadeau de Valkyrie' a été invoqué ici par la Fille aux souhaits dans Rachel.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer2703000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer2708000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3000000:
+	announce "^FF0000Le dixième 'Cadeau de Valkyrie' a été invoqué ici par la Fille aux souhaits dans Rachel.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer3003000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3008000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3300000:
+	announce "^FF0000Le onzième 'Cadeau de Valkyrie' a été invoqué ici par la Fille aux souhaits dans Rachel.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer3303000:
+	announce "^FF0000La cérémonie d'appel sera effectuée 12 fois à intervalles de 5 minutes environ pendant une heure.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3308000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3600000:
+	announce "^FF0000Le douzième 'Cadeau de Valkyrie' a été invoqué ici par la Fille aux souhaits dans Rachel.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Oncall";
+	end;
+
+OnTimer3603000:
+	announce "^FF0000La dernière cérémonie se déroulera pendant 5 minutes.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3608000:
+	announce "^FF0000Veuillez venir chez Rachel pour assister au cérémonial d'appel.",bc_all,"0x70dbdb";
+	end;
+
+OnTimer3900000:
+	announce "^FF0000Le cérémonial est terminé, j'en suis certain, vous avez tous passé un bon moment.",bc_all,"0x70dbdb";
+	donpcevent "Rhehe Ravies#gq_fes03::Onover";
+	end;
+}

@@ -1,0 +1,169 @@
+//===== rAthena Script =======================================
+//= Brasilis Town
+//===== Description: =========================================
+//= [Official Conversion]
+//= Brasilis Town Script
+//===== Changelog: ===========================================
+//= 1.0 First version. Transportation and Basic NPCs. [L0ne_W0lf]
+//= 1.1 Fixed Zeny not being removed for payment. [Kisuka]
+//= 1.2 Updated dialog, added Ice Cream Maker. [L0ne_W0lf]
+//= 1.3 Moved Alberta NPC to pre-re/re paths. [Euphy]
+//= 1.4 Added VIP features. [Euphy]
+//============================================================
+
+// Brasilis Transportation :: brasilis_trans
+//============================================================
+-	script	::Crewman_bra2	-1,{
+	mes "[Membre d'équipage]";
+	mes "Hé, as-tu entendu parler d'un endroit appelé Brasilis ?";
+	mes "C'est une ville tropicale, chaude comme le désert mais aussi pluvieuse. C'est un endroit très mystérieux.";
+	next;
+	mes "[Membre d'équipage]";
+	mes "Nous avons récemment trouvé une nouvelle route maritime pour y arriver facilement.";
+	if (VIP_SCRIPT) {
+		set .@cost, vip_status(VIP_STATUS_ACTIVE)?1000:10000;
+		mes "C'est seulement 10 000 zeny pour un aller-retour, et 1 000 pour VIP ! Alors tu veux y aller ?"; //custom translation (VIP)
+	} else {
+		set .@cost,10000;
+		mes "C'est juste 10 000 zeny pour un aller-retour ! Alors tu veux y aller ?";
+	}
+	next;
+	switch(select("Take me to Brasilis!:I'll stay here.")) {
+	case 1:
+		if (Zeny < .@cost) {
+			mes "[Membre d'équipage]";
+			mes "I said "+callfunc("F_InsertComma",.@cost)+" zeny.";
+			close;
+		}
+		else {
+			mes "[Membre d'équipage]";
+			mes "Cool ~ !! Allons-y ~ !";
+			set Zeny, Zeny-.@cost;
+			close2;
+			warp "brasilis",314,60;
+			end;
+		}
+	case 2:
+		mes "[Membre d'équipage]";
+		mes "Eh bien, si jamais vous êtes intéressé, faites-le-moi savoir et je pourrai vous y emmener.";
+		close;
+	}
+}
+
+brasilis,316,57,3	script	Crewman#bra1	100,{
+	mes "[Membre d'équipage]";
+	mes "Mon navire retourne en Alberta, voulez-vous nous rejoindre ?";
+	next;
+	switch(select("Go back to Alberta.:Not yet~.")) {
+	case 1:
+		mes "[Membre d'équipage]";
+		mes "La maison me manque vraiment.";
+		close2;
+		if (checkre(0))
+			warp "alberta",245,87;
+		else
+			warp "alberta",244,115;
+		end;
+	case 2:
+		mes "[Membre d'équipage]";
+		mes "Ok, arrange-toi. Nous vous reverrons à notre retour.";
+		close;
+	}
+}
+
+// Generic Brasilis NPCs :: brazil_tre
+//============================================================
+brasilis,155,165,3	script	Signpost#bra1	858,{
+	mes ":: Musée d'art ::";
+	close;
+}
+
+brasilis,191,239,3	script	Signpost#bra2	858,{
+	mes ":: Monument de Verass ::";
+	close;
+}
+
+brasilis,240,247,3	script	Signpost#bra3	858,{
+	mes ":: Marché ::";
+	mes " ";
+	mes "- Pour vos potions et armes -";
+	close;
+}
+
+brasilis,303,309,3	script	Signpost#bra4	858,{
+	mes ":: Câble Jungle ::";
+	mes "- Pas pour les âmes sensibles -";
+	close;
+}
+
+brasilis,278,137,3	script	Signpost#bra5	858,{
+	mes ":: Hôtel Brasilis ::";
+	close;
+}
+
+brasilis,137,77,5	script	Ice-Cream Maker	85,{
+	mes "[Machine à glace]";
+	mes "Viens~viens~";
+	mes "La crème glacée est la collation parfaite pour une journée chaude~";
+	mes "C'est juste ^3355FF100 Zeny^000000~";
+	mes "Glace ~";
+	mes "Obtenez votre glace !";
+	next;
+	switch(select("Give me one!:Ice Cream?:Cancel.")) {
+	case 1:
+		mes "[Machine à glace]";
+		mes "Comme il y a tellement de gens qui veulent une glace fraîche, vous ne pouvez en commander que 5 à la fois.";
+		mes "Alors, combien en veux-tu ?";
+		next;
+		while(1) {
+			input .@input; //,1,5;
+			if (.@input == 0) {
+				mes "[Machine à glace]";
+				mes "Aucun?";
+				mes "Très bien, dégagez-vous, j'ai des clients à servir.";
+				close;
+			}
+			else if ((.@input < 0) || (.@input > 5)) {
+				mes "[Machine à glace]";
+				mes "Ouah.";
+				mes "Vous en avez trop commandé.";
+				mes "Si vous en mangez plus de 5, vous devrez peut-être vous battre avec un monstre dans l'estomac. Calme-toi mon pote.";
+				next;
+			}
+			else
+				break;
+		}
+		set .@icecream_hap,.@input*100;
+		if (Zeny < .@icecream_hap) {
+			mes "[Machine à glace]";
+			mes "Bravo~! Vous n'avez pas assez d'argent.";
+			mes "C'est seulement ^3355FF100 Zeny^000000~ Sérieusement !";
+			close;
+		}
+		if (!checkweight(536,.@input)) {
+			mes "[Machine à glace]";
+			mes "Tu as l'air d'avoir trop de choses.";
+			mes "Allégez votre sac avant de l'acheter.";
+			close;
+		}
+		set Zeny, Zeny-.@icecream_hap;
+		getitem 536,.@input; //Ice_Cream
+		close;
+	case 2:
+		mes "[Machine à glace]";
+		mes ""La glace est...";
+		mes "Attends, tu ne sais pas";
+		mes "qu'est-ce que la glace ?";
+		mes "Quel rocher as-tu";
+		mes "vécu sous ?";
+		next;
+		mes "[Machine à glace]";
+		mes "Je ne vais même pas commencer par dire à quel point cela semble bizarre.";
+		mes "Quoi qu'il en soit, procurez-vous votre glace ici pendant qu'elle est bien froide.";
+		close;
+	case 3:
+		mes "[Machine à glace]";
+		mes "Ne manquez pas votre chance de manger la meilleure glace de tout le pays ~ !";
+		close;
+	}
+}

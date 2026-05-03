@@ -1,0 +1,620 @@
+//===== rAthena Script =======================================
+//= Easter Event (2010)
+//===== By: ==================================================
+//= Euphy
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Lift Lina's curse for an Easter Egg Shell.
+//===== Additional Comments: =================================
+//= 1.0 First version. [Euphy]
+//============================================================
+
+prontera,202,297,3	script	Rina#Easter	727,{
+	disable_items;
+	if (BaseLevel < 40) {
+		mes "[Rina]";
+		mes "^FF0000Hi~!";
+		mes "Vous êtes un aventurier comme moi.";
+		next;
+		mes "[Rina]";
+		mes "Je suis sous une malédiction.";
+		mes "Je sais que vous voulez m'aider,";
+		mes "mais votre expérience n'est pas suffisante.";
+		next;
+		consumeitem 607; //Yggdrasilberry
+		consumeitem 12068; //Luk_Dish03
+		consumeitem 12063; //Dex_Dish03
+		consumeitem 12053; //Vit_Dish03
+		npcskill "AL_INCAGI",1,0,0;
+		npcskill "AL_BLESSING",1,0,0;
+		mes "[Rina]";
+		mes "Je ne suis pas dans un bon état,";
+		mes "alors ce que je peux faire pour vous";
+		mes "est juste comme ça.";
+		mes "Alors, au revoir.";
+		mes "Prenez soin de vous~!";
+		close;
+	}
+	set .@quest1, checkquest(9117);
+	if (.@quest1 == -1) {
+		playbgm "30.mp3"; // One Step Closer
+		mes "[Rina]";
+		mes "^FF0000Hi~!";
+		mes "Vous êtes un aventurier comme moi.";
+		mes "Bien... En fait, je suis";
+		mes "sous une malédiction étrange.";
+		next;
+		mes "[Rina]";
+		mes "Pour lever cette malédiction,";
+		mes "somebody needs to do ^800080Oath-taking ceremony^000000";
+		mes "with me,";
+		mes "and then needs to solve";
+		mes "^FF0000plusieurs problèmes à ma place.^RGBO";
+		next;
+		if (select("Let's help ^800080Rina^000000.:Just skip it.") == 2) {
+			emotion ET_OHNO;
+			mes "[Rina]";
+			mes "[^RagnarokMage] Bonjour ! Je m'appelle [RagnarokMage]. Que puis-je faire pour toi aujourd'hui ? ^FF0000[NB]: N'oublie pas que je peux aussi te donner des informations sur les sorts magiques.^[FFFF00]";
+			mes "^FF0000[joueur], je cherche un aventurier compétent.";
+			mes "^FF0000Si vous les connaissez,";
+			mes "J'espère que vous me les introduirez plus tard.";
+			close;
+		}
+		emotion ET_COOL;
+		mes "[Rina]";
+		mes "^FF0000[Areth]^\ vous allez vraiment m'aider ?";
+		mes "Merci.";
+		mes "^FF0000Tu es si courageux.^RGBO";
+		next;
+		playbgm "01.mp3"; // Title
+		mes "[Rina]";
+		mes "Je vais commencer la ^800080cérémonie de serment^000000.";
+		mes " ";
+		mes "^787878( Une atmosphère mystérieuse flotte dans l'air. )^000000";
+		next;
+		specialeffect2 EF_COUPLECASTING;
+		next;
+		mes "[Rina]";
+		mes "Blablabla...";
+		mes " ";
+		mes "Blablabla...";
+		mes " ";
+		mes "^787878(... C'est un sort étrange. )^000000";
+		next;
+		specialeffect2 EF_SIGNUM;
+		mes "[Rina]";
+		mes "Haaaaah~";
+		mes "^800080La cérémonie de serment^000000 est maintenant suffisamment accomplie.";
+		mes "N'est-ce pas si simple?";
+		next;
+		emotion ET_HUM;
+		mes "[Rina]";
+		mes "D'accord, à partir d'ici,";
+		mes "vous devez vous lancer dans ^006400une vraie aventure^000000";
+		mes "pour lever ma malédiction.^000000";
+		mes "Revient me voir quand tu seras prêt.";
+		setquest 9117;
+		close;
+	} else if (.@quest1 == 0 || .@quest1 == 1) {
+	L_HuntingInfo:
+		mes "[Rina]";
+		mes "Ce que vous devez faire, c'est";
+		mes "choisir un monstre parmi";
+		mes "^FF0000DEVIRUCHI,^000000 ^FF0000ESPRIT DÉCHAINE,^000000";
+		mes "^FF0000DULLAHAN,^000000 ^FF0000CAUCHEMAR TERRORISANT^000000";
+		mes "et ensuite tuer ^0000FF50^000000 monstres";
+		mes "et revenir me trouver.";
+		next;
+		mes "[Rina]";
+		mes "C'est une tâche difficile,";
+		mes "mais vous êtes la bonne personne";
+		mes "qui a fait la cérémonie de serment.";
+		mes "J'espère que tu réussiras.";
+		if (.@quest1 < 2) {
+			completequest 9117;
+			setquest 9118;
+			setquest 9119;
+			setquest 9120;
+			setquest 9121;
+		}
+		close2;
+		npcskill "AL_INCAGI",1,0,0;
+		npcskill "AL_BLESSING",1,0,0;
+		end;
+	} else if (.@quest1 == 2) {
+		if (checkquest(9118) < 2 || checkquest(9119) < 2 || checkquest(9120) < 2 || checkquest(9121) < 2) {
+			if (checkquest(9118,HUNTING) == 2 || checkquest(9119,HUNTING) == 2 || checkquest(9120,HUNTING) == 2 || checkquest(9121,HUNTING) == 2) {
+				mes "[Rina]";
+				mes "^FF0000Tu l'as fait.^000000";
+				mes "Je sens que mon corps se rétablit.";
+				mes "Mais ce n'est pas suffisant.";
+				next;
+				mes "[Rina]";
+				mes "^006400Il te reste encore une chose à faire.^000000";
+				mes "Laisse-moi savoir quand tu es prêt.";
+				close2;
+				completequest 9118;
+				completequest 9119;
+				completequest 9120;
+				completequest 9121;
+				setquest 9122;
+			} else
+				goto L_HuntingInfo;
+			end;
+		}
+	}
+	set .@quest2, checkquest(9122);
+	if (.@quest2 == 0 || .@quest2 == 1) {
+		mes "[Rina]";
+		mes "Je vais vérifier un point.";
+		mes "Pour cette tâche,";
+		mes "Tu dois sentir la musique.";
+		next;
+		mes "[Rina]";
+		mes "^FF0000Tu ne peux pas accomplir la tâche^000000";
+		mes "sans la musique.";
+		mes "as-tu un problème?";
+		next;
+		mes "- Vérification! -";
+		mes "^787878- L'option BGM doit être activée -^000000";
+		mes "^787878- dans le menu des options du jeu. -^000000";
+		mes "^787878- Veuillez vérifier -^000000";
+		mes "^787878- si vous pouvez l'écouter -^000000";
+		mes "^787878- au son musical. -^000000";
+		next;
+		if(select("[I'm ready to listen to the BGM.]:[I can't listen to the BGM.]") == 2) {
+			mes "[Rina]";
+			mes "Je suis tellement choquée que";
+			mes "vous ne puissiez pas sentir la musique.";
+			mes "Que devrions-nous faire maintenant...";
+			close2;
+			emotion ET_CRY;
+			end;
+		}
+		mes "[Rina]";
+		mes "Écoutez bien";
+		mes "les sentiments qu'elle évoque...";
+		mes "Je ne l'entends pas,";
+		mes "mais vous entendez le son.";
+		next;
+		if (oversea_event2 < 520 || oversea_event3 < 270 || oversea_event6 < 245 || oversea_event9 < 197) {
+			     if (oversea_event2 == 520) playbgm "13.mp3"; // Theme of Geffen
+			else if (oversea_event3 == 270) playbgm "59.mp3"; // Theme of Lutie
+			else if (oversea_event6 == 245) playbgm "70.mp3"; // Theme of Juno
+			else if (oversea_event9 == 197) playbgm "94.mp3"; // Theme of Rachel
+			else {
+				switch(rand(1,4)) {
+					case 1: playbgm "13.mp3"; set oversea_event2,520; break;
+					case 2: playbgm "59.mp3"; set oversea_event3,270; break;
+					case 3: playbgm "70.mp3"; set oversea_event6,245; break;
+					case 4: playbgm "94.mp3"; set oversea_event9,197; break;
+				}
+			}
+		}
+		mes "[Rina]";
+		mes "^006400la musique que vous entendez maintenant^000000";
+		mes "a quelque chose à voir avec une ville spécifique.";
+		mes "Réfléchissez attentivement ^006400à quel type de ville^000000";
+		mes "a des sentiments similaires avec cette musique.";
+		next;
+		mes "[Rina]";
+		mes "Et...";
+		mes "Allez à ^006400la ville";
+		mes "où vous pouvez être rappelé par cette musique^000000.";
+		next;
+		mes "[Rina]";
+		mes "Après ça,";
+		mes "trouve ^FF0000la marque étrange^000000";
+		mes "autour des entrées de la ville.";
+		mes "Alors tu pourras lever le sort qui me pèse.";
+		next;
+		mes "[Rina]";
+		mes "C'est sûrement difficile,";
+		mes "mais j'espère que tu as beaucoup de chance.";
+		close2;
+		emotion ET_OHNO;
+		end;
+	} else {
+		set .@quest3, checkquest(9123);
+		if (.@quest3 == 0 || .@quest3 == 1) {
+			emotion ET_CHUP;
+			mes "[Rina]";
+			mes "Tu es revenu~!";
+			mes "Mon malédiction a été levée.";
+			mes "Merci beaucoup.";
+			next;
+			if (checkweight(5852,1) == 0) {
+				mes "[Rina]";
+				mes "Ton sac est plein.";
+				mes "J'ai un cadeau pour toi";
+				mes "donc vide ton sac.";
+				mes "Je t'attends.";
+				close;
+			}
+			completequest 9123;
+			getitem 5852,1; //Easter_Egg_Shell
+			set .@BaseExp, (BaseLevel * (BaseLevel / 4)) * ((BaseLevel / 29) + (BaseLevel / 6)) + (5 * BaseLevel / 2);
+			if (ADVJOB == 0) {
+				     if (BaseLevel < 40) set .@nBaseExp, .@BaseExp;
+				else if (BaseLevel < 50) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel);
+				else if (BaseLevel < 60) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * (BaseLevel / 20));
+				else if (BaseLevel < 70) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * (BaseLevel / 10));
+				else if (BaseLevel < 80) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * (BaseLevel / 5));
+				else if (BaseLevel < 90) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * (BaseLevel / 3));
+				else if (BaseLevel < 99) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * (BaseLevel / 2));
+				else set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * (BaseLevel / 2) * 2);
+
+				set .@nJobExp, (JobLevel * (JobLevel - 3) * (JobLevel / 25 + 1) + (16 - (JobLevel * 2))) * 2;
+			} else {
+				     if (BaseLevel < 30) set .@nBaseExp, .@BaseExp;
+				else if (BaseLevel < 40) set .@nBaseExp, .@BaseExp + (BaseLevel * 10);
+				else if (BaseLevel < 50) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * 2);
+				else if (BaseLevel < 60) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * (BaseLevel / 10));
+				else if (BaseLevel < 70) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * (BaseLevel / 5));
+				else if (BaseLevel < 80) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * (BaseLevel / 3));
+				else if (BaseLevel < 90) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * (BaseLevel / 2));
+				else if (BaseLevel < 98) set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * BaseLevel);
+				else set .@nBaseExp, .@BaseExp + (BaseLevel * BaseLevel * BaseLevel * 2);
+
+				set .@nJobExp, (JobLevel * JobLevel * (JobLevel / 5 + 2) + (20 - JobLevel)) * 3;
+			}
+			getexp .@nBaseExp,.@nJobExp;
+			mes "[Rina]";
+			mes "Voici le cadeau pour toi.";
+			mes "Ce n'est pas grand,";
+			mes "mais prends-le s'il te plaît";
+			mes "comme un signe de ma gratitude.";
+			next;
+			mes "[Rina]";
+			mes "Je vais me reposer pendant quelques jours.";
+			mes "Et ensuite, je partirai à l'aventure.";
+			mes "Au revoir et à une prochaine fois.";
+			close2;
+			consumeitem 607; //Yggdrasilberry
+			consumeitem 12068; //Luk_Dish03
+			consumeitem 12063; //Dex_Dish03
+			consumeitem 12053; //Vit_Dish03
+			npcskill "AL_INCAGI",1,0,0;
+			npcskill "AL_BLESSING",1,0,0;
+			end;
+		} else {
+			mes "[Rina]";
+			mes "Merci de m'avoir libérée de ce sortilège.";
+			mes "Je vais me reposer pendant quelques jours.";
+			mes "Et ensuite, je repartirai pour d'autres aventures.";
+			mes "Que ta journée soit heureuse~!";
+			close2;
+			consumeitem 607; //Yggdrasilberry
+			npcskill "AL_INCAGI",1,0,0;
+			npcskill "AL_BLESSING",1,0,0;
+			end;
+		}
+	}
+}
+
+geffen,207,114,4	script	#Hiddne01Easter	844,{
+	if (oversea_event2 > 519) {
+	OnRelease:
+		specialeffect EF_PATTACK;
+		mes "- J'ai trouvé ^0000FFla marque étrange^000000. -";
+		next;
+		specialeffect2 EF_HOLYHIT;
+		mes "- Je peux sentir sans aucun doute que";
+		mes "- ^0000FFRina^000000 a été libérée";
+		mes "- du sortilège.";
+		mes "- ^006400Allons retrouver Rina !^000000";
+		if (checkquest(9122) < 2) {
+			completequest 9122;
+			setquest 9123;
+		}
+		close;
+	}
+	end;
+}
+
+xmas,144,52,4	script	#Hiddne02Easter	844,{
+	if (oversea_event3 > 269)
+		doevent "#Hiddne01Easter::OnRelease";
+	end;
+}
+
+yuno,164,46,4	script	#Hiddne03Easter	844,{
+	if (oversea_event6 > 244)
+		doevent "#Hiddne01Easter::OnRelease";
+	end;
+}
+
+rachel,36,132,4	script	#Hiddne04Easter	844,{
+	if (oversea_event9 > 196)
+		doevent "#Hiddne01Easter::OnRelease";
+	end;
+}
+
+prontera,204,297,3	script	Rina's Little Friend	463,{
+	disable_items;
+	if (checkquest(9117) == -1) {
+		emotion ET_PROFUSELY_SWEAT;
+		mes "[Rina's Little Friend]";
+		mes ".......";
+		mes " ";
+		mes "^787878( Pas de réponse. )^000000";
+		close;
+	}
+	if (checkquest(9123) == 2) {
+		emotion ET_MERONG;
+		mes "[Rina's Little Friend]";
+		mes "Salut.";
+		mes "Je suppose que tu es le/la ami(e) de confiance.";
+		mes "Êtes-vous ici pour faire un deal avec moi?";
+		next;
+		switch(select("Yes.:No.:What do you mean?")) {
+		case 1:
+			if (ADVJOB == 0) {
+				if (BaseLevel < 70)
+					set .@nCharge,400000;
+				else if (BaseLevel < 90)
+					set .@nCharge,450000;
+				else
+					set .@nCharge,480000;
+			} else
+				set .@nCharge,500000;
+			if (countitem(574) < 1 || countitem(1001) < 20 || Zeny < .@nCharge) {
+				mes "[Rina's Little Friend]";
+				mes "Hmm.";
+				mes "Le matériau est insuffisant.";
+				mes "Veuillez vérifier les choses dont vous avez besoin.";
+				close;
+			}
+			mes "[Rina's Little Friend]";
+			mes "Génial... si vous me donnez les matériaux";
+			mes "Je vais commencer tout de suite.";
+			mes "Êtes-vous prêt pour ça?";
+			next;
+			if(select("Yes, let's start it.:No, stop it.") == 2) {
+				mes "[Rina's Little Friend]";
+				mes "Heh. C'est ennuyeux.";
+				close;
+			}
+			mes "[Rina's Little Friend]";
+			mes "D'accord, je vais commencer maintenant.";
+			mes " ";
+			mes "^787878( Une atmosphère mystérieuse flotte dans l'air. )^000000";
+			next;
+			specialeffect EF_ASPERSIO;
+			delitem 574,1; //Egg
+			delitem 1001,20; //Sparkling_Dust
+			set Zeny, Zeny - .@nCharge;
+			set .@nPercentage, rand(1,100);
+			if (.@nPercentage <= 41) {
+				mes "[Rina's Little Friend]";
+				mes "La vie est donnée à l'œuf.";
+				mes "Aaaaah~ Je dois prendre un peu de repos.";
+				mes "Au revoir~!";
+				if (.@nPercentage <= 12)
+					getitem 9003,1; //Poporing_Egg
+				else if (.@nPercentage <= 24)
+					getitem 9005,1; //Picky_Egg
+				else if (.@nPercentage <= 36)
+					getitem 9009,1; //Savage_Bebe_Egg
+				else
+					getitem 9023,1; //Deviruchi_Egg
+				close2;
+				emotion ET_SLEEPY;
+				end;
+			} else if (.@nPercentage <= 60) {
+				if (.@nPercentage >= 42 && .@nPercentage <= 45)
+					getitem 5852,1; //Easter_Egg_Shell
+				else
+					getitem 12019,5; //Holy_Egg
+				mes "[Rina's Little Friend]";
+				mes "Il semble que vous ayez des choses assez intéressantes.";
+				mes "J'ai besoin de prendre un peu de repos.";
+				mes "Au revoir~!";
+				close2;
+				emotion ET_SLEEPY;
+				end;
+			} else if (.@nPercentage <= 85) {
+				if (.@nPercentage >= 61 && .@nPercentage <= 75) {
+					getitem 1001,20; //Sparkling_Dust
+					getitem 607,1; //Yggdrasilberry
+				} else {
+					getitem 574,1; //Egg
+					getitem 608,2; //Seed_Of_Yggdrasil
+				}
+				mes "[Rina's Little Friend]";
+				mes "Il n'y a eu aucun changement.";
+				mes "Je ne l'ai pas fait exprès,";
+				mes "mais je suis désolé...";
+				mes "J'espère te revoir, mon ami.";
+				emotion ET_HUM;
+				close;
+			} else {
+				getitem 12093,2; //Dex_Dish08
+				mes "[Rina's Little Friend]";
+				mes "Hmm.";
+				mes "C'est devenu un plat.";
+				mes "Ça a l'air délicieux.";
+				mes "Alors, au revoir~!";
+				close2;
+				emotion ET_HUNGRY;
+				end;
+			}
+		case 2:
+			mes "[Rina's Little Friend]";
+			mes "Es-tu là juste pour voir mes adorables traits?";
+			mes "N'es-tu pas en train d'espionner Rina";
+			mes "en prétendant me regarder?";
+			mes "C'est drôle... hahaha~";
+			close2;
+			emotion ET_KIK;
+			end;
+		case 3:
+			playbgm "23.mp3"; // Travel
+			mes "[Rina's Little Friend]";
+			mes "Hein? !";
+			mes "Je ne t'ai jamais dit cela avant?";
+			mes "Alors, écoute attentivement.";
+			next;
+			mes "[Rina's Little Friend]";
+			mes "Je possède une";
+			mes "aptitude spéciale.";
+			mes "C'est de donner une force spéciale";
+			mes "^0000FFà l'oeuf^000000.";
+			next;
+			mes "[Rina's Little Friend]";
+			mes "Eh bien, je ne peux pas le faire illimitement.";
+			mes "Il n'y a pas de magie qui dure éternellement.";
+			mes "Donc j'ai besoin d'un coût supplémentaire.";
+			next;
+			mes "[Rina's Little Friend]";
+			mes "Et je ne peux pas être sûr";
+			mes "de ce à quoi l'oeuf va se transformer.";
+			mes "Cela peut échouer";
+			mes "et cela pourrait ressembler à un Pet Egg.";
+			next;
+			if(select("Ask the cost.:Stop listening because it feels like a trick.") == 2) {
+				mes "[Rina's Little Friend]";
+				mes "Eh bien... Je m'en fiche vraiment.";
+				mes "Au revoir.";
+				close2;
+				playbgm "08.mp3"; // Theme of Prontera
+				end;
+			}
+			mes "[Rina's Little Friend]";
+			mes "Voulez-vous faire un marché ?";
+			mes "Vous avez besoin de";
+			mes "^0000FF1 Oeuf^000000, ^0000FF20 Granule Lumineux^000000 et";
+			if (ADVJOB == 0) {
+				if (BaseLevel < 70)
+					mes "^B8860B400,000 Zeny.";
+				else if (BaseLevel < 90)
+					mes "^B8860B450,000 Zeny^000000.";
+				else
+					mes "^B8860B480,000 Zeny^000000.";
+			} else
+				mes "^B8860B500,000 Zeny^000000.";
+			next;
+			mes "[Rina's Little Friend]";
+			mes "Si vous êtes intéressé";
+			mes "faites que cela en zeny et revenez.";
+			mes "Haha...";
+			mes "Je vais vous attendre.";
+			close2;
+			playbgm "08.mp3"; // Theme of Prontera
+			emotion ET_KIK;
+			end;
+		}
+	}
+	emotion ET_MERONG;
+	mes "[Rina's Little Friend]";
+	mes "Ahem!";
+	mes "Pourquoi? Êtes-vous surpris de me voir parler?";
+	mes "Bien, je comprends.";
+	mes "Seule la personne qui a";
+	mes "fait la cérémonie du serment peut m'adresser la parole.";
+	next;
+	mes "[Rina's Little Friend]";
+	mes "Si le sort de Rina est levé,";
+	mes "je peux aussi";
+	mes "vous suggère";
+	mes "une chose intéressante.";
+	next;
+	mes "[Rina's Little Friend]";
+	mes "je vous informerai";
+	mes "de l'explication détaillée plus tard.";
+	mes "Alors à plus tard, mon ami.";
+	close;
+}
+
+prontera,116,82,5	script	Traveler#01Easter	85,{
+	mes "[Traveler]";
+	mes "Je suis un voyageur";
+	mes "et je visite souvent ^8B4513Prontera^000000.";
+	mes "Hmm, j'ai l'impression de vous avoir déjà vu ici avant.";
+	mes "see you around here before.";
+	next;
+	if(select("Listen some more.:Just ignore it.") == 2) {
+		mes "[Traveler]";
+		mes "Comme je le pensais,";
+		mes "vous êtes une personne discrète. Ha ha.";
+		mes "Au revoir.";
+		close;
+	}
+	mes "[Traveler]";
+	mes "Il y a quelques jours,";
+	mes "j'ai vu un nouvel aventurier";
+	mes "qui se tenait";
+	mes "près du ^8B4513Cathedral^000000.";
+	next;
+	emotion ET_THROB;
+	mes "[Traveler]";
+	mes "Ce aventurier semblait assez joli.";
+	mes "Mais...";
+	mes "Je sens une énergie étrange";
+	mes "donc je ne m'approche pas de cette personne.";
+	next;
+	mes "[Traveler]";
+	mes "Ça fait";
+	mes "comme si tu es intéressé par";
+	mes "ce nouvel aventurier?";
+	mes "Ou c'est juste ton air. Haha.";
+	next;
+	if(select("I'm interested in it.:I don't care at all.") == 2) {
+		mes "[Traveler]";
+		mes "Ah~ Je vois~!";
+		mes "Alors, Au revoir.";
+		close;
+	}
+	mes "[Traveler]";
+	mes "Comme je l'avais prévu !";
+	mes "Tu peux trouver";
+	mes "ce nouvel aventurier";
+	mes "sur le chemin vers la ^8B4513Cathédrale^000000";
+	mes "dans la direction des 1 heures à ^8B4513Prontera^000000.";
+	next;
+	mes "[Traveler]";
+	mes "Elle portait";
+	mes "^800080un grand objet en forme d'œuf^000000.";
+	mes "C'est tout ce que je sais.";
+	close;
+OnInit:
+	initnpctimer;
+	end;
+OnTimer5000:
+	emotion ET_SURPRISE;
+	stopnpctimer;
+	initnpctimer;
+	end;
+}
+
+prontera,163,194,5	script	Traveler#02Easter	92,{
+	mes "[Traveler]";
+	mes "Il y a un moment,";
+	mes "j'ai rencontré une dame";
+	mes "et elle m'a dit qu'elle était sous";
+	mes "une malédiction étrange.";
+	next;
+	mes "[Traveler]";
+	mes "Je voulais l'aider";
+	mes "mais mon expérience n'est pas assez grande.";
+	mes "Donc je ne pouvais pas l'aider.";
+	next;
+	mes "[Traveler]";
+	mes "Si vous êtes plus de";
+	mes "niveau ^0000FF40^000000,";
+	mes "allez à la ^8B4513Cathédrale^000000";
+	mes "dans la direction des 1 heure.";
+	mes "J'espère que vous pourrez l'aider...";
+	close;
+OnInit:
+	initnpctimer;
+	end;
+OnTimer5000:
+	emotion ET_SURPRISE;
+	stopnpctimer;
+	initnpctimer;
+	end;
+}

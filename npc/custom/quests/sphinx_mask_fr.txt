@@ -1,0 +1,52 @@
+//===== rAthena Script ======================================= 
+//= Sphinx Mask Quest (custom)
+//===== By: ================================================== 
+//= sabernet09
+//===== Current Version: ===================================== 
+//= 1.3
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= This quest is related to Umbalian Chief.
+//= 1.1 Removed it from official Umbala quests [Lupus]
+//= 1.2 Added a missing variable (sphmask_q) [erKURITA]
+//= 1.3 Optimized, and coordinates moved. [Euphy]
+//============================================================ 
+
+morocc,208,90,6	script	Turban Thief	58,{
+	mes "[Voleur Turban]";
+	if(event_umbala < 2) {
+		mes "Que veux-tu de moi ? Dégage !";
+		close; }
+	if(sphmask_q) {
+		mes "Tu n'as plus rien à me demander, casse-toi !";
+		close; }
+	mes "Eh là mon pote, ça te dirait ce masque rare que j'ai trouvé? Tu peux me faire confiance, c'est vraiment quelque chose de magnifique.";
+	next;
+	callsub L_Menu,1,"1,000,000",1000000;
+	callsub L_Menu,2,"750,000",750000;
+	callsub L_Menu,3,"500,000",500000;
+	next;
+	mes "[Voleur Turban]";
+	mes "Ah ! Blablate pas ! Je suis meilleur ailleurs !";
+	set sphmask_q,1;
+	close;
+
+L_Menu:
+	mes "[Voleur Turban]";
+	switch(getarg(0)) {
+		case 1: mes "Quoi ? Hé héhéhé, tu sais que je l'ai piqué aux sauvages non ? Eh bien je ne vais pas le rendre. Mais pour une somme... qu'en dis-tu?"; break;
+		case 2: mes "Ah un homme d’affaires donc ! D'accord, et si j'avais..."; break;
+		case 3: mes "Hmm... tu fais du chantage, d'accord... mon offre finale est..."; break; }
+	next;
+	if(select("Pay "+getarg(1)+"z:No deal")==2) return;
+	mes "[Voleur Turban]";
+	if (Zeny < getarg(2)) {
+		mes "Es-tu en train de me narguer ? Tu n'as pas l'argent !";
+		close; }
+	set Zeny, Zeny-getarg(2);
+	mes "Hé héhéhé, c'est conclu alors !";
+	getitem 7114,1;
+	set sphmask_q,1;
+	close;
+}

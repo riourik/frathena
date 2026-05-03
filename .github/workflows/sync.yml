@@ -3,37 +3,96 @@ name: Sync with upstream
 on:
   schedule:
     - cron: '0 0 * * *'  # daily at midnight UTC
-  workflow_dispatch:  # allow manual trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Setup Git
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-      - name: Merge upstream
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Fetch upstream
         run: |
           git remote add upstream https://github.com/rathena/rathena.git || true
           git fetch upstream
-          git checkout master
-          git merge upstream/master --no-edit || true
+
+      - name: Check for new upstream commits
+        id: check
+        run: |
+          behind=$(git rev-list --count HEAD..upstream/master)
+          echo "behind=$behind" >> $GITHUB_OUTPUT
+          echo "Upstream is $behind commits ahead of master"
+
+      - name: Create sync branch
+        if: steps.check.outputs.behind != '0'
+        id: branch
+        run: |
+          name="sync/upstream-$(date +%Y-%m-%d)"
+          git checkout -B "$name"
+          echo "name=$name" >> $GITHUB_OUTPUT
+
+      # No || true: if upstream has conflicts, the workflow fails and notifies you
+      - name: Merge upstream
+        if: steps.check.outputs.behind != '0'
+        run: git merge upstream/master --no-edit
+
       - name: Setup Python
-        uses: actions/setup-python@v4
+        if: steps.check.outputs.behind != '0'
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+
       - name: Install dependencies
-        run: |
-          pip install deep-translator
+        if: steps.check.outputs.behind != '0'
+        run: pip install deep-translator
+
       - name: Update translations
+        if: steps.check.outputs.behind != '0'
+        run: python translate_npc.py
+
+      - name: Commit translations
+        if: steps.check.outputs.behind != '0'
         run: |
-          python translate_npc.py
-      - name: Commit and push changes
+          git add $(find npc -name '*_fr.txt') translation_cache.json || true
+          git diff --staged --quiet || git commit -m "Update French NPC translations"
+
+      - name: Push branch
+        if: steps.check.outputs.behind != '0'
+        run: git push origin "${{ steps.branch.outputs.name }}"
+
+      - name: Open PR
+        if: steps.check.outputs.behind != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git add npc/**/*_fr.txt
-          git commit -m "Auto-update NPC French translations" || true
-          git push origin master
+          gh pr create \
+            --title "chore: sync upstream $(date +%Y-%m-%d)" \
+            --body "$(cat <<'EOF'
+          ## Upstream sync
+
+          Automatic merge from [rathena/rathena](https://github.com/rathena/rathena) master.
+
+          ### Included
+          - Latest rAthena upstream commits (${{ steps.check.outputs.behind }} new)
+          - French NPC translations updated
+
+          ### Before merging
+          - [ ] Check for conflicts in NPC or conf files
+          - [ ] Verify translated files look correct
+          EOF
+          )" \
+            --base master \
+            --head "${{ steps.branch.outputs.name }}" \
+          || echo "PR already exists for today, skipping"

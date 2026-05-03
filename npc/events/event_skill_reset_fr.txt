@@ -1,0 +1,109 @@
+//===== rAthena Script ======================================= 
+//= Official Skill Resetter Event in Juno (kRO & idRO)
+//===== By: ================================================== 
+//= $ephiroth
+//===== Current Version: ===================================== 
+//= 1.02
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= 2006 - Edition Skill Reset NPC
+//= 2006/11/16: 1.0 Release and fully working. [$ephiroth]
+//= 1.01 Checked, fixed typos, now uses MISC_QUEST var [Lupus]
+//= 1.02 Added missing message,comment,etc. [$ephiroth]
+//===== Additional Comments: =================================
+//= Skill Reset with payment, minimum BaseLv.60 to reset skill.
+//= Each 1 BaseLv need 20.000 Zeny, so be careful to use skill.
+//============================================================
+yuno,138,187,4	script	Hypnotist Teacher	124,{
+	set @npcname$,"[^D5A500Hypnotist^000000]";
+	mes @npcname$;
+
+	if(MISC_QUEST & 1024){
+		mes "J'ai déjà dit que vous ne pouvez effectuer cet événement qu'une seule fois.";
+		close;
+	}
+	if(BaseLevel < 60) {
+		mes "Veuillez revenir lorsque votre BaseLv atteindra 60 ou plus.";
+		close;
+	}
+	if(SkillPoint != 0) {
+		mes "Vous devrez utiliser tous vos points de compétence si vous voulez que je continue.";
+		mes "N'hésitez pas à revenir bientôt !";
+		close;
+	}
+	if(Weight || checkfalcon() || checkcart() || checkriding()) {
+		mes "Voulez-vous réinitialiser les compétences ?";
+		mes "Je suis désolé, mais...";
+		next;
+		mes @npcname$;
+		if(Weight) {
+			mes "Vous ne pouvez pas réinitialiser vos compétences";
+			mes "lorsque vous conservez";
+			mes "tous les objets.";
+		} else if(checkcart())
+			mes "Veuillez déposer votre chariot et nous continuerons.";
+		else if(checkfalcon())
+			mes "Veuillez libérer votre Faucon et nous continuerons.";
+		else if(checkriding())
+			mes "Veuillez libérer votre PecoPeco et nous continuerons.";
+		next;
+		mes @npcname$;
+		mes "Revenez bientôt !";
+		close;
+	}
+	mes "Bonjour, je suis le Réinitialisateur de Compétences.";
+	mes "Your name is ^0080FF"+strcharinfo(0)+"^000000.";
+	mes "Comment puis-je t'aider?";
+	next;
+	menu "^009500Information about Reset skills.^000000",L_Info,"^00B6FFReset skills.^000000",L_Reset,"^000088Nevermind^000000",-;
+
+	mes @npcname$;
+	mes "Vous savez où me trouver,";
+	mes "si vous voulez une réinitialisation !!"; 
+	close;
+
+L_Info:
+	mes @npcname$;
+	mes "Cette réinitialisation de compétence n'est PAS GRATUITE !!";
+	mes "Les frais pour la réinitialisation des compétences sont ^D5A50020000 Zeny x BaseLv^000000.";
+	mes "Ouais... chaque BaseLv coûte 20000 Zeny pour réinitialiser les compétences.";
+	next;
+	mes @npcname$;
+	mes "Oh, au fait ! Une dernière chose !";
+	mes "^FF0000[Any carts, falcons or pecos you have equiped]";
+	mes "^FF0000[will be removed if you reset your skills.]";
+	next;
+	mes @npcname$;
+	mes "^FF0000[Just one time does again to shake the skill point]";
+	mes "^FF0000[Careful with your skills from here on.]";
+	close;
+	
+L_Reset:
+	mes @npcname$;
+	mes "^FF0000[Before skill reset in starting.]";
+	mes "^FF0000[You shall have to first tell me your Base Level.]"; 
+	next;
+	mes "^D5A500[" + strcharinfo(0) + "]^000000";
+	mes "My Base level is ^AA00AALevel " + BaseLevel + "BaseLv.^000000"; 
+	next;
+	set @zeny,BaseLevel*20000;
+	mes @npcname$;
+	mes "Total zeny to the reset of skill amount ^529DFF" + @zeny + "Zeny^000000  for the skill reset service.";
+	next;
+	if(Zeny < @zeny) {
+		mes @npcname$;
+		mes "^FF0000[It seems that you don't have enough money.]";
+		mes "^FF0000[In addition we wait for the opportunity.]";
+		emotion ET_SCRATCH;
+		close;
+	}
+	set Zeny, Zeny-@zeny;
+	set MISC_QUEST,MISC_QUEST | 1024;
+	resetskill;
+	mes @npcname$;
+	mes "Merci.";
+	emotion ET_THANKS;
+//	logmes "^FF0000[SKILL RESET EVENT]";
+	close;
+}

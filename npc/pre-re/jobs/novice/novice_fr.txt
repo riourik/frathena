@@ -1,0 +1,4321 @@
+//===== rAthena Script ======================================= 
+//= Ep 10+ Novice Training Grounds
+//===== By: ================================================== 
+//= Dr.Evil & MasterOfMuppets
+//===== Current Version: ===================================== 
+//= 2.4
+//===== Compatible With: ===================================== 
+//= rAthena Project; SVN 3422+
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Novice Training Grounds
+//===== Additional Comments: ================================= 
+//= 1.7D Added confirm character name thing on receptionist. [Kisuka]
+//= 1.8 Rescripted to Aegis 10.3 standards. [L0ne_W0lf]
+//=     NPCs are not backwards compatable, and will remove
+//=     old variables used in the previous novice grounds.
+//= 1.9 Fixed problem with Hanson's dialog. (bugreport:1703) [L0ne_W0lf]
+//=     Fixed Entrance Guard clearing vars. (bugreport:1695)
+//=     Added duplicate NPCs to combat training maps.
+//= 2.0 Fixed savepoint not being changed sometimes. [L0ne_W0lf]
+//= 2.1 Corrected spacing issue in welcome message. [L0ne_W0lf]
+//= 2.2 Corrected Leo's endless dialog. [L0ne_W0lf]
+//= 2.3 Added fix to Hanson from GM-windsor- and Saithis. [L0ne_W0lf]
+//= 2.3a Correct a wrong variable name. (bugreport:2293) [Samuray22]
+//= 2.4 Corrected an error in Hanson. (bugreport:2374) [L0ne_W0lf]
+//============================================================ 
+
+// Bulletin Board
+new_1-1,66,114,4	script	Bulletin Board#nv	111,{
+	mes "^FF0000=================================^000000";
+	mes "^FF0000 ^E40CAA[Bienvenue]^CC0000 à ^FF9000Novice^7FFF00 Training Grounds ^E40CAA[Bienvenue]^FF0000^000000";
+	mes "^FF0000=================================^000000";
+	close;
+}
+
+new_2-1,66,114,4	duplicate(Bulletin Board#nv)	Bulletin Board#nv2	111
+new_3-1,66,114,4	duplicate(Bulletin Board#nv)	Bulletin Board#nv3	111
+new_4-1,66,114,4	duplicate(Bulletin Board#nv)	Bulletin Board#nv4	111
+new_5-1,66,114,4	duplicate(Bulletin Board#nv)	Bulletin Board#nv5	111
+
+new_1-1,144,116,2	script	Guard#nv1	105,{
+	mes "[Training Grounds Guard]";
+	mes "Bienvenue dans les Training Grounds.";
+	mes "Vous êtes maintenant dans la cour extérieure. Veuillez entrer dans le château pour commencer votre entraînement.";
+	close;
+}
+
+new_2-1,144,116,2	duplicate(Guard#nv1)	Guard#nv2-1	105
+new_3-1,144,116,2	duplicate(Guard#nv1)	Guard#nv3-1	105
+new_4-1,144,116,2	duplicate(Guard#nv1)	Guard#nv4-1	105
+new_5-1,144,116,2	duplicate(Guard#nv1)	Guard#nv5-1	105
+
+new_1-1,144,107,2	script	Guard#nv2	105,{
+	mes "[Training Grounds Guard]";
+	if(rand(2)) {
+		mes "Entrez !";
+		mes "Je voudrais";
+		mes "vous souhaiter la bienvenue";
+		mes "dans les Training Grounds !";
+		next;
+		mes "[Training Grounds Guard]";
+		mes "Ici, vous pouvez vous préparer";
+		mes "pour vos futures";
+		mes "aventures dans le";
+		mes "monde de Ragnarok !";
+	}
+	else {
+		mes "Allez-y, Novice, allez-y !";
+		mes "Battre et devenir plus fort ! Regardez vers un avenir meilleur !";
+	}
+	close;
+}
+
+new_2-1,144,107,2	duplicate(Guard#nv2)	Guard#nv2-2	105
+new_3-1,144,107,2	duplicate(Guard#nv2)	Guard#nv3-2	105
+new_4-1,144,107,2	duplicate(Guard#nv2)	Guard#nv4-2	105
+new_5-1,144,107,2	duplicate(Guard#nv2)	Guard#nv5-2	105
+
+
+// Receptionist
+new_1-2,100,29,4	script	Receptionist#nv1	86,{
+	mes "[Receptionniste des Arènes de Formation]";
+	mes "Bonjour, vous semblez être nouveau ici.";
+	mes "Quel est votre nom ?";
+	next;
+	input .@charname$;
+	if (.@charname$!=strcharinfo(0)) {
+		mes "[Receptionniste des Arènes de Formation]";
+		mes "Désolé, mais je ne suis pas sûr d'avoir bien entendu";
+		mes "votre réponse.";
+		close;
+	}
+	mes "[Receptionniste des Arènes de Formation]";
+	mes "Accueillir!";
+	mes "Vous êtes à l'entrée";
+	mes "des ^3355FFArènes de formation^000000.";
+	next;
+	mes "[Receptionniste des Arènes de Formation]";
+	mes "Si vous êtes nouveau";
+	mes "dans le monde de Ragnarok,";
+	mes "veuillez choisir l'option";
+	mes "^3355FFIntroduction aux Arènes de formation^000000";
+	mes "pour obtenir plus d'informations.";
+	next;
+	while (1) {
+		switch(select("Apply for training.:Direct access to Ragnarok Online.:^3355FFTraining Grounds Introduction.^000000:I need a moment to think.")) {
+		case 1:
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Merci pour votre demande de formation Novice. Pour des informations détaillées sur chaque cours, veuillez interroger les Guides pour obtenir une assistance.";
+			next;
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Lorsque vous avez des questions sur le processus du cours de formation, n'hésitez pas à demander aux Tuteurs.";
+			next;
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Vous allez maintenant être transféré";
+			mes "vers les Arènes de formation.";
+			close2;
+			warp "new_1-2",100,70;
+			end;
+		case 2:
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Vous ne pouvez pas donner une telle fleur précieuse à n'importe qui.";
+			mes "Faites de votre mieux et je vous souhaite";
+			mes "beaucoup de chance!";
+			mes "the best of luck!";
+			close2;
+			set nov_1st_cos,0;
+			set nov_2nd_cos,0;
+			set nov_3_swordman,0;
+			set nov_3_archer,0;
+			set nov_3_thief,0;
+			set nov_3_magician,0;
+			set nov_3_acolyte,0;
+			set nov_3_merchant,0;
+			switch(rand(6)) {
+			case 0:
+				savepoint "prontera",273,354,1,1;
+				warp "prontera",273,354;
+				break;
+			case 1:
+				savepoint "morocc",160,94,1,1;
+				warp "morocc",160,94;
+				break;
+			case 2:
+				savepoint "geffen",120,100,1,1;
+				warp "geffen",120,100;
+				break;
+			case 3:
+				savepoint "payon",70,100,1,1;
+				warp "payon",70,100;
+				break;
+			case 4:
+				savepoint "alberta",116,57,1,1;
+				warp "alberta",116,57;
+				break;
+			case 5:
+				savepoint "izlude",94,103,1,1;
+				warp "izlude",94,103;
+			}
+			end;
+		case 3:
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Ces lieux d'entraînement ont été établis par le Conseil Éducatif du Royaume Rune-Midgarts afin de fournir des informations utiles aux nouveaux joueurs de Ragnarok Online.";
+			next;
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Le cours d’entraînement est organisé en deux parties : les classes de Connaissances de Base, et l'entraînement au Combat sur le Terrain.";
+			next;
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Au travers du premier cours, les joueurs apprendront les connaissances nécessaires pour une expérience plus fluide dans le jeu.";
+			next;
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Dans l’entraînement au Combat sur le Terrain,";
+			mes "les joueurs se battent contre de faibles monstres afin d'apprendre les bases du combat.";
+			next;
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Grâce à cette pratique en bataille,";
+			mes "les joueurs pourront acquérir plus d’expérience avant de rejoindre le monde réel.";
+			next;
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "À la fin du programme, nous introduirons les classes de Métiers de niveau 1. Cela aidera les joueurs à décider quelle classe est la plus adaptée pour eux.";
+			next;
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Si vous souhaitez participer aux lieux d’entraînement, veuillez choisir '^3355FFS' inscrit dans le menu.";
+			next;
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Sinon, si vous souhaitez sauter la formation de base et entrer immédiatement dans le monde de Ragnarok Online, veuillez choisir '^3355FFAccès direct à Ragnarok Online^000000.'";
+			next;
+			break;
+		case 4:
+			mes "[Receptionniste des Arènes de Formation]";
+			mes "Vous ne pouvez pas donner une telle fleur précieuse à n'importe qui.";
+			mes "Prenez votre temps, s'il vous plaît.";
+			close;
+		}
+	}
+}	
+new_2-2,100,29,4	duplicate(Receptionist#nv1)	Receptionist#nv2	86
+new_3-2,100,29,4	duplicate(Receptionist#nv1)	Receptionist#nv3	86
+new_4-2,100,29,4	duplicate(Receptionist#nv1)	Receptionist#nv4	86
+new_5-2,100,29,4	duplicate(Receptionist#nv1)	Receptionist#nv5	86
+
+new_1-1,53,114,4	script	Shion#nv1	727,{
+	if (nov_get_item04 > 9 || nov_get_item05 > 9) {
+		mes "[Shion]";
+		mes "Hum...?";
+		mes "Que faites-vous ";
+		mes "toujours là ?";
+		mes "Oh, tu as utilisé une ^3355FFAile de Papillon^000000, n'est-ce pas?";
+		next;
+		mes "[Shion]";
+		mes "Non, non, non~";
+		mes "Vous êtes censé utiliser l'Aile de Papillon quand vous voulez retourner en ville ^666666après^000000 avoir terminé votre entraînement ici, d'accord?";
+		next;
+		mes "[Shion]";
+		mes "Maintenant, laisse-moi te";
+		mes "ramener aux";
+		mes "Arènes de Formation.";
+		close2;
+		warp "new_1-2",99,99;
+		end;
+	}
+	else if (nov_1st_cos > 2) {
+		mes "[Shion]";
+		mes "Les Arènes de Formation sont situées juste au-delà";
+		mes "du pont situé à";
+		mes "droite.";
+		mes "to the right.";
+		next;
+		mes "[Shion]";
+		mes "Bien que tu vas";
+		mes "doit être fait";
+		mes "pour certaines classes, vous";
+		mes "ne le regretterez pas.";
+		mes "Allez-y maintenant !";
+		close;
+	}
+	else if (nov_1st_cos == 2) {
+		mes "[Shion]";
+		mes "Hé...";
+		mes "Ah ! Te voilà !";
+		next;
+		mes "[Shion]";
+		mes "Attends...";
+		mes "Calme-toi Shion.";
+		mes "Tu es un professionnel";
+		mes "entraîneur! Ne t'énerve pas contre un Apprenti!";
+		mes "upset at a Novice!";
+		next;
+		mes "[Shion]";
+		mes "Va immédiatement traverser le pont à droite ! ^666666*Ahem*^000000 Tu verras une forteresse, et à l'intérieur tu pourras rencontrer divers tuteurs.";
+		next;
+		mes "[Shion]";
+		mes "Si vous ne voyez pas l'entrée, changez simplement la perspective de votre caméra en appuyant sur le bouton de la ^3355FFsouris droite^000000 et faites glisser votre souris. C'est facile, non?";
+		next;
+		mes "[Shion]";
+		mes "Pour réinitialiser l'angle de votre caméra,";
+		mes "double-cliquez simplement sur le bouton droit de la souris. Très bien, prenez soin de vous !";
+		next;
+		mes "[Shion]";
+		mes "Oh et avant que tu partes,";
+		mes "^FF0000Apprends à traiter une dame avec délicatesse, d'accord ? Alors elles pourraient te donner des cadeaux comme celui-ci !";
+		set nov_1st_cos,3;
+		getexp 9,0;
+		close;
+	}
+	else if (nov_1st_cos == 1) {
+		mes "[Shion]";
+		mes "Hein...?";
+		mes "Pourquoi êtes-vous";
+		mes "toujours ici ?";
+		mes "^666666*Soupir...*^000000";
+		next;
+		mes "[Shion]";
+		mes "Hey, quand tu entreras dans les Arènes d'Entraînement, tu apprendras plein de choses qui t'aideront à jouer au jeu. Tu auras même la chance de gagner des zeny et d'autres récompenses.";
+		next;
+		mes "[Shion]";
+		mes "Tu peux même acquérir";
+		mes "de l'expérience comme ça !";
+		set nov_1st_cos,3;
+		getexp 9,0;
+		next;
+		mes "[Shion]";
+		mes "Tout ce que tu apprendras ici dans les Arènes d'Entraînement bénéficiera à ton jeu. Alors pense positif, d'accord ?";
+		close;
+	}
+	else {
+		mes "[Shion]";
+		mes "Bonjour ~";
+		mes "Bienvenue au";
+		mes "Arènes d'Entraînement !";
+		next;
+		mes "[Shion]";
+		mes "Voyons voir.";
+		mes "Ton nom est...";
+		mes "" + strcharinfo(0) + ".";
+		next;
+		mes "[Shion]";
+		mes "Mon nom est Shion.";
+		mes "Oui, c'est la première fois que nous nous rencontrons, bien sûr. Hahahaha~!";
+		next;
+		mes "[Shion]";
+		mes "Maintenant que nous avons fait connaissance, y a-t-il quelque chose dont j'aurais pu t'aider ?";
+		mes "Je suis ici pour répondre à vos questions~";
+		next;
+		switch(select("Where should I go?:About Basic Interfaces.:Who the crap are you?")) {
+		case 1:
+			mes "[Shion]";
+			mes "Voyez-vous le pont de votre côté droit ? Traversez simplement le pont et vous arriverez au château. Il ne reste plus qu'à y entrer !";
+			mes "[Shion]";
+			next;
+			mes "[Shion]";
+			mes "[Shion]";
+			mes "Savez-vous comment bouger ?";
+			next;
+			mes "[Shion]";
+			mes "[Shion]";
+			mes "Allez-y maintenant!";
+			next;
+			mes "[Shion]";
+			mes "[Shion]";
+			mes "Il y a des soldats à l'entrée, alors n'ayez pas peur de vous perdre.";
+			next;
+			mes "[Shion]";
+			mes "Il y a des soldats à l'entrée, donc ne";
+			mes "Interfaces de base...";
+			mes "ne t'inquiète pas de te perdre.";
+			mes "Prends soin de toi~!";
+			set nov_1st_cos,1;
+			close;
+		case 2:
+			mes "[Shion]";
+			mes "Basic Interfaces...";
+			mes "Sais-tu ce que Cliquer, Double-cliquer et Glisser signifient ?";
+			next;
+			mes "[Shion]";
+			mes "Lorsque tu appuis sur le";
+			mes "bouton gauche de la souris une fois,";
+			mes "c'est un clic. Lorsque tu appuies deux fois rapidement sur le bouton de la souris, c'est un double-clic.";
+			next;
+			mes "[Shion]";
+			mes "Glisser consiste à déplacer ta Souris tout en maintenant enfoncé le";
+			mes "bouton de la souris après avoir cliqué sur quelque chose.";
+			next;
+			mes "[Shion]";
+			mes "Avant de commencer à parler des";
+			mes "Interfaces de Base, tu devrais te souvenir de ces termes, car nous les utiliserons fréquemment.";
+			next;
+			mes "[Shion]";
+			mes "À l'intérieur du château, il y a un Maître des Interfaces de Base qui peut t'enseigner les bases plus clairement, d'accord ? Entre dans le château pour commencer ton entraînement.";
+			next;
+			mes "[Shion]";
+			mes "L'entrée";
+			mes "du château est";
+			mes "^4D4DFFune lumière blanche tournante^000000.";
+			next;
+			mes "[Shion]";
+			mes "Il y a des soldats à l'entrée, donc ne";
+			mes "Interfaces de base...";
+			mes "ne t'inquiète pas de te perdre.";
+			mes "Prends soin de toi~!";
+			set nov_1st_cos,1;
+			close;
+		case 3:
+			mes "[Shion]";
+			mes "Moi ? Je suis Shion !";
+			mes "Mais c'est une façon bien grossière de demander ! Je mets mon temps et mes efforts à votre disposition, alors vous devez au moins me témoigner un peu de respect !";
+			set nov_1st_cos,2;
+			close;
+		}
+	}
+}
+
+new_2-1,53,114,4	duplicate(Shion#nv1)	Shion#nv2	727
+new_3-1,53,114,4	duplicate(Shion#nv1)	Shion#nv3	727
+new_4-1,53,114,4	duplicate(Shion#nv1)	Shion#nv4	727
+new_5-1,53,114,4	duplicate(Shion#nv1)	Shion#nv5	727
+
+
+// Interfaces Tutor
+new_1-2,99,105,3	script	Interfaces Tutor#nv1	751,{
+	if (nov_get_item02 > 9 && nov_get_item03 > 9 && nov_get_item04 > 9) {
+		mes "[Kris]";
+		mes "Vous avez complété tous les cours essentiels. Avez-vous déjà parlé aux tuteurs adjoints ? Le prochain cours sera le combat en terrain ouvert. Souhaitez-vous poursuivre?";
+		next;
+		switch(select("Sure!:No, I'll come back later.:Send me to a town!")) {
+		case 1:
+			mes "[Kris]";
+			mes "Votre prochain cours est le Combat en Terrain Ouvert. Veuillez écouter attentivement votre nouvel entraîneur et j'espère que vous passerez avec succès ce cours. Bon courage.";
+			close2;
+			warp "new_1-2",28,178;
+			end;
+		case 2:
+			mes "[Kris]";
+			mes "D'accord, dans l'intervalle, il serait bon de parler aux tuteurs adjoints, car les informations de base enseignées lors des cours essentiels ne peuvent pas être suffisantes pour les nouveaux aventuriers.";
+			next;
+			mes "[Kris]";
+			mes "N'hésitez pas à revenir me voir quand vous en avez besoin.";
+			close;
+		case 3:
+			mes "[Kris]";
+			mes "Donc, souhaitez-vous être envoyé dans une ville ? Si vous êtes confiant que vous avez appris suffisamment, allez à droite et parlez au ^3355FFEmployé Kafra^000000.";
+			next;
+			mes "[Kris]";
+			mes "Les Services Kafra sont très pratiques une fois dans le monde réel. Leur Service de Téléportation peut être utilisé pour voyager d'une ville à l'autre, et vous pouvez conserver vos objets en sécurité dans la Caisse Kafra.";
+			next;
+			mes "[Kris]";
+			mes "Nous ne nous reverrons peut-être jamais, mais j'espère que vous deviendrez un grand aventurier. Bonne chance.";
+			close;
+		}
+	}
+	else if (nov_get_item02 < 10) {
+		mes "[Kris]";
+		mes "Bonjour, pourrais-je voir votre";
+		mes "preuve d'inscription ?";
+		next;
+		if (NEW_MES_FLAG0) {
+			mes "[Kris]";
+			mes "Ah, " + strcharinfo(0) + ", you've applied for an old training course that we no longer provide for our trainees. Let me issue a new proof of registration for you.";
+			set NEW_MES_FLAG0,0;
+			set NEW_MES_FLAG1,0;
+			set NEW_MES_FLAG2,0;
+			set NEW_MES_FLAG3,0;
+			set NEW_MES_FLAG4,0;
+			set NEW_MES_FLAG5,0;
+			set NEW_LVUP0,0;
+			set NEW_LVUP1,0;
+			set NEW_JOBLVUP,0;
+			next;
+		}
+		mes "[Kris]";
+		mes "Okay, now";
+		mes "vous êtes maintenant prêt à partir.";
+		mes "Dans ma classe, j'enseigne l'utilisation des";
+		mes "interfaces les plus de base.";
+		mes "interfaces.";
+		next;
+		mes "[Kris]";
+		mes strcharinfo(0)+".";
+		mes "voulez-vous en savoir plus sur les bases des interfaces ?";
+		mes "fondamentaux des interfaces";
+		mes "fundamentals?";
+		next;
+		switch(select("Yes.:Nah, I'm a pro~:Cancel.")) {
+		case 1:
+			mes "[Kris]";
+			mes "D'abord, il est possible de déplacer toutes les fenêtres d'interface sur votre écran par le simple fait de cliquer dessus et de maintenir le bouton souris enfoncé tout en déplaçant la souris.";
+			next;
+			mes "[Kris]";
+			mes "Maintenant, laissez-moi vous expliquer chaque fenêtre d'interface selon leur position par défaut sur votre écran.";
+			next;
+			mes "[Kris]";
+			mes "Dans le coin supérieur gauche de votre écran, vous verrez une fenêtre avec le nom et le niveau de votre personnage. C'est la ^3355FFFenêtre d'Informations de Base^000000.";
+			next;
+			mes "[Kris]";
+			if (BaseLevel < 8) {
+				mes "Permettez-moi de vous donner";
+				mes "des points d'expérience.";
+				mes "Regardez dans votre fenêtre de Base Info et observez le changement dans votre jauge d'expérience de Base Level.";
+				next;
+				mes "[Kris]";
+				mes "Vous avez vu...?";
+				mes "À mesure que vous gagnez des points d'expérience,";
+				mes "la jauge d'expérience se remplit.";
+				mes "Une fois qu'elle est pleine à 100 %, vous montez en expérience de niveau et la jauge est réinitialisée à 0.";
+				set nov_get_item02,10;
+				switch (BaseLevel) {
+				case 1: getexp 10,0; break;
+				case 2: getexp 17,0; break;
+				case 3: getexp 26,0; break;
+				case 4: getexp 37,0; break;
+				case 5: getexp 78,0; break;
+				case 6: getexp 115,0; break;
+				case 7: getexp 155,0; break;
+				}
+			}
+			else {
+				mes "Mais...";
+				mes "Je suppose que vous êtes déjà familiarisé avec la jauge d'expérience du Base Level.";
+			}
+			next;
+			mes "[Kris]";
+			mes "En bas de la fenêtre de Base Info, vous verrez deux barres différentes de jauge d'expérience. La barre en haut est pour votre niveau actuel de Base Level et celle en bas montre l'expérience pour votre niveau actuel Job Level.";
+			next;
+			mes "[Kris]";
+			mes "Quand le Job Level";
+			mes "Jauge d'expérience est pleine, vous gagnerez un niveau Job Level et recevrez ^3355FFun Point de Compétence^000000. Les Points de Compétences sont utilisés pour apprendre des compétences à votre personnage.";
+			next;
+			mes "[Kris]";
+			mes "Du côté droit";
+			mes "de la fenêtre de Base Info,";
+			mes "vous verrez diverses";
+			mes "Boutons Menu.";
+			next;
+			mes "[Kris]";
+			mes "Cliquez sur ces boutons Menu pour ouvrir d'autres Fenêtres d'Interface, telles que la fenêtre du Inventaire.";
+			mes "or Fenêtre de Partie.";
+			next;
+			mes "[Kris]";
+			mes "Maintenant...";
+			mes "La fenêtre de ^3355FFChat^000000 est";
+			mes "située en bas";
+			mes "de votre écran.";
+			next;
+			mes "[Kris]";
+			mes "En bas à droite de la fenêtre de Chat, vous devriez voir deux boutons bleus. Le bouton de gauche permet de changer vos options de chat.";
+			next;
+			mes "[Kris]";
+			mes "L'option '^3355FFEnvoyer à Tous^000000'";
+			mes "vous permet de discuter";
+			mes "avec tout le monde sur votre écran.";
+			next;
+			mes "[Kris]";
+			mes "Les options '^3355FFEnvoyer au Groupe^000000' et '^3355FFEnvoyer à la Guilde^000000' vous permettent d'envoyer des messages uniquement aux membres de votre groupe ou guilde, peu importe leur distance.";
+			next;
+			mes "[Kris]";
+			mes "Vous pouvez faire glisser la Barre de Défilement";
+			mes "du côté droit de la fenêtre de Chat pour parcourir une conversation. Étant donné que la fenêtre de chat est toujours active, vous ne devriez pas rencontrer de problème pour communiquer avec d'autres joueurs.";
+			next;
+			mes "[Kris]";
+			mes "Maintenant, l'une des interfaces les plus importantes est le ^3355FFMini-Map^000000 situé en haut à droite de votre écran.";
+			next;
+			mes "[Kris]";
+			mes "Les points rouges sur la Mini-Map indiquent les emplacements des ^3355FFPortails Warp^000000 qui connectent aux différentes zones.";
+			next;
+			mes "[Kris]";
+			mes "Si vous avez rejoint une partie ou une guilde, la Mini-Map affichera également la position de vos membres d'équipe ou de votre guilde si ces derniers se trouvent sur la même carte que vous.";
+			next;
+			mes "[Kris]";
+			mes "Veuillez cliquer sur les boutons du Menu situés";
+			mes "du côté droit de votre fenêtre Informations de base et familiarisez-vous avec les autres interfaces.";
+			next;
+			mes "[Kris]";
+			mes "Bien, c'était un rapide aperçu des interfaces en jeu. Cela peut sembler beaucoup d'informations pour le moment, mais cela deviendra rapidement naturel pour vous.";
+			if (JobLevel < 7) {
+				next;
+				mes "[Kris]";
+				mes "Laissez-moi vous donner un peu d'expérience professionnelle. Ouvrez votre fenêtre Compétences et distribuez vos Points de compétence dans ^3355FFCompétences de base^000000.";
+				set nov_get_item02,11;
+				switch (JobLevel) {
+				case 1: getexp 0,10; break;
+				case 2: getexp 0,18; break;
+				case 3: getexp 0,28; break;
+				case 4: getexp 0,40; break;
+				case 5: getexp 0,91; break;
+				case 6: getexp 0,151; break;
+				}
+			}
+			else {
+				mes "[Kris]";
+				mes "Votre niveau de profession est beaucoup plus élevé que ce que j'aurais imaginé. Vous devez déjà connaître les informations de base à ce stade.";
+			}
+			next;
+			mes "[Kris]";
+			mes "Maintenant, pourquoi ne pas parler à Edwin ? Il vous enseignera davantage sur l'utilisation de base des compétences. Ah, et laissez-moi vous offrir un petit cadeau : une ^FFA500Robe novice ninja usagée^000000 !";
+			set nov_get_item02,12;
+			getitem 2352,1; //Novice_Plate
+			close;
+		case 2:
+			mes "[Kris]";
+			mes "Laissez-moi vous guider";
+			mes "vers le Cours de combat en terrain hostile.";
+			mes "Training Course.";
+			mes "Vous pouvez revenir à tout moment si vous ressentez le besoin d'une révision.";
+			close2;
+			warp "new_1-2",28,178;
+			end;
+		case 3:
+			emotion ET_PROFUSELY_SWEAT;
+			close;
+		}
+	}
+	else if (nov_get_item03 < 10) {
+		mes "[Kris]";
+		mes "Comment puis-je vous aider ?";
+		mes "[Kris]";
+		next;
+		mes "[Kris]";
+		mes "Il semble que vous n'ayez pas encore assisté à la classe d'Information sur les Compétences. Parlez au tuteur se trouvant tout à gauche de cette pièce pour y assister.";
+		next;
+		switch(select("Thank you!:I'm tired of classes~:Cancel")) {
+		case 1:
+			mes "[Kris]";
+			mes "Lorsque vous assisterez à la classe d'Information sur les Compétences, vous comprendrez mieux l'utilisation des compétences.";
+			next;
+			mes "[Kris]";
+			mes "Comme l'utilisation des compétences est essentielle pour survivre dans Midgard, je vous conseille vivement de suivre cette classe. Venez, je vais vous y guider.";
+			close2;
+			warp "new_1-2",84,107;
+			end;
+		case 2:
+			mes "[Kris]";
+			mes "Je vois. Dans ce cas, vous devez être prêt(e) pour le cours d'entraînement au combat en champ. Dois-je vous y envoyer tout de suite?";
+			next;
+			if (select("No! W-wait!:Please do~!") == 1) {
+				mes "[Kris]";
+				mes "...?!";
+				mes "O... d'accord alors.";
+				mes "Veuillez revenir";
+				mes "^FF0000lorsque vous serez prêt.";
+				close;
+			}
+			else {
+				mes "[Kris]";
+				mes "Bonne chance,";
+				mes "jeune Novice.";
+				close2;
+				warp "new_1-2",28,178;
+				end;
+			}
+		case 3:
+			emotion ET_PROFUSELY_SWEAT;
+			close;
+		}
+	}
+	else if (nov_get_item04 < 10) {
+		mes "[Kris]";
+		mes "Comment puis-je vous aider ?";
+		mes "[Kris]";
+		next;
+		mes "[Kris]";
+		mes "[Kris]";
+		next;
+		switch(select("Thank you.:I'm tired of classes~:Cancel")) {
+		case 1:
+			mes "[Kris]";
+			mes "^FF0000La classe Information d'objet est très utile pour vous apprendre à utiliser vos touches rapides et les barres de touches rapides. Venez, laissez-moi vous y guider.";
+			close2;
+			warp "new_1-2",115,107;
+			end;
+		case 2:
+			mes "[Kris]";
+			mes "Je vois. Dans ce cas, vous devez être prêt(e) pour le cours d'entraînement au combat en champ. Dois-je vous y envoyer tout de suite?";
+			next;
+			if (select("No! W-wait!:Please do~!") == 1) {
+				mes "[Kris]";
+				mes "...?!";
+				mes "O... d'accord alors.";
+				mes "Veuillez revenir";
+				mes "^FF0000lorsque vous serez prêt.";
+				close;
+			}
+			else {
+				mes "[Kris]";
+				mes "Bonne chance,";
+				mes "jeune Novice.";
+				close2;
+				warp "new_1-2",28,178;
+				end;
+			}
+		case 3:
+			emotion ET_PROFUSELY_SWEAT;
+			close;
+		}
+	}
+}
+
+new_1-2,83,111,3	script	Skill Tutor#nv	753,{
+	if (nov_get_item02 > 9 && nov_get_item03 > 9 && nov_get_item04 > 9) {
+		mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+		mes "Hein...?";
+		mes "Avez-vous besoin d'aide supplémentaire?";
+		mes "Je vois que vous avez terminé tous les cours essentiels. Avez-vous parlé aux assistants aussi?";
+		next;
+		switch(select("Send me to the next course!:Assistant tutors?:Take me to a town!")) {
+		case 1:
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Ah! Oui, bien sûr.";
+			mes "Vous devrez prendre le Cours d'entraînement au combat en champ un jour, je suppose.";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Je suis vraiment jaloux des instructeurs dans le cours d'entraînement au combat en champ. Enseigner des informations de base est juste tellement moins cool que de frapper du bide à tout va.";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Ah, oui.";
+			mes "^FF0000Combattre dans le champ.";
+			mes "Je vous envoie maintenant.";
+			mes "Bonne chance, petit!";
+			close2;
+			warp "new_1-2",28,178;
+			end;
+		case 2:
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Vous savez au sujet des";
+			mes "tuteurs adjoints, n'est-ce pas?";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Écoute. Les trois tuteurs dans cette pièce ne dispensent que les informations de base. Nos cours sont conçus pour être passés rapidement.";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Mais certaines personnes pourraient en tirer un peu plus profit si elles apprenaient des informations plus détaillées.";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Si vous êtes totalement nouveau dans Ragnarok, il ne serait pas mal de suivre les cours organisés par les tuteurs adjoints au moins une fois.";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Un type nommé Leo Handerson semble savoir beaucoup sur les compétences, donc je pense que ses connaissances pourraient vous être utiles.";
+			close;
+		case 3:
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Une ville...?";
+			mes "À quoi est-ce que je ressemble à vos yeux, votre propre Peco Peco personnel?";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Vous avez raison, vous êtes peut-être trop jeune pour en connaître la signification. Écoutez bien, si vous voulez déménager vers une ville, parlez à la Dame Kafra du côté droit, d'accord?";
+			close;
+		}
+	}
+	if (nov_get_item03 < 10) {
+		mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+		mes ""+strcharinfo(0)+"";
+		mes "Hé, j'aime ton nom !";
+		if (NEW_MES_FLAG0) {
+			mes "Au fait, ta preuve d'inscription a expiré, alors laisse-moi t'en donner une nouvelle.";
+			mes "Laisse-moi t'en donner une nouvelle.";
+			set NEW_MES_FLAG0,0;
+			set NEW_MES_FLAG1,0;
+			set NEW_MES_FLAG2,0;
+			set NEW_MES_FLAG3,0;
+			set NEW_MES_FLAG4,0;
+			set NEW_MES_FLAG5,0;
+			set NEW_LVUP0,0;
+			set NEW_LVUP1,0;
+			set NEW_JOBLVUP,0;
+		}
+		mes "Alors, commençons la classe ?";
+		next;
+		switch(select("What do you teach?:I want Field Combat Training now!:Cancel")) {
+		case 1:
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Je vis pour le pouvoir";
+			mes "et meurs pour le pouvoir !";
+			mes "Je vais te l'enseigner";
+			mes "mon fameux coup fatal !";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Je joue juste avec toi !";
+			mes "En fait, je t'apprends simplement à utiliser tes compétences. Je vis toujours pour le pouvoir, cependant.";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Dans ta Fenêtre d'Informations de Base, clique sur le bouton ^3355FFCompétence^000000 pour ouvrir ta Fenêtre des Compétences. Tu peux également appuyer en même temps sur les touches '^3355FFAlt^000000' et '^3355FFS^000000'.";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Quand ta";
+			mes "Fenêtre des Compétences est ouverte,";
+			mes "tu verras un icône étiquetée";
+			mes "^3355FFCompétence de Base^000000.";
+			if (JobLevel < 7) {
+				next;
+				mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+				mes "Maintenant, en bas de la fenêtre des Compétences, le nombre de points de compétence restants que vous avez est affiché.";
+				next;
+				mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+				mes "Ouvrez votre Fenêtre Compétences ('Alt' + 'S') et cliquez sur le bouton '^3355FFNiveau Up^000000' à côté de l'icône du Compétence de Base pour allouer un point de compétence à vos Compétences de Base.";
+				set nov_get_item03,10;
+				switch (JobLevel) {
+				case 1: getexp 0,10; break;
+				case 2: getexp 0,18; break;
+				case 3: getexp 0,28; break;
+				case 4: getexp 0,40; break;
+				case 5: getexp 0,91; break;
+				case 6: getexp 0,151; break;
+				}
+			}
+			else {
+				next;
+				mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+				mes "Hum. En fait, votre Niveau Job est plus élevé que je ne le pensais. Je suppose donc que vous connaissez déjà les bases des compétences alors.";
+			}
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Alors avez-vous réparti les points de compétence parmi vos Compétences de Base ? Vous devrez maîtriser les Compétences de Base un jour, donc c'est une bonne idée.";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Pour plus d'informations détaillées sur les compétences, allez parler à Leo Handerson, l'un des assistants tuteurs.";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Oh, j'ai failli oublier !";
+			mes "Laissez-moi vous apprendre la compétence de ^3355FFPremiers Secours^000000. Cette compétence va beaucoup vous aider quand vous êtes en danger.";
+			next;
+			mes "^3355FFFélicitations, vous avez appris";
+			mes "la compétence de ^4A708BPremiers Secours^3355FF.^000000";
+			skill "NV_FIRSTAID",1,SKILL_PERM;
+			set NOV_SK,3;
+			set nov_get_item03,11;
+			next;
+			if (JobLevel < 7) {
+				mes "^3355FFFélicitations, vous avez gagné un petit";
+				mes "nombre d'expérience Job.^000000";
+				set nov_get_item03,12;
+				switch (JobLevel) {
+				case 1: getexp 0,10; break;
+				case 2: getexp 0,18; break;
+				case 3: getexp 0,28; break;
+				case 4: getexp 0,40; break;
+				case 5: getexp 0,91; break;
+				case 6: getexp 0,151; break;
+				}
+			}
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Maintenant, ouvrez votre Fenêtre Compétences et vérifiez si vous avez l'icône de la compétence ^3355FFPremiers Secours^000000. Pour utiliser cette compétence, vous devez double-cliquer sur cet icône.";
+			mes "Maintenant, essayez !";
+			mes "Now, try it!";
+			percentheal -50,0;
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Les compétences actives, comme les Premiers Soins, nécessitent une certaine quantité de SP pour être utilisées. La compétence Premiers Soins est utile pour les Novices, car elle recharge un peu d'HP.";
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Vous avez été";
+			mes "un bon élève,";
+			mes "donc laisse-moi te récompenser !";
+			if (BaseLevel < 8) {
+				mes "Regarde : expérience bonus !";
+				set nov_get_item03,13;
+				switch (BaseLevel) {
+				case 1: getexp 10,0; break;
+				case 2: getexp 17,0; break;
+				case 3: getexp 26,0; break;
+				case 4: getexp 37,0; break;
+				case 5: getexp 78,0; break;
+				case 6: getexp 115,0; break;
+				case 7: getexp 155,0; break;
+				}
+			}
+			else {
+				next;
+				mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+				mes "Oh attends. Tu es bien plus haut de niveau que je ne le pensais. Cependant, j'en suis fier quand même !";
+			}
+			next;
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Bon, c'est tout pour les fondamentaux essentiels. Si tu veux une leçon plus complète, il faut parler aux assistants.";
+			next;
+			switch(select("Okay.:Send me to Field Combat Training, now!:Cancel")) {
+			case 1:
+				mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+				mes "Tous ceux qui sont dans";
+				mes "les Arènes d'entraînement";
+				mes "sont prêts à";
+				mes "t'aider. Bonne chance !";
+				close;
+			case 2:
+				mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+				mes "^FF0000Heh heh~!";
+				mes "^FF0000D'accord, la pratique fait le maitre ! Laisse-moi te faire rejoindre les gars de l'entraënements au combat en champ libre. Prends soin de toi !";
+				close2;
+				warp "new_1-2",28,178;
+				end;
+			case 3:
+				emotion ET_HUK;
+				close;
+			}
+		case 2:
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "^FF0000Heh heh~!";
+			mes "^FF0000D'accord, la pratique fait le maitre ! Laisse-moi te faire rejoindre les gars de l'entraënements au combat en champ libre. Prends soin de toi !";
+			close2;
+			warp "new_1-2",28,178;
+			end;
+		case 3:
+			emotion ET_HUK;
+			close;
+		}
+	}
+	else if (nov_get_item02 < 10) {
+		mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+		mes "Donc, comment puis-je t'aider ?";
+		mes "Je peux t'aider ?";
+		mes "^FF0000Oh, tu n'as pas encore assisté au cours de l'Interface de Base ? Ah bon, je sais que ce cours peut être un peu ennuyeux~";
+		next;
+		switch(select("Oh, I better take that class.:Send me to Field Combat Training.:Cancel")) {
+		case 1:
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "^FF0000Oúh, c'est une bonne idée. En effet, tu gagneras de l'expérience et des objets pendant que tu suivras ce cours. D'accord alors, le tuteur d'interfaces se trouve au centre de cette salle. Allez-y~";
+			close;
+		case 2:
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "^FF0000Heh heh~!";
+			mes "^FF0000D'accord, la pratique fait le maitre ! Laisse-moi te faire rejoindre les gars de l'entraënements au combat en champ libre. Prends soin de toi !";
+			close2;
+			warp "new_1-2",28,178;
+			end;
+		case 3:
+			emotion ET_HUK;
+			close;
+		}
+	}
+	else if (nov_get_item04 < 10) {
+		mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+		mes "Donc, comment puis-je t'aider ?";
+		mes "Je peux t'aider ?";
+		mes "^FF0000Oh, tu n'as pas encore assisté au cours d'Informations sur les Objets ? Ah bon, je sais que ce cours peut être un peu ennuyeux~";
+		next;
+		switch(select("Oh, I better take that class.:Send me to Field Combat Training.:Cancel")) {
+		case 1:
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "^FF0000Oúh, c'est une bonne idée. En effet, tu gagneras de l'expérience et des objets pendant que tu suivras ce cours. D'accord alors, le tuteur sur les objets se trouve du côté droit de cette salle. Allez-y~";
+			close;
+		case 2:
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "^FF0000Heh heh~!";
+			mes "^FF0000D'accord, la pratique fait le maitre ! Laisse-moi te faire rejoindre les gars de l'entraënements au combat en champ libre. Prends soin de toi !";
+			close2;
+			warp "new_1-2",28,178;
+			end;
+		case 3:
+			emotion ET_HUK;
+			close;
+		}
+	}
+}
+
+new_1-2,115,111,3	script	Item Tutor#nv	726,{
+	if (nov_get_item02 > 9 && nov_get_item03 > 9 && nov_get_item04 > 9) {
+		mes "[Alice]";
+		mes "Hein...?";
+		mes "Avez-vous besoin d'aide pour trouver quelqu'un ? Vous semblez avoir terminé tous les cours essentiels. Où allez-vous ?";
+		next;
+		switch(select("I'm not sure~!:Send me to a town.:Cancel")) {
+		case 1:
+			mes "[Alice]";
+			mes "Hmm...";
+			mes "Vous avez appris tout le reste,";
+			mes "donc je suppose que la seule chose qui reste est l'entraînement au combat en champ. Souhaitez-vous assister à ce cours maintenant ?";
+			next;
+			switch(select("Yes.:Oh, w-wait.")) {
+			case 1:
+				mes "[Alice]";
+				mes "Assurez-vous de garder les objets que je vous ai donnés à portée de main, et d'équiper tout votre armure, d'accord ? Maintenant, prenez soin de vous.";
+				close2;
+				warp "new_1-2",28,178;
+				end;
+			case 2:
+				mes "[Alice]";
+				mes "D'accord, pas de problème.";
+				mes "Revenez vers moi lorsque vous";
+				mes "avez besoin d'aide.";
+				close;
+			}
+		case 2:
+			mes "[Alice]";
+			mes "Ah, je vois.";
+			mes "Si vous souhaitez déménager dans une ville, la Dame Kafra à ma droite vous téléportera. Prenez soin de vous~";
+			close;
+		case 3:
+			mes "[Alice]";
+			mes "Hmpf...!";
+			close;
+		}
+	}
+	else if (nov_get_item04 < 10) {
+		mes "[Alice]";
+		mes "^666666*Éternuement~*^000000";
+		mes "C'est tellement ennuyeux.";
+		mes "Oh ! Bonjour, vous êtes nouveau ici.";
+		if (NEW_MES_FLAG0) {
+			mes "Ooh, votre preuve d'inscription était expirée. Mais ce n'est pas grave, je vais juste vous en donner une nouvelle ! Voilà.";
+			set NEW_MES_FLAG0,0;
+			set NEW_MES_FLAG1,0;
+			set NEW_MES_FLAG2,0;
+			set NEW_MES_FLAG3,0;
+			set NEW_MES_FLAG4,0;
+			set NEW_MES_FLAG5,0;
+			set NEW_LVUP0,0;
+			set NEW_LVUP1,0;
+			set NEW_JOBLVUP,0;
+		}
+		mes "Alors, es-tu venu assister à";
+		mes "mon cours d'Information sur les objets ?";
+		next;
+		switch(select("Yes!:No, thanks.:How do I get to a town?")) {
+		case 1:
+			mes "[Alice]";
+			mes "Ne t'inquiète pas, ce sera court.";
+			mes "Ouvre la fenêtre de ton Inventaire";
+			mes "en cliquant sur le bouton '^3355FFobjets^000000' dans la fenêtre Informations de base, ou en appuyant simultanément sur les touches '^3355FFAlt^000000' et '^3355FFE^000000'.";
+			next;
+			mes "[Alice]";
+			mes "Dans la fenêtre d'inventaire, tu verras trois onglets marqués ^3355FFobjet^000000, ^3355FFéquipement^000000 et ^3355FFautres^000000. Les objets consommables sont sous l'onglet ^4A708Bobjet^000000.";
+			next;
+			mes "[Alice]";
+			mes "Maintenant, clique sur l'onglet ^4A708Bobjet^000000 dans la fenêtre d'inventaire. Je t'ai donné un Potions Novice. Tu peux le boire en faisant un double-clic dessus. Vas-y, essaie-le !";
+			set nov_get_item04,10;
+			getitem 569,1; //Novice_Potion
+			percentheal -50,0;
+			next;
+			mes "[Alice]";
+			if (countitem(569) < 1) {
+				if (BaseLevel < 8) {
+					mes "Bien joué~!";
+					mes "Et voici";
+					mes "une petite récompense";
+					mes "pour avoir écouté.";
+					set nov_get_item04,11;
+					switch (BaseLevel) {
+					case 1: getexp 10,0; break;
+					case 2: getexp 17,0; break;
+					case 3: getexp 26,0; break;
+					case 4: getexp 37,0; break;
+					case 5: getexp 78,0; break;
+					case 6: getexp 115,0; break;
+					case 7: getexp 155,0; break;
+					}
+				}
+				else {
+					mes "Travail bien fait! Je vous récompenserais avec plus d'expérience si votre niveau n'était pas déjà aussi élevé.";
+				}
+			}
+			else {
+				mes "Euh...";
+				mes "Bon, tu peux boire";
+				mes "ça plus tard je suppose.";
+			}
+			next;
+			mes "[Alice]";
+			mes "Laisse-moi t’expliquer sur";
+			mes "les objets dans l'onglet ^4A708Bequip^000000";
+			mes "de la fenêtre de l'inventaire.";
+			next;
+			mes "[Alice]";
+			mes "Quand vous cliquez sur l'onglet ^4A708Bequip^000000, vous pouvez visualiser tous les objets dans votre inventaire que vous pouvez équiper. Laissez-moi vous donner quelques équipements pour que vous puissiez les essayer.";
+			next;
+			mes "[Alice]";
+			mes "Vous les avez ? Parfait.";
+			mes "Maintenant, double-cliquez";
+			mes "sur les Souliers du Novice";
+			mes "que je viens de vous donner";
+			mes "pour les enfiler.";
+			set nov_get_item04,12;
+			getitem 2510,1; //Novice_Hood
+			getitem 2414,1; //Novice_Boots
+			getitem 5055,1; //Novice_Egg_Cap
+			next;
+			mes "[Alice]";
+			if (isequipped(2414)) {
+				if (BaseLevel < 8) {
+					mes "Bravo~ !";
+					mes "Vous l'avez fait!";
+					mes "Vous méritez une récompense!";
+					set nov_get_item04,13;
+					switch (BaseLevel) {
+					case 1: getexp 10,0; break;
+					case 2: getexp 17,0; break;
+					case 3: getexp 26,0; break;
+					case 4: getexp 37,0; break;
+					case 5: getexp 78,0; break;
+					case 6: getexp 115,0; break;
+					case 7: getexp 155,0; break;
+					}
+				}
+				else {
+					mes "Travail bien fait! Je vous récompenserais avec plus d'expérience si votre niveau n'était pas déjà aussi élevé.";
+				}
+			}
+			else {
+				mes "Ah...";
+				mes "Vous devez";
+				mes "double-cliquer";
+				mes "sur l'équipement pour";
+				mes "le mettre.";
+				mes "n'oublie pas ça, d'accord?";
+			}
+			disable_items;
+			next;
+			mes "[Alice]";
+			mes "Voudriez-vous";
+			mes "la '^3355FFF12^000000' touche?";
+			mes "Cela va appeler votre";
+			mes "barre de raccourcis sur votre écran.";
+			next;
+			mes "[Alice]";
+			mes "Vous pouvez attribuer des raccourcis à vos objets, compétences et équipements en utilisant la barre de raccourcis. Vous n'avez qu'à glisser les icônes de compétence depuis la Fenêtre Compétences ou les objets depuis la Fenêtre Inventaire vers la Barre de Raccourci.";
+			next;
+			mes "[Alice]";
+			mes "Les raccourcis sont '^3355FFF1^000000' à '^3355FFF9^000000'.";
+			mes "Si vous avez assisté au Cours Compétences, vous devez avoir reçu la compétence Premiers Soins. Glissez et déposez l'icône de Premiers Soins dans la Barre de Raccourci.";
+			next;
+			mes "[Alice]";
+			mes "Pour votre information, seules";
+			mes "les compétences actives peuvent être assignées à un raccourci et glissées vers la barre de raccourcis. Les Compétences Actives ont des icônes carrées colorées qui peuvent être double-cliquées et utilisées.";
+			next;
+			mes "[Alice]";
+			mes "Les Compétences Passives, comme l'adéquatement nommée 'Compétence de Base,' ne peuvent pas être glissées vers la barre de raccourcis car les Compétences Passives sont toujours en vigueur et n'ont pas besoin d'être activées.";
+			set nov_get_item04,14;
+			if (JobLevel < 7) {
+				switch (JobLevel) {
+				case 1: getexp 0,10; break;
+				case 2: getexp 0,18; break;
+				case 3: getexp 0,28; break;
+				case 4: getexp 0,40; break;
+				case 5: getexp 0,91; break;
+				case 6: getexp 0,151; break;
+				}
+			}
+			next;
+			mes "[Alice]";
+			mes "Voilà, c'est tout!";
+			mes "Permettez-moi de vous fournir certains objets";
+			mes "qui vont vous aider pendant l'entraînement au Combat dans le Champ.";
+			next;
+			mes "[Alice]";
+			mes "Cependant, ^ff0000n'utilisez pas l'Aile Volante ou la Petite Aile Papillon^000000 dans ces Zones d'Entrainement car vous risquez de rester coincé ici à jamais. Ces objets sont pour quand vous sortirez diplômés, d'accord?";
+			set nov_get_item04,15;
+			getitem 601,10; //Wing_Of_Fly
+			getitem 602,2; //Wing_Of_Butterfly
+			getitem 569,50; //Novice_Potion
+			next;
+			mes "[Alice]";
+			mes "Et enfin...";
+			if (JobLevel < 7) {
+				mes "Je vais vous donner";
+				mes "vous donner un peu d'expérience professionnelle!";
+				set nov_get_item04,16;
+				switch (JobLevel) {
+				case 1: getexp 0,10; break;
+				case 2: getexp 0,18; break;
+				case 3: getexp 0,28; break;
+				case 4: getexp 0,40; break;
+				case 5: getexp 0,91; break;
+				case 6: getexp 0,151; break;
+				}
+			}
+			else {
+				mes "Je comptais vous accorder des points d'expérience professionnelle, mais je pense que vous avez assez pour l'instant.";
+			}
+			next;
+			switch(select("Now what?:Send me to the actual fighting class!:Cancel")) {
+			case 1:
+				mes "[Alice]";
+				mes "Pourquoi ne pas faire le tour et";
+				mes "parler aux autres tuteurs si vous n'avez pas encore fait?";
+				next;
+				mes "[Alice]";
+				mes "Tout le monde dans cette zone d'entraînement est plus qu'heureux de vous aider.";
+				mes "Peut-être pourriez-vous explorer";
+				mes "cette zone si vous êtes ennuyé.";
+				next;
+				mes "[Alice]";
+				mes "Les tuteurs assistants dans la pièce à droite possèdent des connaissances utiles. Il y a aussi quelques lieux intéressants cachés dans cette zone. Bonne chance!";
+				close;
+			case 2:
+				mes "[Alice]";
+				mes "Quel Novice enthousiaste que tu es ! D'accord, je vais te faire rencontrer les responsables de l'entraînement au combat sur le terrain. Assure-toi d'écouter attentivement tes entraîneurs.";
+				next;
+				mes "[Alice]";
+				mes "Après tout...";
+				mes "Quand tu affronteras des monstres, ce sera une question de vie ou de mort ! Bon alors, sois prudent~";
+				close2;
+				warp "new_1-2",28,178;
+				end;
+			case 3:
+				mes "[Alice]";
+				mes "Hmpf!";
+				close;
+			}
+		case 2:
+			mes "[Alice]";
+			mes "Es-tu sûr(e) de vouloir entreprendre l'entraînement au combat sur le terrain ? As-tu parlé à chaque tuteur ? Tu devrais le faire avant.";
+			next;
+			switch(select("No, no! Send me to the actual fight class!:Oh, wait!")) {
+			case 1:
+				mes "[Alice]";
+				mes "Quel Novice enthousiaste que tu es ! D'accord, je vais te faire rencontrer les responsables de l'entraînement au combat sur le terrain. Assure-toi d'écouter attentivement tes entraîneurs.";
+				next;
+				mes "[Alice]";
+				mes "Après tout...";
+				mes "Quand tu affronteras des monstres, ce sera une question de vie ou de mort ! Bon alors, sois prudent~";
+				close2;
+				warp "new_1-2",28,178;
+				end;
+			case 2:
+				mes "[Alice]";
+				mes "Maintenant, c'est une excellente décision. Vous n'aurez pas beaucoup d'occasions de recevoir des objets gratuits et de l'expérience à l'avenir. Profitez-en autant que vous le pouvez !";
+				close;
+			}
+		case 3:
+			mes "[Alice]";
+			mes "Si vous voulez aller dans une ville, demandez à l'Employé Kafra de droite. Très bien, prenez soin de vous~";
+			close;
+		}
+	}
+	else if (nov_get_item02 < 10) {
+		mes "[Alice]";
+		mes "Donc, comment puis-je t'aider ?";
+		mes "Je peux t'aider ?";
+		mes "[Alice]";
+		next;
+		switch(select("I am going to attend that class.:Send me to Field Combat Training.:Cancel")) {
+		case 1:
+			mes "Êtes-vous sûr que vous voulez vraiment entrer dans le Training de Combat au Champ ? Avez-vous parlé à tous les tuteurs ? Vous feriez mieux de le faire avant.";
+			mes "Excellent~";
+			mes "You'll learn some essential stuff and gain experience and items as you take that class. The tutor for Basic Interfaces is in the center of this room. Now, go for it~";
+			close;
+		case 2:
+			mes "[Alice]";
+			mes "Es-tu sûr(e) de vouloir entreprendre l'entraînement au combat sur le terrain ? As-tu parlé à chaque tuteur ? Tu devrais le faire avant.";
+			next;
+			switch(select("I want Field Combat Training~!:Oh, wait!")) {
+			case 1:
+				mes "[Alice]";
+				mes "Quel Novice enthousiaste que tu es ! D'accord, je vais te faire rencontrer les responsables de l'entraînement au combat sur le terrain. Assure-toi d'écouter attentivement tes entraîneurs.";
+				next;
+				mes "[Alice]";
+				mes "Après tout...";
+				mes "Quand tu affronteras des monstres, ce sera une question de vie ou de mort ! Bon alors, sois prudent~";
+				close2;
+				warp "new_1-2",28,178;
+				end;
+			case 2:
+				mes "[Alice]";
+				mes "Maintenant, c'est une excellente décision. Vous n'aurez pas beaucoup d'occasions de recevoir des objets gratuits et de l'expérience à l'avenir. Profitez-en autant que vous le pouvez !";
+				close;
+			}
+		case 3:
+			mes "[Alice]";
+			mes "Si vous voulez aller dans une ville, demandez à l'Employé Kafra de droite. Très bien, prenez soin de vous~";
+			close;
+		}
+	}
+	else if (nov_get_item03 < 10) {
+		mes "[Alice]";
+		mes "Donc, comment puis-je t'aider ?";
+		mes "Je peux t'aider ?";
+		mes "Il semble que tu n'aies pas encore assisté à la classe d'informations sur les ^4d4dffcompétences^000000. Souhaites-tu y assister en premier ?";
+		next;
+		switch(select("I'll attend that class.:Send me to Field Combat Training.:Cancel")) {
+		case 1:
+			mes "[Alice]";
+			mes "Maintenant, c'est une excellente idée. Parle à Cecil, le tuteur du côté gauche de cette pièce, d'accord ?";
+			close2;
+			warp "new_1-2",84,107;
+			end;
+		case 2:
+			mes "[Alice]";
+			mes "Es-tu sûr(e) de vouloir entreprendre l'entraînement au combat sur le terrain ? As-tu parlé à chaque tuteur ? Tu devrais le faire avant.";
+			next;
+			switch(select("I want Field Combat Training~!:Oh, wait!")) {
+			case 1:
+				mes "[Alice]";
+				mes "Quel Novice enthousiaste que tu es ! D'accord, je vais te faire rencontrer les responsables de l'entraînement au combat sur le terrain. Assure-toi d'écouter attentivement tes entraîneurs.";
+				next;
+				mes "[Alice]";
+				mes "Après tout...";
+				mes "Quand tu affronteras des monstres, ce sera une question de vie ou de mort ! Bon alors, sois prudent~";
+				close2;
+				warp "new_1-2",28,178;
+				end;
+			case 2:
+				mes "[Alice]";
+				mes "Maintenant, c'est une excellente décision. Vous n'aurez pas beaucoup d'occasions de recevoir des objets gratuits et de l'expérience à l'avenir. Profitez-en autant que vous le pouvez !";
+				close;
+			}
+		case 3:
+			mes "[Alice]";
+			mes "Si vous voulez aller dans une ville, demandez à l'Employé Kafra de droite. Très bien, prenez soin de vous~";
+			close;
+		}
+	}
+}
+
+new_1-2,118,108,3	script	Kafra Employee#nv1	117,{
+	mes "[Employé de Kafra]";
+	mes "Bienvenue à";
+	mes "Société Kafra.";
+	mes "^FF0000Les Services Kafra sont";
+	mes "toujours à vos côtés.";
+	if (NEW_MES_FLAG0) {
+		set NEW_MES_FLAG0,0;
+		set NEW_MES_FLAG1,0;
+		set NEW_MES_FLAG2,0;
+		set NEW_MES_FLAG3,0;
+		set NEW_MES_FLAG4,0;
+		set NEW_MES_FLAG5,0;
+		set NEW_LVUP0,0;
+		set NEW_LVUP1,0;
+		set NEW_JOBLVUP,0;
+	}
+	next;
+	mes "[Employé de Kafra]";
+	mes "Je suis envoyé par la direction de Kafra Corporation pour aider les nouveaux joueurs comme vous.";
+	next;
+	mes "[Employé de Kafra]";
+	mes "S'il vous plaît, prenez garde !";
+	mes "Si vous bougez vers une ville";
+	mes "^4d4dffvous ne pourrez jamais plus retourner aux Arènes d'Entraînement^000000.";
+	next;
+	if ( select("Teleport Service","About Kafra services") == 1 ) {
+		if (nov_get_item02 < 10 && nov_get_item03 < 10 && nov_get_item04 < 10) {
+			mes "[Employé de Kafra]";
+			mes "Je vois, vous devez vouloir téléporter immédiatement à une ville de Rune-Midgarts. D'abord, permettez-moi de vous informer brièvement sur les différentes villes et cités de Ragnarok.";
+			next;
+			mes "[Employé de Kafra]";
+			mes "Prontera est la capitale du royaume de Rune-Midgarts, et sa colonie Izlude se trouve à proximité.";
+			next;
+			mes "[Employé de Kafra]";
+			mes "^996633Morocc^000000 est dans le désert. C'est la ville où vous pouvez changer votre classe en Voleur ou Assassin.";
+			next;
+			mes "[Employé de Kafra]";
+			mes "^006600Payon^000000 est dans les montagnes et est célèbre pour son village d'Archer, où les Novices peuvent changer leur classe en Archer.";
+			next;
+			mes "[Employé de Kafra]";
+			mes "La cité des sorts, ^993300Geffen^000000, est là où les gens deviennent Sorciers et Sages.";
+			next;
+			mes "[Employé de Kafra]";
+			mes "^003399Alberta^000000, la ville portuaire, abrite le Guilde des Marchands. Vous devez aussi aller à Alberta si vous voulez voyager par mer.";
+			next;
+			mes "[Employé de Kafra]";
+			mes "Veuillez choisir";
+			mes "votre destination.";
+			next;
+			switch(select("Prontera:Morocc:Payon:Alberta:Geffen")) {
+			case 1:
+				set .@dest$,"Prontera";
+				set .@mapn$,"prontera";
+				set .@saveX,117; set .@saveY,72;
+				set .@warpX,150; set .@warpY,50;
+				break;
+			case 2:
+				set .@dest$,"Morocc";
+				set .@mapn$,"morocc";
+				set .@saveX,150; set .@saveY,99;
+				set .@warpX,155; set .@warpY,110;
+				break;
+			case 3:
+				set .@dest$,"Payon";
+				set .@mapn$,"payon";
+				set .@saveX,70; set .@saveY,100;
+				set .@warpX,166; set .@warpY,67;
+				break;
+			case 4:
+				set .@dest$,"Alberta";
+				set .@mapn$,"alberta";
+				set .@saveX,30; set .@saveY,232;
+				set .@warpX,114; set .@warpY,58;
+				break;
+			case 5:
+				set .@dest$,"Geffen";
+				set .@mapn$,"geffen";
+				set .@saveX,119; set .@saveY,37;
+				set .@warpX,122; set .@warpY,65;
+				break;
+			}
+			mes "[Employé de Kafra]";
+			mes "Vous avez décidé";
+			mes "to go to "+.@dest$+".";
+			mes "Que Dieu soit avec vous.";
+			close2;
+			if (nov_get_item05 < 11) {
+				set nov_get_item05,11;
+				getitem 569,100; //Novice_Potion
+				getitem 1243,1; //Novice_Knife
+				getitem 2414,1; //Novice_Boots
+				getitem 2510,1; //Novice_Hood
+				getitem 2352,1; //Novice_Plate
+				getitem 2112,1; //Novice_Guard
+				getitem 601,10; //Wing_Of_Fly
+				getitem 602,2; //Wing_Of_Butterfly
+				getitem 7059,5; //Cargo_Free_Ticket
+				getitem 7060,5; //Warp_Free_Ticket
+			}
+			set nov_1st_cos,0;
+			set nov_2nd_cos,0;
+			set nov_3_swordman,0;
+			set nov_3_archer,0;
+			set nov_3_thief,0;
+			set nov_3_magician,0;
+			set nov_3_acolyte,0;
+			set nov_3_merchant,0;
+			savepoint .@mapn$,.@saveX,.@saveY,1,1;
+			warp .@mapn$,.@warpX,.@warpY;
+			end;
+		}
+		else {
+			switch(select("Field Combat Course:Prontera:Morocc:Payon:Alberta:Geffen")) {
+			case 1:
+				mes "[Employé de Kafra]";
+				mes "Merci, laissez-moi";
+				mes "vous envoyer au";
+				mes "Cours de Combats en Champ de Bataille.";
+				close2;
+				warp "new_1-2",28,178;
+				end;
+			case 2:
+				set .@dest$,"Prontera";
+				set .@mapn$,"prontera";
+				set .@saveX,117; set .@saveY,72;
+				set .@warpX,150; set .@warpY,50;
+				break;
+			case 3:
+				set .@dest$,"Morocc";
+				set .@mapn$,"morocc";
+				set .@saveX,150; set .@saveY,99;
+				set .@warpX,155; set .@warpY,110;
+				break;
+			case 4:
+				set .@dest$,"Payon";
+				set .@mapn$,"payon";
+				set .@saveX,70; set .@saveY,100;
+				set .@warpX,166; set .@warpY,67;
+				break;
+			case 5:
+				set .@dest$,"Alberta";
+				set .@mapn$,"alberta";
+				set .@saveX,30; set .@saveY,232;
+				set .@warpX,114; set .@warpY,58;
+				break;
+			case 6:
+				set .@dest$,"Geffen";
+				set .@mapn$,"geffen";
+				set .@saveX,119; set .@saveY,37;
+				set .@warpX,122; set .@warpY,65;
+				break;
+			}
+			mes "[Employé de Kafra]";
+			mes "Vous avez décidé";
+			mes "to go to "+.@dest$+".";
+			mes "Que Dieu soit avec vous.";
+			close2;
+			if (nov_get_item05 < 11) {
+				set nov_get_item05,11;
+				getitem 7059,5; //Cargo_Free_Ticket
+				getitem 7060,5; //Warp_Free_Ticket
+			}
+			set nov_1st_cos,0;
+			set nov_2nd_cos,0;
+			set nov_3_swordman,0;
+			set nov_3_archer,0;
+			set nov_3_thief,0;
+			set nov_3_magician,0;
+			set nov_3_acolyte,0;
+			set nov_3_merchant,0;
+			savepoint .@mapn$,.@saveX,.@saveY,1,1;
+			warp .@mapn$,.@warpX,.@warpY;
+			end;
+		}
+	}
+	else {
+		mes "[Employé de Kafra]";
+		mes "Permettez-moi de vous présenter";
+		mes "les Services Kafra.";
+		mes "Dans le menu, veuillez choisir";
+		mes "le service que vous souhaitez";
+		mes "en savoir plus sur.";
+		next;
+		while(1) {
+			switch(select("Save service:Storage service:Teleport service:Cart rental service:Cancel")) {
+			case 1:
+				mes "[Employé de Kafra]";
+				mes "Lorsque vous parlez à un employé Kafra et demandez le Service Sauvegarde, l'emplacement de votre lieu de réapparition, après avoir été vaincu en combat, sera changé.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Votre point de résurrection est toujours le dernier endroit où vous avez sauvegardé. L'utilisation d'une Aile de Papillon vous ramènera à l'endroit où vous";
+				mes "vous êtes le plus récemment sauvegardé.";
+				next;
+				mes "[Employé Kafra]";
+				mes "Le Service Sauvegarde";
+				mes "est également fourni";
+				mes "la Corporation Kafra";
+				mes "gratuitement~!";
+				if (nov_1st_cos < 20) {
+					set nov_1st_cos,20;
+					switch (BaseLevel) {
+					case 1: getexp 10,0; break;
+					case 2: getexp 17,0; break;
+					case 3: getexp 26,0; break;
+					case 4: getexp 37,0; break;
+					case 5: getexp 78,0; break;
+					case 6: getexp 115,0; break;
+					case 7: getexp 155,0; break;
+					}
+				}
+				next;
+				break;
+			case 2:
+				mes "[Employé de Kafra]";
+				mes "La Corporation Kafra est la plus grande entreprise au monde avec une longue et prestigieuse histoire sur le continent de Midgard.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Vous pouvez stocker et récupérer";
+				mes "vos objets dans n'importe quelle ville à votre convenance. Ce Stockage est partagé par tous les personnages d'un même compte.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Il serait irrationnel de transporter tous vos objets avec vous lorsque vous ne les avez pas besoin immédiatement. Utilisez notre Service de Stockage et assurez la sécurité de vos objets.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Notre pratique Service de Stockage";
+				mes "est fourni à nos clients pour une petite redevance qui varie d'une ville à l'autre.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Cependant, vous devez être";
+				mes "^3355FFNiveau de Compétence de Base 6^000000";
+				mes "pour utiliser le Stockage.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Il y a 3 sections différentes du Stockage où les objets sont organisés : Consommables, Équipement et Autres.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Il y a un maximum de 300 emplacements de rangement dans le coffre de Kafra, ce qui signifie que vous pouvez y stocker jusqu'à 300 types différents d'objets.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Néanmoins, en ce qui concerne l'équipement, chaque objet occupe un emplacement d'inventaire. Le nombre maximal d'objets pouvant être rangés dans le coffre de Kafra est de 30 000.";
+				if (nov_3_archer < 20) {
+					if (JobLevel < 7) {
+						set nov_3_archer,20;
+						switch (JobLevel) {
+						case 1: getexp 0,10; break;
+						case 2: getexp 0,18; break;
+						case 3: getexp 0,28; break;
+						case 4: getexp 0,40; break;
+						case 5: getexp 0,91; break;
+						case 6: getexp 0,151; break;
+						}
+					}
+				}
+				next;
+				break;
+			case 3:
+				mes "[Employé de Kafra]";
+				mes "La société Kafra";
+				mes "offre à nos chers clients un service de téléportation très pratique qui réduit considérablement";
+				mes "votre temps de déplacement.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Notre service de téléportation est sûr et confortable, et vous permettra d'explorer en toute liberté les divers terres du continent de Midgard.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Nous remercions nos chers clients pour leur soutien et continuons à leur offrir le meilleur";
+				mes "service possible.";
+				next;
+				break;
+			case 4:
+				mes "[Employé de Kafra]";
+				mes "La société Kafra";
+				mes "propose un service de location de chariots aux Marchands, ainsi qu'aux Forgerons et Alchimistes.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Le mystérieux et flamboyant";
+				mes "^CE6300Novice Super^000000 peut utiliser des chars, mais nous n'avons officiellement pas de contrat avec cette classe. Cependant, d'une certaine manière...";
+				next;
+				mes "[Employé de Kafra]";
+				mes "De toute façon, les Marchands, Forgerons et Alchimistes doivent également apprendre la compétence ^3355FFTirer un char^000000 pour pouvoir louer un chariot.";
+				next;
+				mes "[Employé de Kafra]";
+				mes "Le service de location de charrettes";
+				mes "coûtera plus ou moins selon";
+				mes "la ville où vous êtes.";
+				next;
+				break;
+			case 5:
+				mes "[Employé de Kafra]";
+				mes "Merci.";
+				close;
+			}
+
+		}
+	}
+}
+
+//Interface Assistant
+new_1-2,161,182,5	script	Instructor#nv	92,{
+	mes "[Edwin]";
+	mes "Bienvenue dans ma classe.";
+	mes "Choisissez le sujet que vous";
+	mes "souhaitez approfondir.";
+	next;
+	while(1) {
+		switch(select("Basic Info Window:Party Window:Item Window:Option Window:Equipment Window:Cancel")) {
+		case 1:
+			mes "[Edwin]";
+			mes "Examinons";
+			mes "La fenêtre d'informations de base";
+			mes "^FF0000et bien ?";
+			next;
+			mes "[Edwin]";
+			mes "Votre nom, profession, niveau de base, et votre niveau de profession sont affichés dans cette fenêtre. ^800FFFniveau de base^000000 est le niveau de votre personnage.";
+			mes "La fenêtre d'informations de base indique vos points d'expérience actuels sous la barre du niveau de base.";
+			next;
+			mes "[Edwin]";
+			mes "Le ^800fffniveau de profession^000000 affiché sous le";
+			mes "niveau de base montre le niveau de profession de votre personnage. Lorsque vous commencez une nouvelle profession, vous serez au";
+			mes "Niveau de Profession 1.";
+			next;
+			mes "[Edwin]";
+			mes "Dans la fenêtre d'informations de base, vos points d'expérience actuels sont affichés dans la barre du niveau de base.";
+			next;
+			mes "[Edwin]";
+			mes "Les points d'expérience dans Ragnarok Online sont indiqués en pourcentage. Les expériences de base et les expériences professionnelles sont distinctes l'une de l'autre.";
+			next;
+			mes "[Edwin]";
+			mes "Lorsque la barre du niveau de base ou";
+			mes "niveau de profession atteint 100, le niveau sera augmenté d'un niveau et la barre se réinitialisera à 0 pour le prochain niveau.";
+			next;
+			mes "[Edwin]";
+			mes "HP signifie 'points de vie'.";
+			mes "Lorsque vos HP sont réduits à 0, vous tombez inconscient et ne pouvez plus combattre. Vous pouvez soit retourner au point d'apparition initial, soit attendre que quelqu'un vienne vous ressusciter.";
+			next;
+			mes "[Edwin]";
+			mes "Si vous meurez dans les champs ou les donjons, vous recevrez";
+			mes "a ^FF0000-1 % PENALITÉ D'EXP^000000, donc soyez prudent.";
+			next;
+			mes "[Edwin]";
+			mes "SP signifie 'points de sort'.";
+			mes "Lorsque vous deviendrez un 1er classe, vous apprendrez des compétences uniques à votre classe qui nécessitent des SP pour être utilisées. Votre instructeur en compétences peut vous enseigner davantage sur les compétences.";
+			next;
+			mes "[Edwin]";
+			mes "Si vous voulez vérifier la limite de poids des objets que vous pouvez transporter, consultez le bas à gauche de";
+			mes "la fenêtre Informations de base.";
+			next;
+			mes "[Edwin]";
+			mes "Le poids actuel des objets que vous transportez sera affiché à côté de votre limite maximale de poids.";
+			next;
+			mes "[Edwin]";
+			mes "Si vous transporte plus de 50 % de votre limite maximale de poids, vos PV et SP ne seront pas restaurés en reposant, donc soyez prudent.";
+			next;
+			mes "[Edwin]";
+			mes "La valeur numérique à côté de la limite de poids indique le montant actuel de Zeny, la monnaie de Midgard, que vous possédez.";
+			next;
+			mes "[Edwin]";
+			mes "À droite de";
+			mes "la fenêtre Informations de base, il y a une série de boutons qui ouvrent d'autres interfaces. Cliquez-y les uns après les autres et vérifiez ce que vous pouvez faire avec eux.";
+			next;
+			mes "[Edwin]";
+			mes "Le raccourci pour minimiser et maximiser la fenêtre Informations de base";
+			mes "est '^3355FFAlt^000000 + ^3355FFV^000000'.";
+			next;
+			break;
+		case 2:
+			mes "[Edwin]";
+			mes "Vous pouvez ouvrir la fenêtre du Groupe en cliquant sur le bouton ^3355FFami
+eau000000 dans la fenêtre des Informations de base. Le raccourci pour la fenêtre du Groupe est '^3355FFAlt^000000 + ^3355FFF^000000.' Vous pouvez utiliser cette fenêtre pour vérifier l'état des membres de votre groupe.";
+			mes "[Edwin]";
+			next;
+			mes "[Edwin]";
+			mes "[Edwin]";
+			mes "Dans la fenêtre du Groupe, vous pouvez cliquer sur le bouton ^3355FFami
+eau000000 pour voir votre Liste d'amis. Vous pouvez utiliser la";
+			next;
+			mes "[Edwin]";
+			mes "à vos amis.";
+			mes "[Edwin]";
+			mes "Vous pouvez demander à votre formateur en compétences de vous apprendre comment organiser un groupe. Mais je suppose que vous pouvez aussi essayer par vous-même.";
+			next;
+			mes "[Edwin]";
+			mes "La fenêtre d'objet est divisée en";
+			next;
+			break;
+		case 3:
+			mes "[Edwin]";
+			mes "[Edwin]";
+			mes "Votre limite de poids détermine la quantité d'objets que vous pouvez transporter. Lorsque vous transportez trop de choses, mettez vos effets supplémentaires en dépôt chez Kafra.";
+			next;
+			mes "[Edwin]";
+			mes "De plus, l'équipement et les objets consommables peuvent également être attribués à une Touche rapide via la barre des Raccourcis.";
+			next;
+			mes "[Edwin]";
+			mes "La fenêtre de Touche rapide est ouverte en appuyant sur ^3355FFF12^000000. Les touches F1 à F9 sont les touches raccourcies désignées.";
+			next;
+			mes "[Edwin]";
+			mes "The Hotkey window is opened by pressing ^3355FFF12^000000 key. The F1 to F9 keys are the designated hotkeys.";
+			next;
+			mes "[Edwin]";
+			mes "Il y a au total 3 ensembles";
+			mes "de raccourcis-clavier. Vous pouvez basculer";
+			mes "entre les ensembles de raccourcis-clavier en";
+			mes "appuyant sur la touche ^FF0000F12^000000.";
+			next;
+			break;
+		case 4:
+			mes "[Edwin]";
+			mes "Vous pouvez ouvrir la fenêtre Options en appuyant sur le bouton ^3355FFoptions^000000 dans la fenêtre Informations de base. Vous pouvez également utiliser les touches '^3355FFAlt^000000 + ^3355FFO^000000'.";
+			mes "[Édouard]";
+			next;
+			mes "[Edwin]";
+			mes "[Édouard]";
+			next;
+			mes "[Edwin]";
+			mes "[Édouard]";
+			next;
+			mes "[Edwin]";
+			mes "un skin.";
+			mes "[Édouard]";
+			next;
+			mes "[Edwin]";
+			mes "^0000FFhttp://iro.ragnarokonline.com^000000";
+			mes "[Édouard]";
+			next;
+			mes "[Edwin]";
+			mes "The Snap option allows your mouse cursor to automatically be placed on a target once it hovers within the target's vicinity.";
+			next;
+			mes "[Edwin]";
+			mes "Lorsque vous cliquez pour attaquer, la forme de votre curseur de souris change automatiquement en une silhouette d'épée. La cible de compétences et d'objets fonctionne également avec le Snap.";
+			next;
+			mes "[Edwin]";
+			mes "Cela peut être pratique ou déroutant si vous n'y êtes pas habitué. Mais une fois que vous maîtrisez la fonction Snap, vous pourrez ajuster vos propres options de Snap.";
+			next;
+			mes "[Edwin]";
+			mes "Eh bien, tout cela dépend de votre expérience. C'est tout pour la fenêtre des Options.";
+			next;
+			break;
+		case 5:
+			mes "[Edwin]";
+			mes "Cliquez sur le bouton ^3355FFéquip^000000";
+			mes "dans votre Fenêtre Informations de Base,";
+			mes "ou pressez simplement les touches '^3355FFAlt^000000 + ^3355FFQ^000000'.";
+			next;
+			mes "[Edwin]";
+			mes "Dans la Fenêtre Équipement,";
+			mes "vous verrez les objets que votre personnage porte actuellement. Au tout début, chaque personnage est équipé d'un Couteau et";
+			mes "d'une Chemise en Coton.";
+			next;
+			mes "[Edwin]";
+			mes "Il y a deux façons de changer votre équipement. Double-cliquez sur l'équipement dans la Fenêtre Inventaire ou faites glisser un objet vers la";
+			mes "Fenêtre Équipement.";
+			next;
+			mes "[Edwin]";
+			mes "Vous pouvez également assigner des équipements aux Raccourcis. Cela peut être fait en faisant glisser de l'équipement depuis l'Inventaire vers la Fenêtre Raccourci.";
+			mes "('^3355FFF12^000000' touche).";
+			next;
+			break;
+		case 6:
+			mes "[Edwin]";
+			mes "Si vous avez";
+			mes "des questions,";
+			mes "n'hésitez pas à me les poser~";
+			close;
+		}
+	}
+}
+
+new_1-2,182,182,3	script	Somatology Instructor	754,{
+	mes "[Jare Riotte]";
+	mes "Bienvenue, nouveau aventurier.";
+	mes "Je suis Jare Riotte et je vais vous aider à comprendre les règles fondamentales des Statuts de votre Personnage.";
+	mes "Connus sous le nom de 'Stats',";
+	next;
+	mes "[Jare Riotte]";
+	mes "ces statuts sont les briques de base de votre personnage.";
+	mes "[Jare Riotte]";
+	next;
+	mes "[Jare Riotte]";
+	mes "[Jare Riotte]";
+	mes "Dans Ragnarok Online,";
+	next;
+	mes "[Jare Riotte]";
+	mes "[Jare Riotte]";
+	mes "Je veux que ma classe progresse selon vos besoins personnels, alors demandez-moi sur les Statuts que vous souhaitez mieux comprendre. Tout d'abord, ouvrez la fenêtre des Statuts en utilisant les touches '^3355FFAlt^000000 + ^3355FFA^000000'.";
+	next;
+	mes "[Jare Riotte]";
+	mes "I want my class to proceed";
+	mes "according to your personal needs, so ask about the Status you wish to better understand. First, open your Status Window by using the '^3355FFAlt^000000 + ^3355FFA^000000' keys.";
+	next;
+	while(1) {
+		switch(select("Strength and Agility:Vitality and Intelligence:Dexterity and Luck:I do not wish to continue.")) {
+		case 1:
+			mes "[Jare Riotte]";
+			mes "Laissez-moi expliquer d'abord la Force (FOR).";
+			mes "^4D4DFFForce (FOR)^000000 augmente";
+			mes "^4D4DFFles dégâts physiques (ATK) ^000000";
+			mes "et votre limite maximale de poids^4D4DFF maximum^000000.";
+			next;
+			mes "[Jare Riotte]";
+			mes "1 point de FORCE augmente vos dégâts physiques de 1 point. Un bonus de dégât est donné lorsque la statistique FORCE atteint un multiple de 10.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Le calcul du bonus de dégât se fait en prenant la valeur totale de force, en supprimant le dernier chiffre et en multipliant ce nombre par lui-même.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Disons que votre attaque est affichée sous la forme '48 + 1.' Cela fait un total de 49 points de force. En supprimant le dernier chiffre, '9,' on reste avec le nombre '4.' 4 multiplié par lui-même donne 16.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Donc, le bonus d'attaque physique est de 16. Si vous aviez un total de 50 FOR, le bonus d'attaque serait de 25. Et si votre FOR était de 100, votre bonus d'attaque serait de 100.";
+			next;
+			mes "[Jare Riotte]";
+			mes "D'accord, maintenant passons";
+			mes "à la Dextérité (DEX).";
+			mes "La Dextérité affecte votre Taux d'Évitement et Votre Vitesse d'Attaque. Plus votre Taux d'Évitement est élevé, plus vous avez de chances d'éviter les attaques ennemies.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Votre Taux d'Évitement";
+			mes "est égal au nombre";
+			mes "de votre Niveau de Base ajouté";
+			mes "à votre AGI.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Donc, si vous avez 40 AGI et que vous êtes au Niveau de Base 30, votre Taux d'Évitage serait de 70. C'est tellement simple ! Selon la formule du Taux d'Évitage, le vôtre serait un total de 70.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Maintenant, l'AGI se réfère uniquement au Taux d'Évitage normal. La Parfaite Esquive est un autre facteur déterminant la réussite dans l'évitement des attaques, mais nous en reparlerons quand nous discuterons de";
+			mes "la statistique LUK.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Un autre avantage à augmenter votre AGI est que votre Vitesse d'Attaque (ASPD) augmentera également, ce qui réduira le temps entre vos attaques au corps-à-corps.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Cependant, l'ASPD";
+			mes "varie selon la Classe de Job";
+			mes ", alors n'en oubliez pas.";
+			next;
+			mes "[Jare Riotte]";
+			mes "^666666*Phew!*^000000";
+			mes "C'est presque trop";
+			mes "d'excitation pour une";
+			mes "journée. Allons-nous passer";
+			mes "à l'objet suivant?";
+			next;
+			break;
+		case 2:
+			mes "[Jare Riotte]";
+			mes "Notre sujet suivant";
+			mes "sera la Vitalité (VIT)";
+			mes "et l'Intelligence (INT).";
+			next;
+			mes "[Jare Riotte]";
+			mes "^4D4DFFVitalité^000000 affecte le ^4D4DFFmaximum de points de vie, la quantité de restauration des points de vie et la défense.^000000 La quantité de points de vie ajoutés par VIT varie selon votre classe d'emploi.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Parmi toutes les classes de métier, la classe Swordman en tire le plus grand bénéfice";
+			mes "des augmentations en Vitalité (VIT).";
+			next;
+			mes "[Jare Riotte]";
+			mes "Examinons maintenant la défense.";
+			mes "Dans votre fenêtre de statistiques, votre défense est affichée sous l'acronyme DEF. Deux valeurs numériques sont montrées, et le deuxième nombre représente l'augmentation de votre défense par votre Vitalité (VIT).";
+			next;
+			mes "[Jare Riotte]";
+			mes "Maintenant, la première valeur";
+			mes "affichée dans votre Défense est la défense calculée à partir de vos Équipements et Armes.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Actuellement, l'équipement que vous portez réduit les dégâts subis par un pourcentage du dommage total, tandis que la Vitalité (VIT) réduit le dommage de manière fixe. C'est pourquoi la Défense est affichée avec deux valeurs.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Le prochain sujet";
+			mes "est l'Intelligence (INT).";
+			next;
+			mes "[Jare Riotte]";
+			mes "INT affecte votre quantité maximale de ^4D4DFFSP^000000, la ^4D4DFFrestauration du SP^000000, les dégâts ^4D4DFFmagiques (MATK)^000000 que vous infligez et votre ^4D4DFFdéfense contre les attaques magiques (MDEF)^000000.";
+			next;
+			mes "[Jare Riotte]";
+			mes "La quantité de SP et la MATK augmentent";
+			mes "de 1 par INT. Cela dépend du Job Class, comme pour la VIT. Ce qui signifie que certains Jobs bénéficieront plus d'un INT élevé que d'autres.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Tout comme la défense normale (DEF), votre Défense Magique (MDEF) est affichée sous deux valeurs numériques distinctes. La MDEF fournie par l'INT est la deuxième valeur de MDEF affichée.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Pour étudier le contrôle des éléments naturels, il convient de prioriser votre intelligence. Les Sages et les Wizards";
+			mes "concentrent donc sur la statistique INT.";
+			next;
+			break;
+		case 3:
+			mes "[Jare Riotte]";
+			mes "Notre sujet suivant est";
+			mes "la Dextérité (DEX) et le Succès (LUK).";
+			mes "[Jare Riotte]";
+			next;
+			mes "[Jare Riotte]";
+			mes "et la force moyenne de vos attaques.";
+			mes "[Jare Riotte]";
+			next;
+			mes "[Jare Riotte]";
+			mes "Si vous avez une faible DEX, la différence entre le dégât minimum et";
+			mes "le dégât maximum que vous pouvez infliger devient importante. Les dégâts de vos attaques deviennent instables.";
+			mes "the maximum damage you can inflict becomes huge. The damage of your attacks becomes unstable.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Si vous utilisez un ^4D4DFFArc^000000 comme arme principale, votre force d'attaque dépendra de^4D4DFFDEX^000000. Donc les Archers devraient se concentrer sur l'amélioration de leur DEX.";
+			mes "[Jare Riotte]";
+			next;
+			mes "[Jare Riotte]";
+			mes "[Jare Riotte]";
+			mes "Par exemple, si vous êtes au niveau^4D4DFFde base^000000 40 et que vous avez 20 points de^4D4DFFDEX^000000, votre précision d'attaque serait de 60.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Enfin, DEX réduit également le temps de lancé des sorts et des compétences. Ainsi, posséder un certain niveau de^4D4DFFDEX^000000 serait utile pour les Mages et les Sorciers.";
+			mes "[Jare Riotte]";
+			mes "Maintenant, permettez-moi de vous parler de la statistique LUK.";
+			next;
+			mes "[Jare Riotte]";
+			mes "La chance (LUK) affecte la probabilité d'attaque critique, le taux d'esquive et une petite quantité de dégâts que vous infligez aux monstres.";
+			mes "be handy for Mages and Wizards.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Now, let me tell";
+			mes "you about the LUK stat.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Luck (LUK) affects the chance";
+			mes "for a critical attack, the Flee Rate and a small amount of damage you deal to monsters.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Pour une attaque critique, la valeur de base est de 1 pour tout le monde et elle augmente de ^4d4dff1^000000 pour chaque point de ^4d4dff3LUK^000000.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Plus vous avez de LUK, plus il est probable que vous infligiez des attaques critiques (^3355FFcritiques^000000) à vos ennemis. Les attaques critiques sont utiles car elles perforent la défense de votre adversaire.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Vous pouvez savoir que vous avez effectué une attaque critique lorsque le dommage infligé à un ennemi est plus important que d'habitude, et le nombre du dommage est affiché avec un effet visuel en rouge explosif.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Pour chaque point de LUK sur 10, vous ajoutez un point à votre taux d'évitement parfait. Le taux d'évitement parfait est un peu comme votre Taux d'Éviction. Lorsque vous effectuez un évitement parfait, le mot '^FF7F00Chanceux^000000' apparaît au-dessus de votre tête.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Bien qu'il soit similaire à votre Taux d'Éviction, l'évitement parfait est un facteur distinct dans l'esquive des attaques qui est calculé différemment.";
+			next;
+			mes "[Jare Riotte]";
+			mes "Eh bien, je dois dire que...";
+			mes "La chance est une bonne chose à avoir, mais cela ne signifie pas qu'elle doit être votre priorité absolue.";
+			next;
+			break;
+		case 4:
+			mes "[Jare Riotte]";
+			mes "Avez-vous d'autres";
+			mes "questions?";
+			mes "J'espère que ma classe";
+			mes "vous a été utile.";
+			close;
+		}
+	}
+}
+
+new_1-2,184,172,1	script	Understandings of Skills	47,{
+	mes "[Leo Handerson]";
+	mes "Bienvenue~";
+	mes "Oh regardez ceci, ce charmant petit Novice~!";
+	mes "cute little Novice~!";
+	next;
+	mes "[Leo Handerson]";
+	mes "Je suis Leo Handerson,";
+	mes "je me sens responsable de votre performance et vous enseignerai avec le meilleur de mes capacités. Maintenant, veuillez sélectionner le sujet que vous souhaitez apprendre.";
+	emotion ET_CHUP;
+	next;
+	while(1) {
+		switch(select("Passive and Active skills:Basic Skills:Use of Emoticons:Cancel.")) {
+		case 1:
+			mes "[Leo Handerson]";
+			mes "D'abord, permettez-moi d'expliquer";
+			mes "ce qui concerne les Compétences Passives.";
+			mes "Aimeriez-vous ouvrir";
+			mes "votre Fenêtre des Compétences ?";
+			mes "('^3355FFAlt^000000' + '^3355FFS^000000')";
+			next;
+			mes "[Leo Handerson]";
+			mes "Maintenant, vous savez que chaque fois";
+			mes "que votre Niveau de Métier augmente, vous gagnez";
+			mes "un ^3355FFPoint de Compétence^000000, d'accord ? Les Points de Compétence sont utilisés pour apprendre vos compétences~";
+			next;
+			mes "[Leo Handerson]";
+			mes "Voyez-vous l'icône de votre Compétence de Base ? Elle est en haut de la Fenêtre des Compétences. Cliquez sur le bouton 'Nvle Niv' à côté de l'icône de Compétence de Base pour utiliser un Point de Compétence sur les compétences de base.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Vous verrez le mot 'Passif'";
+			mes "à droite de l'icône de la Compétence de Base. Cela signifie que cette compétence est Passive et ne consomme pas de SP.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Maintenant, cliquez droit sur l'icône de Compétence de Base. Vous pourrez alors lire une brève description des Compétences de base.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Les Compétences Actives, contrairement aux Compétences Passives qui n'utilisent pas de points SP, nécessitent des SP à chaque fois qu'elles sont utilisées.";
+			mes "they are used.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Vous pouvez utiliser une compétence active en double-cliquant sur son icône dans votre Fenêtre Compétences.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Vous pouvez également faire glisser l'icône d'une compétence depuis la Fenêtre Compétences et la déposer dans votre Barre de raccourcis ('^3355FFF12^000000' clé) pour attribuer un raccourci à cette compétence.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Le nombre de points SP";
+			mes "nécessaire pour utiliser une Compétence Active sera affiché à droite de l'icône de la compétence.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Généralement, les Compétences Passives sont liées à un entraînement mental ou physique. L'utilisation d'aptitudes spéciales ou d'attaques est considérée comme des Compétences Actives.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Si vous n'êtes toujours pas";
+			mes "sûr de mon enseignement,";
+			mes "je suis prêt à le repasser";
+			mes "une fois de plus.";
+			next;
+			break;
+		case 2:
+			mes "[Leo Handerson]";
+			mes "Les Compétences de Base sont";
+			mes "purement Passives.";
+			mes "que vous devez jouer";
+			mes "Ragnarok Online.";
+			mes "Ne vous inquiétez pas,";
+			mes "ils sont faciles à apprendre.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Quand vous cliquez avec le bouton droit de la souris dans votre fenêtre Skill Window";
+			mes "('^3355FFAlt^000000' + '^3355FFS^000000'), vous pouvez vérifier les descriptions des compétences, mais j'ai préparé ce cours pour";
+			mes "votre meilleure compréhension.";
+			next;
+			while(1) {
+				switch(select("Trade and Exchange:Organizing & Joining party:Opening Chat Room:Storage Use:No thanks, I know this already.")) {
+				case 1:
+					mes "[Leo Handerson]";
+					mes "Quand vous visitez notre site officiel à ^0000FFiro.ragnarokonline.com^000000, vous trouverez une explication complète sur le commerce, illustrée avec des images.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Pour trader des objets";
+					mes "ou de la zeny avec d'autres personnes,";
+					mes "vous devez apprendre au moins ^3355FFNiveau de Compétence de Base 1^000000.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Lorsque vous faites du commerce, vous devez être";
+					mes "proche de la personne avec qui vous souhaitez échanger des objets ou de la zeny. Sinon, le commerce ne fonctionnera pas si cette personne est plus loin que deux cases.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Cliquez droit sur la personne";
+					mes "une fois et un petit menu apparaîtra.";
+					mes "Depuis ce menu, choisissez :";
+					mes "^800fffDemandez un accord^000000.";
+					next;
+					mes "[Leo Handerson]";
+					mes "ensuite, cette personne va";
+					mes "choisir de vous accepter ou non. Si votre demande est acceptée, la fenêtre de commerce s'ouvrira.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Pour échanger des objets, faites glisser les objets depuis la fenêtre d'inventaire ('^3355FFAlt^000000' + '^3355FFE^000000') et déposez-les du côté gauche de la fenêtre de commerce.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Les objets donnés par l'autre personne apparaîtront du côté droit de la fenêtre de commerce. Vérifiez toujours";
+					mes "si l'autre personne échange les objets dont vous avez convenu.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Pour échanger des Zeny, entrez le montant que vous souhaitez échanger. Une fois que vous avez placé des objets ou de la zeny dans la fenêtre de commerce, cliquez sur le bouton 'OK' en bas pour confirmer l'échange.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Une fois l'échange confirmé,";
+					mes "cliquez sur le bouton 'Echanger' pour terminer l'échange. Si aucun des deux ne clique pas sur le bouton 'OK', l'échange ne peut être effectué.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Si l'un des deux clic sur le bouton 'Annuler' à droite de la fenêtre, l'échange est annulé.";
+					next;
+					break;
+				case 2:
+					mes "[Leo Handerson]";
+					mes "Maintenant, laissez-moi vous expliquer";
+					mes "à propos du système de groupe.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Le système de groupe vous permet";
+					mes "d'organiser un petit groupe avec des personnes pour chasser coopérativement des monstres, ou simplement pour s'amuser ensemble.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Vous pouvez organiser";
+					mes "un groupe en tapant la commande :";
+					mes "la commande :";
+					mes "^4F4FFF//organise 'Nom du Groupe'^000000";
+					mes "dans votre fenêtre de chat.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Bien sûr, vous devez avoir au moins";
+					mes "le niveau de compétence de base";
+					mes "^4d4dffNiveau de Compétence de Base 7^000000";
+					mes "ou plus pour utiliser le système de groupe.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Je pourrais vous expliquer davantage sur";
+					mes "la répartition des objets ou la répartition des expériences que les membres du groupe ont gagnées ensemble, mais c'est mieux si vous essayez cela par vous-même plus tard.";
+					next;
+					mes "[Leo Handerson]";
+					mes "C'est tout pour";
+					mes "le système de groupe~";
+					mes "Un Novice adorable";
+					mes "comme vous devriez choisir";
+					mes "sur cela rapidement~";
+					emotion ET_CHUP;
+					next;
+					break;
+				case 3:
+					mes "[Leo Handerson]";
+					mes "quand vous avez";
+					mes "^4D4DFFNiveau 4 Compétence de Base^000000";
+					mes "ou au-dessus, vous pouvez ouvrir votre propre Chat Room. Vous pouvez soit cliquer sur le bouton ^3355FFchat^000000 dans la Fenêtre des Informations de Base ou juste appuyer sur '^3355FFAlt^000000' + '^3355FFC^000000.'";
+					mes "[Leo Handerson]";
+					next;
+					mes "[Leo Handerson]";
+					mes "vous pouvez vérifier les informations des membres du chat room en faisant un clic droit sur le nom d'un personnage.";
+					mes "[Leo Handerson]";
+					next;
+					mes "[Leo Handerson]";
+					mes "de la salle, vous pouvez changer";
+					mes "la configuration de la pièce.";
+					mes "[Leo Handerson]";
+					next;
+					mes "[Leo Handerson]";
+					mes "vous ne pouvez pas entendre les conversations qui se passent en dehors du Chat Room. Souvenez-vous-en, d'accord?";
+					mes "[Leo Handerson]";
+					next;
+					break;
+				case 4:
+					mes "[Leo Handerson]";
+					mes "Kafra Corporation sont dispersés dans le monde entier, offrant leurs services pratiques et un dépôt.";
+					mes "Kafra Corporation are scattered throughout the world, providing their convenient services and Storage.";
+					next;
+					mes "[Leo Handerson]";
+					mes "En fait, il y a une employée Kafra juste à l'extérieur de cette pièce. Parlez-lui et elle sera plus qu'heureuse de vous expliquer en détail les services Kafra.";
+					next;
+					mes "[Leo Handerson]";
+					mes "De toute façon, vous êtes";
+					mes "autorisé à utiliser votre";
+					mes "^4d4dffstockage personnel Kafra^000000";
+					mes "à partir du niveau de compétence ^4D4DFFde base 6^000000 ou supérieur.";
+					next;
+					mes "[Leo Handerson]";
+					mes "Quand vous transportez trop d'objets, votre poids devient trop lourd et vous ne pourrez pas restaurer HP ou SP en vous reposant, ni même combattre les monstres ! Alors stockez ce dont vous n'avez pas besoin dans le stockage Kafra.";
+					next;
+					break;
+				case 5:
+					mes "[Leo Handerson]";
+					mes "Oh, est-ce que oui ?";
+					mes "Comme je le pensais,";
+					mes "tu es aussi intelligent";
+					mes "que tu es mignon~!";
+					mes "Je, Leo, suis très impressionné.";
+					next;
+					set .@end,1;
+				}
+				if (.@end) break;
+			}
+			mes "[Leo Handerson]";
+			mes "Souhaitez-vous";
+			mes "apprendre plus sur";
+			mes "un sujet différent ?";
+			next;
+			break;
+		case 3:
+			mes "[Leo Handerson]";
+			mes "^4d4dffÉmoticones^000000 sont souvent utilisées en ligne pour ^4D4DFFexprimer vos sentiments^000000. C'est un moyen amusant de communiquer !";
+			mes "online for ^4D4DFFdisplaying your feelings^000000. It's a fun way of communicating!";
+			next;
+			mes "[Leo Handerson]";
+			mes "Vous devez être au niveau de compétence basique";
+			mes "^4D4DFF2^000000 et plus pour utiliser les émoticônes.";
+			mes "or above to use emoticons.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Vous pouvez consulter la liste des";
+			mes "icons d'émotion";
+			mes "("^3355FFAlt^000000" + "^3355FFL^000000") et cliquer sur chaque icône pour voir le commandement à afficher l'émoticône.";
+			mes "the emoticon.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Vous pouvez également enregistrer les";
+			mes "émoticônes dans votre liste de raccourcis ('^3355FFAlt^000000' + '^3355FFM^000000') pour utiliser un raccourci afin d'utiliser une émoticône. Ceci est également expliqué en détail sur notre site officiel.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Ah~ Je dois dire,";
+			mes "l'expression honnête";
+			mes "des sentiments est essentielle";
+			mes "pour une relation.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Vous pouvez jouer à";
+			mes "Pierre, Feuille, Ciseaux";
+			mes "en pressant les touches '^4D4DFFCtrl^000000', le '^4D4DFF - ^000000', '^4D4DFF = ^000000' ou '^4D4DFF \ ^000000'.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Bien sûr, vous pouvez taper ^4D4DFF//bawi^000000, ^4D4DFF//bo^000000 et ^4D4DFF//gawi^000000, qui signifient pierre, papier et ciseaux en coréen, dans la fenêtre de chat.";
+			next;
+			mes "[Leo Handerson]";
+			mes "Pour voir les commandes supplémentaires pour des émoticônes, tapez la commande ^4d4dff//emotion^000000 dans votre fenêtre de chat~";
+			emotion ET_THROB;
+			next;
+			break;
+		case 4:
+			mes "[Leo Handerson]";
+			mes "Je vois...";
+			mes "Vous n'avez plus besoin de moi";
+			mes "maintenant! Oh! Ils";
+			mes "grandissent si vite";
+			mes "de nos jours!";
+			close;
+		}
+	}
+}
+
+new_1-2,121,101,2	script	Guide Soldier#nv1	105,{
+	mes "[Soldat Guide]";
+	mes "Nous, les Soldats Guides, fournissons des informations sur l'emplacement à l'entrée de chaque ville. Vous pouvez nous trouver facilement par notre tenue distinctive.";
+	next;
+	mes "[Soldat Guide]";
+	mes "Chaque fois que vous visitez une nouvelle ville";
+	mes "nous recommandons fortement que vous demandiez aux lieux notables de la ville.";
+	next;
+	mes "[Soldat Guide]";
+	mes "Si vous souhaitez suivre un cours d'information, veuillez vous promener et parler à divers tuteurs dans ces Arenas d'entraînement. Bonne journée.";
+	close;
+}
+
+new_1-2,17,182,5	script	Helper#nv	84,{
+	if (nov_2nd_cos < 11) {
+		mes "[Elmeen]";
+		mes "Félicitations!";
+		mes "Vous avez réussi le premier cours d'entraînement! Wow~ Maintenant que vous comprenez un peu mieux Ragnarok Online.";
+		next;
+		mes "[Elmeen]";
+		mes "Vous apprendrez les bases du véritable combat grâce à cette classe. Si vous avez fait de votre mieux pendant la classe informative, on devrait vous avoir fourni un équipement de départ.";
+		next;
+		mes "[Elmeen]";
+		mes "Veuillez vérifier votre";
+		mes "équipement avant de vous engager dans un combat. Êtes-vous sûr d'avoir équipé tout votre équipement, vos armes et votre armure?";
+		next;
+		switch(select("Yes:No")) {
+		case 1:
+			mes "[Elmeen]";
+			mes "D'abord, vous placez le curseur sur une créature. Lorsque vous cliquez avec le bouton gauche de la souris, vous frapperez la créature une fois.";
+			next;
+			mes "[Elmeen]";
+			mes "Si vous êtes trop paresseux pour continuer à cliquer gauchement, cliquez sur la créature tout en maintenant la touche '^4D4DFFCtrl^000000'. Vous continuerez alors d'attaquer la créature jusqu'à ce que l'une des deux meure ou que vous vous enfuyiez.";
+			next;
+			mes "[Elmeen]";
+			mes "Vous pouvez également maintenir enfoncé le bouton gauche de la souris tout en maintenant le curseur sur la créature. Toutefois, il y a des gens qui sont encore trop paresseux pour utiliser la touche '^4D4DFFCtrl^000000' chaque fois qu'ils attaquent une créature.";
+			next;
+			mes "[Elmeen]";
+			mes "Si vous faites partie de ce groupe, tapez la commande ^E79E29//nc^000000 dans votre fenêtre de chat. Alors, lorsque vous cliquez avec le bouton gauche";
+			mes "sur une créature, vous attaquerez simplement continuellement!";
+			next;
+			mes "[Elmeen]";
+			mes "Si une créature possède la propriété Undead, vous pouvez utiliser le sort 'Heal' pour l'attaquer si vous en disposez.";
+			next;
+			mes "[Elmeen]";
+			mes "Lorsque vous utilisez le sort Heal tout en maintenant enfoncé la touche '^4D4DFFShift^000000', vous pouvez cibler la créature avec le sort Heal pour l'endommager.";
+			next;
+			mes "[Elmeen]";
+			mes "Bien sûr, nous avons un moyen très pratique même pour les gens paresseux. Tapez la commande ^E79E29//ns^000000 dans votre fenêtre de chat.";
+			next;
+			mes "[Elmeen]";
+			mes "^FF0000Cela vous permettra d'attaquer les monstres en utilisant le sort Soigner sans presser la touche Majuscule. Pratique, non ?";
+			next;
+			mes "[Elmeen]";
+			mes "Comprenez-vous ces commandes de combat ? Maintenant, je vais vous apprendre à connaître le comportement et les caractéristiques des monstres, l'expérience gagnée grâce au combat et les objets que vous pouvez obtenir en tuant les monstres.";
+			next;
+			mes "[Elmeen]";
+			mes "L'entraînement de combat en terrain hostile peut être assez dangereux pour les nouveaux aventuriers. Laissez-moi vous";
+			mes "donner un peu plus de force grâce au pouvoir de ma magie.";
+			next;
+			mes "[Elmeen]";
+			mes "Haaaaaaa~!";
+			if (nov_2nd_cos < 1) {
+				if (BaseLevel == 1) {
+					set nov_2nd_cos,12;
+					getexp 9,0;
+				}
+				else if (BaseLevel == 2) {
+					set nov_2nd_cos,13;
+					getexp 16,0;
+				}
+				else if (BaseLevel == 3) {
+					set nov_2nd_cos,14;
+					getexp 25,0;
+				}
+				else if (BaseLevel == 4) {
+					set nov_2nd_cos,15;
+					getexp 36,0;
+				}
+				else if (BaseLevel == 5) {
+					set nov_2nd_cos,16;
+					getexp 77,0;
+				}
+				else if (BaseLevel == 6) {
+					set nov_2nd_cos,17;
+					getexp 112,0;
+				}
+				else if (BaseLevel >= 7) {
+					set nov_2nd_cos,18;
+					getexp 153,0;
+				}
+			}
+			next;
+			mes "[Elmeen]";
+			mes "Quel sujet";
+			mes "devrais-je aborder";
+			mes "d'abord pour vous?";
+			next;
+			while(1) {
+				switch(select("Monsters:Experience:Items:Quit.")) {
+				case 1:
+					mes "[Elmeen]";
+					mes "Il existe de nombreux monstres agressifs qui vous attaqueront avant même que vous n'approchiez d'eux.";
+					next;
+					mes "[Elmeen]";
+					mes "Il y a également quelques monstres qui coopèrent avec leur espèce. Attaquez-en un, et toute la meute s'en prendra à vous pour se venger.";
+					next;
+					mes "[Elmeen]";
+					mes "Chaque monstre peut être spécifié par leurs types, tailles et propriétés. Par exemple, il existe des monstres de type Démoniaque, Brute, Saint et Démon.";
+					next;
+					mes "[Elmeen]";
+					mes "Lorsque vous êtes au courant de la propriété d'un monstre, cette connaissance peut vous aider lors du combat.";
+					next;
+					mes "[Elmeen]";
+					mes "Si vous parvenez à obtenir des cartes qui augmentent vos dégâts face à certaines propriétés de monstres, ou réduisent les dégâts subis d'une propriété spécifique de monstre, vous aurez bien plus facilement la vie en combat.";
+					next;
+					mes "[Elmeen]";
+					mes "Les monstres sont séparés par leur taille : petit, moyen et grand. Il existe quelques cartes qui vous permettent d'infliger plus de dégâts à";
+					mes "une taille spécifique de monstre.";
+					next;
+					mes "[Elmeen]";
+					mes "De plus, chaque arme a ses forces et faiblesses. La taille de l'arme affecte la quantité de dommages qu'elle inflige aux monstres.";
+					next;
+					mes "[Elmeen]";
+					mes "Par exemple, les armes de classe Dagger font 100 % de dégâts sur des monstres petits mais seulement 50 % de dégâts sur des monstres grands.";
+					next;
+					mes "[Elmeen]";
+					mes "Les propriétés communes des monstres incluent Eau, Vent, Terre, Feu, Ombre, Fantôme et Saint. Si vous attaquez un monstre avec une propriété opposée à la sienne, vous pouvez infliger des dégâts supplémentaires~";
+					next;
+					mes "[Elmeen]";
+					mes "Mais si vous attaquez un monstre avec";
+					mes "une compétence ou une arme qui cause des dégâts de la même propriété que le monstre, les dégâts seront considérablement réduits, voire totalement nuls. Vous pourriez même soigner le monstre!";
+					next;
+					mes "[Elmeen]";
+					mes "Dans le cas des monstres à propriété Fantôme, les armes normales ne causent aucun dommage. Cependant, une arme avec toute autre propriété sera capable de causer des dégâts.";
+					next;
+					break;
+				case 2:
+					mes "[Elmeen]";
+					mes "En gros, un personnage qui cause le plus de dégâts à un monstre reçoit le plus d'expériences du monstre.";
+					next;
+					mes "[Elmeen]";
+					mes "Par conséquent, vous recevez une certaine proportion des points d’expérience en fonction des dégâts que vous avez infligés au monstre par rapport à ses HP totaux.";
+					next;
+					mes "[Elmeen]";
+					mes "^FF0000 Disons qu'il y a un personnage nommé 'Z.' Z inflige 65 points de dégâts à un monstre qui possède 100 points de vie totale et donne 1000 points d'expérience lorsqu'il meurt. Donc, Z recevra 650 points d'expérience.";
+					next;
+					mes "[Elmeen]";
+					mes "^FF0000 Cependant, cette règle s'applique différemment en fonction de certaines situations.";
+					next;
+					mes "[Elmeen]";
+					mes "^FF0000 Si deux personnes infligent chacune 65 points de dégâts au même monstre, les points d'expérience qu'ils recevront diffèrent selon la quantité de vie restante du monstre.";
+					next;
+					mes "[Elmeen]";
+					mes "^FF0000 Par exemple, quelqu'un inflige des dommages à un monstre alors que vous le frappez déjà et a fait autant de dégâts que vous.";
+					next;
+					mes "[Elmeen]";
+					mes "^FF0000 Dans ce cas, vous recevrez les 2//3 des points d'expérience totaux que le monstre peut vous donner, tandis que l'autre recevra 1//3.";
+					next;
+					mes "[Elmeen]";
+					mes "^FF0000 Cependant, attaquer un monstre déjà frappé par quelqu'un d'autre n'est pas recommandé dans Ragnarok Online. Cette action est considérée comme du comportement malpoli.";
+					next;
+					mes "[Elmeen]";
+					mes "^FF0000 Pour le jeu en groupe, le chef de groupe peut définir la répartition des points d'expérience sur l'option partage égalitaire.";
+					next;
+					mes "[Elmeen]";
+					mes "^FF0000 Avec cette méthode, les membres du groupe peuvent partager leurs points d'expérience selon le niveau de leur personnage et le nombre de membres dans le groupe.";
+					next;
+					mes "[Elmeen]";
+					mes "^FF0000 De plus, il y a un avantage en matière d'expérience pour le jeu en groupe qui vous permet de gagner davantage de points d'expérience que lors du jeu solo. Vous pouvez tirer parti de ce système pour monter en niveau plus rapidement.";
+					next;
+					break;
+				case 3:
+					mes "[Elmeen]";
+					mes "^FF0000 Lorsque vous tuez des monstres,";
+					mes "^FF0000 vous pouvez obtenir des objets par hasard. De plus, certains personnages peuvent utiliser la compétence 'Voleur' pour voler des objets aux monstres.";
+					next;
+					mes "[Elmeen]";
+					mes "Ne vous inquiétez pas, le sort Vol ne va pas vous empêcher de trouver des objets après les avoir tués. Utiliser le sort Vol n'affecte en aucun cas le taux de drop d'objets pour les monstres une fois qu'ils sont morts.";
+					next;
+					mes "[Elmeen]";
+					mes "Quand un groupe de personnes tue un monstre, la personne qui a infligé le plus de dégâts reçoit la priorité pour ramasser les objets tombés.";
+					next;
+					break;
+				case 4:
+					mes "[Elmeen]";
+					mes "N'hésitez pas à";
+					mes "demandez-moi si vous";
+					mes "avez des questions.";
+					close;
+				}
+			}
+		case 2:
+			mes "[Elmeen]";
+			mes "Prenez soin de l'équipement que vous avez reçu au cours des formations. Une fois cet équipement perdu, il est impossible de le récupérer.";
+			close;
+		}
+	}
+	else {
+		mes "[Elmeen]";
+		mes "Quel sujet";
+		mes "dois-je expliquer?";
+		next;
+		while(1) {
+			switch(select("Monsters:Experience:Items:Quit.")) {
+			case 1:
+				mes "[Elmeen]";
+				mes "Il existe de nombreux monstres agressifs qui vous attaqueront avant même que vous n'approchiez d'eux.";
+				next;
+				mes "[Elmeen]";
+				mes "Il y a également quelques monstres qui coopèrent avec leur espèce. Attaquez-en un, et toute la meute s'en prendra à vous pour se venger.";
+				next;
+				mes "[Elmeen]";
+				mes "Chaque monstre peut être spécifié par leurs types, tailles et propriétés. Par exemple, il existe des monstres de type Démoniaque, Brute, Saint et Démon.";
+				next;
+				mes "[Elmeen]";
+				mes "Lorsque vous êtes au courant de la propriété d'un monstre, cette connaissance peut vous aider lors du combat.";
+				next;
+				mes "[Elmeen]";
+				mes "Si vous parvenez à obtenir des cartes qui augmentent vos dégâts face à certaines propriétés de monstres, ou réduisent les dégâts subis d'une propriété spécifique de monstre, vous aurez bien plus facilement la vie en combat.";
+				next;
+				mes "[Elmeen]";
+				mes "Les monstres sont classés par leur taille : petit, moyen et grand. Il existe quelques cartes qui vous permettent de faire plus de dégâts sur une taille spécifique de monstre.";
+				next;
+				mes "[Elmeen]";
+				mes "De plus, chaque arme a ses forces et faiblesses. La taille de l'arme affecte la quantité de dommages qu'elle inflige aux monstres.";
+				next;
+				mes "[Elmeen]";
+				mes "Par exemple, les armes de classe Dagger font 100 % de dégâts sur des monstres petits mais seulement 50 % de dégâts sur des monstres grands.";
+				next;
+				mes "[Elmeen]";
+				mes "Les propriétés communes des monstres incluent Eau, Vent, Terre, Feu, Ombre, Fantôme et Saint. Si vous attaquez un monstre avec une propriété opposée à la sienne, vous pouvez infliger des dégâts supplémentaires~";
+				next;
+				mes "[Elmeen]";
+				mes "Mais si vous attaquez un monstre avec";
+				mes "une compétence ou une arme qui cause des dégâts de la même propriété que le monstre, les dégâts seront considérablement réduits, voire totalement nuls. Vous pourriez même soigner le monstre!";
+				next;
+				mes "[Elmeen]";
+				mes "Dans le cas des monstres à propriété Fantôme, les armes normales ne causent aucun dommage. Cependant, une arme avec toute autre propriété sera capable de causer des dégâts.";
+				next;
+				break;
+			case 2:
+				mes "[Elmeen]";
+				mes "En gros, un personnage qui cause le plus de dégâts à un monstre reçoit le plus d'expériences du monstre.";
+				next;
+				mes "[Elmeen]";
+				mes "Par conséquent, vous recevez une certaine proportion des points d’expérience en fonction des dégâts que vous avez infligés au monstre par rapport à ses HP totaux.";
+				next;
+				mes "[Elmeen]";
+				mes "^FF0000 Disons qu'il y a un personnage nommé 'Z.' Z inflige 65 points de dégâts à un monstre qui possède 100 points de vie totale et donne 1000 points d'expérience lorsqu'il meurt. Donc, Z recevra 650 points d'expérience.";
+				next;
+				mes "[Elmeen]";
+				mes "^FF0000 Cependant, cette règle s'applique différemment en fonction de certaines situations.";
+				next;
+				mes "[Elmeen]";
+				mes "^FF0000 Si deux personnes infligent chacune 65 points de dégâts au même monstre, les points d'expérience qu'ils recevront diffèrent selon la quantité de vie restante du monstre.";
+				next;
+				mes "[Elmeen]";
+				mes "^FF0000 Par exemple, quelqu'un inflige des dommages à un monstre alors que vous le frappez déjà et a fait autant de dégâts que vous.";
+				next;
+				mes "[Elmeen]";
+				mes "^FF0000 Dans ce cas, vous recevrez les 2//3 des points d'expérience totaux que le monstre peut vous donner, tandis que l'autre recevra 1//3.";
+				next;
+				mes "[Elmeen]";
+				mes "^FF0000 Cependant, attaquer un monstre déjà frappé par quelqu'un d'autre n'est pas recommandé dans Ragnarok Online. Cette action est considérée comme du comportement malpoli.";
+				next;
+				mes "[Elmeen]";
+				mes "^FF0000 Pour le jeu en groupe, le chef de groupe peut définir la répartition des points d'expérience sur l'option partage égalitaire.";
+				next;
+				mes "[Elmeen]";
+				mes "^FF0000 Avec cette méthode, les membres du groupe peuvent partager leurs points d'expérience selon le niveau de leur personnage et le nombre de membres dans le groupe.";
+				next;
+				mes "[Elmeen]";
+				mes "^FF0000 De plus, il y a un avantage en matière d'expérience pour le jeu en groupe qui vous permet de gagner davantage de points d'expérience que lors du jeu solo. Vous pouvez tirer parti de ce système pour monter en niveau plus rapidement.";
+				next;
+				break;
+			case 3:
+				mes "[Elmeen]";
+				mes "^FF0000 Lorsque vous tuez des monstres,";
+				mes "^FF0000 vous pouvez obtenir des objets par hasard. De plus, certains personnages peuvent utiliser la compétence 'Voleur' pour voler des objets aux monstres.";
+				next;
+				mes "[Elmeen]";
+				mes "Ne vous inquiétez pas, le sort Vol ne va pas vous empêcher de trouver des objets après les avoir tués. Utiliser le sort Vol n'affecte en aucun cas le taux de drop d'objets pour les monstres une fois qu'ils sont morts.";
+				next;
+				mes "[Elmeen]";
+				mes "Quand un groupe de personnes tue un monstre, la personne qui a infligé le plus de dégâts reçoit la priorité pour ramasser les objets tombés.";
+				next;
+				break;
+			case 4:
+				mes "[Elmeen]";
+				mes "N'hésitez pas à";
+				mes "demandez-moi si vous";
+				mes "avez des questions.";
+				close;
+			}
+		}
+	}
+}
+
+new_1-2,38,182,3	script	Entrance Guard#nv	92,{
+	if (nov_2nd_cos == 0) {
+		mes "[Muriel]";
+		mes "Je suis désolée, mais je ne peux pas autoriser quiconque n'ayant pas reçu d'instructions sur la lutte à entrer dans les Champs de Combat pour le Training.";
+		next;
+		mes "[Muriel]";
+		mes "Pourquoi ne parlez-vous pas au Helper situé à gauche de cette pièce en premier, afin de recevoir quelques instructions sur la bataille ?";
+		close;
+	}
+	else if (nov_2nd_cos > 0 && nov_2nd_cos < 21) {
+		mes "[Muriel]";
+		mes "Le Field Combat Training est une classe de combat réelle où vous pouvez acquérir des compétences de base que vous pourrez utiliser pour vous défendre dans Midgard.";
+		next;
+		mes "[Muriel]";
+		mes "Veuillez tuer autant de monstres que possible afin d'augmenter votre niveau de base au moins deux fois.";
+		next;
+		mes "[Muriel]";
+		mes "Gagner deux niveaux de base est requis pour compléter votre Field Combat Training. Bien que les monstres soient tous faibles et faciles à tuer, j'espère que vous serez prudent.";
+		next;
+		mes "[Muriel]";
+		mes "Voulez-vous";
+		mes "prendre l'examen";
+		mes "immédiatement ?";
+		next;
+		switch(select("Yes:I need more time.")) {
+		case 1:
+			mes "[Muriel]";
+			mes "Veuillez vous assurer que";
+			mes "vous parlez au personnel du nord après avoir augmenté votre niveau de base de deux niveaux grâce à la bataille.";
+			next;
+			mes "[Muriel]";
+			mes "Je vais vous donner quelques fournitures utiles, alors utilisez-les en cas d'urgence.";
+			if (nov_2nd_cos == 12) {
+				set nov_2nd_cos,22;
+			}
+			else if (nov_2nd_cos == 13) {
+				set nov_2nd_cos,23;
+			}
+			else if (nov_2nd_cos == 14) {
+				set nov_2nd_cos,24;
+			}
+			else if (nov_2nd_cos == 15) {
+				set nov_2nd_cos,25;
+			}
+			else if (nov_2nd_cos == 16) {
+				set nov_2nd_cos,26;
+			}
+			else if (nov_2nd_cos == 17) {
+				set nov_2nd_cos,27;
+			}
+			else if (nov_2nd_cos == 18) {
+				set nov_2nd_cos,28;
+			}
+			else {
+				set nov_2nd_cos,29;
+			}
+			getitem 602,1; //Wing_Of_Butterfly
+			getitem 601,9; //Wing_Of_Fly
+			getitem 1243,1; //Novice_Knife
+			getitem 2112,1; //Novice_Guard
+			getitem 611,2; //Spectacles
+			getitem 569,300; //Novice_Potion
+			close2;
+			savepoint "new_1-2",23,188,1,1;
+			warp "new_1-3",96,21;
+			end;
+		case 2:
+			mes "[Muriel]";
+			mes "Pas de problème.";
+			mes "^FF0000Si vous ne savez pas si vous pouvez passer l'épreuve ou non, pourquoi ne parlez-vous pas une fois de plus au [Helper] à gauche ? Veuillez revenir^";
+			mes "^FF0000lorsque vous serez prêt.";
+			close;
+		}
+		close;
+	}
+	else if ((nov_2nd_cos > 20) && (nov_2nd_cos < 31)) {
+		mes "[Muriel]";
+		mes "Ah bien, je vous avais dit d'être prudent. Ne soyez pas triste ! Ce n'est pas un grand problème.";
+		mes " ";
+		mes "L'échec enseigne le succès.";
+		mes "Vous avez de nombreuses chances";
+		mes "de repasser l'examen.";
+		next;
+		mes "[Muriel]";
+		mes "Voulez-vous";
+		mes "essayer à nouveau ?";
+		next;
+		switch(select("Yes.:Can I have more time?")) {
+		case 1:
+			mes "[Muriel]";
+			mes "Je vais vous donner";
+			mes "des fournitures encore une fois.";
+			mes "Prenez garde !";
+			if (nov_2nd_cos == 22) {
+				set nov_2nd_cos,33;
+				getexp 16,0;
+			}
+			else if (nov_2nd_cos == 23) {
+				set nov_2nd_cos,34;
+				getexp 25,0;
+			}
+			else if (nov_2nd_cos == 24) {
+				set nov_2nd_cos,35;
+				getexp 36,0;
+			}
+			else if (nov_2nd_cos == 25) {
+				set nov_2nd_cos,36;
+				getexp 77,0;
+			}
+			else if (nov_2nd_cos == 26) {
+				set nov_2nd_cos,37;
+				getexp 112,0;
+			}
+			else if (nov_2nd_cos == 27) {
+				set nov_2nd_cos,38;
+				getexp 153,0;
+			}
+			else if (nov_2nd_cos == 28) {
+				set nov_2nd_cos,39;
+				getexp 200,0;
+			}
+			else if (nov_2nd_cos == 29) {
+				set nov_2nd_cos,40;
+				getexp 200,0;
+			}
+			percentheal 100,0;
+			getitem 569,50; //Novice_Potion
+			close2;
+			warp "new_1-3",96,21;
+			end;
+		case 2:
+			mes "[Muriel]";
+			mes "Pas de problème.";
+			mes "^FF0000Si vous ne savez pas si vous pouvez passer l'épreuve ou non, pourquoi ne parlez-vous pas une fois de plus au [Helper] à gauche ? Veuillez revenir^";
+			mes "^FF0000lorsque vous serez prêt.";
+			close;
+		}
+	}
+	else if (nov_2nd_cos > 30) {
+		mes "[Muriel]";
+		mes "Ah bien, je vous avais dit d'être prudent. Ne soyez pas triste ! Ce n'est pas un grand problème.";
+		mes " ";
+		mes "L'échec enseigne le succès.";
+		mes "Vous avez de nombreuses chances de repasser l'examen.";
+		next;
+		mes "[Muriel]";
+		mes "Voulez-vous essayer à nouveau?";
+		next;
+		switch(select("Yes:Can I have more time?")) {
+		case 1:
+			mes "[Muriel]";
+			mes "Je vais restaurer";
+			mes "vos PV. S'il vous plaît, soyez prudent !";
+			mes "^FF0000Si vous ne savez pas si vous pouvez passer l'épreuve ou non, pourquoi ne parlez-vous pas une fois de plus au [Helper] à gauche ? Veuillez revenir quand vous serez prêt.^";
+			percentheal 100,0;
+			close2;
+			warp "new_1-3",96,21;
+			end;
+		case 2:
+			mes "[Muriel]";
+			mes "Pas de problème.";
+			mes "[Hoffman]";
+			close;
+		}
+	}
+}
+
+//Teleport NPC
+new_1-3,95,30,4	script	Trainer#nv1::NovHoffman	84,{
+	mes "[Hoffman]";
+	mes "Salut ~";
+	mes "[Hoffman]";
+	mes "Ces monstres sont tous faibles et faciles à tuer. Mais soyez prudents, de nombreux monstres sont agressifs et recherchent du sang !";
+	next;
+	mes "[Hoffman]";
+	mes "These monsters are all weak";
+	mes "and easy to kill. But be careful,";
+	mes "a lot of them are aggressive";
+	mes "and out for blood!";
+	next;
+	mes "[Hoffman]";
+	mes "Si vous pensez que les monstres ici sont trop faibles pour vous, je peux vous envoyer dans un autre terrain d'entraînement où les monstres seront plus forts que ceux-ci.";
+	next;
+	mes "[Hoffman]";
+	mes "Mais n'inquiétez-vous pas tant que ça,";
+	mes "Ils ne sont pas impossibles pour";
+	mes "les novices. Alors voudriez-vous";
+	mes "essayer?";
+	next;
+	switch(select("I do want more of a challenge~:I wanna fight tough monsters!:Cancel")) {
+	case 1:
+		mes "[Hoffman]";
+		mes "Je vois, alors laissez-moi vous guider";
+		mes "vers un terrain d'entraînement où les monstres seront plus forts. Que Dieu soit avec vous...";
+		next;
+		if (strnpcinfo(2) == "nv1") {
+			if (rand(2)) {
+				warp "new_2-3",96,21;
+			}
+			else {
+				warp "new_3-3",96,21;
+			}
+		}
+		else {
+			warp "new_1-3",96,21;
+		}	
+		end;
+	case 2:
+		mes "[Hoffman]";
+		mes "Vous devez aimer";
+		mes "les défis difficiles,";
+		mes "n'est-ce pas? S'il vous plaît";
+		mes "soyez prudent, cela peut devenir";
+		mes "très difficile...";
+		next;
+		if (strnpcinfo(2) == "nv1" || strnpcinfo(2) == "nv2" || strnpcinfo(2) == "nv3") {
+			if (rand(2)) {
+				warp "new_4-3",96,21;
+			}
+			else {
+				warp "new_5-3",96,21;
+			}
+		}
+		else {
+			if (rand(2)) {
+				warp "new_2-3",96,21;
+			}
+			else {
+				warp "new_3-3",96,21;
+			}
+		}
+		end;
+	case 3:
+		mes "[Hoffman]";
+		mes "Hmm...?";
+		mes "Êtes-vous inquiet à l'idée d'aller";
+		mes "dans des endroits plus défiantes? C'est compréhensible, puisque vous êtes encore un nouvel aventurier. Bonne chance~";
+		close;
+	}
+}
+
+new_2-3,95,30,4	duplicate(NovHoffman)	Trainer#nv2	84
+new_3-3,95,30,4	duplicate(NovHoffman)	Trainer#nv3	84
+new_4-3,95,30,4	duplicate(NovHoffman)	Trainer#nv4	84
+new_5-3,95,30,4	duplicate(NovHoffman)	Trainer#nv5	84
+
+new_1-3,96,174,3	script	Test Examiner#nv1::NovKeyman	85,{
+	mes "[Keyman]";
+	mes "^FF0000Bon!!";
+	mes "^FF0000Maintenant, tu sais comment combattre";
+	mes "^FF0000contre les monstres, n'est-ce pas?";
+	mes "^FF0000Voudrais-tu passer";
+	mes "^FF0000à l'étape suivante?";
+	next;
+	switch(select("Yes:No")) {
+	case 1:
+		mes "[Keyman]";
+		mes "^FF0000J'espère que tu deviendras";
+		mes "^FF0000un bon combattant dans le";
+		mes "^FF0000futur. Bon voyage.";
+		close2;
+		warp "new_1-4",99,10;
+		return
+		end;
+	case 2:
+		mes "[Keyman]";
+		mes "Je vois...";
+		mes "^FF0000Il ne peut pas faire de mal d'entraîner jusqu'à ce que tu te sentes plus à l'aise avec les bases du combat.";
+		close;
+	}
+}
+
+new_2-3,96,174,3	duplicate(NovKeyman)	Test Examiner#nv2	85
+new_3-3,96,174,3	duplicate(NovKeyman)	Test Examiner#nv3	85
+new_4-3,96,174,3	duplicate(NovKeyman)	Test Examiner#nv4	85
+new_5-3,96,174,3	duplicate(NovKeyman)	Test Examiner#nv5	85
+
+//Potato Merchant
+new_1-2,28,185,4	shop	Potato Merchant	90,516:15
+
+new_1-4,100,29,1	script	Hanson#nv	46,{
+	if (checkweight(909,400) == 0) {
+		mes "[Hanson]";
+		mes "^FF0000Tous les objets que tu portes doivent être assez pesants. D'où as-tu obtenu autant de choses? Veuillez alléger ton poids en te débarrassant des choses dont tu n'as pas besoin.";
+		close;
+	}
+	if (nov_3_swordman == 20) {
+		mes "[Hanson]";
+		mes "Bonjour,";
+		mes "^A62A2A" + strcharinfo(0) + "'^000000.";
+		mes "^FF0000Tu as fait beaucoup";
+		mes "^FF0000d'efforts pour venir ici.";
+		next;
+		mes "[Hanson]";
+		mes "^FF0000Ce dernier test dans les Arènes d'entraînement est un test de personnalité,";
+		mes "^FF0000mais ce n'est pas une étape obligatoire.";
+		next;
+		mes "[Hanson]";
+		mes "Cependant, il y a certains avantages";
+		mes "à passer ce test. Lorsque vous le passez, vous recevrez de nombreux objets pour la santé qui vous seront utiles lorsque vous rejoindrez la communauté de Ragnarok Online.";
+		next;
+		mes "[Hanson]";
+		mes "Deuxièmement, après avoir terminé le cours, nous suggérerons la classe de personnage qui semble être la mieux adaptée à votre personnalité et vous téléporterons dans une ville où vous pourrez changer en fonction du job que nous vous avons proposé.";
+		next;
+		mes "[Hanson]";
+		mes "Maintenant...";
+		mes "Que";
+		mes "aimeriez-vous faire?";
+		next;
+		mes "[Hanson]";
+		mes "Voulez-vous commencer Ragnarok Online immédiatement, ou passer ce cours de test de personnalité d'abord?";
+		next;
+		switch(select("I'll take the course.:Let me start Ragnarok Online please.")) {
+		case 1:
+			mes "[Hanson]";
+			mes "Excellent choix!";
+			mes "Vous devez suivre chaque formation si vous voulez vraiment être un joueur bien préparé!";
+			next;
+			mes "[Hanson]";
+			mes "D'accord, laissez-moi lancer le premier test de personnalité. Détendez-vous";
+			mes "et prenez votre temps.";
+			next;
+			mes "[Hanson]";
+			mes "Rappelez-vous que ce test est uniquement pour vérifier votre personnalité, il n'y a pas d'égard pour les standards de droit et de tort. Maintenant ! Commençons le test!";
+			next;
+			mes "[Hanson]";
+			mes "S'il vous plaît choisissez le mot";
+			mes "qui correspond le mieux à vous parmi";
+			mes "parmi les suivants.";
+			next;
+			switch(select("Study:Exercise:Public service:Violence")) {
+			case 1:
+				set .@magician_p,.@magician_p+1;
+				break;
+			case 2:
+				set .@thief_p,.@thief_p+1;
+				set .@swordman_p,.@swordman_p+1;
+				break;
+			case 3:
+				set .@acolyte_p,.@acolyte_p+1;
+				break;
+			case 4:
+				set .@thief_p,.@thief_p+1;
+				break;
+			}
+			switch(select("Change:Conserve")) {
+			case 1:
+				set .@magician_p,.@magician_p+1;
+				break;
+			case 2:
+				set .@acolyte_p,.@acolyte_p+1;
+				break;
+			}
+			switch(select("Consumer:Seller:Producer")) {
+			case 1:
+				set .@swordman_p,.@swordman_p+1;
+				set .@thief_p,.@thief_p+1;
+				set .@acolyte_p,.@acolyte_p+1;
+				break;
+			case 2:
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			case 3:
+				set .@magician_p,.@magician_p+1;
+				break;
+			}
+			switch(select("Celebrity:Prudence")) {
+			case 1:
+				set .@thief_p,.@thief_p+1;
+				break;
+			case 2:
+				set .@archer_p,.@archer_p+1;
+				break;
+			}
+			switch(select("Theory:Experience")) {
+			case 1:
+				set .@magician_p,.@magician_p+1;
+				break;
+			case 2:
+				set .@swordman_p,.@swordman_p+1;
+				break;
+			}
+			switch(select("The Past:Reality:The Future")) {
+			case 1:
+				set .@archer_p,.@archer_p+1;
+				break;
+			case 2:
+				set .@merchant_p,.@merchant_p+1;
+				set .@thief_p,.@thief_p+1;
+				break;
+			case 3:
+				set .@magician_p,.@magician_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Veuillez répondre";
+			mes "'Oui' ou 'Non' à";
+			mes "les questions suivantes.";
+			next;
+			mes "[Hanson]";
+			mes "^FF0000Je préférerais mourir^FF0000";
+			mes "que de vivre soumis.";
+			next;
+			switch(select("Yes.:No.")) {
+			case 1:
+				set .@swordman_p,.@swordman_p+1;
+				break;
+			case 2:
+				set .@thief_p,.@thief_p+1;
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Vous êtes souvent contrarié";
+			mes "de voir quelqu'un qui est meilleur";
+			mes "que vous.";
+			next;
+			switch(select("Yes.:No.")) {
+			case 1:
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			case 2:
+				set .@acolyte_p,.@acolyte_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Vous n'êtes pas gêné";
+			mes "pour explorer des endroits dangereux";
+			mes ".";
+			next;
+			switch(select("Yes.:No.")) {
+			case 1:
+				set .@swordman_p,.@swordman_p+1;
+				break;
+			case 2:
+				set .@magician_p,.@magician_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Vous êtes";
+			mes "un(e) personne de type leader";
+			mes ".";
+			next;
+			switch(select("Yes.:No.")) {
+			case 1:
+				set .@swordman_p,.@swordman_p+1;
+				break;
+			case 2:
+				set .@archer_p,.@archer_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Tandis que vous explorez";
+			mes "une grotte, vous vous retrouvez";
+			mes "devant une impasse.";
+			next;
+			mes "[Hanson]";
+			mes "Cependant, il y a un panneau indiquant 'Ne Pas Appuyer' à côté d'une pierre qui ressemble étrangement à un bouton sur le mur juste à côté de vous.";
+			next;
+			mes "[Hanson]";
+			mes "Avez-vous envie";
+			mes "d'appuyer";
+			mes "sur ce bouton?";
+			next;
+			switch(select("Yes.:No.")) {
+			case 1:
+				set .@thief_p,.@thief_p+1;
+				break;
+			case 2:
+				set .@swordman_p,.@swordman_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Vous voyez souvent";
+			mes "des choses qui n'existent pas.";
+			next;
+			switch(select("Yes.:No.")) {
+			case 1:
+				set .@acolyte_p,.@acolyte_p+1;
+				break;
+			case 2:
+				set .@magician_p,.@magician_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Si vous tombiez";
+			mes "d'un précipice, vous auriez l'impression";
+			mes "de voler.";
+			next;
+			switch(select("Yes.:No.")) {
+			case 1:
+				set .@acolyte_p,.@acolyte_p+1;
+				break;
+			case 2:
+				set .@magician_p,.@magician_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "L'argent parle.";
+			next;
+			switch(select("Yes.:No.")) {
+			case 1:
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			case 2:
+				set .@archer_p,.@archer_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Maintenant, laissez-moi vous poser quelques questions différentes. Veuillez vous détendre et prenez votre temps, choisissez la réponse qui vous convient le mieux.";
+			next;
+			mes "[Hanson]";
+			mes "vous vérifiez";
+			mes "votre emploi du temps serré....";
+			next;
+			switch(select("You feel like a robot.:You are proud and satisfied.:Schedule? What schedule?")) {
+			case 1:
+				set .@swordman_p,.@swordman_p+1;
+				set .@thief_p,.@thief_p+1;
+				break;
+			case 2:
+				set .@acolyte_p,.@acolyte_p+1;
+				set .@magician_p,.@magician_p+1;
+				break;
+			case 3:
+				set .@archer_p,.@archer_p+1;
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "alors que vous faites de la vitrine,";
+			mes "vous trouvez un article vraiment intéressant dans une boutique et débattez de l'achat ou non.";
+			mes "avant d'effectuer un achat, la première chose que vous faites est...";
+			mes "[Hanson]";
+			next;
+			switch(select("Consider if you need it.:Check the price.:Don't think twice, just buy it!")) {
+			case 1:
+				set .@archer_p,.@archer_p+1;
+				break;
+			case 2:
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			case 3:
+				set .@thief_p,.@thief_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Vous ^3355FF_____^000000";
+			mes "en compétition avec d'autres personnes...";
+			mes "[Hanson]";
+			next;
+			switch(select("don't mind...:don't like...:don't care about...")) {
+			case 1:
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			case 2:
+				set .@thief_p,.@thief_p+1;
+				break;
+			case 3:
+				set .@acolyte_p,.@acolyte_p+1;
+				set .@swordman_p,.@swordman_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "[Hanson]";
+			next;
+			mes "[Hanson]";
+			mes "[Hanson]";
+			next;
+			switch(select("Handle it myself, even if it's hard.:Ask friends to help.")) {
+			case 1:
+				set .@magician_p,.@magician_p+1;
+				break;
+			case 2:
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Vous avez eu la chance de";
+			mes "a perdu conscience dans la rue.";
+			mes "fainted on the street.";
+			mes "^FF0000Qu'allez-vous faire?";
+			next;
+			switch(select("Carry her to a hospital.:Assess the situation before taking action.:Just ignore it.")) {
+			case 1:
+				set .@acolyte_p,.@acolyte_p+1;
+				break;
+			case 2:
+				set .@swordman_p,.@swordman_p+1;
+				set .@archer_p,.@archer_p+1;
+				break;
+			case 3:
+				set .@magician_p,.@magician_p+1;
+				set .@thief_p,.@thief_p+1;
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Vous avez eu la chance de";
+			mes "prendre des 'vêtements'.";
+			mes "^FF0000Qu'allez-vous faire?";
+			next;
+			switch(select("Check the brand.:Wonder who lost it.:Finder's keepers!:Leave it where it was.")) {
+			case 1:
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			case 2:
+				set .@acolyte_p,.@acolyte_p+1;
+				break;
+			case 3:
+				set .@merchant_p,.@merchant_p+1;
+				set .@thief_p,.@thief_p+1;
+				break;
+			case 4:
+				set .@magician_p,.@magician_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Au milieu d'une conversation, vous avez glissé et révélé quelque chose par accident. Comment gérez-vous cette situation?";
+			next;
+			switch(select("Pretend it's a joke.:Change the subject.:Analyze it.:Apologize honestly.")) {
+			case 1:
+				set .@thief_p,.@thief_p+1;
+				break;
+			case 2:
+				set .@swordman_p,.@swordman_p+1;
+				break;
+			case 3:
+				set .@magician_p,.@magician_p+1;
+				break;
+			case 4:
+				set .@acolyte_p,.@acolyte_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "Vous êtes en voyage avec votre bien-aimé(e). Votre partenaire vous demande alors d'acheter un souvenir qui n'est pas particulièrement bon. Que faites-vous?";
+			next;
+			switch(select("Buy the item for her/him.:Say 'no.':Promise it for next time.")) {
+			case 1:
+				set .@swordman_p,.@swordman_p+1;
+				break;
+			case 2:
+				set .@merchant_p,.@merchant_p+1;
+				break;
+			case 3:
+				set .@thief_p,.@thief_p+1;
+				break;
+			}
+			mes "[Hanson]";
+			mes "D'accord~ ! C'est tout pour le test. Vous avez terminé tous les cours des Arènes de Formation. Félicitations!";
+			next;
+			mes "[Hanson]";
+			mes "Je vous ai préparé quelques objets depuis que vous avez réussi l'épreuve de personnalité. Prenez-les, car vous les méritez.";
+			next;
+			//---------------------------------------------------------------------------------------------------------------------------------------------------
+			set nov_3_swordman,40;
+			getitem 501,4; //Red_Potion
+			getitem 503,2; //Yellow_Potion
+			getitem 506,2; //Green_Potion
+			//-------------------------------------------------------------------------------------------------------------------------------------------------
+			next;
+			mes "[Hanson]";
+			mes "Maintenant, nous allons vous recommander un emploi approprié après avoir analysé les résultats de votre test de personnalité. Veuillez patienter un moment.";
+			next;
+			mes "[Hanson]";
+			mes "...";
+			next;
+			mes "[Hanson]";
+			mes "...";
+			mes "....";
+			next;
+			mes "[Hanson]";
+			mes "Voici le";
+			mes "résultat final";
+			mes "de votre test.";
+			next;
+			if (.@swordman_p > .@magician_p) {
+				if (.@swordman_p > .@merchant_p) {
+					if (.@swordman_p > .@thief_p) {
+						if (.@swordman_p > .@archer_p) {
+							if (.@swordman_p > .@acolyte_p) {
+								set .@job_c,1;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+						else {
+							if (.@archer_p > .@acolyte_p) {
+								set .@job_c,5;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+					}
+					else {
+						if (.@thief_p > .@archer_p) {
+							if (.@thief_p > .@acolyte_p) {
+								set .@job_c,4;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+						else {
+							if (.@archer_p > .@acolyte_p) {
+								set .@job_c,5;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+					}
+				}
+				else {
+					if (.@merchant_p > .@thief_p) {
+						if (.@merchant_p > .@archer_p) {
+							if (.@merchant_p > .@acolyte_p) {
+								set .@job_c,3;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+						else {
+							if (.@archer_p > .@acolyte_p) {
+								set .@job_c,5;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+					}
+					else {
+						if (.@thief_p > .@archer_p) {
+							if (.@thief_p > .@acolyte_p) {
+								set .@job_c,4;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+						else {
+							if (.@archer_p > .@acolyte_p) {
+								set .@job_c,5;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+					}
+				}
+			}
+			else {
+				if (.@magician_p > .@merchant_p) {
+					if (.@magician_p > .@thief_p) {
+						if (.@magician_p > .@archer_p) {
+							if (.@magician_p > .@acolyte_p) {
+								set .@job_c,2;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+						else {
+							if (.@archer_p > .@acolyte_p) {
+								set .@job_c,5;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+					}
+					else {
+						if (.@thief_p > .@archer_p) {
+							if (.@thief_p > .@acolyte_p) {
+								set .@job_c,4;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+						else {
+							if (.@archer_p > .@acolyte_p) {
+								set .@job_c,5;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+					}
+				}
+				else {
+					if (.@merchant_p > .@thief_p) {
+						if (.@merchant_p > .@archer_p) {
+							if (.@merchant_p > .@acolyte_p) {
+								set .@job_c,3;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+						else {
+							if (.@archer_p > .@acolyte_p) {
+								set .@job_c,5;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+					}
+					else {
+						if (.@thief_p > .@archer_p) {
+							if (.@thief_p > .@acolyte_p) {
+								set .@job_c,4;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+						else {
+							if (.@archer_p > .@acolyte_p) {
+								set .@job_c,5;
+							}
+							else {
+								set .@job_c,6;
+							}
+						}
+					}
+				}
+			}
+			if (.@job_c == 1) {
+				mes "[Hanson]";
+				mes "Bien que vous soyez très direct et simple d'esprit, vous";
+				mes "avez une volonté forte et voulez devenir une personne importante pour ce monde.";
+				next;
+				mes "[Hanson]";
+				mes "vous efforcez toujours";
+				mes "de protéger les faibles.";
+				next;
+				mes "[Hanson]";
+				mes "Pour vous, qui avez votre propre volonté, ^696969Classe Swordman^000000 est la meilleure classe pour vous.";
+				next;
+				mes "[Hanson]";
+				mes "Alors, accepteriez-vous notre recommandation, ou aimeriez-vous choisir une profession par vous-même?";
+				next;
+				switch(select("Swordman!:My own choice!")) {
+				case 1:
+					mes "[Hanson]";
+					mes "C'est un choix excellent!";
+					mes "Après avoir reçu toutes les fournitures, je vais vous téléporter à l'Association des Swordman.";
+					next;
+					mes "^660000Liste des Fournitures^000000";
+					mes "^0000335 Billet Gratuit pour le Stockage Kafra^000000";
+					mes "^0000335 Billet Gratuit pour la Téléportation Kafra^000000";
+					////mes "^000099100 zeny^000000";
+					mes "^000033Falchion^000000";
+					mes "^0000337 Phracon^000000";
+					next;
+					set nov_3_swordman,40;
+					getitem 7059,5; //Cargo_Free_Ticket
+					getitem 7060,5; //Warp_Free_Ticket
+					getitem 1104,1; //Falchion
+					getitem 1010,7; //Phracon
+					////getgold 100
+					mes "[Hanson]";
+					mes "Vérifiez votre inventaire pour vous assurer que vous avez reçu tous les fournitures listés. Je vais vous informer brièvement sur les objets que vous avez reçus.";
+					next;
+					mes "[Hanson]";
+					mes "[Hanson]";
+					next;
+					mes "[Hanson]";
+					mes "'Zeny' est la monnaie de Midgard. 'Falchion' est une arme qui sera très utile dès que vous serez un Swordman.";
+					next;
+					mes "[Hanson]";
+					mes "'Phracon' est un minerai qui peut être utilisé pour améliorer les armes de niveau 1. Pour renforcer votre Falchion avec ce Phracon, merci de visiter une forge dans l'une des villes.";
+					next;
+					mes "[Hanson]";
+					mes "La ville où vous serez envoyé est appelée Izlude qui est un satellite de Prontera. L'Association des Swordman se trouve à l'Ouest de la ville. Merci de bien le retenir.";
+					next;
+					mes "[Hanson]";
+					mes "Vous allez maintenant";
+					mes "être téléporté.";
+					mes "^FF0000Bon courage,";
+					mes "^A62A2A" + strcharinfo(0) + "^000000";
+					mes "^FF0000et au revoir.";
+					close2;
+					set nov_1st_cos,0;
+					set nov_2nd_cos,0;
+					set nov_3_swordman,0;
+					set nov_3_archer,0;
+					set nov_3_thief,0;
+					set nov_3_magician,0;
+					set nov_3_acolyte,0;
+					set nov_3_merchant,0;
+					savepoint "izlude",93,104,1,1;
+					warp "izlude_in",74,167;
+					end;
+				case 2:
+					callsub S_UserJobchoice,"Swordsman";
+					end;
+				}
+			}
+			else if (.@job_c == 2) {
+				mes "[Hanson]";
+				mes "Vous aimez analyser les choses autour de vous et vous êtes très indépendant. Vous avez un jugement perspicace et vous pouvez être timide et logique.";
+				next;
+				mes "[Hanson]";
+				mes "Pour vous, l'intellectuel observateur, ^696969Mage^000000 est le métier le plus adapté.";
+				next;
+				mes "[Hanson]";
+				mes "Alors, voudrais-tu accepter notre recommandation ou préfères-tu choisir ton propre métier?";
+				next;
+				switch(select("Mage!:My own choice!")) {
+				case 1:
+					mes "[Hanson]";
+					mes "C'est un choix excellent!";
+					mes "Une fois que vous aurez reçu tous les fournitures, je vais vous téléporter à la ville des Mages.";
+					next;
+					mes "^660000Liste des Fournitures^000000";
+					mes "^0000335 Billet Gratuit pour le Stockage Kafra^000000";
+					mes "^0000335 Billet Gratuit pour la Téléportation Kafra^000000";
+					////mes "^000099100 zeny^000000";
+					mes "^0000331 Bâton^000000";
+					mes "^0000331 Cutter^000000";
+					mes "^0000337 Phracon^000000";
+					next;
+					//---------------------------------------------------------------------------------------------------------------------------------------------------
+					set nov_3_swordman,40;
+					getitem 7059,5; //Cargo_Free_Ticket
+					getitem 7060,5; //Warp_Free_Ticket
+					getitem 1601,1; //Rod
+					getitem 1204,1; //Cutter
+					getitem 1010,7; //Phracon
+					////getgold 100
+					//---------------------------------------------------------------------------------------------------------------------------------------------------
+					mes "[Hanson]";
+					mes "Vérifiez votre inventaire pour vous assurer que vous avez reçu tous les fournitures listés. Je vais vous informer brièvement sur les objets que vous avez reçus.";
+					next;
+					mes "[Hanson]";
+					mes "[Hanson]";
+					next;
+					mes "[Hanson]";
+					mes "'Zeny' est la monnaie du Midgard. Ce 'Cutter' vous a été donné afin que vous puissiez combattre des monstres avant de devenir un Mage.";
+					next;
+					mes "[Hanson]";
+					mes "Une fois que vous serez devenu un Mage, vous pourrez utiliser le 'Bâton' qui vous a été donné. Il sera très utile pendant vos premiers jours en tant que Mage.";
+					next;
+					mes "[Hanson]";
+					mes "Phracon est une roche qui peut être utilisée pour améliorer les armes de niveau 1. Pour renforcer vos armes de Niveau 1 avec cette Phracon, veuillez vous rendre à un fourneau dans l'un des villages.";
+					next;
+					mes "[Hanson]";
+					mes "La ville que vous allez atteindre s'appelle 'Geffen'.";
+					mes "L'académie de magie est située dans la partie nord-ouest de la ville. Veuillez m'en souvenir.";
+					next;
+					mes "[Hanson]";
+					mes "Vous serez maintenant téléporté.";
+					mes "Good luck, ^A62A2A" + strcharinfo(0) + "^000000 and farewell.";
+					close2;
+					set nov_1st_cos,0;
+					set nov_2nd_cos,0;
+					set nov_3_swordman,0;
+					set nov_3_archer,0;
+					set nov_3_thief,0;
+					set nov_3_magician,0;
+					set nov_3_acolyte,0;
+					set nov_3_merchant,0;
+					savepoint "geffen",119,37,1,1;
+					warp "geffen_in",163,98;
+					end;
+				case 2:
+					callsub S_UserJobchoice,"Mage";
+					end;
+				}
+			}
+			else if (.@job_c == 3) {
+				mes "[Hanson]";
+				mes "Vous êtes très volontaire et très bien organisé. Vous avez déjà fixé un objectif dans la vie et vous êtes devenu extrêmement responsable envers vos actions.";
+				next;
+				mes "[Hanson]";
+				mes "En raison de votre détermination et de votre désir de réussir, ^696969Commerçant^000000 est le métier le plus adapté pour vous.";
+				next;
+				mes "[Hanson]";
+				mes "Alors, voudrais-tu accepter notre recommandation ou préfères-tu choisir ton propre métier?";
+				next;
+				switch(select("Merchant!:My own choice!")) {
+				case 1:
+					mes "[Hanson]";
+					mes "C'est un choix excellent!";
+					mes "Après avoir reçu tous les fournitures, je vais vous téléporter à la ville des commerçants.";
+					next;
+					mes "^660000Liste des Fournitures^000000";
+					mes "^0000334 Billet gratuit pour le service de stockage Kafra^000000";
+					mes "^0000334 Billet gratuit pour le service de transport Kafra^000000";
+					mes "^0000334 Billet gratuit pour le service de chariot^000000";
+					////mes "^000099100 zeny^000000";
+					mes "^000033Hache de guerre^000000";
+					mes "^0000337 Phracon^000000";
+					next;
+					//---------------------------------------------------------------------------------------------------------------------------------------------------
+					set nov_3_swordman,40;
+					getitem 7059,4; //Cargo_Free_Ticket
+					getitem 7060,4; //Warp_Free_Ticket
+					getitem 7061,4; //Cart_Free_Ticket
+					getitem 1351,1; //Battle_Axe
+					getitem 1010,7; //Phracon
+					////getgold 100
+					//---------------------------------------------------------------------------------------------------------------------------------------------------
+					mes "[Hanson]";
+					mes "Vérifiez votre inventaire pour vous assurer que vous avez reçu tous les fournitures listés. Je vais vous informer brièvement sur les objets que vous avez reçus.";
+					next;
+					mes "[Hanson]";
+					mes "[Hanson]";
+					next;
+					mes "[Hanson]";
+					mes "'Zeny' est la monnaie d’Edelgard. La 'Hache de guerre' sera utile lorsque vous deviendrez Marchand.";
+					next;
+					mes "[Hanson]";
+					mes "'Phracon' est un minerai qui peut être utilisé pour améliorer les armes lvl 1. Pour renforcer votre Hache de guerre avec ce Phracon, veuillez visiter une forge dans l’un des villages.";
+					next;
+					mes "[Hanson]";
+					mes "La ville à laquelle vous serez envoyé est nommée Alberta. La Guilde des Marchands se trouve au Sud-Ouest d’Alberta. Veuillez vous en souvenir.";
+					next;
+					mes "[Hanson]";
+					mes "Vous allez maintenant";
+					mes "être téléporté.";
+					mes "^FF0000Bon courage,";
+					mes "^A62A2A" + strcharinfo(0) + "^000000";
+					mes "^FF0000et au revoir.";
+					close2;
+					set nov_1st_cos,0;
+					set nov_2nd_cos,0;
+					set nov_3_swordman,0;
+					set nov_3_archer,0;
+					set nov_3_thief,0;
+					set nov_3_magician,0;
+					set nov_3_acolyte,0;
+					set nov_3_merchant,0;
+					savepoint "alberta",30,232,1,1;
+					warp "alberta_in",62,44;
+					end;
+				case 2:
+					callsub S_UserJobchoice,"Merchant";
+					end;
+				}
+			}
+			else if (.@job_c == 4) {
+				mes "[Hanson]";
+				mes "Carpe diem:";
+				mes "Saisissez la journée.";
+				mes "^FF0000C'est ainsi que tu vis.";
+				next;
+				mes "[Hanson]";
+				mes "De ta curiosité naturelle";
+				mes "naît un sens de l'aventure heureux et insouciant, et un désir d'exploration.";
+				next;
+				mes "[Hanson]";
+				mes "Pour quelqu'un comme toi,";
+				mes "^696969Voleur^000000 est le métier le plus approprié.";
+				next;
+				mes "[Hanson]";
+				mes "Alors, voudrais-tu accepter notre recommandation ou préfères-tu choisir ton propre métier?";
+				next;
+				switch(select("Thief!:My own choice!")) {
+				case 1:
+					mes "[Hanson]";
+					mes "C'est un choix excellent!";
+					mes "Après avoir reçu tous les fournitures, je vais te téléporter dans la ville du Voleur.";
+					next;
+					mes "^660000Liste des Fournitures^000000";
+					mes "^0000335 Billet Gratuit pour le Stockage Kafra^000000";
+					mes "^0000335 Billet Gratuit pour la Téléportation Kafra^000000";
+					////mes "^000099100 Zeny^000000";
+					mes "^000033Main Gauche^000000";
+					mes "^0000337 Phracon^000000";
+					next;
+					//---------------------------------------------------------------------------------------------------------------------------------------------------
+					set nov_3_swordman,40;
+					getitem 7059,5; //Cargo_Free_Ticket
+					getitem 7060,5; //Warp_Free_Ticket
+					getitem 1207,1; //Main_Gauche
+					getitem 1010,7; //Phracon
+					////getgold 100
+					//---------------------------------------------------------------------------------------------------------------------------------------------------
+					mes "[Hanson]";
+					mes "Vérifiez votre inventaire pour vous assurer que vous avez reçu tous les fournitures listés. Je vais vous informer brièvement sur les objets que vous avez reçus.";
+					next;
+					mes "[Hanson]";
+					mes "[Hanson]";
+					next;
+					mes "[Hanson]";
+					mes "'Zeny' est la monnaie d'Ange (Midgard). 'Main Gauche' est une arme qui sera très utile lorsque vous deviendrez un Voleur.";
+					next;
+					mes "[Hanson]";
+					mes "'Phracon' est une roche que l'on peut utiliser pour améliorer les armes de niveau 1. Pour renforcer votre Main Gauche avec cette Phracon, veuillez visiter une forge dans l'un des villages.";
+					next;
+					mes "[Hanson]";
+					mes "La ville où vous serez envoyé s'appelle Morocc. La Guilde du Voleur se trouve au premier sous-sol de la pyramide située à l'ouest-nord-ouest de Morocc. Gardez cela en tête.";
+					next;
+					mes "[Hanson]";
+					mes "Vous allez maintenant";
+					mes "être téléporté.";
+					mes "^FF0000Bon courage,";
+					mes "^A62A2A" + strcharinfo(0) + "^000000";
+					mes "^FF0000et au revoir.";
+					close2;
+					savepoint "morocc",150,99,1,1;
+					warp "moc_ruins",155,44;
+					end;
+				case 2:
+					callsub S_UserJobchoice,"Thief";
+					end;
+				}
+			}
+			else if (.@job_c == 5) {
+				mes "[Hanson]";
+				mes "Vous essayez toujours de comprendre les autres, même s'ils sont étranges. Vous attendez que les autres essaient de vous comprendre.";
+				next;
+				mes "[Hanson]";
+				mes "Vous refusez d'être une personne ordinaire tandis que vous poursuivez votre rêve. En tant que personne sensible à la nature, ^696969Archer^000000 est le métier le plus adapté pour vous.";
+				next;
+				mes "[Hanson]";
+				mes "Alors, voudrais-tu accepter notre recommandation ou préfères-tu choisir ton propre métier?";
+				next;
+				switch(select("Archer!:My own choice!")) {
+				case 1:
+					mes "[Hanson]";
+					mes "C'est un choix excellent!";
+					mes "Une fois que vous aurez reçu tous les fournitures, je vous téléporterai dans la ville des Archers.";
+					next;
+					mes "^660000Liste des Fournitures^000000";
+					mes "^0000335 Billet Gratuit pour le Stockage Kafra^000000";
+					mes "^0000335 Billet Gratuit pour la Téléportation Kafra^000000";
+					////mes "^000099100 Zeny^000000";
+					mes "^000033Fleuve Composite^000000";
+					mes "^0000337 Phracon^000000";
+					next;
+					//---------------------------------------------------------------------------------------------------------------------------------------------------
+					set nov_3_swordman,40;
+					getitem 7059,5; //Cargo_Free_Ticket
+					getitem 7060,5; //Warp_Free_Ticket
+					getitem 1704,1; //Composite_Bow
+					getitem 1010,7; //Phracon
+					////getgold 100
+					//---------------------------------------------------------------------------------------------------------------------------------------------------
+					mes "[Hanson]";
+					mes "Vérifiez votre inventaire pour vous assurer que vous avez reçu tous les fournitures listés. Je vais vous informer brièvement sur les objets que vous avez reçus.";
+					next;
+					mes "[Hanson]";
+					mes "[Hanson]";
+					next;
+					mes "[Hanson]";
+					mes "'Zeny' est la monnaie d’Aden. 'Fleuve Composite' est une arme qui sera très utile lorsque vous serez Archer.";
+					next;
+					mes "[Hanson]";
+					mes "'Phracon' est un minéral qui peut être utilisé pour améliorer les armes de niveau 1. Pour renforcer votre Fleuve Composite avec ce Phracon, veuillez visiter une forge dans l'une des villes.";
+					next;
+					mes "[Hanson]";
+					mes "La ville vers laquelle vous serez envoyé est nommée Payon. Le Guilde des Archers se trouve au nord-ouest de la ville. N'oubliez pas cela.";
+					next;
+					mes "[Hanson]";
+					mes "Vous allez maintenant";
+					mes "être téléporté.";
+					mes "^FF0000Bon courage,";
+					mes "^A62A2A" + strcharinfo(0) + "^000000";
+					mes "^FF0000et au revoir.";
+					close2;
+					set nov_1st_cos,0;
+					set nov_2nd_cos,0;
+					set nov_3_swordman,0;
+					set nov_3_archer,0;
+					set nov_3_thief,0;
+					set nov_3_magician,0;
+					set nov_3_acolyte,0;
+					set nov_3_merchant,0;
+					savepoint "payon",70,100,1,1;
+					warp "payon_in02",64,65;
+					end;
+				case 2:
+					callsub S_UserJobchoice,"Archer";
+					end;
+				}
+			}
+			else if (.@job_c == 6) {
+				mes "[Hanson]";
+				mes "Vous êtes très généreux et considérable. Vous êtes prêt à sacrifier votre bien-être pour le bénéfice des autres.";
+				next;
+				mes "[Hanson]";
+				mes "Vous êtes toujours impatient d'aider les autres, c'est pourquoi vous êtes si apprécié.";
+				next;
+				mes "[Hanson]";
+				mes "Pour toi qui es généreux de cœur, ^696969Acolyte^000000 est le métier le plus approprié.";
+				next;
+				mes "[Hanson]";
+				mes "Alors, voudrais-tu accepter notre recommandation ou préfères-tu choisir ton propre métier?";
+				next;
+				switch(select("Acolyte!:My own choice!")) {
+				case 1:
+					mes "[Hanson]";
+					mes "C'est un choix excellent!";
+					mes "Après avoir reçu tous les fournitures, je vais te téléporter derrière le Sanctuaire.";
+					next;
+					mes "^660000Liste des Fournitures^000000";
+					mes "^0000335 Billet Gratuit pour le Stockage Kafra^000000";
+					mes "^0000335 Billet Gratuit pour la Téléportation Kafra^000000";
+					////mes "^000099100 Zeny^000000";
+					mes "^0000331 Massue^000000";
+					mes "^0000337 Phracon^000000";
+					next;
+					//---------------------------------------------------------------------------------------------------------------------------------------------------
+					set nov_3_swordman,40;
+					getitem 7059,5; //Cargo_Free_Ticket
+					getitem 7060,5; //Warp_Free_Ticket
+					getitem 1504,1; //Mace
+					getitem 1010,7; //Phracon
+					////getgold 100
+					//---------------------------------------------------------------------------------------------------------------------------------------------------
+					mes "[Hanson]";
+					mes "Vérifiez votre inventaire pour vous assurer que vous avez reçu tous les fournitures listés. Je vais vous informer brièvement sur les objets que vous avez reçus.";
+					next;
+					mes "[Hanson]";
+					mes "[Hanson]";
+					next;
+					mes "[Hanson]";
+					mes "'Zeny' est la monnaie d'Midgard. 'Mace' est une arme qui sera très utile une fois que vous serez un Acolyte.";
+					next;
+					mes "[Hanson]";
+					mes "'Phracon' est un minerai qui peut être utilisé pour améliorer des armes de niveau 1. Pour renforcer votre Mace avec ce Phracon, veuillez vous rendre à une forge dans l'un des villages.";
+					next;
+					mes "[Hanson]";
+					mes "Vous avez choisi d'être un Acolyte. La ville où vous serez envoyé est nommée Prontera. Le Sanctuaire se trouve au Nord-Est de Prontera. Gardez cela à l'esprit.";
+					next;
+					mes "[Hanson]";
+					mes "Vous allez maintenant";
+					mes "être téléporté.";
+					mes "^FF0000Bon courage,";
+					mes "^A62A2A" + strcharinfo(0) + "^000000";
+					mes "^FF0000et au revoir.";
+					close2;
+					set nov_1st_cos,0;
+					set nov_2nd_cos,0;
+					set nov_3_swordman,0;
+					set nov_3_archer,0;
+					set nov_3_thief,0;
+					set nov_3_magician,0;
+					set nov_3_acolyte,0;
+					set nov_3_merchant,0;
+					savepoint "prontera",117,72,1,1;
+					warp "prt_church",172,19;
+					end;
+				case 2:
+					callsub S_UserJobchoice,"Acolyte";
+					end;
+				}
+			}
+		case 2:
+			mes "[Hanson]";
+			mes "Vous ne pouvez pas donner une telle fleur précieuse à n'importe qui.";
+			mes "Laissez-moi vous transporter";
+			mes "dans le monde de";
+			mes "Ragnarok Online";
+			mes "immédiatement.";
+			next;
+			mes "[Hanson]";
+			mes "Pour plus d'informations et de connaissances, j'espère que vous obtiendrez vos propres expériences dans Midgard.";
+			next;
+			mes "[Hanson]";
+			mes "Enfin...";
+			mes "J'espère que vous allez";
+			mes "devenir un bon joueur,";
+			mes ""+ strcharinfo(0) +".";
+			mes "Au revoir.";
+			next;
+			set nov_3_swordman,40;
+			set nov_1st_cos,0;
+			set nov_2nd_cos,0;
+			set nov_3_swordman,0;
+			set nov_3_archer,0;
+			set nov_3_thief,0;
+			set nov_3_magician,0;
+			set nov_3_acolyte,0;
+			set nov_3_merchant,0;
+			set .@startmap,rand(1,6);
+			if ((.@startmap > 0) && (.@startmap < 2)) {
+				savepoint "prontera",117,72,1,1;
+				warp "prt_fild08",170,371;
+			}
+			else if ((.@startmap > 1) && (.@startmap < 3)) {
+				savepoint "geffen",119,37,1,1;
+				warp "gef_fild07",327,188;
+			}
+			else if ((.@startmap > 2) && (.@startmap < 4)) {
+				savepoint "alberta",30,232,1,1;
+				warp "pay_fild03",388,70;
+			}
+			else if ((.@startmap > 3) && (.@startmap < 5)) {
+				savepoint "morocc",150,99,1,1;
+				warp "moc_fild07",198,39;
+			}
+			else if ((.@startmap > 4) && (.@startmap < 6)) {
+				savepoint "payon",256,242,1,1;
+				warp "pay_fild01",334,354;
+			}
+			else if ((.@startmap > 5) && (.@startmap < 7)) {
+				savepoint "izlude",93,104,1,1;
+				warp "prt_fild08",357,212;
+			}
+			end;
+		}
+	}
+	else if (nov_3_swordman == 40) {
+		mes "[Hanson]";
+		mes "^FF0000 Hmmm...?";
+		mes "Pourquoi êtes-vous";
+		mes "toujours ici ?";
+		next;
+		mes "[Hanson]";
+		mes "Vous n'avez rien dit, donc";
+		mes "j'ai supposé que vous étiez déjà parti. Puisque vous avez terminé l'épreuve finale et que je vous ai donné tous les fournitures...";
+		next;
+		mes "[Hanson]";
+		mes "La seule chose";
+		mes "restante à faire est de vous mener";
+		mes "à Midgard~";
+		next;
+		set nov_1st_cos,0;
+		set nov_2nd_cos,0;
+		set nov_3_swordman,0;
+		set nov_3_archer,0;
+		set nov_3_thief,0;
+		set nov_3_magician,0;
+		set nov_3_acolyte,0;
+		set nov_3_merchant,0;
+		set .@startmap,rand(1,6);
+		if ((.@startmap > 0) && (.@startmap < 2)) {
+			savepoint "prontera",117,72,1,1;
+			warp "prt_fild08",170,371;
+		}
+		else if ((.@startmap > 1) && (.@startmap < 3)) {
+			savepoint "geffen",119,37,1,1;
+			warp "gef_fild07",327,188;
+		}
+		else if ((.@startmap > 2) && (.@startmap < 4)) {
+			savepoint "alberta",30,232,1,1;
+			warp "pay_fild03",388,70;
+		}
+		else if ((.@startmap > 3) && (.@startmap < 5)) {
+			savepoint "morocc",150,99,1,1;
+			warp "moc_fild07",198,39;
+		}
+		else if ((.@startmap > 4) && (.@startmap < 6)) {
+			savepoint "payon",70,100,1,1;
+			warp "pay_fild01",334,354;
+		}
+		else if ((.@startmap > 5) && (.@startmap < 7)) {
+			savepoint "izlude",93,104,1,1;
+			warp "prt_fild08",357,212;
+		}
+		end;
+	}
+	else {
+		mes "[Hanson]";
+		mes "Bonjour, vous";
+		mes "must be "+ strcharinfo(0) +".";
+		next;
+		mes "[Hanson]";
+		mes "Je suis Hanson,";
+		mes "la personne en";
+		mes "charge du";
+		mes "test de personnalité.";
+		next;
+		mes "[Hanson]";
+		mes "Veuillez parler";
+		mes "à Bruce pour la";
+		mes "'Explication des Classes'";
+		mes "avant que nous ne commencions votre";
+		mes "test. Merci.";
+		close;
+	}
+
+S_UserJobchoice:
+	mes "[Hanson]";
+	mes "Je vois. C'est votre choix.";
+	mes "Il n'y a aucune obligation de changer vers le métier que nous recommandons. Veuillez choisir le métier que vous souhaitez devenir.";
+	next;
+	select( "Swordsman:Mage:Merchant:Thief:Archer:Acolyte" );
+	// @menu is already set by Core.
+	setarray .@Jobs$[1],"Swordsman","Mage","Merchant","Thief","Archer","Acolyte";
+
+	mes "[Hanson]";
+	mes "Vous avez choisi";
+	if (@menu == 1) {
+		mes "de devenir un Épéiste.";
+		mes "Vous serez envoyé à";
+		mes "la ville d'Izlude.";
+		next;
+		mes "[Hanson]";
+		mes "L'association des Épéistes se trouve au nord-ouest dans Izlude. Veuillez vous en souvenir.";
+	}
+	else if (@menu == 2) {
+		mes "de devenir un Mage.";
+		mes "Vous serez envoyé à";
+		mes "la ville de Geffen.";
+		next;
+		mes "[Hanson]";
+		mes "L'Académie des Mages se trouve dans le coin Nord-Ouest de la ville. Veuillez vous en souvenir.";
+	}
+	else if (@menu == 3) {					
+		mes "devenir un Marchand.";
+		mes "Vous serez envoyé à";
+		mes "la ville d'Alberta.";
+	}
+	else if (@menu == 4) {
+		mes "devenir un Voleur.";
+		mes "Vous serez envoyé à";
+		mes "la ville de Morocc.";
+		next;
+		mes "[Hanson]";
+		mes "La Guilde des Voleurs se trouve au premier étage souterrain d'une pyramide située dans le coin Nord-Ouest de la ville. Veuillez vous en souvenir.";
+	}
+	else if (@menu == 5) {
+		mes "devenir un Tireur.";
+		mes "Vous serez envoyé à";
+		mes "la ville de Payon.";
+		next;
+		mes "[Hanson]";
+		mes "La Guilde des Tireurs se trouve dans le coin Nord-Ouest de la ville. Veuillez vous en souvenir.";
+	}
+	else {
+		mes "devenir un Acolyte.";
+		mes "Vous serez envoyé à";
+		mes "la ville de Prontera.";
+		next;
+		mes "[Hanson]";
+		mes "Le sanctuaire de Prontera se trouve au nord-est dans la ville de Prontera. Souvenez-vous-en.";
+	}
+	next;
+	mes "[Hanson]";
+	mes "Permettez-moi de vous donner";
+	mes "quelques fournitures. Puis";
+	mes "vous serez transporté";
+	mes "dans la ville choisie.";
+	next;
+	mes "^660000Liste des Fournitures^000000";
+	mes "^0000335 Billet Gratuit pour le Stockage Kafra^000000";
+	mes "^0000335 Billet Gratuit pour la Téléportation Kafra^000000";
+	mes "^0000331 Costume de l'Aventureur^000000";
+	////mes "^000099100 Zeny^000000";
+	next;
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	set nov_3_swordman,40;
+	getitem 7059,5; //Cargo_Free_Ticket
+	getitem 7060,5; //Warp_Free_Ticket
+	getitem 2305,1; //Adventure_Suit
+	////getgold 100
+	//------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	mes "[Hanson]";
+	mes "Veuillez vérifier votre inventaire pour voir si vous avez reçu toutes les fournitures listées. Je vais vous informer brièvement des articles que vous avez reçus.";
+	mes "[Hanson]";
+	next;
+	mes "[Hanson]";
+	mes "[Hanson]";
+	next;
+	mes "[Hanson]";
+	mes "'Zeny' is the currency of Midgard. The 'Adventurer's Suit' will come in handy once you become a " + .@Jobs$[@menu] + ".";
+	next;
+	mes "[Hanson]";
+	mes "Vous allez maintenant";
+	mes "être téléporté.";
+	mes "^FF0000Bon courage,";
+	mes "^A62A2A" + strcharinfo(0) + "^000000";
+	mes "^FF0000et au revoir.";
+	next;
+	set nov_1st_cos,0;
+	set nov_2nd_cos,0;
+	set nov_3_swordman,0;
+	set nov_3_archer,0;
+	set nov_3_thief,0;
+	set nov_3_magician,0;
+	set nov_3_acolyte,0;
+	set nov_3_merchant,0;
+	if(@menu == 1) {
+		savepoint "izlude",93,104,1,1;
+		warp "izlude_in",74,167;
+	}
+	else if (@menu == 2) {
+		savepoint "geffen",119,37,1,1;
+		warp "geffen_in",163,98;
+	}
+	else if (@menu == 3) {
+		savepoint "alberta",30,232,1,1;
+		warp "alberta_in",62,44;
+	}
+	else if (@menu == 4) {
+		savepoint "morocc",150,99,1,1;
+		warp "moc_ruins",155,44;
+	}
+	else if (@menu == 5) {
+		savepoint "payon",70,100,1,1;
+		warp "payon_in02",64,65;
+	}
+	else {
+		savepoint "prontera",117,72,1,1;
+		warp "prt_church",172,19;
+	}
+	return;
+}
+
+//Novice Instructor
+new_1-4,91,22,4	script	Bruce#nv	57,{
+	if (Class == Job_Novice) {
+		if (nov_3_swordman == 20) {
+			mes "[Bruce]";
+			mes "Permettez-moi de vous expliquer les";
+			mes "classes de première classe";
+			mes "une fois de plus.";
+			mes "Quelle classe aviez-vous";
+			mes "en tête?";
+			next;
+			while(1) {
+				switch(select("Swordman:Mage:Archer:Merchant:Thief:Acolyte:End conversation.")) {
+				case 1:
+					mes "[Bruce]";
+					mes "Comme son nom l'indique, le";
+					mes "Swordman est un expert dans l'utilisation des épées. Ils peuvent également utiliser les armes de lance, mais on ne voit pas souvent des Swordmen utilisant une lance.";
+					next;
+					mes "[Bruce]";
+					mes "Les Swordmans possèdent une force physique considérable leur permettant d'équiper de l'armure et des armes lourdes. La plupart des classes d'armes, à l'exception des arcs et des bâtons, peuvent être équipées par la classe Swordman.";
+					next;
+					mes "[Bruce]";
+					mes "Le seul point faible de la classe Swordman est qu'ils ne peuvent pas utiliser des sorts magiques. Cependant, cela peut être compensé en utilisant des armes avec un attribut élémentaire.";
+					next;
+					mes "[Bruce]";
+					mes "L'un des plus grands avantages d'être un Swordman est de posséder une quantité énorme de points de vie (HP), ce qui signifie qu'ils peuvent mieux résister aux dommages infligés par leurs ennemis.";
+					next;
+					mes "[Bruce]";
+					mes "Après avoir appris quelques compétences d'attaque puissantes, le Swordman est presque invincible dans un combat à distance rapprochée.";
+					next;
+					mes "[Bruce]";
+					mes "Dans Ragnarok Online, les Swordmen occupent généralement la position de tank, protégeant les personnages des autres classes des attaques ou des blessures.";
+					next;
+					mes "[Bruce]";
+					mes "Un Swordman est le personnage idéal pour prendre la position de leader du groupe. Lorsqu'ils avancent vers leur classe de Second Job, les Swordmen peuvent changer leurs métiers en ^8E2323Chevalier^000000 ou en ^8E2323Croisé^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 2:
+					mes "[Bruce]";
+					mes "La classe Mage se spécialise dans l'utilisation des forces du feu, de l'eau, de la terre et de la foudre pour attaquer leurs ennemis.";
+					next;
+					mes "[Bruce]";
+					mes "Cependant, en raison de leur faible force physique, ils ne sont autorisés qu'à équiper des bâtons et des couteaux comme armes, et à porter une armure légère pour la défense.";
+					next;
+					mes "[Bruce]";
+					mes "Malgré leur faiblesse physique, ils parviennent à infliger de gros dommages avec leurs sorts puissants. Ce fait seul attire beaucoup de personnes à rejoindre cette classe.";
+					next;
+					mes "[Bruce]";
+					mes "Dans Ragnarok Online, le Mage prend un rôle offensif important dans les groupes et est dépendu pour infliger de grands dommages aux ennemis.";
+					next;
+					mes "[Bruce]";
+					mes "Lors de l'avancement au Second Job Class, les Mages peuvent changer leur classe en ^8E2323Sorciers^000000 ou ^8E2323Sages^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 3:
+					mes "[Bruce]";
+					mes "La classe Archer est spécialisée dans l'utilisation des armes à arc et est utile en groupe pour leurs attaques de longue portée.";
+					next;
+					mes "[Bruce]";
+					mes "Bien que physiquement plus faibles, les Archers possèdent une grande précision avec des arcs puissants. Cela leur permet d'attaquer et de tuer des monstres à distance sécuritaire.";
+					next;
+					mes "[Bruce]";
+					mes "Dans Ragnarok Online, la classe Archer a relativement peu de Points de Vie (HP), mais leurs attaques de longue portée leur permettent d'éliminer les ennemis facilement avant que ceux-ci n'arrivent assez près pour causer des dégâts.";
+					next;
+					mes "[Bruce]";
+					mes "Lors de l'avancement au Second Job Class, chaque Archer peut avancer vers la classe ^8E2323Chasseur^000000. De plus, les Archers masculins peuvent devenir ^8E2323Bretteurs^000000 et les Archers féminins peuvent devenir ^8E2323Danseuses^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 4:
+					mes "[Bruce]";
+					mes "La classe Marchand se spécialise dans le commerce. En raison de l'influence forte de la Guilde des Marchands, cette classe est attrayante pour ceux qui souhaitent se concentrer sur l'obtention d'argent (Zeny).";
+					next;
+					mes "[Bruce]";
+					mes "Dans Ragnarok Online, les Marchands possèdent diverses capacités économiques. Les Marchands peuvent apprendre à vendre des objets aux PNJ pour des prix plus élevés et recevoir des réductions sur les achats auprès de PNJ.";
+					next;
+					mes "[Bruce]";
+					mes "De plus, les Marchands peuvent louer";
+					mes "un Caddy qui étend considérablement leur capacité de transport et leur permet d'ouvrir des magasins avec leurs propres articles et prix.";
+					next;
+					mes "[Bruce]";
+					mes "Lors de l'avancement au Second Job Class, les Marchands peuvent changer leur classe en ^8E2323Forgerons^000000 ou ^8E2323Alchimistes^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 5:
+					mes "[Bruce]";
+					mes "Les voleurs sont des experts dans l'utilisation d'armes de type Dagger. Ils frappent rapidement et évitent facilement les attaques de leurs ennemis.";
+					next;
+					mes "[Bruce]";
+					mes "Les voleurs peuvent apprendre des compétences leur permettant de se cacher de leurs ennemis ou de voler des objets aux monstres. Ils sont aussi craints pour l'utilisation de poisons qui affaiblissent lentement";
+					mes "leurs ennemis.";
+					next;
+					mes "[Bruce]";
+					mes "Lorsque vous passez au Second Job Class, les voleurs peuvent changer d'emploi en ^8E2323Assassins^000000 ou ^8E2323Rogues^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 6:
+					mes "[Bruce]";
+					mes "Dans Ragnarok Online, les Acolytes agissent comme messagers de Dieu dans Rune-Midgarts. Ils possèdent des compétences qui soutiennent leurs alliés, ainsi que la capacité de sauver la vie grâce à Heal.";
+					next;
+					mes "[Bruce]";
+					mes "Les compétences de soutien de l'Acolyte les rendent une addition bienvenue dans tout groupe. Dans des situations difficiles, les compétences de l'Acolyte assurent la survie du groupe, permettant aux autres membres de se concentrer sur l'offensive.";
+					next;
+					mes "[Bruce]";
+					mes "Lorsque vous passez au Second Job Class, les Acolytes peuvent changer d'emploi en ^8E2323Prêtres^000000 ou ^8E2323Moines^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 7:
+					mes "[Bruce]";
+					mes "Pour plus d'informations,";
+					mes "veuillez visiter le site officiel";
+					mes "de Ragnarok Online :";
+					mes " ";
+					mes "^0000FFiro.ragnarokonline.com^000000.";
+					next;
+					mes "[Bruce]";
+					mes "Hanson vous attend";
+					mes "maintenant. Bonne chance";
+					mes "^FF0000dehors, jeune Novice.^";
+					close;
+				}
+			}
+		}
+		else if (nov_3_swordman == 40) {
+			mes "[Bruce]";
+			mes "Je suis désolé, mais";
+			mes "Hanson vous attend";
+			mes "maintenant. Bonne chance dehors, jeune Novice.";
+			next;
+			mes "[Bruce]";
+			mes "Hanson vous attend";
+			mes "maintenant. Bonne chance";
+			mes "^FF0000dehors, jeune Novice.^";
+			close;
+		}
+		else {
+			mes "[Bruce]";
+			mes "Vous avez quitté";
+			mes "traversé de";
+			mes "petites difficultés";
+			mes "finir tous les";
+			mes "cours de formation.";
+			next;
+			mes "[Bruce]";
+			mes "Salut là-bas,";
+			mes "^A62A2A" + strcharinfo(0) + "'^000000,";
+			mes "ravi de vous rencontrer.";
+			mes "Je suis Bruce de la";
+			mes "Royaume de Rune-Midgarts.";
+			next;
+			mes "[Bruce]";
+			mes "Mon devoir est de vous aider en enseignant des informations sur chaque Classe d'Emploi Premier, afin que vous puissiez décider quel emploi vous voulez être.";
+			next;
+			mes "[Bruce]";
+			mes "Les Classes d'Emploi Premier sont";
+			mes "^0000FFGuerrier, Mage, Archer, Marchand, Voleur et Religieux^000000.";
+			next;
+			mes "[Bruce]";
+			mes "Donc...";
+			mes "quelle profession aviez-vous";
+			mes "en tête?";
+			next;
+			while(1) {
+				switch(select("Swordman:Mage:Archer:Merchant:Thief:Acolyte:End conversation.")) {
+				case 1:
+					mes "[Bruce]";
+					mes "Comme son nom l'indique, le";
+					mes "Guerrier est un expert dans la maniement des Épées. Ils peuvent aussi utiliser des Armes Lances, mais généralement vous ne voyez pas de Guerriers utilisant des Lances";
+					mes "très souvent.";
+					next;
+					mes "[Bruce]";
+					mes "Les Swordmen possèdent une force physique puissante, leur permettant d'équiper de l'armure et des armes lourdes. La plupart des classes d'armes, sauf les arcs et les bâtons, peuvent être équipées par la classe Swordman.";
+					next;
+					mes "[Bruce]";
+					mes "Le seul point faible de la classe Swordman est qu'ils ne peuvent pas utiliser des sorts magiques. Cependant, cela peut être compensé en utilisant des armes avec un attribut élémentaire.";
+					next;
+					mes "[Bruce]";
+					mes "L'un des plus grands avantages d'être un Swordman est de posséder une quantité énorme de points de vie (HP), ce qui signifie qu'ils peuvent mieux résister aux dommages infligés par leurs ennemis.";
+					next;
+					mes "[Bruce]";
+					mes "Après avoir appris quelques compétences d'attaque puissantes, le Swordman est presque invincible dans un combat à distance rapprochée.";
+					next;
+					mes "[Bruce]";
+					mes "Dans Ragnarok Online, les Swordmen occupent généralement la position de tank, protégeant les personnages des autres classes des attaques ou des blessures.";
+					next;
+					mes "[Bruce]";
+					mes "Un Swordman est le personnage idéal pour prendre la position de leader du groupe. Lorsqu'ils avancent vers leur classe de Second Job, les Swordmen peuvent changer leurs métiers en ^8E2323Chevalier^000000 ou en ^8E2323Croisé^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 2:
+					mes "[Bruce]";
+					mes "La classe Mage se spécialise dans l'utilisation des forces du feu, de l'eau, de la terre et de la foudre pour attaquer leurs ennemis.";
+					next;
+					mes "[Bruce]";
+					mes "Cependant, en raison de leur faible force physique, ils ne sont autorisés qu'à équiper des bâtons et des couteaux comme armes, et à porter une armure légère pour la défense.";
+					next;
+					mes "[Bruce]";
+					mes "Malgré leur faiblesse physique, ils parviennent à infliger de gros dommages avec leurs sorts puissants. Ce fait seul attire beaucoup de personnes à rejoindre cette classe.";
+					next;
+					mes "[Bruce]";
+					mes "Dans Ragnarok Online, le Mage prend un rôle offensif important dans les groupes et est dépendu pour infliger de grands dommages aux ennemis.";
+					next;
+					mes "[Bruce]";
+					mes "Lors de l'avancement au Second Job Class, les Mages peuvent changer leur classe en ^8E2323Sorciers^000000 ou ^8E2323Sages^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 3:
+					mes "[Bruce]";
+					mes "La classe Archer est spécialisée dans l'utilisation des armes à arc et est utile en groupe pour leurs attaques de longue portée.";
+					next;
+					mes "[Bruce]";
+					mes "Bien que physiquement plus faibles, les Archers possèdent une grande précision avec des arcs puissants. Cela leur permet d'attaquer et de tuer des monstres à distance sécuritaire.";
+					next;
+					mes "[Bruce]";
+					mes "Dans Ragnarok Online, la classe Archer a relativement peu de Points de Vie (HP), mais leurs attaques de longue portée leur permettent d'éliminer les ennemis facilement avant que ceux-ci n'arrivent assez près pour causer des dégâts.";
+					next;
+					mes "[Bruce]";
+					mes "Lors de l'avancement au Second Job Class, chaque Archer peut avancer vers la classe ^8E2323Chasseur^000000. De plus, les Archers masculins peuvent devenir ^8E2323Bretteurs^000000 et les Archers féminins peuvent devenir ^8E2323Danseuses^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 4:
+					mes "[Bruce]";
+					mes "La classe Marchand se spécialise dans le commerce. En raison de l'influence forte de la Guilde des Marchands, cette classe est attrayante pour ceux qui souhaitent se concentrer sur l'obtention d'argent (Zeny).";
+					next;
+					mes "[Bruce]";
+					mes "Dans Ragnarok Online, les Marchands possèdent diverses capacités économiques. Les Marchands peuvent apprendre à vendre des objets aux PNJ pour des prix plus élevés et recevoir des réductions sur les achats auprès de PNJ.";
+					next;
+					mes "[Bruce]";
+					mes "De plus, les Marchands peuvent louer";
+					mes "un Caddy qui étend considérablement leur capacité de transport et leur permet d'ouvrir des magasins avec leurs propres articles et prix.";
+					next;
+					mes "[Bruce]";
+					mes "Lors de l'avancement au Second Job Class, les Marchands peuvent changer leur classe en ^8E2323Forgerons^000000 ou ^8E2323Alchimistes^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 5:
+					mes "[Bruce]";
+					mes "Les voleurs sont des experts dans l'utilisation d'armes de type Dagger. Ils frappent rapidement et évitent facilement les attaques de leurs ennemis.";
+					next;
+					mes "[Bruce]";
+					mes "Les voleurs peuvent apprendre des compétences leur permettant de se cacher de leurs ennemis ou de voler des objets aux monstres. Ils sont aussi craints pour l'utilisation de poisons qui affaiblissent lentement";
+					mes "leurs ennemis.";
+					next;
+					mes "[Bruce]";
+					mes "Lorsque vous passez au Second Job Class, les voleurs peuvent changer d'emploi en ^8E2323Assassins^000000 ou ^8E2323Rogues^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 6:
+					mes "[Bruce]";
+					mes "Dans Ragnarok Online, les Acolytes agissent comme messagers de Dieu dans Rune-Midgarts. Ils possèdent des compétences qui soutiennent leurs alliés, ainsi que la capacité de sauver la vie grâce à Heal.";
+					next;
+					mes "[Bruce]";
+					mes "Les compétences de soutien de l'Acolyte les rendent une addition bienvenue dans tout groupe. Dans des situations difficiles, les compétences de l'Acolyte assurent la survie du groupe, permettant aux autres membres de se concentrer sur l'offensive.";
+					next;
+					mes "[Bruce]";
+					mes "Lorsque vous passez au Second Job Class, les Acolytes peuvent changer d'emploi en ^8E2323Prêtres^000000 ou ^8E2323Moines^000000.";
+					set nov_3_swordman,20;
+					next;
+					break;
+				case 7:
+					mes "[Bruce]";
+					mes "Pour plus d'informations,";
+					mes "veuillez visiter le site officiel";
+					mes "de Ragnarok Online :";
+					mes " ";
+					mes "^0000FFiro.ragnarokonline.com^000000.";
+					next;
+					mes "[Bruce]";
+					mes "Hanson vous attend";
+					mes "maintenant. Bonne chance";
+					mes "^FF0000dehors, jeune Novice.^";
+					close;
+				}
+			}
+
+		}
+	}
+}
+
+// Training Ground Mobs
+new_1-3,0,0	monster	Poring	1002,10
+new_1-3,0,0	monster	Drops	1113,10
+new_1-3,0,0	monster	Lunatic	1063,10
+new_1-3,0,0	monster	ChonChon	1011,10
+new_2-3,0,0	monster	Condor	1009,10
+new_2-3,0,0	monster	Picky	1050,10
+new_2-3,0,0	monster	Willow	1010,10
+new_2-3,0,0	monster	Roda Frog	1012,10
+new_3-3,0,0	monster	Condor	1009,10
+new_3-3,0,0	monster	Picky	1050,10
+new_3-3,0,0	monster	Willow	1010,10
+new_3-3,0,0	monster	Roda Frog	1012,10
+new_4-3,0,0	monster	Rocker	1052,10
+new_4-3,0,0	monster	Thief Bug	1051,10
+new_4-3,0,0	monster	Thief Bug	1053,10
+new_4-3,0,0	monster	Spore	1014,10
+new_5-3,0,0	monster	Rocker	1052,10
+new_5-3,0,0	monster	Thief Bug	1051,1
+new_5-3,0,0	monster	Thief Bug	1053,1
+new_5-3,0,0	monster	Spore	1014,1
+new_1-3,0,0	monster	Fabre	1184,5
+new_2-3,0,0	monster	Fabre	1184,5
+new_3-3,0,0	monster	Fabre	1184,5
+new_4-3,0,0	monster	Fabre	1184,5
+new_5-3,0,0	monster	Fabre	1184,5
+
+//============================================================ 
+// Old changelog
+//============================================================ 
+//= 1.0 Added the New Novice Training Grounds, a big thanks [MasterOfMuppets]
+//=     to Dr.Evil who did 90% of the work =)
+//= 1.0b Temp measure to stop exploits. [Vicious]
+//= 1.2 Removed Duplicates [Silent]
+//= 1.3 Removed Duplicates [Toms]
+//= 1.4 Added Kafra Free Cart Tickets, as in official one [Lupus]
+//= 1.5 Fixed warps, removed map duplicates, typos [Lupus]
+//= 1.6 Changed clone maps new_1-? -> new_zone0? [Lupus]
+//= 1.7 Now Kafra Tickets are given at correct NPC/Actions [Lupus]
+//= 1.7a a bit of optimization [Lupus]
+//= 1.7b Corrected a little Typo Error. (bugreport:728) [Samuray22]
+//= 1.7C Corrected another Typo Error. (bugreport:740) [Samuray22]
+//============================================================ 

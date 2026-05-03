@@ -1,0 +1,1406 @@
+//===== rAthena Script =======================================
+//= 2006 Halloween Event
+//===== By: ==================================================
+//= Brainstorm
+//===== Current Version: =====================================
+//= 1.4
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Event 1: Redeem "Pumpkin Mojo" for pumpkin headgear.
+//= Event 2: Create "Pumpkin Pie" item.
+//===== Additional Comments: =================================
+//= 1.0 First semi-working conversion. [Brainstorm]
+//= 1.1 Refined Brainstorm's conversion. [L0ne_W0lf]
+//= 1.1a Minor fixes. (Screwed up weight checks somehow) [L0ne_W0lf]
+//= 1.2 Added missing checkweights. [L0ne_W0lf]
+//= 1.3 Replaced effect numerics with constants. [L0ne_W0lf]
+//= 1.3a Replaced effect numerics with constants (1 was missed). [Samuray22]
+//= 1.4 Effects are now played by proper NPC. [L0ne_W0lf]
+//============================================================
+
+// Pumpkin Mojo quest (Event 1)
+//============================================================
+prontera,162,69,5	script	Gloomy Jack#06_hw	1130,2,2,{
+	end;
+
+OnTouch:
+	mes "[Cool Devi]";
+	mes "Si vous avez quelque chose à lui dire,";
+	mes "parlez simplement avec moi.";
+	mes "Vous ne comprendrez même pas ce que dit le stupide Jack aux têtes de citrouille.";
+	close;
+
+OnEffect:
+	specialeffect EF_LEVEL99;
+	end;
+
+OnEffect2:
+	specialeffect EF_HIT2;
+	end;
+}
+
+prontera,164,69,3	script	Cool Devi#06_hw	738,{
+	if (MaxWeight - Weight < 2000 || checkweight(1201,1) == 0) {
+		mes "^3355FFVous transporte un peu trop d'objets en ce moment.";
+		mes "Actuellement, vous transportez";
+		mes "trop de choses avec vous.";
+		mes "Veuillez revenir après";
+		mes "avoir utilisé le service Kafra";
+		mes "pour stocker certaines de vos objets.^000000";
+		close;
+	}
+	if (countitem(7609) > 0) {
+		mes "[Gloomy Jack]";
+		mes "Oh attends, est-ce une Mojo Citrouille que vous transportez ?";
+		mes " ";
+		mes "[Cool Devi]";
+		mes "Il dit.";
+		next;
+		mes "[Gloomy Jack]";
+		mes "Donnez-la-moi. Je vais vous rembourser.";
+		mes " ";
+		mes "[Cool Devi]";
+		mes "Il dit...";
+		mes "Je devine simplement ce qu'il va dire ensuite. Alors que dites-vous ?";
+		next;
+		if (select("What will he say?:I also know about it.") == 1) {
+			mes "[" + strcharinfo(0) + "]";
+			mes "Que dira-t-il?";
+			next;
+			mes "[Cool Devi]";
+			mes "Jack n'est pas comme les autres. C'est Jack d'Halloween.";
+			mes "Mais un jour, il a perdu son Mojo citrouille et est devenu Jack déprimé..";
+			mes "Le Mojo citrouille était tout pour lui.";
+			next;
+			mes "[Cool Devi]";
+			mes "Bien, en fait c'est la vraie raison pour laquelle Jack est venu en ville.";
+			mes "Pour trouver son Pumpkin Mojo. Le suspect le plus étrange est ^4d4dffDelightful Lude^000000, celui connu sous le nom de monstre d'Halloween.";
+			next;
+			mes "[Cool Devi]";
+			mes "Pourquoi ne lui rendrais-tu pas son 'Mojo citrouille' ?";
+			mes "Ne vous en faites pas, il vous le compensera.";
+			next;
+			mes "[" + strcharinfo(0) + "]";
+			mes "Compenser? Avec quoi?";
+			next;
+			mes "[Cool Devi]";
+			mes "Si vous apportez ^4d4dff 1 Mojo de citrouille^000000 et une tête de citrouille que nous vous avons donnée l'année dernière,";
+			mes "il pourra en faire la ^00ff00meilleure casquette de citrouille^000000.";
+			mes "Ou si vous n'avez pas de tête de citrouille, vous pouvez simplement apporter un ^3d3dff Mojo de citrouille, une citrouille et une casquette ^000000.";
+			next;
+			mes "[Cool Devi]";
+			mes "Eh bien, ce Mojo de citrouille est inutile si vous ne le donnez pas à quelqu'un.";
+			mes "Donnez-le à Jack. Ne ressentez-vous pas pitié pour lui?";
+			close;
+		}
+		mes "[Cool Devi]";
+		mes "Oh~Génial.";
+		mes "Alors, laissez-moi voir ce que vous avez.";
+		next;
+		if ((countitem(7609) > 0) && (countitem(5134) > 0)) {
+			mes "[Gloomy Jack]";
+			mes "Oh, vous avez apporté la tête de citrouille!";
+			mes "Je vais en faire un plus sympa pour toi.";
+			mes " ";
+			mes "[Cool Devi]";
+			mes "dit qu'il...";
+			next;
+			if (select( "No, I'll come back later.:Oh, good. Make it now!") == 1) {
+				mes "[Gloomy Jack]";
+				mes "Hein?";
+				mes " ";
+				mes "[Cool Devi]";
+				mes "Quoi? Regardez Jack. Il est tellement déçu.";
+				mes "Promets-moi de rendre la Mojo Citrouille à Jack plus tard, d'accord ?";
+				close;
+			}
+			mes "[Gloomy Jack]";
+			mes "Merci pour avoir rendu ma chose, je vais rendre votre chapeau plus joli.";
+			mes " ";
+			mes "[Cool Devi]";
+			mes "dit qu'il...";
+			next;
+			donpcevent "Gloomy Jack#06_hw::OnEffect";
+			mes "[Excited Jack]";
+			mes "Lalala~ lalala~";
+			mes " ";
+			mes "(Il commence à chanter. Soudain, l'aura de Jack apparaît.)";
+			delitem 7609,1; //Pumpkin_Mojo
+			delitem 5134,1; //Pumpkin_Hat
+			getitem 5202,1; //Pumpkin_Hat_
+			next;
+			donpcevent "Gloomy Jack#06_hw::OnEffect2";
+			mes "[Gloomy Jack]";
+			mes "Mon aura n'est pas comme avant. Peut-être que j'ai besoin de plus de Pumpkin Mojo.";
+			mes " ";
+			mes "[Cool Devi]";
+			mes "dit qu'il...";
+			next;
+			mes "[Cool Devi]";
+			mes "Oh~pauvre Jack.";
+			mes "Bien, un jour il récupérera tout son Pumpkin Mojo.";
+			close;
+		}
+		else if ((countitem(7609) > 0) && (countitem(535) > 0) && (countitem(2226) > 0)) {
+			mes "[Gloomy Jack]";
+			mes "Wow!";
+			mes "Je vais rendre ton chapeau très cool.";
+			mes " ";
+			mes "[Cool Devi]";
+			mes "dit qu'il...";
+			next;
+			if (select( "No, I'll come back later.:Oh,good. Make it now!") == 1) {
+				mes "[Gloomy Jack]";
+				mes "Hein?";
+				mes " ";
+				mes "[Cool Devi]";
+				mes "Quoi? Regardez Jack. Il est tellement déçu.";
+				mes "Promettez-vous de rendre la Pumpkin Mojo à Jack plus tard?";
+				close;
+			}
+			mes "[Gloomy Jack]";
+			mes "Merci pour avoir rendu ma chose, je vais rendre votre chapeau plus joli.";
+			mes " ";
+			mes "[Cool Devi]";
+			mes "dit qu'il...";
+			next;
+			donpcevent "Gloomy Jack#06_hw::OnEffect";
+			mes "[Excited Jack]";
+			mes "Lalala~ lalala~";
+			mes " ";
+			mes "(Il commence à chanter. Soudain, l'aura de Jack apparaît.)";
+			delitem 7609, 1;//Pumpkin_Mojo
+			delitem 535, 1;//Pumpkin
+			delitem 2226, 1;//Cap
+			getitem 5202, 1;//Pumpkin_Hat_
+			next;
+			donpcevent "Gloomy Jack#06_hw::OnEffect2";
+			mes "[Gloomy Jack]";
+			mes "Mon aura n'est pas comme avant. Peut-être que j'ai besoin de plus de Pumpkin Mojo.";
+			mes " ";
+			mes "[Cool Devi]";
+			mes "dit qu'il...";
+			next;
+			mes "[Cool Devi]";
+			mes "Oh~pauvre Jack.";
+			mes "Bien, un jour il récupérera tout son Pumpkin Mojo.";
+			close;
+		}
+		else {
+			mes "[Cool Devi]";
+			mes "Hey, là. Tu ne sembles pas avoir tous les matériaux pour le chapeau fantastique.";
+			close;
+		}
+	}
+	else {
+		mes "[Gloomy Jack]";
+		mes "Hey, là. Pourquoi n'es-tu pas venu ici écouter mon histoire ?";
+		mes " ";
+		mes "[Cool Devi]";
+		mes "Il dit.";
+		next;
+		mes "[Gloomy Jack]";
+		mes "Je faisais autrefois beaucoup de bruit. Mais maintenant....";
+		mes " ";
+		mes "[Cool Devi]";
+		mes "Il dit...";
+		mes "Bien, je vais te le dire sans traduire.";
+		next;
+		mes "[Cool Devi]";
+		mes "Jack n'est pas comme les autres. C'est Jack d'Halloween.";
+		mes "Mais un jour, il a perdu son Mojo citrouille et est devenu Jack déprimé..";
+		mes "Le Mojo citrouille était tout pour lui.";
+		next;
+		mes "[Cool Devi]";
+		mes "Bien, en fait c'est la vraie raison pour laquelle Jack est venu en ville.";
+		mes "Pour trouver son Mojo citrouille. Le suspect le plus douteux est ^4d4dffDelightful Lude^000000, connu sous le nom de monstre d'Halloween.";
+		next;
+		mes "[Cool Devi]";
+		mes "Pourquoi ne lui rendrais-tu pas son 'Mojo citrouille' ?";
+		mes "Ne vous en faites pas, il vous le compensera.";
+		next;
+		mes "[" + strcharinfo(0) + "]";
+		mes "Compenser? Avec quoi?";
+		next;
+		mes "[Cool Devi]";
+		mes "Si vous apportez ^4d4dff 1 Mojo de citrouille^000000 et une tête de citrouille que nous vous avons donnée l'année dernière,";
+		mes "il pourra en faire la ^00ff00meilleure casquette de citrouille^000000.";
+		mes "Ou si vous n'avez pas de tête de citrouille, vous pouvez simplement apporter un ^3d3dff Mojo de citrouille, une citrouille et une casquette ^000000.";
+		next;
+		mes "[Cool Devi]";
+		mes "Eh bien, ce Mojo de citrouille est inutile si vous ne le donnez pas à quelqu'un.";
+		mes "Donnez-le à Jack. Ne ressentez-vous pas pitié pour lui?";
+		close;
+	}
+}
+
+
+geffen,145,132,3	script	Hoirin#06_hw	729,{
+	if (MaxWeight - Weight < 2000 || checkweight(1201,1) == 0) {
+		mes "^3355FFVous transporte un peu trop d'objets en ce moment.";
+		mes "Actuellement, vous transportez";
+		mes "trop de choses avec vous.";
+		mes "Veuillez revenir après";
+		mes "avoir utilisé le service Kafra";
+		mes "pour stocker certaines de vos objets.^000000";
+		close;
+	}
+	if (halloween < 100) {
+		mes "[Hoirin]";
+		mes "La citrouille est le cadeau que Dieu nous a envoyé.";
+		mes "C'est une excellente source de nutrition et vous aide à rester en bonne santé !";
+		mes "Bravo~bravo~!";
+		next;
+		mes "[Hoirin]";
+		mes "Je, Hoirin, ai toujours cherché un moyen d'apprécier la citrouille plus savoureusement.";
+		mes "Mais tout à coup, j'ai réalisé.";
+		mes "Si j'avais cela ! Je pourrais faire le meilleur gâteau de citrouille !!!!!";
+		next;
+		mes "[Hoirin]";
+		mes "[Hoirin]";
+		next;
+		if (select( "What's that?:Ignore.") == 1) {
+			mes "[Hoirin]";
+			mes "Quelle est la première image qui vous vient à l'esprit quand vous pensez aux citrouilles ?";
+			mes "Je vois Jack ! Je pense que Jack est la forme la plus évoluée de la citrouille !";
+			mes "Je me demande ce qu'a de spécial Jack ? Pouvez-vous l'imaginer ?";
+			next;
+			mes "[Hoirin]";
+			mes "J'aime toujours les plats uniques à base de citrouille ! Récemment, j'ai découvert qu'il existe de nombreuses sortes de Jack dans le monde";
+			mes "et la classe extrême de Jack a une aura bleue autour de son corps !";
+			next;
+			mes "[Hoirin]";
+			mes "Devine quoi?! Il s'agissait du Jack d'Halloween !";
+			mes "Le Jack d'Halloween possède quelque chose qui est concentré avec les citrouilles.";
+			mes "C'est appelé ^4d4dffPumpkin Mojo^000000. Seulement si j'en ai un, je peux terminer de préparer mon gâteau spécial.";
+			next;
+			mes "[Hoirin]";
+			mes "Apportez-moi les ingrédients !";
+			mes "Je vais vous faire un très spécial gâteau tout de suite !";
+			mes "Vous en deviendrez accro.";
+			mes "Ne soyez pas surpris après avoir essayé.";
+			next;
+			mes "[" + strcharinfo(0) + "]";
+			mes ".......................";
+			mes "Vous semblez être une personne passionnée.";
+			mes "Alors, quels sont les ingrédients d'ailleurs ?";
+			next;
+			mes "[Hoirin]";
+			mes "Bonne question !";
+			mes "Pour faire mon gâteau spécial à la citrouille, j'ai besoin";
+			mes "^4d4dff1 Mojo de citrouille";
+			mes "2 Citrouilles";
+			mes "2 Oeufs^000000";
+			next;
+			mes "[Hoirin]";
+			mes "Achetez simplement un Mojo de citrouille, une Citrouille et un Oeuf.";
+			mes "Laissez le reste à moi... Vous aurez l'occasion de goûter au meilleur gâteau d'Halloween !";
+			set halloween, 100;
+			close;
+		}
+		mes "[Hoirin]";
+		mes "Hum...Vous allez regretter ça !";
+		mes "Le gâteau d'Halloween d'Hoirin est juste délicieux.";
+		close;
+	}
+	else {
+		mes "[Hoirin]";
+		mes "Alors, avez-vous apporté tous les matériaux ?";
+		mes "Y avait-il quelque chose difficile à trouver ?";
+		next;
+		switch(select( "I brought all ingredients.:How can I get eggs?:No,I'm just passing by.")) {
+		case 1:
+			if ((countitem(7609) > 0) && (countitem(535) > 1) && (countitem(574) > 1)) {
+				mes "[Hoirin]";
+				mes "Vous avez raison !";
+				mes "Vous m'avez apporté tout ce qu'il faut. Donnez-le-moi !!";
+				specialeffect2 EF_HIT1;
+				next;
+				specialeffect EF_PIERCESELF;
+				mes "[Hoirin]";
+				mes "Abracadabra~~";
+				mes "Abracadabra~~!";
+				next;
+				mes "[Hoirin]";
+				mes "Voilà(h)!";
+				mes "Voilà~ prenez-le.";
+				mes "Cela sera bénéfique pour votre santé. J'y ai ajouté des nutriments supplémentaires.";
+				delitem 7609,1; //Pumpkin_Mojo
+				delitem 535,2; //Pumpkin
+				delitem 574,2; //Egg
+				getitem 12192,1; //Pumpkin_Pie
+				close;
+			}
+			else {
+				mes "[Hoirin]";
+				mes "Non!! Ce n'est pas suffisant. J'ai besoin de";
+				mes "^4d4dff1 Mojo de citrouille";
+				mes "2 Citrouilles";
+				mes "2 Oeufs^000000";
+				mes "au moins.";
+				close;
+			}
+		case 2:
+			if (halloween == 100) {
+				mes "[Hoirin]";
+				mes "Des œufs?";
+				mes "Eh bien, en fait je connais quelqu'un qui peut vous aider.";
+				mes "Il y a un homme qui élève beaucoup de poules.";
+				next;
+				mes "[Hoirin]";
+				mes "Je peux vous envoyer là où il se trouve si vous le souhaitez.";
+				mes "^4d4dffMais seulement une fois^000000.";
+				next;
+				if (select("Send me.:It's ok.") == 1) {
+					mes "[Hoirin]";
+					mes "D'accord, allez chercher les œufs.";
+					set halloween, 101;
+					close2;
+					warp "nif_fild01", 162, 113;
+					end;
+				}
+				mes "[Hoirin]";
+				mes "Croyez-vous que vous pouvez y arriver sans mon aide?!";
+				mes "Ok! go ahead.";
+				mes "Sais-tu où c'est ?";
+				close;
+			}
+			else {
+				mes "[Hoirin]";
+				mes "Si tu vas à la ^4d4dfffarm de Skelington Town à Neiflheim^000000, tu rencontreras Chicken Masta. Il élève des poulets.";
+				close;
+			}
+		case 3:
+			mes "[Hoirin]";
+			mes "La prochaine fois, n'oublie pas d'amener";
+			mes "tous les ingrédients pour la tarte aux citrouilles !";
+			close;
+		}
+	}
+}
+
+nif_in,18,34,5	script	Loli Ruri#06_hw	1505,2,2,{
+	end;
+
+OnTouch:
+	mes "[Deviruchi]";
+	mes "Salut, si tu as quelque chose à dire à Loli Ruri, parle-moi.";
+	mes "Elle n'est pas habituée au langage humain.";
+	close;
+}
+
+nif_in,19,32,3	script	Deviruchi#06_hw	738,{
+	if (MaxWeight - Weight < 2000 || checkweight(1201,1) == 0) {
+		mes "^3355FFVous transporte un peu trop d'objets en ce moment.";
+		mes "Actuellement, vous transportez";
+		mes "trop de choses avec vous.";
+		mes "Veuillez revenir après";
+		mes "avoir utilisé le service Kafra";
+		mes "pour stocker certaines de vos objets.^000000";
+		close;
+	}
+	mes "[Loli Ruri]";
+	mes "Devi~Où est la tarte aux citrouilles ?";
+	mes "Les humains les font, non?";
+	mes "Est-ce que tu l'as alors?";
+	mes " ";
+	mes "[Deviruchi]";
+	mes "Elle dit qu'elle...";
+	next;
+	mes "[Deviruchi]";
+	mes "Si tu as une tarte aux citrouilles, puis-je en avoir une ?";
+	mes "Parce que nous sommes les victimes si Loli Ruri s'en prend à quelqu'un.";
+	next;
+	mes "[Deviruchi]";
+	mes "Bien sûr je ne dis pas que je veux la prendre gratuitement.";
+	mes "^FF0000Ne t'inquiète pas, je ne vais pas te décevoir.";
+	next;
+	switch(select( "Give him the pumpkin pie.:Do not give him the pumpkin pie.:Huh? What pumkin pie?")) {
+	case 1:
+		if (countitem(12192) > 0) {
+			mes "[Loli Ruri]";
+			mes "Merci pour le gâteau de citrouille !";
+			mes "Tiens, prends ça.";
+			mes " ";
+			mes "[Deviruchi]";
+			mes "Elle dit qu'elle...";
+			next;
+			mes "[Deviruchi]";
+			mes "Comme je l'ai promis, je vais te donner quelque chose d'assez précieux en échange du gâteau de citrouille.";
+			mes "Attends un peu...";
+			next;
+			mes "[Deviruchi]";
+			mes "Hmm...Cela pourrait être bien.";
+			mes "Tiens, prends ça et encore merci~";
+			delitem 12192, 1;//Pumpkin_Pie
+			set @hw_temp,rand(1,3);
+			if (@hw_temp == 2) getitem 12130,1; //Cookie_Bag
+			else getitem 7460,3; //Nifl_Express_Ticket
+			close;
+		}
+		else {
+			mes "[Loli Ruri]";
+			mes "Tu me fais marcher ?";
+			mes "Où est le gâteau de citrouille ! Ne cherche pas à me mentir !";
+			mes " ";
+			mes "[Deviruchi]";
+			mes "Elle dit...Il semble qu'elle soit très en colère...Tu es dans les ennuis.";
+			next;
+			mes "[Loli Ruri]";
+			mes "DEVI!!!!! C'est toi qui m'as dit que je pouvais obtenir le gâteau de citrouille si je restais ici et attendais.";
+			mes "^FF0000Attention derrière !";
+			mes " ";
+			mes "[Deviruchi]";
+			mes "Elle dit qu'elle... Hein?! Moi?!";
+			next;
+			mes "[" + strcharinfo(0) + "]";
+			mes "Pauvre Devi~";
+			mes "Tu n'aurais pas dû mentir~";
+			mes "Je te souhaite bonne chance.";
+			close;
+		}
+	case 2:
+		mes "[Loli Ruri]";
+		mes "J'ai envie de manger une tarte à la citrouille. Est-ce que je peux en avoir une s'il vous plaît~~~~";
+		mes " ";
+		mes "[Deviruchi]";
+		mes "Il dit... Donne-moi si tu en as une.";
+		close;
+	case 3:
+		mes "[Deviruchi]";
+		mes "Il y a un homme qui fait une tarte à la citrouille très spéciale.";
+		mes "Personne ne peut l'oublier quand elle est dans son assiette.";
+		next;
+		mes "[Deviruchi]";
+		mes "Loli Ruri attend ici quelqu'un qui lui rapportera cette tarte.";
+		mes "Peux-tu en obtenir une pour elle?";
+		mes "Je te revaudrai ça.";
+		close;
+	}
+}
+
+// Creation of Pumpkin Pie (Event 2)
+//============================================================
+nif_fild01,165,115,3	script	Chicken Masta#06_hw	794,{
+	if (MaxWeight - Weight < 2000 || checkweight(1201,1) == 0) {
+		mes "^3355FFVous transporte un peu trop d'objets en ce moment.";
+		mes "Actuellement, vous transportez";
+		mes "trop de choses avec vous.";
+		mes "Veuillez revenir après";
+		mes "avoir utilisé le service Kafra";
+		mes "pour stocker certaines de vos objets.^000000";
+		close;
+	}
+	if (halloween == 101) {
+		mes "[Chicken Masta]";
+		mes "Où est parti ce coq ?!";
+		mes "Oh, salut voyageur. Comment puis-je t'aider ?";
+		next;
+		mes "[Chicken Masta]";
+		mes "Cette ville est trop dangereuse pour que tu y traînes.";
+		mes "Tu ferais mieux de retourner d'où tu viens....";
+		next;
+		mes "[Chicken Masta]";
+		mes "...Es-tu à la recherche d'œufs?";
+		mes "De récente, des personnes me demandent des œufs pour faire une sorte de tarte...es-tu l'un d'eux?";
+		next;
+		if (select( "Actually, yes. I came here to get some eggs.:Nope.") == 1) {
+			mes "[Chicken Masta]";
+			mes "D'accord. Mais certains de mes poulets ont fui,";
+			mes "donc il ne me reste plus beaucoup d'œufs.";
+			mes "1000 zeny pour 2 œufs ! Comment ça va ?";
+			next;
+			switch(select( "Ok,I'll take it.:I'll just buy one.:Whew~it's too expensive.")) {
+			case 1:
+				if (Zeny > 1999) {
+					mes "[Chicken Masta]";
+					mes "Merci.";
+					mes "Voici les œufs.";
+					set Zeny,Zeny-2000;
+					set halloween, 102;
+					getitem 574,2; //Egg
+					close;
+				}
+				else {
+					mes "[Chicken Masta]";
+					mes "Hey, ce n'est pas assez~";
+					mes "1000zeny par chaque, donc si tu en achètes deux, cela signifie 2000zeny.";
+					close;
+				}
+			case 2:
+				if (Zeny > 999) {
+					mes "[Chicken Masta]";
+					mes "Merci.";
+					mes "Voici les œufs.";
+					set Zeny,Zeny-1000;
+					set halloween, 102;
+					getitem 574,1; //Egg
+					close;
+				}
+				else {
+					mes "[Chicken Masta]";
+					mes "Tu ne sembles pas avoir assez d'argent...";
+					mes "^FF0000C'est 1000 zeny par chacun.";
+					close;
+				}
+			case 3:
+				mes "[Chicken Masta]";
+				mes "Eh bien... Je sais que c'est un peu cher, mais comme je te l'ai dit, mes poulets sont partis.";
+				mes "Il faut que tu comprennes.";
+				close;
+			}
+		}
+		mes "[Chicken Masta]";
+		mes "Laisse-moi te dire juste une chose!";
+		mes "Si tu ne veux pas mourir,";
+		mes "tu ferais mieux de t'enfuir. C'est trop dangereux ici.";
+		close;
+	}
+	else if (halloween == 102) {
+		mes "[Chicken Masta]";
+		mes "Tu as besoin d'œufs...?";
+		mes "Alors, aide-moi en premier.";
+		mes "8 de mes poulets sont partis.";
+		mes "Je ne sais tout simplement pas où ils sont.";
+		next;
+		mes "[Chicken Masta]";
+		mes "Je ne m'attends pas à ce que tous les poulets reviennent chez eux.";
+		mes "Seulement si tu trouves un d'entre eux pour moi, je te vendrai trois œufs.";
+		next;
+		mes "[Chicken Masta]";
+		mes "^FF0000N'est-ce pas une affaire excellente?";
+		mes "Les poulets doivent être quelque part autour d'ici.";
+		next;
+		mes "[Chicken Masta]";
+		mes "Vous n'avez pas besoin de me ramener des poulets si vous en trouvez un.";
+		mes "Inscrivez simplement le mot ^4d4dff'Return'^000000.";
+		mes ".........";
+		next;
+		mes "[Chicken Masta]";
+		mes "C'est un sort pour faire revenir les poulets chez eux.";
+		mes ".........";
+		mes "N'oubliez pas le mot 'Return' !";
+		next;
+		mes "[Chicken Masta]";
+		mes "J'espère que vous trouverez mes poulets.";
+		close;
+	}
+	else if (halloween == 103) {
+		mes "[Chicken Masta]";
+		mes "Oh, tu es de retour. J'ai attendu ton arrivée.";
+		mes "Et merci pour les poulets que tu m'as envoyés.";
+		mes "Ils sont en sécurité dans le poulailler, au cas où ils s'enfuiraient à nouveau.";
+		next;
+		mes "[Chicken Masta]";
+		mes "Je n'ai pas oublié ce que nous avons promis.";
+		mes "Dites-moi combien d'œufs vous voulez.";
+		mes "C'est 1000 zeny par œuf.";
+		mes "Et au maximum, vous pouvez en obtenir trois.";
+		next;
+		while(1) {
+			input .@input;
+			if (.@input == 0) {
+				mes "[Chicken Masta]";
+				mes "Vous n'avez pas besoin de l'acheter si vous n'en avez pas besoin.";
+				close;
+			}
+			else if (@input > 3) {
+				mes "[Chicken Masta]";
+				mes "Que t'ai-je dit ?";
+				mes "Je vais vendre seulement trois œufs.";
+				next;
+			}
+			else
+				break;
+		}
+		set .@hw_egg, .@input * 1000;
+		if (Zeny < @hw_egg) {
+			mes "[Chicken Masta]";
+			mes "Vous n'avez pas assez de zeny.";
+			close;
+		}
+		mes "[Chicken Masta]";
+		mes "Voici.";
+		mes "Mais plus que ça, non.";
+		mes "Si vous voulez des œufs supplémentaires, trouvez-moi plus de poules.";
+		set Zeny,Zeny-@hw_egg;
+		getitem 574, @input;//Egg
+		set halloween, 102;
+		close;
+	}
+	else {
+		mes "[Chicken Masta]";
+		mes "Où est parti ce coq ?!";
+		mes "Oh, salut voyageur. Comment puis-je t'aider ?";
+		next;
+		mes "[Chicken Masta]";
+		mes "Cette ville est trop dangereuse pour que tu y traînes.";
+		mes "Tu ferais mieux de retourner d'où tu viens....";
+		close;
+	}
+}
+
+nif_fild01,167,113,3	script	Masta's chicken#06_hw01	800,{
+	mes "Poulet endormi.";
+	close;
+}
+
+-	script	HwChicken::HwChicken	-1,{
+	if ((halloween == 102) || (halloween == 103)) {
+		mes "Oh, ceci doit être le coq de Chicken Masta.";
+		mes "Je devrais insérer l'incantation magique.";
+		next;
+		input .@inputstr$;
+		if( .@inputstr$ == "Return" ) {
+			emotion ET_HUK;
+			specialeffect EF_TELEPORTATION;
+			mes "Le sortilège a été lancé.";
+			set halloween, 103;
+			disablenpc "Masta's chicken#"+strnpcinfo(1);
+			close2;
+			sleep 180000;
+			enablenpc "Masta's chicken#"+strnpcinfo(1);
+			end;
+		}
+		else {
+			mes "[" + strcharinfo(0) + "]";
+			mes "Hm... J'ai dû mal orthographier.";
+			close;
+		}
+	}
+	else {
+		mes "Poulet endormi.";
+		close;
+	}
+}
+
+-	script	HwChicken2::HwChicken2	-1,{
+	set @egg_temp,rand(1,4);
+	if( @egg_temp == 3) {
+		mes "Dès que vous avez approché le poulet et l'avez touché, il a disparu complètement.";
+		mes "Vous avez obtenu un 'œuf' à l'endroit où le poulet a disparu.";
+		disablenpc "Chicken#"+strnpcinfo(1);
+		getitem 574,1; //Egg
+		close;
+	}
+	else {
+		mes "Dès que vous avez approché le poulet et l'avez touché, il a disparu complètement.";
+		disablenpc "Chicken#"+strnpcinfo(1);
+		close;
+	}
+}
+
+-	script	HwChicken3::HwChicken3	-1,{
+	set @egg_temp,rand(1,4);
+	if( @egg_temp == 3) {
+		mes "Dès que vous avez approché le poulet et l'avez touché, il a disparu complètement.";
+		mes "Vous avez obtenu un 'œuf' à l'endroit où le poulet a disparu.";
+		disablenpc "Chicken#"+strnpcinfo(1);
+		getitem 574,1; //Egg
+		close;
+	}
+	else {
+		mes "Dès que vous avez approché le poulet et l'avez touché, il a disparu complètement.";
+		disablenpc "Chicken#"+strnpcinfo(1);
+		close;
+	}
+
+OnInit:
+	while(1) {
+		sleep 180000;
+		specialeffect EF_BAT2;
+		end;
+	}
+}
+
+
+nif_fild01,270,145,3	duplicate(HwChicken)	Masta's chicken#06_hw02	800
+nif_fild01,219,267,4	duplicate(HwChicken)	Masta's chicken#06_hw03	800
+nif_fild01,199,240,5	duplicate(HwChicken)	Masta's chicken#06_hw04	800
+nif_fild01,316,97,6	duplicate(HwChicken)	Masta's chicken#06_hw05	800
+nif_fild01,147,343,7	duplicate(HwChicken)	Masta's chicken#06_hw06	800
+nif_fild01,185,325,8	duplicate(HwChicken)	Masta's chicken#06_hw07	800
+nif_fild01,133,105,1	duplicate(HwChicken)	Masta's chicken#06_hw08	800
+nif_fild01,331,329,2	duplicate(HwChicken)	Masta's chicken#06_hw09	800
+
+pay_dun03,1,1,0	script	#06_hw_timer01	-1,{
+OnInit:
+	disablenpc "Chicken#06_hw_p01";
+	disablenpc "Chicken#06_hw_p02";
+	disablenpc "Chicken#06_hw_p03";
+	disablenpc "Chicken#06_hw_p04";
+	disablenpc "Chicken#06_hw_p05";
+	disablenpc "Chicken#06_hw_p06";
+	disablenpc "Chicken#06_hw_p07";
+	disablenpc "Chicken#06_hw_p08";
+	disablenpc "Chicken#06_hw_p09";
+	disablenpc "Chicken#06_hw_p10";
+	disablenpc "Chicken#06_hw_p11";
+	disablenpc "Chicken#06_hw_p12";
+	disablenpc "Chicken#06_hw_p13";
+	disablenpc "Chicken#06_hw_p14";
+	disablenpc "Chicken#06_hw_p15";
+	disablenpc "Chicken#06_hw_p16";
+	disablenpc "Chicken#06_hw_p17";
+	disablenpc "Chicken#06_hw_p18";
+	disablenpc "Chicken#06_hw_p19";
+	disablenpc "Chicken#06_hw_p20";
+	disablenpc "Chicken#06_hw_p21";
+	disablenpc "Chicken#06_hw_p22";
+	disablenpc "Chicken#06_hw_p23";
+	disablenpc "Chicken#06_hw_p24";
+	disablenpc "Chicken#06_hw_p25";
+	disablenpc "Chicken#06_hw_p26";
+	disablenpc "Chicken#06_hw_p27";
+	disablenpc "Chicken#06_hw_p28";
+	disablenpc "Chicken#06_hw_p29";
+	disablenpc "Chicken#06_hw_p30";
+	disablenpc "Chicken#06_hw_p31";
+	disablenpc "Chicken#06_hw_p32";
+	disablenpc "Chicken#06_hw_p33";
+	disablenpc "Chicken#06_hw_p34";
+	disablenpc "Chicken#06_hw_p35";
+	disablenpc "Chicken#06_hw_p36";
+	disablenpc "Chicken#06_hw_p37";
+	disablenpc "Chicken#06_hw_p38";
+	disablenpc "Chicken#06_hw_p39";
+	disablenpc "Chicken#06_hw_p40";
+	disablenpc "Chicken#06_hw_p41";
+	initnpctimer;
+	end;
+
+OnTimer3600000:
+	enablenpc "Chicken#06_hw_p01";
+	enablenpc "Chicken#06_hw_p02";
+	enablenpc "Chicken#06_hw_p03";
+	enablenpc "Chicken#06_hw_p04";
+	enablenpc "Chicken#06_hw_p05";
+	enablenpc "Chicken#06_hw_p06";
+	enablenpc "Chicken#06_hw_p07";
+	enablenpc "Chicken#06_hw_p08";
+	enablenpc "Chicken#06_hw_p09";
+	enablenpc "Chicken#06_hw_p10";
+	enablenpc "Chicken#06_hw_p11";
+	enablenpc "Chicken#06_hw_p12";
+	enablenpc "Chicken#06_hw_p13";
+	enablenpc "Chicken#06_hw_p14";
+	enablenpc "Chicken#06_hw_p15";
+	enablenpc "Chicken#06_hw_p16";
+	enablenpc "Chicken#06_hw_p17";
+	enablenpc "Chicken#06_hw_p18";
+	enablenpc "Chicken#06_hw_p19";
+	enablenpc "Chicken#06_hw_p20";
+	enablenpc "Chicken#06_hw_p21";
+	enablenpc "Chicken#06_hw_p22";
+	enablenpc "Chicken#06_hw_p23";
+	enablenpc "Chicken#06_hw_p24";
+	enablenpc "Chicken#06_hw_p25";
+	enablenpc "Chicken#06_hw_p26";
+	enablenpc "Chicken#06_hw_p27";
+	enablenpc "Chicken#06_hw_p28";
+	enablenpc "Chicken#06_hw_p29";
+	enablenpc "Chicken#06_hw_p30";
+	enablenpc "Chicken#06_hw_p31";
+	enablenpc "Chicken#06_hw_p32";
+	enablenpc "Chicken#06_hw_p33";
+	enablenpc "Chicken#06_hw_p34";
+	enablenpc "Chicken#06_hw_p35";
+	enablenpc "Chicken#06_hw_p36";
+	enablenpc "Chicken#06_hw_p37";
+	enablenpc "Chicken#06_hw_p38";
+	enablenpc "Chicken#06_hw_p39";
+	enablenpc "Chicken#06_hw_p40";
+	enablenpc "Chicken#06_hw_p41";
+	end;
+
+OnTimer4200000:
+	disablenpc "Chicken#06_hw_p01";
+	disablenpc "Chicken#06_hw_p02";
+	disablenpc "Chicken#06_hw_p03";
+	disablenpc "Chicken#06_hw_p04";
+	disablenpc "Chicken#06_hw_p05";
+	disablenpc "Chicken#06_hw_p06";
+	disablenpc "Chicken#06_hw_p07";
+	disablenpc "Chicken#06_hw_p08";
+	disablenpc "Chicken#06_hw_p09";
+	disablenpc "Chicken#06_hw_p10";
+	disablenpc "Chicken#06_hw_p11";
+	disablenpc "Chicken#06_hw_p12";
+	disablenpc "Chicken#06_hw_p13";
+	disablenpc "Chicken#06_hw_p14";
+	disablenpc "Chicken#06_hw_p15";
+	disablenpc "Chicken#06_hw_p16";
+	disablenpc "Chicken#06_hw_p17";
+	disablenpc "Chicken#06_hw_p18";
+	disablenpc "Chicken#06_hw_p19";
+	disablenpc "Chicken#06_hw_p20";
+	disablenpc "Chicken#06_hw_p21";
+	disablenpc "Chicken#06_hw_p22";
+	disablenpc "Chicken#06_hw_p23";
+	disablenpc "Chicken#06_hw_p24";
+	disablenpc "Chicken#06_hw_p25";
+	disablenpc "Chicken#06_hw_p26";
+	disablenpc "Chicken#06_hw_p27";
+	disablenpc "Chicken#06_hw_p28";
+	disablenpc "Chicken#06_hw_p29";
+	disablenpc "Chicken#06_hw_p30";
+	disablenpc "Chicken#06_hw_p31";
+	disablenpc "Chicken#06_hw_p32";
+	disablenpc "Chicken#06_hw_p33";
+	disablenpc "Chicken#06_hw_p34";
+	disablenpc "Chicken#06_hw_p35";
+	disablenpc "Chicken#06_hw_p36";
+	disablenpc "Chicken#06_hw_p37";
+	disablenpc "Chicken#06_hw_p38";
+	disablenpc "Chicken#06_hw_p39";
+	disablenpc "Chicken#06_hw_p40";
+	disablenpc "Chicken#06_hw_p41";
+	stopnpctimer;
+	initnpctimer;
+	end;
+}
+
+
+pay_dun03,151,138,3	duplicate(HwChicken3)	Chicken#06_hw_p01	800
+pay_dun03,151,138,3	duplicate(HwChicken2)	Chicken#06_hw_p02	800
+pay_dun03,152,138,3	duplicate(HwChicken2)	Chicken#06_hw_p03	800
+pay_dun03,154,138,3	duplicate(HwChicken2)	Chicken#06_hw_p04	800
+pay_dun03,155,138,3	duplicate(HwChicken2)	Chicken#06_hw_p05	800
+pay_dun03,157,138,3	duplicate(HwChicken2)	Chicken#06_hw_p06	800
+pay_dun03,158,138,3	duplicate(HwChicken3)	Chicken#06_hw_p07	800
+pay_dun03,150,137,3	duplicate(HwChicken2)	Chicken#06_hw_p08	800
+pay_dun03,153,137,3	duplicate(HwChicken2)	Chicken#06_hw_p09	800
+pay_dun03,156,137,3	duplicate(HwChicken3)	Chicken#06_hw_p10	800
+pay_dun03,159,137,3	duplicate(HwChicken2)	Chicken#06_hw_p11	800
+pay_dun03,149,136,3	duplicate(HwChicken2)	Chicken#06_hw_p12	800
+pay_dun03,152,136,3	duplicate(HwChicken3)	Chicken#06_hw_p13	800
+pay_dun03,157,136,3	duplicate(HwChicken2)	Chicken#06_hw_p14	800
+pay_dun03,160,136,3	duplicate(HwChicken2)	Chicken#06_hw_p15	800
+pay_dun03,149,135,3	duplicate(HwChicken3)	Chicken#06_hw_p16	800
+pay_dun03,151,135,3	duplicate(HwChicken2)	Chicken#06_hw_p17	800
+pay_dun03,152,135,3	duplicate(HwChicken2)	Chicken#06_hw_p18	800
+pay_dun03,153,135,3	duplicate(HwChicken3)	Chicken#06_hw_p19	800
+pay_dun03,156,135,3	duplicate(HwChicken2)	Chicken#06_hw_p20	800
+pay_dun03,157,135,3	duplicate(HwChicken2)	Chicken#06_hw_p21	800
+pay_dun03,158,135,3	duplicate(HwChicken3)	Chicken#06_hw_p22	800
+pay_dun03,160,135,3	duplicate(HwChicken2)	Chicken#06_hw_p23	800
+pay_dun03,149,134,3	duplicate(HwChicken2)	Chicken#06_hw_p24	800
+pay_dun03,152,134,3	duplicate(HwChicken3)	Chicken#06_hw_p25	800
+pay_dun03,157,134,3	duplicate(HwChicken2)	Chicken#06_hw_p26	800
+pay_dun03,160,134,3	duplicate(HwChicken2)	Chicken#06_hw_p27	800
+pay_dun03,149,133,3	duplicate(HwChicken3)	Chicken#06_hw_p28	800
+pay_dun03,160,133,3	duplicate(HwChicken2)	Chicken#06_hw_p29	800
+pay_dun03,150,132,3	duplicate(HwChicken2)	Chicken#06_hw_p30	800
+pay_dun03,153,132,3	duplicate(HwChicken3)	Chicken#06_hw_p31	800
+pay_dun03,156,132,3	duplicate(HwChicken2)	Chicken#06_hw_p32	800
+pay_dun03,159,132,3	duplicate(HwChicken2)	Chicken#06_hw_p33	800
+pay_dun03,151,131,3	duplicate(HwChicken2)	Chicken#06_hw_p34	800
+pay_dun03,152,131,3	duplicate(HwChicken2)	Chicken#06_hw_p35	800
+pay_dun03,153,131,3	duplicate(HwChicken3)	Chicken#06_hw_p36	800
+pay_dun03,154,131,3	duplicate(HwChicken2)	Chicken#06_hw_p37	800
+pay_dun03,155,131,3	duplicate(HwChicken2)	Chicken#06_hw_p38	800
+pay_dun03,156,131,3	duplicate(HwChicken3)	Chicken#06_hw_p39	800
+pay_dun03,157,131,3	duplicate(HwChicken2)	Chicken#06_hw_p40	800
+pay_dun03,158,131,3	duplicate(HwChicken3)	Chicken#06_hw_p41	800
+
+// Payon Field chickens
+//============================================================
+pay_fild08,1,1,0	script	#06_hw_timer02	-1,{
+OnInit:
+	disablenpc "Chicken#06_hw_pf01";
+	disablenpc "Chicken#06_hw_pf02";
+	disablenpc "Chicken#06_hw_pf03";
+	disablenpc "Chicken#06_hw_pf04";
+	disablenpc "Chicken#06_hw_pf05";
+	disablenpc "Chicken#06_hw_pf06";
+	disablenpc "Chicken#06_hw_pf07";
+	disablenpc "Chicken#06_hw_pf08";
+	disablenpc "Chicken#06_hw_pf09";
+	disablenpc "Chicken#06_hw_pf10";
+	disablenpc "Chicken#06_hw_pf11";
+	disablenpc "Chicken#06_hw_pf12";
+	disablenpc "Chicken#06_hw_pf13";
+	disablenpc "Chicken#06_hw_pf14";
+	disablenpc "Chicken#06_hw_pf15";
+	disablenpc "Chicken#06_hw_pf16";
+	disablenpc "Chicken#06_hw_pf17";
+	disablenpc "Chicken#06_hw_pf18";
+	disablenpc "Chicken#06_hw_pf19";
+	disablenpc "Chicken#06_hw_pf20";
+	disablenpc "Chicken#06_hw_pf21";
+	disablenpc "Chicken#06_hw_pf22";
+	disablenpc "Chicken#06_hw_pf23";
+	disablenpc "Chicken#06_hw_pf24";
+	disablenpc "Chicken#06_hw_pf25";
+	disablenpc "Chicken#06_hw_pf26";
+	disablenpc "Chicken#06_hw_pf27";
+	initnpctimer;
+	end;
+
+OnTimer5400000:
+	enablenpc "Chicken#06_hw_pf01";
+	enablenpc "Chicken#06_hw_pf02";
+	enablenpc "Chicken#06_hw_pf03";
+	enablenpc "Chicken#06_hw_pf04";
+	enablenpc "Chicken#06_hw_pf05";
+	enablenpc "Chicken#06_hw_pf06";
+	enablenpc "Chicken#06_hw_pf07";
+	enablenpc "Chicken#06_hw_pf08";
+	enablenpc "Chicken#06_hw_pf09";
+	enablenpc "Chicken#06_hw_pf10";
+	enablenpc "Chicken#06_hw_pf11";
+	enablenpc "Chicken#06_hw_pf12";
+	enablenpc "Chicken#06_hw_pf13";
+	enablenpc "Chicken#06_hw_pf14";
+	enablenpc "Chicken#06_hw_pf15";
+	enablenpc "Chicken#06_hw_pf16";
+	enablenpc "Chicken#06_hw_pf17";
+	enablenpc "Chicken#06_hw_pf18";
+	enablenpc "Chicken#06_hw_pf19";
+	enablenpc "Chicken#06_hw_pf20";
+	enablenpc "Chicken#06_hw_pf21";
+	enablenpc "Chicken#06_hw_pf22";
+	enablenpc "Chicken#06_hw_pf23";
+	enablenpc "Chicken#06_hw_pf24";
+	enablenpc "Chicken#06_hw_pf25";
+	enablenpc "Chicken#06_hw_pf26";
+	enablenpc "Chicken#06_hw_pf27";
+	end;
+
+OnTimer6000000:
+	disablenpc "Chicken#06_hw_pf01";
+	disablenpc "Chicken#06_hw_pf02";
+	disablenpc "Chicken#06_hw_pf03";
+	disablenpc "Chicken#06_hw_pf04";
+	disablenpc "Chicken#06_hw_pf05";
+	disablenpc "Chicken#06_hw_pf06";
+	disablenpc "Chicken#06_hw_pf07";
+	disablenpc "Chicken#06_hw_pf08";
+	disablenpc "Chicken#06_hw_pf09";
+	disablenpc "Chicken#06_hw_pf10";
+	disablenpc "Chicken#06_hw_pf11";
+	disablenpc "Chicken#06_hw_pf12";
+	disablenpc "Chicken#06_hw_pf13";
+	disablenpc "Chicken#06_hw_pf14";
+	disablenpc "Chicken#06_hw_pf15";
+	disablenpc "Chicken#06_hw_pf16";
+	disablenpc "Chicken#06_hw_pf17";
+	disablenpc "Chicken#06_hw_pf18";
+	disablenpc "Chicken#06_hw_pf19";
+	disablenpc "Chicken#06_hw_pf20";
+	disablenpc "Chicken#06_hw_pf21";
+	disablenpc "Chicken#06_hw_pf22";
+	disablenpc "Chicken#06_hw_pf23";
+	disablenpc "Chicken#06_hw_pf24";
+	disablenpc "Chicken#06_hw_pf25";
+	disablenpc "Chicken#06_hw_pf26";
+	disablenpc "Chicken#06_hw_pf27";
+	stopnpctimer;
+	initnpctimer;
+	end;
+}
+
+pay_fild08,147,353,3	duplicate(HwChicken3)	Chicken#06_hw_pf01	800
+pay_fild08,147,354,3	duplicate(HwChicken2)	Chicken#06_hw_pf02	800
+pay_fild08,147,355,3	duplicate(HwChicken2)	Chicken#06_hw_pf03	800
+pay_fild08,148,352,3	duplicate(HwChicken3)	Chicken#06_hw_pf04	800
+pay_fild08,148,356,3	duplicate(HwChicken2)	Chicken#06_hw_pf05	800
+pay_fild08,149,351,3	duplicate(HwChicken2)	Chicken#06_hw_pf06	800
+pay_fild08,149,354,3	duplicate(HwChicken3)	Chicken#06_hw_pf07	800
+pay_fild08,149,357,3	duplicate(HwChicken2)	Chicken#06_hw_pf08	800
+pay_fild08,150,351,3	duplicate(HwChicken2)	Chicken#06_hw_pf09	800
+pay_fild08,150,357,3	duplicate(HwChicken3)	Chicken#06_hw_pf10	800
+pay_fild08,151,351,3	duplicate(HwChicken2)	Chicken#06_hw_pf11	800
+pay_fild08,151,353,3	duplicate(HwChicken2)	Chicken#06_hw_pf12	800
+pay_fild08,151,355,3	duplicate(HwChicken3)	Chicken#06_hw_pf13	800
+pay_fild08,151,357,3	duplicate(HwChicken2)	Chicken#06_hw_pf14	800
+pay_fild08,152,351,3	duplicate(HwChicken2)	Chicken#06_hw_pf15	800
+pay_fild08,152,357,3	duplicate(HwChicken3)	Chicken#06_hw_pf16	800
+pay_fild08,153,351,3	duplicate(HwChicken2)	Chicken#06_hw_pf17	800
+pay_fild08,153,357,3	duplicate(HwChicken2)	Chicken#06_hw_pf18	800
+pay_fild08,154,351,3	duplicate(HwChicken3)	Chicken#06_hw_pf19	800
+pay_fild08,154,353,3	duplicate(HwChicken2)	Chicken#06_hw_pf20	800
+pay_fild08,154,355,3	duplicate(HwChicken2)	Chicken#06_hw_pf21	800
+pay_fild08,154,357,3	duplicate(HwChicken3)	Chicken#06_hw_pf22	800
+pay_fild08,155,350,3	duplicate(HwChicken2)	Chicken#06_hw_pf23	800
+pay_fild08,155,352,3	duplicate(HwChicken2)	Chicken#06_hw_pf24	800
+pay_fild08,155,354,3	duplicate(HwChicken3)	Chicken#06_hw_pf25	800
+pay_fild08,155,356,3	duplicate(HwChicken2)	Chicken#06_hw_pf26	800
+pay_fild08,155,358,3	duplicate(HwChicken3)	Chicken#06_hw_pf27	800
+
+prontera,155,285,3	script	Familiar#06_hw01::HWFamiDup	799,{
+	mes "[Familiar]";
+	mes "Bonjour.";
+	mes "Je suis le fidèle et mignon Familiar de Loli Ruri.";
+	mes "Avez-vous une invitation de la part de Loli Ruri?";
+	mes "C'est un genre de^4d4dffa billet spécial pour Niflheim^000000.";
+	next;
+	if (select( "Yes, I do.:No, I don't.") == 1) {
+		mes "[Familiar]";
+		mes "Voulez-vous aller à Niflheim?";
+		mes "Il est disponible pendant Halloween.";
+		next;
+		if (select( "Yes, I do:No, I don't.") == 1) {
+			if (countitem(7460) > 0) {
+				mes "[Familiar]";
+				mes "J'ai vérifié votre billet.";
+				mes "Vous pouvez y aller maintenant";
+				delitem 7460,1; //Nifl_Express_Ticket
+				close2;
+				warp "nif_in", 18, 20;
+				end;
+			}
+			else {
+				mes "[Familiar]";
+				mes "Tu mens.";
+				mes "Vous n'avez pas le billet!";
+				mes "^FF0000Je vais aspirer tout ton sang, toi menteur !";
+				percentheal -20,0;
+				emotion ET_HUK, playerattached();
+				close;
+			}
+		}
+		mes "[Familiar]";
+		mes "D'accord.";
+		mes "En fait, il est inutile d'avoir un billet spécial pour Niflheim.";
+		close;
+	}
+	mes "[Familiar]";
+	mes "D'accord.";
+	mes "Si vous voulez poser une question, donnez un morceau de tarte à la citrouille à Loli Ruri.";
+	mes "Il l'aime.";
+	close;
+}
+payon,156,231,3	duplicate(HWFamiDup)	Familiar#06_hw02	799
+morocc,159,143,3	duplicate(HWFamiDup)	Familiar#06_hw03	799
+geffen,120,188,3	duplicate(HWFamiDup)	Familiar#06_hw04	799
+alberta,80,171,3	duplicate(HWFamiDup)	Familiar#06_hw05	799
+
+// Event Lude Monster Spawns
+//============================================================
+ra_fild01,0,0	monster	Lude	1812,3
+ra_fild02,0,0	monster	Lude	1812,3
+ra_fild03,0,0	monster	Lude	1812,3
+ra_fild04,0,0	monster	Lude	1812,3
+ra_fild05,0,0	monster	Lude	1812,3
+ra_fild06,0,0	monster	Lude	1812,3
+ra_fild07,0,0	monster	Lude	1812,3
+ra_fild08,0,0	monster	Lude	1812,3
+ra_fild09,0,0	monster	Lude	1812,3
+ra_fild10,0,0	monster	Lude	1812,3
+ra_fild11,0,0	monster	Lude	1812,3
+ra_fild12,0,0	monster	Lude	1812,3
+ra_fild13,0,0	monster	Lude	1812,3
+
+ra_san01,0,0	monster	Lude	1812,3
+ra_san02,0,0	monster	Lude	1812,3
+ra_san03,0,0	monster	Lude	1812,3
+ra_san04,0,0	monster	Lude	1812,3
+ra_san05,0,0	monster	Lude	1812,3
+
+ice_dun01,0,0	monster	Lude	1812,3
+ice_dun02,0,0	monster	Lude	1812,3
+ice_dun03,0,0	monster	Lude	1812,3
+
+odin_tem01,0,0	monster	Lude	1812,3
+odin_tem02,0,0	monster	Lude	1812,3
+odin_tem03,0,0	monster	Lude	1812,3
+
+kh_kiehl01,0,0	monster	Lude	1812,3
+
+kh_dun01,0,0	monster	Lude	1812,3
+kh_dun02,0,0	monster	Lude	1812,3
+
+yuno_fild06,0,0	monster	Lude	1812,3
+yuno_fild10,0,0	monster	Lude	1812,3
+
+ein_fild01,0,0	monster	Lude	1812,3
+ein_fild02,0,0	monster	Lude	1812,3
+ein_fild05,0,0	monster	Lude	1812,3
+
+hu_fild01,0,0	monster	Lude	1812,3
+hu_fild02,0,0	monster	Lude	1812,3
+hu_fild03,0,0	monster	Lude	1812,3
+hu_fild04,0,0	monster	Lude	1812,3
+hu_fild05,0,0	monster	Lude	1812,3
+hu_fild06,0,0	monster	Lude	1812,3
+hu_fild07,0,0	monster	Lude	1812,3
+
+tha_t01,0,0	monster	Lude	1812,3
+tha_t02,0,0	monster	Lude	1812,3
+tha_t03,0,0	monster	Lude	1812,3
+tha_t04,0,0	monster	Lude	1812,3
+tha_t05,0,0	monster	Lude	1812,3
+tha_t06,0,0	monster	Lude	1812,3
+tha_t07,0,0	monster	Lude	1812,3
+tha_t08,0,0	monster	Lude	1812,3
+tha_t09,0,0	monster	Lude	1812,3
+tha_t10,0,0	monster	Lude	1812,3
+tha_t11,0,0	monster	Lude	1812,3
+tha_t12,0,0	monster	Lude	1812,3
+
+abyss_01,0,0	monster	Lude	1812,3
+abyss_02,0,0	monster	Lude	1812,3
+abyss_03,0,0	monster	Lude	1812,3
+
+juperos_01,0,0	monster	Lude	1812,3
+juperos_02,0,0	monster	Lude	1812,3
+jupe_core,0,0	monster	Lude	1812,3
+
+lhz_dun01,0,0	monster	Lude	1812,3
+lhz_dun02,0,0	monster	Lude	1812,3
+lhz_dun03,0,0	monster	Lude	1812,3
+lhz_fild01,0,0	monster	Lude	1812,3
+
+lhz_fild02,0,0	monster	Lude	1812,3
+lhz_fild03,0,0	monster	Lude	1812,3
+ein_fild03,0,0	monster	Lude	1812,3
+ein_fild04,0,0	monster	Lude	1812,3
+
+ein_fild06,0,0	monster	Lude	1812,3
+ein_fild07,0,0	monster	Lude	1812,3
+ein_fild08,0,0	monster	Lude	1812,3
+ein_fild09,0,0	monster	Lude	1812,3
+ein_fild10,0,0	monster	Lude	1812,3
+ein_dun01,0,0	monster	Lude	1812,3
+ein_dun02,0,0	monster	Lude	1812,3
+
+gefenia01,0,0	monster	Lude	1812,3
+gefenia02,0,0	monster	Lude	1812,3
+gefenia03,0,0	monster	Lude	1812,3
+gefenia04,0,0	monster	Lude	1812,3
+
+yuno_fild05,0,0	monster	Lude	1812,3
+yuno_fild07,0,0	monster	Lude	1812,3
+yuno_fild08,0,0	monster	Lude	1812,3
+yuno_fild09,0,0	monster	Lude	1812,3
+yuno_fild11,0,0	monster	Lude	1812,3
+yuno_fild12,0,0	monster	Lude	1812,3
+
+ayo_fild01,0,0	monster	Lude	1812,3
+ayo_fild02,0,0	monster	Lude	1812,3
+ayo_dun01,0,0	monster	Lude	1812,3
+ayo_dun02,0,0	monster	Lude	1812,3
+
+gon_dun01,0,0	monster	Lude	1812,3
+gon_dun02,0,0	monster	Lude	1812,3
+gon_dun03,0,0	monster	Lude	1812,3
+
+ama_dun01,0,0	monster	Lude	1812,3
+ama_dun02,0,0	monster	Lude	1812,3
+ama_dun03,0,0	monster	Lude	1812,3
+
+lou_fild01,0,0	monster	Lude	1812,3
+lou_dun01,0,0	monster	Lude	1812,3
+lou_dun02,0,0	monster	Lude	1812,3
+lou_dun03,0,0	monster	Lude	1812,3
+
+um_fild01,0,0	monster	Lude	1812,3
+um_fild02,0,0	monster	Lude	1812,3
+um_fild03,0,0	monster	Lude	1812,3
+um_fild04,0,0	monster	Lude	1812,3
+um_dun01,0,0	monster	Lude	1812,3
+um_dun02,0,0	monster	Lude	1812,3
+yggdrasil01,0,0	monster	Lude	1812,3
+
+mag_dun01,0,0	monster	Lude	1812,3
+mag_dun02,0,0	monster	Lude	1812,3
+
+beach_dun,0,0	monster	Lude	1812,3
+beach_dun2,0,0	monster	Lude	1812,3
+beach_dun3,0,0	monster	Lude	1812,3
+
+gon_fild01,0,0	monster	Lude	1812,3
+ama_fild01,0,0	monster	Lude	1812,3
+yuno_fild01,0,0	monster	Lude	1812,3
+yuno_fild02,0,0	monster	Lude	1812,3
+yuno_fild03,0,0	monster	Lude	1812,3
+yuno_fild04,0,0	monster	Lude	1812,3
+
+prt_fild00,0,0	monster	Lude	1812,3
+prt_fild01,0,0	monster	Lude	1812,3
+prt_fild02,0,0	monster	Lude	1812,3
+prt_fild03,0,0	monster	Lude	1812,3
+prt_fild04,0,0	monster	Lude	1812,3
+prt_fild05,0,0	monster	Lude	1812,3
+prt_fild06,0,0	monster	Lude	1812,3
+prt_fild07,0,0	monster	Lude	1812,3
+prt_fild08,0,0	monster	Lude	1812,3
+prt_fild09,0,0	monster	Lude	1812,3
+prt_fild10,0,0	monster	Lude	1812,3
+prt_fild11,0,0	monster	Lude	1812,3
+
+moc_fild01,0,0	monster	Lude	1812,3
+moc_fild02,0,0	monster	Lude	1812,3
+moc_fild03,0,0	monster	Lude	1812,3
+moc_fild04,0,0	monster	Lude	1812,3
+moc_fild05,0,0	monster	Lude	1812,3
+moc_fild06,0,0	monster	Lude	1812,3
+moc_fild07,0,0	monster	Lude	1812,3
+moc_fild08,0,0	monster	Lude	1812,3
+moc_fild09,0,0	monster	Lude	1812,3
+moc_fild10,0,0	monster	Lude	1812,3
+moc_fild11,0,0	monster	Lude	1812,3
+moc_fild12,0,0	monster	Lude	1812,3
+moc_fild13,0,0	monster	Lude	1812,3
+moc_fild14,0,0	monster	Lude	1812,3
+moc_fild15,0,0	monster	Lude	1812,3
+moc_fild16,0,0	monster	Lude	1812,3
+moc_fild17,0,0	monster	Lude	1812,3
+moc_fild18,0,0	monster	Lude	1812,3
+
+pay_fild01,0,0	monster	Lude	1812,3
+pay_fild02,0,0	monster	Lude	1812,3
+pay_fild03,0,0	monster	Lude	1812,3
+pay_fild04,0,0	monster	Lude	1812,3
+pay_fild05,0,0	monster	Lude	1812,3
+pay_fild06,0,0	monster	Lude	1812,3
+pay_fild07,0,0	monster	Lude	1812,3
+pay_fild08,0,0	monster	Lude	1812,3
+pay_fild09,0,0	monster	Lude	1812,3
+pay_fild10,0,0	monster	Lude	1812,3
+pay_fild11,0,0	monster	Lude	1812,3
+
+gef_fild00,0,0	monster	Lude	1812,3
+gef_fild01,0,0	monster	Lude	1812,3
+gef_fild02,0,0	monster	Lude	1812,3
+gef_fild03,0,0	monster	Lude	1812,3
+gef_fild04,0,0	monster	Lude	1812,3
+gef_fild05,0,0	monster	Lude	1812,3
+gef_fild06,0,0	monster	Lude	1812,3
+gef_fild07,0,0	monster	Lude	1812,3
+gef_fild08,0,0	monster	Lude	1812,3
+gef_fild09,0,0	monster	Lude	1812,3
+gef_fild10,0,0	monster	Lude	1812,3
+gef_fild11,0,0	monster	Lude	1812,3
+gef_fild12,0,0	monster	Lude	1812,3
+gef_fild13,0,0	monster	Lude	1812,3
+gef_fild14,0,0	monster	Lude	1812,3
+
+cmd_fild01,0,0	monster	Lude	1812,3
+cmd_fild02,0,0	monster	Lude	1812,3
+cmd_fild03,0,0	monster	Lude	1812,3
+cmd_fild04,0,0	monster	Lude	1812,3
+cmd_fild05,0,0	monster	Lude	1812,3
+cmd_fild06,0,0	monster	Lude	1812,3
+cmd_fild07,0,0	monster	Lude	1812,3
+cmd_fild08,0,0	monster	Lude	1812,3
+cmd_fild09,0,0	monster	Lude	1812,3
+
+mjolnir_01,0,0	monster	Lude	1812,3
+mjolnir_02,0,0	monster	Lude	1812,3
+mjolnir_03,0,0	monster	Lude	1812,3
+mjolnir_04,0,0	monster	Lude	1812,3
+mjolnir_05,0,0	monster	Lude	1812,3
+mjolnir_06,0,0	monster	Lude	1812,3
+mjolnir_07,0,0	monster	Lude	1812,3
+mjolnir_08,0,0	monster	Lude	1812,3
+mjolnir_09,0,0	monster	Lude	1812,3
+mjolnir_10,0,0	monster	Lude	1812,3
+mjolnir_11,0,0	monster	Lude	1812,3
+mjolnir_12,0,0	monster	Lude	1812,3
+
+xmas_fild01,0,0	monster	Lude	1812,3
+
+sec_in02,0,0	monster	Lude	1812,3
+
+gl_dun02,0,0	monster	Lude	1812,3
+gl_dun01,0,0	monster	Lude	1812,3
+
+gl_knt02,0,0	monster	Lude	1812,3
+gl_knt01,0,0	monster	Lude	1812,3
+
+gl_step,0,0	monster	Lude	1812,3
+
+gl_sew04,0,0	monster	Lude	1812,3
+gl_sew03,0,0	monster	Lude	1812,3
+gl_sew02,0,0	monster	Lude	1812,3
+gl_sew01,0,0	monster	Lude	1812,3
+
+gl_chyard,0,0	monster	Lude	1812,3
+gl_church,0,0	monster	Lude	1812,3
+
+glast_01,0,0	monster	Lude	1812,3
+
+gl_prison1,0,0	monster	Lude	1812,3
+gl_prison,0,0	monster	Lude	1812,3
+
+gl_in01,0,0	monster	Lude	1812,3
+
+gl_cas02,0,0	monster	Lude	1812,3
+gl_cas01,0,0	monster	Lude	1812,3
+
+tur_dun04,0,0	monster	Lude	1812,3
+tur_dun03,0,0	monster	Lude	1812,3
+tur_dun02,0,0	monster	Lude	1812,3
+tur_dun01,0,0	monster	Lude	1812,3
+
+alde_dun04,0,0	monster	Lude	1812,3
+alde_dun03,0,0	monster	Lude	1812,3
+alde_dun02,0,0	monster	Lude	1812,3
+alde_dun01,0,0	monster	Lude	1812,3
+
+c_tower1,0,0	monster	Lude	1812,3
+c_tower2,0,0	monster	Lude	1812,3
+c_tower3,0,0	monster	Lude	1812,3
+c_tower4,0,0	monster	Lude	1812,3
+
+in_sphinx5,0,0	monster	Lude	1812,3
+in_sphinx4,0,0	monster	Lude	1812,3
+in_sphinx3,0,0	monster	Lude	1812,3
+in_sphinx2,0,0	monster	Lude	1812,3
+in_sphinx1,0,0	monster	Lude	1812,3
+
+prt_maze03,0,0	monster	Lude	1812,3
+prt_maze02,0,0	monster	Lude	1812,3
+prt_maze01,0,0	monster	Lude	1812,3
+
+treasure02,0,0	monster	Lude	1812,3
+treasure01,0,0	monster	Lude	1812,3
+
+moc_pryd06,0,0	monster	Lude	1812,3
+moc_pryd05,0,0	monster	Lude	1812,3
+moc_pryd04,0,0	monster	Lude	1812,3
+moc_pryd03,0,0	monster	Lude	1812,3
+moc_pryd02,0,0	monster	Lude	1812,3
+moc_pryd01,0,0	monster	Lude	1812,3
+
+gef_dun02,0,0	monster	Lude	1812,3
+gef_dun01,0,0	monster	Lude	1812,3
+gef_dun00,0,0	monster	Lude	1812,3
+
+iz_dun00,0,0	monster	Lude	1812,3
+iz_dun01,0,0	monster	Lude	1812,3
+iz_dun02,0,0	monster	Lude	1812,3
+iz_dun03,0,0	monster	Lude	1812,3
+iz_dun04,0,0	monster	Lude	1812,3
+
+pay_dun00,0,0	monster	Lude	1812,3
+pay_dun01,0,0	monster	Lude	1812,3
+pay_dun02,0,0	monster	Lude	1812,3
+pay_dun03,0,0	monster	Lude	1812,3
+pay_dun04,0,0	monster	Lude	1812,3
+
+xmas_dun02,0,0	monster	Lude	1812,3
+xmas_dun01,0,0	monster	Lude	1812,3
+
+anthell02,0,0	monster	Lude	1812,3
+anthell01,0,0	monster	Lude	1812,3
+
+orcsdun02,0,0	monster	Lude	1812,3
+orcsdun01,0,0	monster	Lude	1812,3
+
+mjo_dun03,0,0	monster	Lude	1812,3
+mjo_dun02,0,0	monster	Lude	1812,3
+mjo_dun01,0,0	monster	Lude	1812,3
+
+prt_sewb4,0,0	monster	Lude	1812,3
+prt_sewb3,0,0	monster	Lude	1812,3
+prt_sewb2,0,0	monster	Lude	1812,3
+prt_sewb1,0,0	monster	Lude	1812,3
+
+nif_fild01,0,0	monster	Lude	1812,3
+
+nif_fild02,0,0	monster	Lude	1812,3

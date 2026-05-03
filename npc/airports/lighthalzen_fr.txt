@@ -1,0 +1,85 @@
+//===== rAthena Script ======================================= 
+//= Lighthalzen Airport Staff
+//===== By: ================================================== 
+//= L0ne_W0lf, Muad_Dib
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Lighthalzen Airport Staff
+//===== Additional Comments: ================================= 
+//= 1.0 First version.
+//============================================================ 
+
+lhz_airport,143,43,5	script	Airport Staff#lhz_air1a::lhz_airport1	90,{
+	mes "[Personnel de l'aéroport]";
+	mes "Bienvenue au";
+	mes "Aéroport de Lighthalzen,";
+	mes "où nous offrons non-stop";
+	mes "vols vers Einbroch, Juno et Hugel.";
+	next;
+	if (select("Board the Airship.:Cancel.") == 1) {
+		mes "[Personnel de l'aéroport]";
+		mes "Les frais d'embarquement sont";
+		mes "1 200 zeny, mais tu peux";
+		mes "renoncez aux frais si vous échangez";
+		mes "un billet gratuit pour le dirigeable.";
+		next;
+		if (select("Yes:No") == 1) {
+			if (countitem(7311) > 0) {
+				delitem 7311,1; //Free_Flying_Ship_Ticket
+				warp "lhz_airport",148,51;
+				end;
+			}
+			if (Zeny >= 1200) {
+				set Zeny, Zeny - 1200;
+				warp "lhz_airport",148,51;
+				end;
+			}
+			mes "[Personnel du dirigeable]";
+			mes "Je suis désolé, mais tu ne le fais pas";
+			mes "j'ai 1 200 zeny à payer";
+			mes "pour les frais d'embarquement.";
+			close;
+		}
+	}
+	mes "[Personnel de l'aéroport]";
+	mes "Merci et";
+	mes "s'il te plaît, reviens.";
+	mes "Bonne journée ~";
+	close;
+}
+
+lhz_airport,158,43,5	duplicate(lhz_airport1)	Airship Staff#lhz_air1b	90
+lhz_airport,126,43,5	duplicate(lhz_airport1)	Airship Staff#lhz_air1c	90
+
+lhz_airport,143,49,3	script	Arrival Staff#lhz_air2a::lhz_airport2	90,{
+	mes "[Personnel d'arrivée]";
+	mes "Bienvenue à l'aéroport de Lighthalzen.";
+	mes "S'il vous plaît laissez-moi vous guider vers le";
+	mes "terminal principal si vous arrivez de votre vol. Sinon, s'il vous plaît";
+	mes "Montez à bord du dirigeable au départ pour atteindre votre destination prévue.";
+	next;
+	if (select("Exit to main terminal.:Cancel.") == 1) {
+		mes "[Personnel d'arrivée]";
+		mes "Une fois dans le terminal principal, vous devrez payer à nouveau les frais.";
+		mes "monter à bord d'un dirigeable. Tu devrais";
+		mes "ne sortez que si Lighthalzen est votre destination prévue. Allons-nous";
+		mes "se rendre au terminal principal ?";
+		next;
+		if (select("Yes:No") == 1) {
+			warp "lhz_airport",142,40;
+			end;
+		}
+	}
+	mes "[Personnel d'arrivée]";
+	mes "Très bien, merci";
+	mes "pour votre mécénat";
+	mes "et j'espère que tu as";
+	mes "un vol agréable~";
+	close;
+}
+
+lhz_airport,126,51,3	duplicate(lhz_airport2)	Arrival Staff#lhz_air2b	90
+lhz_airport,158,50,3	duplicate(lhz_airport2)	Arrival Staff#lhz_air2c	90

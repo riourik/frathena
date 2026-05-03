@@ -1,0 +1,118 @@
+//===== rAthena Script ======================================= 
+//= Banker Script 
+//===== By: ================================================== 
+//= Syrus22 (1.0)
+//===== Current Version: ===================================== 
+//= 2.0
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= An account wide Banker to store Zeny
+//===== Additional Comments: ================================= 
+//= Syrus22 - There's an optional transaction fee at the top of
+//= the script. To use it simply change the first set command
+//= to set the cost variable to whatever you want the fee to be.
+//= Version 2.0: Optimized and brought the script up to standard. [Jguy]
+//============================================================ 
+
+prontera,132,217,5	script	Banker	109,{
+	set @cost,500;
+	mes "[Banquier]";
+	mes "Bienvenue à la première banque de Prontera. Comment puis-je vous aider aujourd'hui ?";
+	next;
+	switch(select("I'd like to make a deposit.:I'd like to make a withdrawal.:What's my current balance?:Cancel")) {
+	case 1:
+		mes "[Banquier]";
+		mes "Très bien... Combien souhaitez-vous déposer ? Le maximum que vous pouvez déposer en une seule fois est de 999 999 Zeny.";
+		next;
+		if (@cost > 0) {
+			mes "[Banquier]";
+			mes "Oh, and do realize there is a " +@cost + " Zeny charge on all transactions!";
+			next;
+		}
+		input @deposit;
+		if (@deposit < 1) {
+			mes "Assurez-vous de me demander de déposer un montant réel.";
+			close;
+		}
+		else if (@deposit > Zeny) {
+			mes "Il ne semble pas que vous ayez le montant de zeny que vous essayez de déposer !";
+			close;
+		}
+		else if (@deposit > (Zeny - @cost)) {
+			mes "You need " + @cost + " Zeny to cover the transaction fee!";
+			close;
+		}
+		else {
+			set Zeny,Zeny - @deposit;
+			set Zeny,Zeny - @cost;
+			set #bankstorage,#bankstorage + @deposit;
+			mes "[Banquier]";
+			mes "Merci beaucoup... Votre zeny est entre de bonnes mains.";
+			close;
+		}
+	case 2:
+		mes "[Banquier]";
+		mes "Très bien... Combien souhaitez-vous retirer ? Le maximum que vous pouvez retirer en une seule fois est de 999 999 Zeny.";
+		next;
+		if (@cost > 0) {
+			mes "[Banquier]";
+			mes "Oh, and do realize there is a " +@cost + " Zeny charge on all transactions!";
+			next;
+		}
+		input @withdrawl;
+		if (@withdrawl < 1) {
+			mes "S'il vous plaît, ne jouez pas à des jeux. J'ai besoin d'un montant réel à retirer.";
+			close;
+		}
+		else if (@withdrawl > #bankstorage) {
+			mes "You only have ^00FF00" + callfunc("F_InsertComma",#bankstorage) +"^000000 zeny in your account!";
+			close;
+		}
+		else if ((@cost > Zeny) && ((Zeny + @withdrawl) > @cost)) {
+			mes "[Banquier]";
+			mes "Vous n'avez pas le Zeny pour les frais de transaction pour le moment. Souhaitez-vous que je prélève les frais directement sur votre retrait ?";
+			next;
+			switch(select("Yes please.:No, Thanks")){
+			case 1:
+				mes "[Banquier]";
+				mes "Removing " + @cost + " from your withdrawal to cover the deposit fee...";
+				set @withdrawl,@withdrawl - @cost;
+				set #bankstorage,#bankstorage - @cost;
+				set @cost,0;
+				next;
+				set Zeny,Zeny - @cost;
+				set Zeny,Zeny + @withdrawl;
+				set #bankstorage,#bankstorage - @withdrawl;
+				mes "[Banquier]";
+				mes "Voilà votre Zeny. Passe une bonne journée.";
+				close;
+			case 2:
+				mes "[Banquier]";
+				mes "Très bien... revenez bientôt.";
+				close;
+			}
+		}
+		else {
+			set Zeny,Zeny - @cost;
+			set Zeny,Zeny + @withdrawl;
+			set #bankstorage,#bankstorage - @withdrawl;
+			mes "[Banquier]";
+			mes "Voilà votre Zeny. Passe une bonne journée.";
+			close;
+		}
+	case 3:
+		mes "[Banquier]";
+		mes "Hmmmm... laisse-moi vérifier quelques papiers.";
+		next;
+		mes "*Bruissement, bruissement*";
+		next;
+		mes "[Banquier]";
+		mes "You currently have " + callfunc("F_InsertComma",#bankstorage) + " Zeny in your account.";
+		close;
+	case 4:
+		mes "[Banquier]";
+		mes "Très bien... revenez bientôt.";
+		close;
+	}
+}

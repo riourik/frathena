@@ -1,0 +1,69 @@
+//===== rAthena Script =======================================
+//= Lord Kaho's Horns Quest
+//===== By: ==================================================
+//= ?
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Custom quest for Lord Kaho's Horns.
+//===== Additional Comments: =================================
+//= 1.1 Optimized, and fixed some requirements. [Euphy]
+//============================================================
+
+geffen,115,107,5	script	Lord Kaho's Servant	61,{
+
+	setarray .@Items[0],7005, 968, 923, 734, 724,2268,7036,7020,5053,7018,741,742,743,750,751,752,753,754;
+	setarray .@Drops[0],1272,1087,1039,1260,1046,1115,1252,1147,1038,1059;
+	set .@n$, "[Lord Kaho's Servant]";
+
+	mes .@n$;
+	mes "J'ai travaillé jusqu'à l'épuisement pour satisfaire les attentes ridicules de Seigneur Kaho concernant un heaume !";
+	mes "Maintenant que j'ai enfin trouvé la formule du heaume parfait, je suis prêt à partager mon temps et mes talents.";
+	next;
+	mes .@n$;
+	mes "Vous avez besoin des éléments suivants pour obtenir les cornes de Kaho :";
+	mes "3x ^0055FFEmperium^000000";
+	next;
+	mes .@n$;
+	mes "Oh oui...";
+	mes "J'ai aussi oublié de mentionner ceux-là...";
+	next;
+	mes .@n$;
+	for(set .@i,0; .@i<10; set .@i,.@i+1)
+		mes "1x ^0055FF"+getitemname(.@Items[.@i])+"^000000 (from "+getmonsterinfo(.@Drops[.@i], MOB_NAME)+")";
+	next;
+	mes .@n$;
+	mes "On n'est pas encore terminés, chérie...";
+	mes "Je suis un grand fan des poupées, alors vous devez me ramener ces petites adorables !";
+	for(set .@i,10; .@i<18; set .@i,.@i+1)
+		mes "1x ^0055FF"+getitemname(.@Items[.@i])+"^000000";
+	next;
+	mes .@n$;
+	mes "Enfin, j'ai travaillé dur pour fabriquer ces cornes pour mon maître avec tous les objets mentionnés ci-dessus...";
+	mes "S'il vous plaît inclure ^0055FF5 millions de Zeny^000000 en reconnaissance de mes efforts."; 
+	next;
+	mes .@n$;
+	mes "Êtes-vous prêt pour que je fabrique cet objet spécial?";
+	next;
+	if(select("Sure am!:These requirements are unfathomable!")==2) {
+		mes .@n$;
+		mes "Ce que j'ai dû endurer était impensable...";
+		mes "Si vous parvenez à obtenir ces objets, vous aurez une force incroyable!";
+		close; }
+	mes .@n$;
+	for(set .@i,0; .@i<18; set .@i,.@i+1)
+		if (!countitem(.@Items[.@i])) { set .@nr,1; break; }
+	if (.@nr || countitem(714) < 3 || Zeny < 5000000) {
+		mes "Je ne peux pas me permettre de fabriquer ceci si vous n'apportez pas tous les matériaux nécessaires. S'il vous plaît comprenez que cela est pour le bénéfice des héros tels que vous-même !";
+		close; }
+	for(set .@i,0; .@i<18; set .@i,.@i+1)
+		delitem .@Items[.@i],1;
+	delitem 714,3;
+	set Zeny, Zeny-5000000;
+	mes "Wow ! Vous êtes courageux, vraiment !";
+	getitem 5013,1;
+	mes "Profitez d'être le Dieu de Midgard !";
+	close;
+}

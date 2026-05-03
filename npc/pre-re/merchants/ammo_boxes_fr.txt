@@ -1,0 +1,128 @@
+//===== rAthena Script =======================================
+//= Magazine Dealers
+//===== Description: =========================================
+//= Turns bullets into magazines/packs.
+//===== Changelogs: ==========================================
+//= 1.0 First version. [SinSloth]
+//= 1.1 Optimized version - Reduced to only one function [SinSloth]
+//= 1.2 Optimized^2, corrected npc's name [ultramage]
+//= 1.2a Optimized. Please, ommit extra NPC names [Lupus]
+//= 1.3 Updated to match AEGIS script. [Kisuka]
+//= 1.4 Updated to match AEGIS script again. [Masao]
+//= 1.5 Moved Izlude duplicate to pre-re/re paths. [Euphy]
+//= 2.0 Clean-up. [Capuche]
+//= 2.1 Fixes Issue #1482, where Rebellion jobs cannot use this npc. [Limestone]
+//============================================================
+
+que_ng,187,149,3	script	Magazine Dealer Kenny::mdk	4_M_01,{
+	mes "[Kenny]";
+	if (BaseClass == Job_Gunslinger) {
+		mes "Bienvenue dans mon magasin de Magazines.";
+		mes "Comme vous le savez peut-être, un grand nombre";
+		mes "de balles peuvent être transportées plus";
+		mes "easily when they're in Magazines. Now, can I interest you in";
+		mes "quoi que ce soit de particulier?";
+		next;
+		switch(select("Wind Sphere Pack:Shadow Sphere Pack:Poison Sphere Pack:Water Sphere Pack:Fire Sphere Pack:Cartridge:Blood Cartridge:Silver Cartridge:Cancel")) {
+		case 1: callsub S_Casing,13204,12144;// <bullet id>, <pack id>
+		case 2: callsub S_Casing,13206,12145;
+		case 3: callsub S_Casing,13205,12146;
+		case 4: callsub S_Casing,13207,12147;
+		case 5: callsub S_Casing,13203,12148;
+		case 6: callsub S_Casing,13200,12149;
+		case 7: callsub S_Casing,13202,12150;
+		case 8: callsub S_Casing,13201,12151;
+		case 9:
+			mes "[Kenny]";
+			mes "Bien, si vous trouvez un jour";
+			mes "que vous avez trop de";
+			mes "balles, venez me voir.";
+			mes "C'est une bonne idée d'entreposer";
+			mes "vos balles avec mes Magazines.";
+			close;
+		}
+	}
+	mes "Bienvenue dans mon magasin.";
+	mes "Ici, je fournis des Magazines";
+	mes "et des Cartridges pour les Gunsliger.";
+	mes "Désolé, mais il ne semble pas que";
+	mes "mes services vous seraient utiles, aventurier.";
+	mes "use to you, adventurer.";
+	next;
+	mes "[Kenny]";
+	mes "Eh, mais si vous arriviez à";
+	mes "^FF0000Si vous connaissez des Tireurs d'élite, faites-leur part de mon offre.";
+	mes "Amenez-les à moi. On ne peut jamais avoir trop de balles.";
+	mes "On ne peut jamais en avoir assez de munitions.";
+	close;
+
+S_Casing:
+	.@bullet_id = getarg(0);
+	.@pack_id = getarg(1);
+
+	mes "[Kenny]";
+	mes "Maintenant, vous pouvez échanger";
+	mes callfunc("F_InsertPlural",500,getitemname(.@bullet_id));
+	mes "and 500 zeny for 1 "+getitemname(.@pack_id)+", so make sure";
+	mes "si vous avez suffisamment de balles";
+	mes "et de zeny pour cet échange.";
+	next;
+	mes "[Kenny]";
+	mes "You can exchange "+callfunc("F_InsertPlural",500,getitemname(.@bullet_id))+" and 500 zeny";
+	mes "with 1 "+getitemname(.@pack_id)+".";
+	next;
+	mes "[Kenny]";
+	mes "Rappelez-vous que je ne peux pas vous donner plus de 50 Magazines à la fois. Veuillez entrer le nombre de Magazines que vous souhaitez recevoir. Si vous voulez annuler, entrez ''0''.";
+	mes "[Kenny]";
+	mes "^FF0000Je ne peux pas vous donner autant de Magazines.";
+	mes "Veuillez réessayer et entrer un nombre inférieur ou égal à 50.";
+	mes "want to receive. If you want to cancel, then just enter ''0.''";
+	next;
+	input .@amount;
+	mes "[Kenny]";
+	if (.@amount > 50 || .@amount == 0) {
+		mes "Hey, I can't give you";
+		mes "that many Magazines.";
+		mes "Please try again, and";
+		mes "enter a number no";
+		mes "greater than 50.";
+	}
+	else if (countitem(.@bullet_id) >= (500*.@amount)) {
+		if (Zeny >= (500*.@amount)) {
+			if (checkweight(.@pack_id,.@amount) == 0) {
+				mes "Hey, tu as beaucoup de";
+				mes "déchets empilés dans ton";
+				mes "inventaire. Dégage un peu";
+				mes "d'espace et reviens plus";
+				mes "tard pour échanger tes";
+				mes "balles contre des Magazines, d'accord?";
+			} else {
+				mes "D'accord, voici vos";
+				mes "Magazines. Merci de vous";
+				mes "être rendu dans mon magasin et";
+				mes "j'espère que tu utiliseras chaque";
+				mes "munition avec sagesse.";
+				Zeny = Zeny -500*.@amount;
+				delitem .@bullet_id,(500*.@amount);
+				getitem .@pack_id,.@amount;
+			}
+		} else {
+			mes "^FF0000Désolé, mais tu n'as pas assez de zeny pour cette échange de Magazine.^000000";
+			mes "assez d'argent pour cet échange de Magazine. Reviens à mon magasin";
+			mes "plus tard après avoir économisé plus d'argent.";
+			mes "^FF0000Désolé, mais tu n'as pas assez de balles pour cette échange de Magazine.^000000";
+			mes "after you've saved up";
+			mes "some more money.";
+		}
+	} else {
+		mes "^FF0000Désolé, mais tu n'as pas assez de zeny pour cette échange de Magazine.^000000";
+		mes "have enough bullets for";
+		mes "plus tard après avoir économisé plus d'argent.";
+		mes "Peut-être devriez-vous vérifier";
+		mes "votre Inventaire, et";
+		mes "revenir me voir plus tard.";
+	}
+	close;
+}
+
+izlude,171,127,3	duplicate(mdk)	Magazine Dealer Kenny#iz	4_M_01

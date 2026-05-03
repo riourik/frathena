@@ -1,0 +1,283 @@
+//===== rAthena Script =======================================
+//= Lunar New Year Event (2008)
+//===== By: ==================================================
+//= L0ne_W0lf
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= iRO Lunar New Year event; Year of the Rat. (2008)
+//= Kill Cramps, Taruus, and Matrins to retrieve "Rice Pouches"
+//= in return for various rice-themed foods, envelopes, and
+//= a "New year Doll" egg. Rates are guessed.
+//=
+//= Cramp, Tarou, and Matrin drops altered, Uncomment in
+//= mob_db2 to enable. [required]
+//=
+//= Miss Lunar NPC uses the sprite 4_f_nacoruri, which isn't
+//= standard in kRO's data files. If you're having problems
+//= or are unsure if your client supports that sprite, an
+//= alternate NPC header has been included.
+//===== Additional Comments: =================================
+//= 1.0 First version. [L0ne_W0lf]
+//= 1.1 Added missing checkweights. [L0ne_W0lf]
+//============================================================
+
+payon_in01,193,30,4	script	Rice Mill Grandma#rat	78,{
+	mes "[Rice Mill Grandma]";
+	if (!lunar_rat) {
+		mes "ces sales petits";
+		mes "créatures ! Se faufilant";
+		mes "ici et là, volant ce qui";
+		mes "m'appartient ! Si seulement ils";
+		mes "n'étaient pas aussi sacrément rapides...";
+		next;
+		select("What's wrong?");
+		mes "[Rice Mill Grandma]";
+		mes "Oh, je préparais simplement quelques";
+		mes "galettes et pâtisseries pour célébrer";
+		mes "la nouvelle année, mais ces animaux ont";
+		mes "été voler les Poches de Riz que j'ai préparées.";
+		mes "[Grand-mère du Moulin de Riz]";
+		mes "Oui, mon fils a besoin de ces";
+		next;
+		select("Rice Pouches?");
+		mes "[Rice Mill Grandma]";
+		mes "faire de pâtisseries si je n'ai même pas de riz. Penses-tu que tu";
+		mes "pourrais m'aider ?";
+		mes "rice in a mortar, but I can't";
+		mes "make any pastries if I don't";
+		mes "even have the rice. Do you";
+		mes "think you can help me?";
+		next;
+		if (select("Of course.:I don't even know you.") == 1) {
+			set lunar_rat,1;
+			mes "[" + strcharinfo(0)+"]";
+			mes "^FF0000Bien sûr.^0";
+			mes "^FF0000Que puis-je faire pour vous ?^0";
+			next;
+			mes "[Rice Mill Grandma]";
+			mes "Eh bien, pensez-vous que vous";
+			mes "pouvez attraper les animaux qui";
+			mes "ont volé mes Poches de riz ?";
+			mes "Ce sont ces rats bleus et";
+			mes "blancs et ces";
+			mes "petits taupes méchantes.";
+			next;
+			select("Not a problem.");
+			mes "[" + strcharinfo(0)+"]";
+			mes "Pas de problème.";
+			mes "Je vais attraper ces animaux,";
+			mes "et ramener toute Poche de riz que";
+			mes "je peux trouver.";
+			next;
+			mes "[Rice Mill Grandma]";
+			mes "Oh, merci !";
+			mes "Bonne chance pour attraper ces";
+			mes "nuisibles pour moi~";
+			close;
+		}
+		mes "[Rice Mill Grandma]";
+		mes "Je... Eh bien...";
+		mes "C'est vrai, mais j'étais";
+		mes "^FF0000je compte vous en donner";
+		mes "^FF0000en retour quelque chose de sympa";
+		mes "^FF0000pour votre aide. Je sais que vous n'êtes";
+		mes "^FF0000pas une mauvaise personne, alors...";
+		close;
+	}
+	else if ((lunar_rat >= 1 && lunar_rat <= 2) || lunar_rat == 4) {
+		if (countitem(7770) >= 1 && lunar_rat == 2) {
+			mes "^FF0000Oh, est-ce le";
+			mes "^FF0000Sweet Rice^FF0000 (Riz sucré) que mon fils a fait?";
+			mes "^FF0000Voudriez-vous me le laisser?";
+			mes "^FF0000S'il vous plaît attendez ici un moment,";
+			mes "^FF0000et je vais vous faire une pâtisserie~";
+			delitem 7770,1; //Sweet_rice
+			set lunar_rat,3;
+			close;
+		}
+		else if (lunar_rat == 4) {
+			if (countitem(7770) >= 1) {
+				mes "^FF0000Oh, est-ce le";
+				mes "^FF0000Sweet Rice^FF0000 (Riz sucré) que mon fils a fait?";
+				mes "^FF0000Voudriez-vous me le laisser?";
+				mes "^FF0000S'il vous plaît attendez ici un moment,";
+				mes "^FF0000et je vais vous faire une pâtisserie~";
+				delitem 7770,1; //Sweet_rice
+				set lunar_rat,5;
+				close;
+			}
+			mes "^FF0000Oh, où sont tous les";
+			mes "^FF0000Rice Pouches^FF0000 (Sac de riz)? Nous en avons besoin";
+			mes "^FF0000pour faire plus de gâteaux au riz...";
+			close;
+		}
+		else if (countitem(7869) < 1 && lunar_rat <= 2) {
+			mes "^FF0000Oh, ces petits souris blanches et";
+			mes "^FF0000bleues pourraient avoir";
+			mes "^FF0000empoigné mes Rice Pouches.";
+			mes "Ces taupins doivent avoir pris";
+			mes "ça aussi. Quels vilains petits";
+			mes "bêtes, n'est-ce pas?";
+			close;
+		}
+		mes "Oh, est-ce l'un de mes";
+		mes "Sac de Riz ? Je suis désolé(e),";
+		mes "mais la douleur à mes hanches..";
+		mes "Ne seriez-vous pas assez gentil";
+		mes "pour me faire un service et";
+		mes "le livrer à mon fils pour moi?";
+		set lunar_rat,2;
+		close;
+	}
+	else if (lunar_rat == 3 || lunar_rat == 5) {
+		set .@reward,rand(1,100);
+		if (.@reward <= 5) {
+			if (lunar_rat == 3) {
+				getitem 9038,1; // New_Year_Doll_Egg
+				set lunar_rat,4;
+			}
+			else if (lunar_rat == 5) {
+				getitem 668,1; // Red_Envelope
+			}
+		}
+		else if (.@reward >= 6 && .@reward <= 10) getitem 12198,2; // Lucky_Rice_Cake
+		else if (.@reward >= 11 && .@reward <= 30) getitem 12195,3; // Plain_Rice_Cake
+		else if (.@reward >= 31 && .@reward <= 40) getitem 12196,2; // Hearty_Rice_Cake
+		else if (.@reward >= 41 && .@reward <= 55) getitem 12123,2; // Honey_Pastry
+		else if (.@reward >= 56 && .@reward <= 70) getitem 12122,2; // Sesame_Pastry
+		else if (.@reward >= 71 && .@reward <= 80) getitem 12124,2; // Rainbow_Cake
+		else if (.@reward >= 81 && .@reward <= 90) getitem 12198,2; // Korean_Rice_Cake
+		else if (.@reward >= 91 && .@reward <= 100) getitem 12197,3; // Salty_Rice_Cake
+		// After getting the egg there is a chance to get an envelope with each turn in
+		if (rand(1,20) <= 5 && lunar_rat == 4) getitem 668,1; // Red_Envelope
+		// Set the quest accordingly for repeat turn-ins.
+		if (lunar_rat == 3) set lunar_rat,2;
+		else if (lunar_rat == 5) set lunar_rat,4;
+		mes "Ce n'est pas suffisant pour vous";
+		mes "remercier de ce que vous avez fait";
+		mes "pour moi, mais j'aimerais que vous";
+		mes "ayez cette pâtisserie que je viens";
+		mes "de faire. Profitez-en~";
+		next;
+		mes "[Rice Mill Grandma]";
+		mes "Merci pour le";
+		mes "Gros Riz Doux ! Je vais être sûr de vous";
+		mes "faire quelque chose de délicieux si vous";
+		mes "apportez plus, d'accord?";
+		mes "bring me more, okay?";
+		close;
+	}
+}
+
+payon,215,127,4	script	Rice Mill Man#rat	54,{
+	mes "[Rice Mill Man]";
+	if (!lunar_rat) {
+		mes "^FF0000C'est tellement triste...^000000";
+		mes "Ma mère passe tout ce";
+		mes "temps à préparer du riz pour";
+		mes "la nouvelle année, et tout est";
+		mes "volé par des rats et autres nuisibles !";
+		close;
+	}
+	else if (lunar_rat == 1) {
+		mes "J'ai entendu de ma mère";
+		mes "que tu l'aides.";
+		mes "C'est une douce vieille dame, non?";
+		mes "Si tu trouves des ^FF0000Sac(s) de Riz^000000,";
+		mes "tu voudrais peut-être les faire inspecter par";
+		mes "elle d'abord.";
+		close;
+	}
+	else if (lunar_rat >= 2) {
+		if (countitem(7869) < 1) {
+			mes "Si tu me rapportes quelques";
+			mes "^FF0000Sac(s) de Riz^000000, je peux";
+			mes "les transformer en riz sucré.";
+			mes "Tu es ici pour aider ma";
+			mes "mère, n'est-ce pas? Merci,";
+			mes "je t'en suis vraiment reconnaissant(e).";
+			close;
+		}
+		mes "Oh, tu m'as apporté des";
+		mes "^FF0000Sac(s) de Riz^000000 de ma mère ?";
+		mes "^FF0000Donnez-moi une seconde, et je vais^000000";
+		mes "^FF0000casser ce riz en pâte rapidement.^000000";
+		mes "^FF0000à toute vitesse.^000000";
+		next;
+		mes "[Rice Mill Man]";
+		mes "^FF0000Hou ! Haa ! Hi-yah !^000000";
+		mes "^FF0000Woosha ! Whoosha !^000000";
+		mes "^FF0000Ka-taaaaaaaaaa !^000000";
+		mes "^FF0000WOOOSHA !^000000";
+		next;
+		mes "[Rice Mill Man]";
+		mes "^FF0000Voilà. Voici ce^000000";
+		mes "^FF0000riz sucré, prêt à être^000000";
+		mes "^FF0000transformé en pâtisseries.^000000";
+		mes "^FF0000Voudriez-vous me l'apporter ?^000000";
+		mes "^FF0000à ma mère, s'il vous plaît ?^000000";
+		delitem 7869,1; //Rice_Pouch
+		getitem 7770,1; //Sweet_Rice
+		close;
+	}
+}
+
+//payon,126,113,4	script	Miss Lunar#rat	862,{
+payon,126,113,4	script	Miss Lunar#rat	719,{
+	mes "[Lunar]";
+	if ((MaxWeight-Weight) < 3000 || checkweight(1201,1) == 0) {
+		mes "^FF0000Oh, je suis désolé(e), mais nous ne pouvons pas faire d'affaires si vous transportez autant de choses.^000000";
+		mes "^FF0000Nous ne pouvons pas faire affaire si vous portez trop d'objets.^000000";
+		mes "^FF0000Voudriez-vous déposer certains de vos objets chez le service Kafra ?^000000";
+		mes "^FF0000Auriez-vous l'amabilité de stocker certaines de vos affaires avec le service Kafra ?^000000";
+		mes "^FF0000chez le service Kafra, s'il vous plaît ?^000000";
+		close;
+	}
+	if (lunar_rat < 4) {
+		mes "Je veux gagner assez";
+		mes "d'argent pour acheter ce grand";
+		mes "épinglette en argent croissant.";
+		mes "Il faut que je vende autant";
+		mes "de cet Mojji que possible!";
+		close;
+	}
+	else if (lunar_rat >= 4) {
+		mes "Oh, bonjour ! Je vends";
+		mes "des cakes de riz spécial faits";
+		mes "avec du riz sucré. Vous pouvez";
+		mes "le manger vous-même ou le donner à";
+		mes "votre poupée du Nouvel An si";
+		mes "vous en avez un comme animal de compagnie.";
+		next;
+		mes "[Lunar]";
+		mes "Enfin, je vends";
+		mes "10 Mojji pour 3 000 zeny";
+		mes "Voulez-vous goûter ?";
+		next;
+		if (select("Yes:No") == 1) {
+			if (Zeny >= 3000) {
+				set Zeny,Zeny-3000;
+				getitem 554,10; // Mojji
+				mes "[Lunar]";
+				mes "Merci beaucoup et je vous souhaite un";
+				mes "bonne année !";
+				mes "Revenez me voir~";
+				close;
+			}
+			mes "[Lunar]";
+			mes "Oh, je suis désolé, mais vous";
+			mes "je n'en ai pas assez";
+			mes "n'avez pas assez de zeny pour le moment....";
+			close;
+		}
+		mes "[Lunar]";
+		mes "D'accord. Eh bien, je serai ici si vous ou vos";
+		mes "amis voulez du Mojji plus tard, d'accord ? Au revoir~";
+		mes "friends want some Mojji";
+		mes "later, alight? Goodbye~";
+		close;
+	}
+}

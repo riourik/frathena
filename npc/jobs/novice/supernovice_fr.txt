@@ -1,0 +1,482 @@
+//===== rAthena Script ======================================= 
+//= Super Novice Job Quest
+//===== By: ================================================== 
+//= Darkchild
+//===== Current Version: ===================================== 
+//= 2.4
+//===== Compatible With: ===================================== 
+//= rAthena Project; SVN r15340+
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Super Novice Job Change Npc
+//= Super Novice Cart Rental Npc
+//= Some Other Useless Super Novice Npc
+//===== Additional Comments: ================================= 
+//= 1.9 Rescripted to the Aegis 10.3 Standars. [Samuray22]
+//= 2.0 Rescripted again, this time using an iRO base. [L0ne_W0lf]
+//= 2.1 Swapped use of baseclass for basejob. [L0ne_W0lf]
+//= 2.2 Added Quest Log commands. [Kisuka]
+//= 2.3 NPC "Esseray" calls Ex. Super Novice script when enabled. [Euphy]
+//= 2.4 Added an Ex. Super Novice dialog check. [Euphy]
+//============================================================ 
+
+aldeba_in,223,167,3	script	Tzerero#sn	709,{
+	if (BaseJob == Job_Super_Novice) {
+		mes "[Tzerero]";
+		mes "Je fais confiance au fait que vous appréciez";
+		mes "la vie en tant que Super Novice ? Ah,";
+		mes "très bien très bien...exactement comme je le pensais.";
+		mes "En effet, la lumière de l'indifférence brille intensément en vous...";
+		next;
+		mes "[Tzerero]";
+		mes "Je vous encourage à vivre";
+		mes "la vie telle que Mister Kimu-Shaun l'a fait...";
+		mes "Devenez un Maître de tout et spécialiste de rien...";
+		mes "...et un expert en rien.";
+		close;
+	}
+	if (countitem(938) > 29 && countitem(907) > 29 && SUPNOV_Q == 1) {
+		delitem 938,30; //Sticky_Mucus
+		delitem 907,30; //Resin
+		mes "[Tzerero]";
+		mes "Ah, vous avez apporté les";
+		mes "objets que j'ai demandés !";
+		mes "Vous avez prouvé votre valeur pour rejoindre notre";
+		mes "Société des Super Novices.";
+		mes "[Tzerero]";
+		next;
+		mes "[Tzerero]";
+		mes "changer votre classe en une";
+		mes "^3355FFSuper Novi--^000000Huh?";
+		mes "^3355FFSuper Novi--^000000Huh?";
+		mes "Qu'est-ce qui est derrière toi ?";
+		next;
+		select("Huh?:What is that?");
+		mes "^3355FFTu regardes derrière toi, mais...";
+		mes "Il n'y a rien là-bas.";
+		mes "Il se passe quelque chose de louche ici !^000000";
+		next;
+		completequest 6010;
+		callfunc "F_ClearJobVar";
+		getitem 2339,1; //G_Strings
+		if (Upper==0) jobchange Job_Super_Novice;
+		if (Upper==2) jobchange Job_Super_Baby;
+		mes "[Tzerero]";
+		mes "Bwaha ! J'ai eu ton filon !";
+		mes "Alors... comment te plais mon trait ?";
+		mes "Oh bien, oublions ça...";
+		next;
+		mes "[Tzerero]";
+		mes "ainsi que toute raison possible";
+		mes "pour laquelle un homme comme moi";
+		mes "porterait toujours sur lui";
+		mes "un dessous pareil.";
+		next;
+		mes "[Tzerero]";
+		mes "L'essentiel est...";
+		mes "que tu as rejoint les rangs honorables";
+		mes "des grands Novices Super !";
+		next;
+		mes "[Tzerero]";
+		mes "Considère ces dessous comme un cadeau...";
+		mes "Cet habit en particulier est réputé";
+		mes "à porter par Mister Kimu-Shaun,";
+		mes "notre légendaire fondateur de club, dans";
+		mes "ses premiers jours à chercher pour";
+		mes "une médiocrité exemplaire.";
+		next;
+		mes "[Tzerero]";
+		mes "Sortez et profitez de votre nouvelle vie";
+		mes "en tant que Super Novice ! Partez";
+		mes "et aidez l'homme ordinaire, tout en étant";
+		mes "vous-même un homme du peuple à la";
+		mes "fois !";
+		close;
+	}
+	if (SUPNOV_Q == 1) {
+		mes "[Tzerero]";
+		mes "Hm ? Vous avez oublié ce que je";
+		mes "voulais de vous ? D'accord,";
+		mes "je vais vous le rappeler une fois";
+		mes "de plus. Veuillez ne pas l'oublier cette";
+		mes "fois...";
+		next;
+		mes "[Tzerero]";
+		mes "Je vous ai demandé d'amener";
+		mes "^FF000030 Glue Mucinelle^000000 et";
+		mes "^FF000030 Résine^000000.";
+		close;
+	}
+	if (BaseJob == Job_Novice && Upper != 1) {
+		mes "[Tzerero]";
+		mes "...Hmm?";
+		mes "Arrêtez.";
+		mes "Laissez-moi vous examiner.";
+		next;
+		mes "[Tzerero]";
+		mes ".....";
+		mes ".......";
+		mes "^FF0000 ........";
+		emotion ET_THINK;
+		next;
+		mes "[Tzerero]";
+		mes "Je vois que la lumière de l'indigence brille";
+		mes "intensément en vous...";
+		mes "brightly within you...";
+		next;
+		mes "[Tzerero]";
+		mes "Pourquoi ne pas nous rejoindre, jeune Apprenti ? Rejoignez";
+		mes "nous et apprenez la subtile grandeur de l'indigence...";
+		mes "us and learn the subtle";
+		mes "greatness of being";
+		mes "mediocre...";
+		next;
+		mes "[Tzerero]";
+		mes "Acceptez mon offre...";
+		mes "Débarrassez-vous de ces vêtements bruns et poussiereux";
+		mes "brown, dusty garments";
+		mes "et fleurir en...";
+		next;
+		mes "[Tzerero]";
+		mes "...un ^CE6300Super Novice^000000.";
+		next;
+		switch(select("Accept his offer.:Reject his offer.:Listen more carefully.")) {
+		case 1:
+			if (!callfunc("F_CanChangeJob")) {
+				mes "[Tzerero]";
+				mes "Hmm... Mais est-ce que tu vraiment";
+				mes "apprécies la valeur de";
+				mes "trouver de la force dans";
+				mes "la faiblesse? Tu dois";
+				mes "prouver à moi que tu";
+				mes "es un vrai sous-achèvement.";
+				next;
+				mes "[Tzerero]";
+				mes "Vis la vie en tant que Novice...";
+				mes "Et reviens quand tu";
+				mes "as maîtrisé les";
+				mes "Compétences de Base...";
+				mes "Crois dans l'indigence et";
+				mes "Devient un Novice Level 10...";
+				close;
+			}
+			if (BaseLevel < 45) {
+				mes "[Tzerero]";
+				mes "Hmm... Mais est-ce que tu vraiment";
+				mes "vaux la vie détendue";
+				mes "^FF0000Vous n'êtes qu'un aventurier banal?";
+				mes "^FF0000Prouvez-moi que vous ne";
+				mes "^FF0000avez pas soif de pouvoir...";
+				next;
+				mes "[Tzerero]";
+				mes "^FF0000Vivez une vie ordinaire...";
+				mes "^FF0000Devenez un Novice de niveau 45...";
+				mes "^FF0000C'est alors que vous pourrez nous rejoindre...";
+				close;
+			}
+			mes "[Tzerero]";
+			mes "^FF0000Je vois dans vos yeux";
+			mes "^FF0000la détermination à";
+			mes "^FF0000vivre une vie simple...";
+			next;
+			mes "[Tzerero]";
+			mes "^FF0000Seuls les véritablement sages peuvent";
+			mes "^FF0000voir que l'ordinaire et le banal est la meilleure";
+			mes "^FF0000façon de vivre.";
+			mes "way to live life.";
+			next;
+			mes "[Tzerero]";
+			mes "^FF0000Cependant, nous n'accueillons pas";
+			mes "^FF0000n’importe qui dans notre société.";
+			mes "^FF0000Vous devez d'abord passer nos";
+			mes "test de qualification.";
+			next;
+			mes "[Tzerero]";
+			mes "Pour ce test, vous devez";
+			mes "me rapporter certains objets qui";
+			mes "sont déposés par des monstres normaux,";
+			mes "inexceptionnels.";
+			next;
+			mes "[Tzerero]";
+			mes "Hmmmm...";
+			mes "^FF000030 Mucus collant^000000";
+			mes "et ^FF000030 Resine";
+			mes "^000000seront adaptés pour tester votre";
+			mes "aptitude à combattre des ennemis mesquins.";
+			next;
+			mes "[Tzerero]";
+			mes "De plus, le chiffre 30";
+			mes "est important. Ce n'est pas";
+			mes "particulier... juste un";
+			mes "chiffre ordinaire.";
+			mes "Hahahahaha~";
+			next;
+			set SUPNOV_Q,1;
+			setquest 6010;
+			mes "[Tzerero]";
+			mes "Bonne chance, mon ami.";
+			close;
+		case 2:
+			mes "[Tzerero]";
+			mes "Eh bien, eh bien... Je suppose que la";
+			mes "valeur de la vie simple";
+			mes "vous est difficile à";
+			mes "comprendre. C'est... d'accord...";
+			mes "Votre vie vous appartient.";
+			next;
+			mes "[Tzerero]";
+			mes "Mais, si un jour vous voyez la";
+			mes "lumière de l'insignifiance, vous";
+			mes "êtes toujours les bienvenus chez moi";
+			mes "à tout moment...";
+			next;
+			mes "[Tzerero]";
+			mes "À mesure que notre club d'apprentis";
+			mes "devient plus populaire et que nous";
+			mes "gagnons plus de partisans, il se peut";
+			mes "que nous envisagions l'utilisation d'un";
+			mes "test plus difficile...";
+			close;
+		case 3:
+			mes "[Tzerero]";
+			mes "Notre Société des Apprentis a été fondée";
+			mes "par le légendaire Monsieur";
+			mes "Kimu-Shaun...peut-être le";
+			mes "homme le plus grand de notre génération.";
+			next;
+			mes "[Tzerero]";
+			mes "Il s'est rendu compte qu'il y avait beaucoup de souffrance dans";
+			mes "le monde, en particulier parmi les";
+			mes "populations ordinaires de";
+			mes "Midgard...";
+			mes "[Tzerero]";
+			next;
+			mes "[Tzerero]";
+			mes "il est devenu un peu de tout sans maîtriser vraiment quelque chose.";
+			mes "[Tzerero]";
+			mes "En partageant la douleur du";
+			mes "commun des mortels, il est devenu lui-même...";
+			mes "le plus grand d'entre eux.";
+			mes "trades...and a master of none.";
+			next;
+			mes "[Tzerero]";
+			mes "In sharing the pain of";
+			mes "the common man, he became";
+			mes "became one himself...";
+			mes "the greatest ordinary";
+			mes "^FF0000homme.";
+			next;
+			mes "[Tzerero]";
+			mes "Les membres de notre société";
+			mes "essaient de vivre comme Monsieur";
+			mes "Kimu-Shaun, conformément à";
+			mes "les principes qu'il nous a laissés...";
+			close;
+		}
+	}
+	else {
+		if (BaseJob == Job_Super_Novice) {
+			mes "[Tzerero]";
+			mes "Comment vous plait-il de vivre";
+			mes "la vie simplement en tant que Super";
+			mes "Novice ? Je suis sûr que";
+			mes "vous l'appréciez~";
+			next;
+			mes "[Tzerero]";
+			mes "Veuillez grandir en tant que Super";
+			mes "Novice en aidant l’";
+			mes "homme ordinaire tout en étant";
+			mes "l’un d’eux au même moment...";
+			next;
+			mes "[Tzerero]";
+			mes "Je vous encourage à grandir dans votre";
+			mes "Super";
+			mes "Noviceness, et guidez";
+			mes "^FF0000une vie en chair et en os^";
+			mes "^FF0000exceptionnellement^";
+			mes "^FF0000banale.^";
+			close;
+		}
+		mes "[Tzerero]";
+		mes "Bonjour, je suis Tzerero,";
+		mes "le directeur non officiel";
+		mes "du Grand";
+		mes "Confrérie des Novices.";
+		next;
+		mes "[Tzerero]";
+		mes "Hmm... vous semblez être au-dessus de la moyenne.";
+		mes "Oui, vous êtes certainement plus";
+		mes "'extraordinaire' que 'ordinaire'.";
+		mes "^FF0000[Tzerero]^";
+		mes "*Sigh* Je suppose que vous";
+		next;
+		mes "[Tzerero]";
+		mes "notre mode de vie, la";
+		mes "grande subtilité dans";
+		mes "être ordinaire. Mais";
+		mes "subtle greatness in";
+		mes "being ordinary. But";
+		mes "^FF0000 C'est tout.";
+		next;
+		mes "[Tzerero]";
+		mes "Eh bien... il y a des milliers";
+		mes "de personnes différentes dans ce";
+		mes "monde, donc j'essaie simplement d'accepter";
+		mes "toutes nos différences.";
+		mes "^FF0000 J'espère que tu le feras aussi.";
+		close;
+	}
+}
+
+aldeba_in,216,169,5	script	Esseray#sn	86,{
+	if (Class == Job_Super_Novice_E || Class == Job_Super_Baby_E) {
+		mes "Hahahahahahaha!";
+		mes "Toi ! Plus fort qu'avant.";
+		mes "Je savais que tu pouvais réussir l'épreuve~";
+		close;
+	}
+	if (BaseJob == Job_Super_Novice) {
+		if (checkre(0))
+			callfunc "Esseray_Ex";
+		mes "Hahahahahahaha!";
+		mes "Hm ? Eh bien, tu es membre";
+		mes "de notre grande Société des Novices,";
+		mes "n'est-ce pas ? N'est-ce pas le";
+		mes "^FF0000 meilleur club du monde !?";
+		next;
+		mes "[Essaray]";
+		mes "Vivre une vie ordinaire,";
+		mes "conformément aux principes";
+		mes "de Monsieur Kimu-Shaun...";
+		mes "^FF0000 Être ordinaire est génial !";
+		next;
+		mes "Hahahahahahaha!";
+		mes "Essayons de mener notre vie ^FF0000aussi normalement que possible^0000!";
+		mes "Bon courage dans cette entreprise !";
+		mes "Pour référence, je suis le numéro un ici, sous la direction de Mister Tzerero, bien sûr !";
+		mes "je suis le membre numéro un, sous la direction de Mister Tzerero, ^FF0000comme vous le savez bien^0000!";
+		mes "sous Mister Tzerero, ^FF0000bien sûr^0000!";
+		mes "^FF0000bien sûr^0000!";
+		close;
+	}
+	if (BaseJob == Job_Novice && Upper != 1) {
+		mes "Hahahahahahaha!";
+		mes "Hah~ tu ne sais pas encore ce qu'est une vie normale !";
+		mes "Pourquoi ne viendrais-tu pas rejoindre notre Société des Novices ? Ce club est le meilleur au monde ~";
+		mes "[Esseray]";
+		mes "Ouais, les Super Novices sont vraiment les meilleurs personnages !";
+		next;
+		mes "Hahahahahahaha!";
+		mes "[Esseray]";
+		mes "Bah~ tu es mieux que la moyenne... En fait, tu pourrais même être ^FF0000spécial^0000.";
+		mes "Hahahahahahahaha!";
+		close;
+	}
+	else {
+		mes "Hahahahahahaha!";
+		mes "Bah~! You're better than";
+		mes "average...Hell, you may";
+		mes "even be 'special.'";
+		mes "Quelle tristesse ! Eh bien...";
+		mes "J'espère que vous vivez";
+		mes "votre vie positivement.";
+		close;
+	}
+}
+
+aldebaran,54,238,5	script	Kafra Employee#sn	117,{
+	if (BaseJob == Job_Super_Novice) {
+		mes "[Employé de Kafra]";
+		if (Sex == SEX_MALE)
+			mes "Bonjour, Mister Super Novice~";
+		else
+			mes "Bonjour, Super Novice, Ma'am.";
+		mes "Vous devez avoir été vraiment";
+		mes "dissatisfait que les autres";
+		mes "employés Kafra ne vous permettent pas";
+		mes "de louer un chariot chez eux.";
+		mes "Mais ne vous inquiétez plus...";
+		next;
+		mes "[Employé de Kafra]";
+		mes "Je suis ici pour vous soutenir en vous fournissant des chariots...";
+		mes "^3355FF*chuchote*^000000";
+		next;
+		mes "[Employé de Kafra]";
+		mes "^555555Je ne devrais pas faire ça";
+		mes "car c'est contre notre politique interne. Mais j'étais vraiment désolé pour les Super Novices...";
+		mes "...donc voilà, je suis là.^000000";
+		mes "D'ailleurs, aimeriez-vous louer un chariot ? Le service coûte 1 900 zeny.";
+		mes "Oh, c'est que... ";
+		mes "...so here I am.^000000";
+		next;
+		mes "[Employé de Kafra]";
+		mes "Anyway, would you like to rent a cart? The service fee is 1,900 zeny.";
+		next;
+		if (select("Rent a Cart.:Cancel.") == 1) {
+			mes "[Employé de Kafra]";
+			mes "Oh, here's the thing...";
+			mes "Avez-vous appris la compétence 'Push Cart'?";
+			mes "^FF0000[Jean-Pierre] :^! Je peux simplement vous louer un";
+			mes "chariot, mais si vous n'avez pas";
+			mes "appris à le pousser, vous allez";
+			mes "juste gaspiller vos zeny.";
+			next;
+			mes "[Employé de Kafra]";
+			mes "Alors assurez-vous d'avoir déjà";
+			mes "la compétence 'Push Cart'.";
+			next;
+			if (select("Rent a Cart.:Cancel.") == 1) {
+				if (checkcart()) {
+					mes "[Employé de Kafra]";
+					mes "Oh, vous avez déjà équipé un chariot.";
+					close;
+				}
+				if (Zeny >= 1899) {
+					set RESRVPTS, RESRVPTS + 190;
+					set Zeny, Zeny-1900;
+					if (getskilllv("MC_PUSHCART") > 0) setcart;
+					mes "[Employé de Kafra]";
+					mes "Merci de m'avoir fait confiance pour mon service.";
+					mes "Bien que ce que je fais peut ne pas être légitime aux yeux d'autres";
+					mes "^FF0000[Kafra Employees]^! Je crois fermement que je fais ce qui est juste pour les clients.";
+					mes "Kafra Employees, I strongly";
+					mes "believe I am doing what's right for the customers.";
+					close;
+				}
+				else {
+					mes "[Employé de Kafra]";
+					mes "Je suis désolé, mais vous n'avez pas assez de zeny sur vous. Le frais du service est de 1 900 zeny.";
+					close;
+				}
+			}
+			mes "[Employé de Kafra]";
+			mes "S'il vous plaît, revenez.";
+			mes "Merci d'avoir utilisé mes services.";
+			close;
+		}
+		mes "[Employé de Kafra]";
+		mes "S'il vous plaît, revenez.";
+		mes "Merci d'avoir utilisé mes services.";
+		close;
+	}
+	mes "[Employé de Kafra]";
+	mes "Bon... journée --Oops...!";
+	mes "Je ne pense pas pouvoir vous fournir";
+	mes "les services que vous souhaitez...";
+	mes "Veuillez aller parler à un autre";
+	mes "Employé de Kafra. Je m'excuse";
+	mes "de cet ennuie...";
+	close;
+}
+
+//============================================================ 
+// Old changelog
+//============================================================ 
+//= Dialogs From Some Other Scripts (Most Of It)
+//= 1.3-1.5 Added Baby class support (and to the Kafta SN Cart
+//=     renter, too) [Lupus]
+//= 1.6 Added a fix which prevent High Novices passing
+//=     this Job Quests again. [Lupus]
+//= 1.7 Fixed Baby Class Support. [Lupus]
+//= 1.8 Now a Baby can become a Super Baby [Lupus]
+//============================================================ 

@@ -1,0 +1,175 @@
+//===== rAthena Script =======================================
+//= Arrow Quiver Event
+//===== By: ==================================================
+//= Muad_Dib (Prometheus Project); L0ne_W0lf
+//===== Current Version: =====================================
+//= 1.2
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Turns arrows into Arrow Quivers.
+//= Breakdown of Subroutine "S_BuyQuiver"
+//= arg(0): Type of Arrow to be packaged (item ID).
+//= arg(1): How many of each 'getarg(0)' arrow per quiver.
+//= arg(2): The cost of making a 'getarg(0)' quiver.
+//= arg(3): The quiver given by the NPC (item ID).
+//===== Additional Comments: =================================
+//= 07/06/05 : Added 1st Version. [Muad_Dib]
+//= Converted to rAthena format by Dr.Evil
+//= added prize to quest - 500 Zeny
+//= Fixed a few spelling errors. [Nexon]
+//= 1.1 Added Holy Arrow Quivers [Playtester]
+//= 1.2 Rescripted to Aegis 10.3 standards. [L0ne_W0lf]
+//=     Removed "Holy Arrows" from the list.
+//============================================================
+
+payon_in01,5,134,5	script	Inventor Jaax	89,{
+	if (checkweight(1201,1) == 0 || MaxWeight - Weight < 2000) {
+		mes "[Inventor Jaax]";
+		mes "Hey, tu as trop de choses sur toi.";
+		mes "Pourquoi ne pas les déposer dans le système de stockage Kafra ? On peut discuter après que tu auras fait ça, d'accord ?";
+		close;
+	}
+	mes "[Inventor Jaax]";
+	mes "Je m'appelle Jaax.";
+	mes "Sans prétention, je peux dire que je suis peut-être";
+	mes "le plus grand inventeur de notre époque.";
+	mes "^663300^le plus grand inventeur de notre époque^000000.";
+	next;
+	mes "[Inventor Jaax]";
+	mes "Cette fois-ci, j'ai";
+	mes "créé quelque chose";
+	mes "d’extraordinaire. Je les appelle... ^663300Carquois Magiques^000000 !! Cela sera gravé dans l'histoire comme une";
+	mes "révolution des flèches !";
+	emotion ET_BEST;
+	next;
+	mes "[Inventor Jaax]";
+	mes "J'ai étudié la magie et les carquois pendant des années, travaillant jour et nuit jusqu'à ce que je comprenne comment condenser les flèches avec de la magie ! Avec des carquois magiques, vous transporterez plus de flèches mais avec moins de poids !";
+	next;
+	mes "[Inventor Jaax]";
+	mes "Voudrais-tu essayer d'utiliser un de mes carquois à flèches ? Je suis sûr que quelqu'un comme toi peut apprécier mon génie !";
+	next;
+	switch(select("Quiver:Iron Arrow Quiver:Steel Arrow Quiver:Oridecon Arrow Quiver:Fire Arrow Quiver:Silver Arrow Quiver:Wind Arrow Quiver:Stone Arrow Quiver:Crystal Arrow Quiver:Shadow Arrow Quiver:Immaterial Arrow Quiver:Rusty Arrow Quiver")) {
+	case 1: callsub S_BuyQuiver,1750,500,500,12004;
+	case 2: callsub S_BuyQuiver,1770,500,500,12005;
+	case 3: callsub S_BuyQuiver,1753,500,500,12006;
+	case 4: callsub S_BuyQuiver,1765,500,500,12007;
+	case 5: callsub S_BuyQuiver,1752,500,500,12008;
+	case 6: callsub S_BuyQuiver,1751,500,500,12009;
+	case 7: callsub S_BuyQuiver,1755,500,500,12010;
+	case 8: callsub S_BuyQuiver,1756,500,500,12011;
+	case 9: callsub S_BuyQuiver,1754,500,500,12012;
+	case 10: callsub S_BuyQuiver,1767,500,500,12013;
+	case 11: callsub S_BuyQuiver,1757,500,500,12014;
+	case 12: callsub S_BuyQuiver,1762,500,500,12015;
+	}
+	//This doesn't seem to be accessable...
+	//mes "[Inventor Jaax]";
+	//mes "Y a-t-il";
+	//mes "veux-tu quelque chose?";
+	//close;
+
+S_BuyQuiver:
+	.@item_id = getarg(0);
+	.@amount = getarg(1);
+	.@zeny_req = getarg(2);
+
+	if (countitem(.@item_id) >= .@amount) {
+		mes "[Inventor Jaax]";
+		mes "Excellent!";
+		mes "Are you carrying any Arrows with you? I'll provide you with a quiver that can carry "+ .@amount +" of your "+ getitemname(.@item_id) +"s for only ^FF3131"+ .@zeny_req +" Zeny^000000.";
+		next;
+		switch(select("Store as many Arrows in quivers as possible:Purchase 1 quiver:Cancel")) {
+		case 1:
+			.@arrows = countitem(.@item_id);
+			set .@quiver,.@arrows / .@amount;
+			set .@arrows_used,.@quiver * .@amount;
+			.@arrow_zeny01 = .@quiver * .@zeny_req;
+			mes "Nombre de";
+			mes "Arrows: ^3131FF"+.@arrows+" ^000000";
+			mes "Maximum Nombre";
+			mes "d'Achetable";
+			mes "Quivers: ^3131FF"+.@quiver+" ^000000";
+			mes "Zeny required: ^3131FF"+.@arrow_zeny01+" Zeny^000000";
+			next;
+			mes "[Inventor Jaax]";
+			mes "Souhaitez-vous";
+			mes "achète autant d'Arcs que tu peux pour les Flèches";
+			mes "que tu transportes actuellement?";
+			mes "[Inventor Jaax]";
+			next;
+			if (select("Yes:Cancel") == 1) {
+				if (.@arrow_zeny01 < Zeny) {
+					mes "[Inventor Jaax]";
+					mes "Et voilà !";
+					mes "N'oublie pas, ^FF0000tu ne pourras pas utiliser le Carquois lorsque ton poids transporté atteint 90% de ta limite maximale^000000.";
+					set Zeny, Zeny-.@arrow_zeny01;
+					delitem .@item_id,.@arrows_used;// Arrow
+					getitem getarg(3),.@quiver; //Quiver
+					next;
+					mes "[Inventor Jaax]";
+					mes "Donc...";
+					mes "Veille simplement à";
+					mes "suivre combien tu";
+					mes "transportes de temps";
+					mes "en temps et tu devrais";
+					mes "aller bien.";
+					close;
+				}
+				else {
+					mes "[Inventor Jaax]";
+					mes "I'm sorry, but you don't have enough Zeny. I can't just give these away after working years";
+					mes "to develop this revolutionary technology!";
+					close;
+				}
+			}
+			mes "[Inventor Jaax]";
+			mes "Tu as changé d'avis ?";
+			mes "Quand la gloire de posséder";
+			mes "un carquois est si proche ?";
+			close;
+		case 2:
+			if (Zeny > .@zeny_req) {
+				mes "[Inventor Jaax]";
+				mes "Et voilà !";
+				mes "N'oublie pas, ^FF0000tu ne pourras pas utiliser le Carquois lorsque ton poids transporté atteint 90% de ta limite maximale^000000.";
+				Zeny = Zeny -.@zeny_req;
+				delitem .@item_id,.@amount;// Arrow
+				getitem getarg(3),1; //Quiver
+				next;
+				mes "[Inventor Jaax]";
+				mes "Donc...";
+				mes "Veille simplement à";
+				mes "suivre combien tu";
+				mes "transportes de temps";
+				mes "en temps et tu devrais";
+				mes "aller bien.";
+				close;
+			}
+			else {
+				mes "[Inventor Jaax]";
+				mes "Tu ne vois pas que cette invention peut changer pour toujours la façon dont les Flèches sont transportées ?! Le futur est maintenant !";
+				mes "have "+ .@zeny_req +" Zeny?";
+				mes "Attends une seconde...";
+				mes "Je suis tellement désolé. Je n'avais pas idée que tu étais si... ";
+				mes "^333333Dans la misère^000000.";
+				close;
+			}
+		case 3:
+			mes "[Inventor Jaax]";
+			mes "Quoi...?";
+			mes "Ne vois-tu pas que cette invention peut changer pour toujours la façon dont les Flèches sont transportées ?! Le futur est maintenant !";
+			close;
+		}
+	}
+	else {
+		mes "[Inventor Jaax]";
+		mes "You can carry a maximum of "+ .@amount +" Arrows within this quiver. It was made using my secret method,";
+		mes "ainsi le poids total des Flèches et du Carquois sera moins élevé que de porter les Flèches seules.";
+		next;
+		mes "[Inventor Jaax]";
+		mes "It's a miracle of science! One that you can experience for yourself if you bring me at least "+ .@amount +" Arrows and "+ .@zeny_req +" Zeny for each Quiver.";
+		close;
+	}
+}

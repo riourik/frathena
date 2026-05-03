@@ -1,0 +1,269 @@
+//===== rAthena Script =======================================
+//= iRO Halloween (2008)
+//===== By: ==================================================
+//= Kisuka
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= iRO Halloween (2008)
+//= Run away from the zombies for tickets.
+//= Redeem tickets for prizes.
+//===== Notes: ===============================================
+//= You must enable the event monsters in mob_db2.
+//===== Additional Comments: =================================
+//= 1.0 First version. [Kisuka]
+//= 1.1 Some small changes. [Kisuka]
+//============================================================
+
+payon,162,176,4	script	Halloween Magician#iRO08	704,{
+	if (Hallow08 < 1) {
+		mes "[Magicien d'Halloween]";
+		mes "Kkkkkkkkk!";
+		mes "J'ai un événement spécial pour Hallowen qui met à l'épreuve votre chance et votre agilité.";
+		mes "^FF0000Êtes-vous intéressé ?";
+		next;
+		mes "[Magicien d'Halloween]";
+		mes "Allez, ne soyez pas une peur bleue !";
+		mes "Si vous collectez suffisamment de tickets, vous pouvez gagner de bons prix !";
+		mes "Alors, qu'en dis-tu ?";
+		next;
+		goto MainMenu;
+	}
+	if (Hallow08Kill == 1) {
+		mes "[Magicien d'Halloween]";
+		mes "Tu as peur ou quoi ?!";
+		mes "Tu sais que tu veux retenter l'expérience...";
+		mes "Sais-tu les règles ?";
+		next;
+		set Hallow08Kill,0;
+		if(select("Yes, I know.:No, I don't know.") == 2) {
+			goto Rules;
+		}
+		goto Participate;
+	}
+	if (Hallow08Kill == 2) {
+		mes "[Magicien d'Halloween]";
+		mes "Oh, bravo ! Tu es coriace !";
+		mes "N'est-ce pas amusant avec les zombies ??";
+		mes "Tu sais, les zombies étaient des gens aussi !";
+		mes "Haha!";
+		mes "Kkkkkkk.";
+		next;
+		getitem 7941,1;
+		set Hallow08Kill,0;
+		mes "[Magicien d'Halloween]";
+		mes "Comme je l'avais promis";
+		mes "Tu peux gagner des tickets d'Hallowen pour obtenir de chouettes objets.";
+		close;
+	}
+	if (Hallow08 > 0) {
+		mes "[Magicien d'Halloween]";
+		mes "Eh bien, voulez-vous entendre les règles encore une fois ou simplement y revenir...";
+		next;
+		goto MainMenu2;
+	}
+
+		Rules:
+			mes "[Magicien d'Halloween]";
+			mes "Ce village est comme un Payon virtuel.";
+			mes "Il y a des zombies et des fantômes errant autour et trois sorties du sud, mais seulement une fonctionne.";
+			mes "C'est à vous de le découvrir.";
+			next;
+			mes "[Magicien d'Halloween]";
+			mes "Vous ne pouvez pas utiliser aucune compétence pour tuer les zombies ou les fantômes.";
+			mes "Et une chose encore...";
+			mes "vous ne devriez pas oublier...";
+			next;
+			mes "[Magicien d'Halloween]";
+			mes "Tous les participants doivent être nus.";
+			mes "Déposez tous vos biens dans votre coffre et revenez ici lorsque votre poids est '0'.";
+			next;
+			mes "[Magicien d'Halloween]";
+			mes "Oh et une chose encore !";
+			mes "Vous ne pouvez pas être monté sur un PecoPeco ou avoir un Cart.";
+			mes "Si c'est le cas, alors je les retirerai avant que vous entriez.";
+			mes "C'est clair?";
+			next;
+			mes "[Magicien d'Halloween]";
+			mes "Souvenez-vous, il y a trois sorties mais seulement une fonctionne aléatoirement, les zombies et fantômes errant autour ne peuvent pas être tués et vous ne pouvez rien porter.";
+			next;
+			if (Hallow08 > 0) {
+				mes "[Magicien d'Halloween]";
+				mes "Hé...";
+				mes "Reviens quand tu seras prêt.";
+				close;
+			} else {
+				goto MainMenu;
+			}
+
+		Participate:
+			mes "[Magicien d'Halloween]";
+			mes "D'accord, tu es prêt.";
+			mes "Laisse-moi vérifier ton poids.";
+			next;
+			if (Weight > 0) {
+				mes "[Magicien d'Halloween]";
+				mes "Mon Dieu !";
+				mes "Il y a toujours un mouton noir quelque part.";
+				next;
+				mes "[Magicien d'Halloween]";
+				mes "Tu crois que je ne remarquerais pas que ton poids est au-dessus de '0'?";
+				mes "Tu es en surpoids...";
+				close;
+			} else {
+				mes "[Magicien d'Halloween]";
+				mes "Tu sembles prêt à partir et ton poids est parfait.";
+				next;
+				mes "[Magicien d'Halloween]";
+				mes "J'étais assez occupé avec mon travail, alors je suis épuisé.";
+				next;
+				mes "[Magicien d'Halloween]";
+				mes "Je m'oublie parfois de te l'envoyer...";
+				next;
+				mes "[Magicien d'Halloween]";
+				mes "J'espère que tu reviendras en forme.";
+				close2;
+				if (Hallow08 < 1) {
+					set Hallow08,1;
+				}
+				set Hallow08Kill,1;
+				set @Hallow08Warp, rand(1,3);
+				percentheal -98,0;
+				setriding 0;
+				setcart 0;
+				warp "evt_zombie",155,246;
+				end;
+			}
+
+		TicketExchange:
+			mes "[Magicien d'Halloween]";
+			mes "Tu veux échanger des billets contre des prix?";
+			mes "^FF0000Gros travail ! Kkkkkk!";
+			next;
+			mes "[Magicien d'Halloween]";
+			mes "Je vais vous dire quels objets vous pouvez échanger contre des billets.";
+			next;
+			mes "[Magicien d'Halloween]";
+			mes "5 billets pour une Parte de Tarte à la Citrouille.";
+			mes "20 billets pour un Casque Citrouille.";
+			mes "50 billets pour une Ancienne Boîte Bleue.";
+			mes "70 billets pour une Ancienne Boîte Violette.";
+			mes "200 billets pour un Album de Cartes Ancien.";
+			next;
+			mes "[Magicien d'Halloween]";
+			mes "Qu'est-ce que vous voulez échanger contre?";
+			next;
+			switch(select("Pumpkin Pie:Pumpkin-Head:Old Blue Box:Old Purple Box:Old Card Album")) {
+			case 1:
+				if (countitem(7941) < 5) {
+					goto NotEnough;
+				} else {
+					delitem 7941,5;
+					getitem 12192,1;
+					goto Enough;
+				}
+				break;
+			case 2:
+				if (countitem(7941) < 20) {
+					goto NotEnough;
+				} else {
+					delitem 7941,20;
+					getitem 5134,1;
+					goto Enough;
+				}
+				break;
+			case 3:
+				if (countitem(7941) < 50) {
+					goto NotEnough;
+				} else {
+					delitem 7941,50;
+					getitem 603,1;
+					goto Enough;
+				}
+				break;
+			case 4:
+				if (countitem(7941) < 70) {
+					goto NotEnough;
+				} else {
+					delitem 7941,70;
+					getitem 617,1;
+					goto Enough;
+				}
+				break;
+			case 5:
+				if (countitem(7941) < 200) {
+					goto NotEnough;
+				} else {
+					delitem 7941,200;
+					getitem 616,1;
+					goto Enough;
+				}
+			}
+
+		NextTime:
+			mes "[Magicien d'Halloween]";
+			mes "D'accord, à plus tard.";
+			mes "^FF0000Kkkkkkkk.";
+			close;
+
+	MainMenu:
+		menu "Explain it to me.",Rules,"I want to participate.",Participate,"I want to exchange tickets for prizes.",TicketExchange,"I'll come back next time.",NextTime;
+
+	MainMenu2:
+		menu "Get me back there now!",Participate,"Please, tell me the rules",Rules,"I want to exchange tickets for prizes.",TicketExchange,"I'll come back next time.",NextTime;
+
+	NotEnough:
+		mes "[Magicien d'Halloween]";
+		mes "Vous n'avez pas assez de billets!";
+		mes "Ne savez-vous donc pas compter?";
+		mes "Veuillez revenir avec le bon nombre de billets, s'il vous plaît.";
+		close;
+
+	Enough:
+		mes "[Magicien d'Halloween]";
+		mes "Voilà.";
+		mes "^FF0000Do vous avez besoin de...";
+		mes "...autre chose?";
+		next;
+		if (Hallow08 == 1) {
+			goto MainMenu2;
+		} else {
+			goto MainMenu;
+		}
+}
+
+evt_zombie,16,142,1	script	zombiewarp001	45,2,2,{
+OnTouch:
+	if (@Hallow08Warp == 1) {
+		set Hallow08Kill,2;
+		specialeffect EF_BASH;
+		warp "payon",28,142;
+	}
+	end;
+}
+
+evt_zombie,122,27,1	script	zombiewarp002	45,2,2,{
+OnTouch:
+	if (@Hallow08Warp == 2) {
+		set Hallow08Kill,2;
+		specialeffect EF_BASH;
+		warp "payon",121,40;
+	}
+	end;
+}
+
+evt_zombie,267,89,1	script	zombiewarp003	45,2,2,{
+OnTouch:
+	if (@Hallow08Warp == 3) {
+		set Hallow08Kill,2;
+		specialeffect EF_BASH;
+		warp "payon",253,95;
+	}
+	end;
+}
+
+evt_zombie,0,0	monster	Zombie	3000,150
+evt_zombie,0,0	monster	Ghoul	3001,80
+evt_zombie,0,0	monster	Zombie Master	3002,20

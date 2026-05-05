@@ -1,0 +1,225 @@
+//===== rAthena Script =======================================
+//= Moscovia Dungeon Warp Script
+//===== By: ==================================================
+//= Kisuka, $ephiroth
+//===== Current Version: =====================================
+//= 2.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Warp Points for Moscovia Dungeon
+//===== Additional Comments: =================================
+//= 1.0 Initial version [$ephiroth]
+//= 1.1, 1.2 Updated from jA [$ephiroth]
+//= 1.3 Added warp npcs. Removed place holder warps. [Kisuka]
+//= 1.4 Fixed cords on milestone 1-3. [Kisuka]
+//= 2.0 Clean-up. [Capuche]
+//============================================================
+
+mosk_fild02,190,257,0	warp	moscoviawarp0401	1,1,mosk_dun01,189,45
+mosk_dun01,189,42,0	warp	moscoviawarp0501	1,1,mosk_fild02,190,254
+mosk_in,215,36,0	warp2	babayagaout	1,1,mosk_dun02,53,217
+
+mosk_dun02,53,220,4	script	#babayagain	WARPNPC,1,1,{
+	end;
+OnTouch:
+	if (mos_nowinter == 11) {
+		donpcevent "Soldier1#mos::OnEnable";
+		donpcevent "Soldier2#mos::OnEnable";
+		donpcevent "Soldier3#mos::OnEnable";
+		mes "[Soldat]";
+		mes "Arrêtez-vous là !";
+		next;
+		mes "[Soldat]";
+		mes "Nous avons des informations";
+		mes "selon lesquelles vous avez secrètement";
+		mes "communiqué avec";
+		mes "Baba Yaga, l'Horrible.";
+		next;
+		mes "[Soldat]";
+		mes "Si vous avez quelque chose à dire,";
+		mes "parlez au Csar.";
+		mes "Suivez-nous.";
+		close2;
+		donpcevent "Soldier1#mos::OnInit";
+		donpcevent "Soldier2#mos::OnInit";
+		donpcevent "Soldier3#mos::OnInit";
+		set mos_nowinter,12;
+		warp "mosk_in",125,92;
+		end;
+	}
+	else if (mos_nowinter == 12 || mos_nowinter == 13) {
+		donpcevent "Soldier1#mos::OnEnable";
+		donpcevent "Soldier2#mos::OnEnable";
+		donpcevent "Soldier3#mos::OnEnable";
+		mes "[Soldat]";
+		mes "Nous pensions";
+		mes "que vous réapparaîtriez.";
+		mes "Quel est votre but auprès du Csar ?";
+		next;
+		if(select("Run away.:Explain the situation.") == 1) {
+			mes "["+strcharinfo(0)+"]";
+			mes "Je devrais sortir d'ici...";
+			close2;
+			warp "mosk_dun02",100,100;
+		}
+		else {
+			mes "-J'explique ce qui s'est passé jusqu'à présent.-";
+			next;
+			mes "[Soldat]";
+			mes "Si vous avez quelque chose à dire, parlez";
+			mes "au Csar.";
+			mes "Si vous quittez cet endroit,";
+			mes "vous serez considéré comme notre ennemi.";
+			close2;
+		}
+		donpcevent "Soldier1#mos::OnInit";
+		donpcevent "Soldier2#mos::OnInit";
+		donpcevent "Soldier3#mos::OnInit";
+		end;
+	}
+	else {
+		warp "mosk_in",215,41;
+		end;
+	}
+}
+
+mosk_dun02,53,215,3	script	Soldier1#mos	4_M_RUSKNIGHT,{
+	mes "[Soldat]";
+	mes "Nous sommes les soldats du Csar.";
+	mes "Nous sommes appelés en cas d'urgence,";
+	mes "ne nous dérangez plus.";
+	close;
+	
+OnInit:
+	hideonnpc strnpcinfo(0);
+	end;
+OnEnable:
+	hideoffnpc strnpcinfo(0);
+	end;
+}
+mosk_dun02,50,217,3	duplicate(Soldier1#mos)	Soldier2#mos	4_M_RUSKNIGHT
+mosk_dun02,56,217,5	duplicate(Soldier1#mos)	Soldier3#mos	4_M_RUSKNIGHT
+
+mosk_dun01,170,164,3	script	Milestone#1	HIDDEN_NPC,{
+	mes "- Il y a des écritures sur un grand roc. -";
+	next;
+	mes "^3131FF- Ceux qui servent le Soleil mourront, allez au Nord.-^000000";
+	close;
+}
+
+mosk_dun01,207,276,3	script	Milestone#1-2	HIDDEN_NPC,{
+	mes "- Il y a des écritures sur un grand roc. -";
+	next;
+	mes "^3131FF- Ceux qui avancent peuvent se blesser mais sont courageux de cœur et ceux qui reculent resteront en sécurité.";
+	mes "- Si vous avez du courage, avancez. Sinon, reculez.-^000000";
+	next;
+	if(select("Step forward.:Stay.") == 1) {
+		mes "- Vous suivez le chemin devant vous.";
+		close2;
+		warp "mosk_dun02",165,30;
+		end;
+	}
+	mes "- Vous ne pouvez pas avancer.";
+	close;
+}
+
+mosk_dun01,264,191,3	script	Milestone#1-3	HIDDEN_NPC,{
+	mes "- Il y a des écritures sur un grand roc. -";
+	next;
+	mes "^3131FF- Ceux qui avancent peuvent se blesser mais sont braves de cœur et ceux qui reculent resteront en sécurité.";
+	mes "- Si vous êtes brave, faites un pas en avant. Sinon, reculez.-^000000";
+	next;
+	if(select("Step forward.:Stay.") == 1) {
+		mes "- Vous suivez le chemin devant vous.";
+		close2;
+		warp "mosk_dun03",117,36;
+		end;
+	}
+	mes "- Vous avez décidé de rester.";
+	close;
+}
+
+mosk_dun02,168,28,3	script	Milestone#2-1	HIDDEN_NPC,{
+	mes "- Il y a des écritures sur un grand roc. -";
+	next;
+	mes "^3131FF- Ceux qui avancent peuvent se blesser mais sont vaillants de cœur et ceux qui reculent resteront en sécurité.";
+	mes "- Si vous êtes vaillant, faites un pas en avant. Sinon, reculez.-^000000";
+	next;
+	if(select("Go back.:Stay.") == 1) {
+		mes "- Vous sentez le danger et décidez de repartir -";
+		close2;
+		warp "mosk_dun01",201,269;
+		end;
+	}
+	mes "- Vous avez décidé de rester.";
+	close;
+}
+
+mosk_dun02,268,117,3	script	Milestone#2-3	HIDDEN_NPC,{
+	mes "- Il y a des écritures sur un grand roc. -";
+	next;
+	mes "^3131FF- Ceux qui avancent gagneront l'honneur mais peuvent mourir, ceux qui reculeront auront du courage mais pourront toujours se blesser.";
+	mes "- Si vous êtes vraiment brave, avancez. Sinon, reculez.-^000000";
+	next;
+	if(select("Step forward.:Stay.") == 1) {
+		mes "- Vous avancez courageusement.";
+		close2;
+		warp "mosk_dun03",32,135;
+		end;
+	}
+	mes "- Vous avez décidé de rester.";
+	close;
+}
+
+mosk_dun03,27,131,3	script	Milestone#3-2	HIDDEN_NPC,{
+	mes "- Il y a des écritures sur un grand roc. -";
+	next;
+	mes "^3131FF- Ceux qui restent risquent la mort mais gagneront l'honneur, ceux qui repartent risqueront de se blesser mais gagneront du courage.";
+	mes "Ceux qui ont du courage retourneront en arrière, sinon avancez et restez ici.-^000000";
+	next;
+	if(select("Go back.:Stay.") == 1) {
+		mes "- Vous sentez le danger et décidez de repartir -";
+		close2;
+		warp "mosk_dun02",262,118;
+		end;
+	}
+	mes "- Vous avez décidé de rester.";
+	close;
+}
+
+mosk_dun03,119,46,3	script	Milestone#3-1	HIDDEN_NPC,{
+	mes "Il y a des écritures sur un grand roc.";
+	next;
+	mes "^3131FF- Ceux qui restent risquent la mort mais gagneront l'honneur, ceux qui repartent risqueront de se blesser mais gagneront du courage.";
+	mes "Ceux qui ont peur de mourir retourneront en arrière, sinon avancez et restez ici.-^000000";
+	next;
+	if(select("Go back.:Stay.") == 1) {
+		mes "- Vous sentez le danger et décidez de repartir -";
+		close2;
+		warp "mosk_dun01",257,190;
+		end;
+	}
+	mes "- Vous avez décidé de rester.";
+	close;
+}
+
+mosk_dun01,194,43,3	script	Milestone#1-1	HIDDEN_NPC,{
+	mes "- Il y a des écritures sur un grand roc. -";
+	next;
+	mes "- Si vous voulez protéger votre vie, retournez en arrière -";
+	close;
+}
+
+mosk_fild02,198,53,3	script	Ship#mos_dun	HIDDEN_NPC,{
+	mes "- Vous trouvez un navire à l'ancre.";
+	next;
+	if(select("Take the ship and go back to the village.:Explore more.") == 1) {
+		mes "- Vous montez dans le navire et tirez sur les rames.";
+		close2;
+		warp "moscovia",140,54;
+		end;
+	}
+	mes "- Cette zone inconnue suscite votre intérêt. -";
+	close;
+}

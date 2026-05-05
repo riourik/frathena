@@ -1,0 +1,152 @@
+//===== rAthena Script =======================================
+//= Arrow Quivers
+//===== By: ==================================================
+//= Muad_Dib (Prometheus Project); L0ne_W0lf
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Turns arrows into Arrow Quivers.
+//= Breakdown of Subroutine "S_BuyQuiver"
+//= arg(0): Type of Arrow to be packaged (item ID).
+//= arg(1): How many of each 'getarg(0)' arrow per quiver.
+//= arg(2): The cost of making a 'getarg(0)' quiver.
+//= arg(3): The quiver given by the NPC (item ID).
+//===== Additional Comments: =================================
+//= 1.0 Added Mora NPC. [Euphy]
+//= 1.1 Updated to match the official scripts. [Euphy]
+//= 1.2 Update regarding the Barter Shop [JohnnyPlayy, Capuche]
+//============================================================
+
+// Mora :: ep14_1_tre
+//============================================================
+mora,106,117,3	script	Quiver Maker#mora	4_M_RAFLE_GR,{
+	if (checkweight(1201,1) == 0) {
+		mes "[Fabricant de carquois]";
+		mes "Vous avez trop d'objets avec vous.";
+		mes "Faites de la place dans votre inventaire et revenez. Je vais vous dire quelque chose d'intéressant.";
+		close;
+	}
+	if (MaxWeight - Weight < 2000) {
+		mes "[Fabricant de carquois]";
+		mes "Vous semblez épuisé avec tout ce matériel.";
+		mes "Faites de la place dans votre inventaire et revenez. Je vais vous dire quelque chose d'intéressant.";
+		close;
+	}
+	mes "[Fabricant de carquois]";
+	mes "Les villageois de Mora demandent quels sont les bons carquois. Ils ne savent tout simplement pas comment fonctionne le monde.";
+	mes "Pas étonnant qu'ils ne sachent rien des carquois - étaler du miel sur des feuilles toute la journée.";
+	next;
+	if (getbattleflag("feature.barter")) {
+		.@menu$ = "I want arrows";
+	}
+	switch( select("Please make me a quiver.", .@menu$, "What's a quiver?") ) {
+	case 1:
+		if (getbattleflag("feature.barter")) {
+			mes "[Fabricant de carquois]";
+			mes "Enfin, quelqu'un est apparu qui connaît la vraie valeur d'un carquois. Je le ferai pour ceux qui en connaissent la valeur.";
+			close2;
+			callshop "Quiver_Archer", 1;
+			end;
+		}
+		mes "[Fabricant de carquois]";
+		mes "Enfin, quelqu'un apprécie un carquois !";
+		mes "Je peux fabriquer des Carquois Elfiques et des Carquois de Chasse.";
+		mes "Lequel avez-vous besoin ?";
+		next;
+		switch(select("An Elven Quiver:A Hunting Quiver:I don't need a quiver.")) {
+		case 1: callsub S_BuyQuiver,1773,500,500,12575; //Arrow_Of_Elf_Cntr
+		case 2: callsub S_BuyQuiver,1774,500,500,12576; //Hunting_Arrow_Cntr
+		case 3:
+			mes "[Fabricant de carquois]";
+			mes "Vous pouvez acheter des flèches auprès du marchand d'outils à côté de moi.";
+			close;
+		}
+		end;
+	case 2:
+		if (getbattleflag("feature.barter")) {
+			mes "[Fabricant de carquois]";
+			mes "Je ne vends pas de flèches ordinaires. Ce sont des flèches artisanales qui ne peuvent être achetées qu'ici. Vous reconnaissez vraiment leur valeur, n'est-ce pas ?";
+			close2;
+			callshop "Catch_Arrows", 1;
+		}
+		end;
+	case 3:
+		mes "[Fabricant de carquois]";
+		mes "Une flèche peut être fine et légère, mais en transporter des centaines ou des milliers est comme porter un tronc entier.";
+		next;
+		mes "[Fabricant de carquois]";
+		mes "Mais lorsque vous avez des carquois, vous pouvez y ranger vos flèches et ainsi économiser du poids et de l'espace.";
+		mes "Si vous êtes intéressé par l'un d'eux, je vais en coudre un pour vous.";
+		close;
+	}
+	end;
+
+S_BuyQuiver:
+	.@item_req = getarg(0);
+	.@req_amount = getarg(1);
+	if (countitem(getarg(0)) < .@req_amount) {
+		mes "[Fabricant de carquois]";
+		mes "Bring more than "+ .@req_amount +" "+ getitemname(.@item_req) +" and I'll make you a quiver.";
+		close;
+	}
+	mes "[Fabricant de carquois]";
+	mes "Oh, I see you have "+ getitemname(.@item_req) +" in your hand!";
+	mes "Vous êtes intéressé à utiliser un carquois ? C'est vraiment pratique !";
+	mes "If you're interested, I can trade "+ .@req_amount +" of those arrows for one of these quivers for ^FF3131"+getarg(2)+" zeny^000000.";
+	next;
+	switch(select("Trade all the arrows you have:Get only one quiver:Don't trade")) {
+	case 1:
+		set .@arrows, countitem(.@item_req);
+		set .@quiver, .@arrows / .@req_amount;
+		set .@arrows_used, .@quiver * .@req_amount;
+		set .@arrow_zeny01, .@quiver * getarg(2);
+		mes "The number of arrows you have : ^3131FF"+.@arrows+"^000000";
+		mes "The number of quivers available : ^3131FF"+.@quiver+"^000000";
+		mes "Zeny needed for trade : ^3131FF"+.@arrow_zeny01+" zeny^000000";
+		next;
+		mes "Échange ?";
+		next;
+		if(select("Trade:Don't trade") == 2) {
+			mes "[Fabricant de carquois]";
+			mes "Eh, vous ne doutez pas de mes compétences, n'est-ce pas ?";
+			close;
+		}
+		break;
+	case 2:
+		set .@quiver, 1;
+		set .@arrows_used, .@req_amount;
+		set .@arrow_zeny01, getarg(2);
+		set .@zeny_mes,1;
+		break;
+	case 3:
+		mes "[Fabricant de carquois]";
+		mes "Eh, vous ne doutez pas de mes compétences, n'est-ce pas ?";
+		close;
+	}
+	if (Zeny < .@arrow_zeny01) {
+		mes "[Fabricant de carquois]";
+		if (.@zeny_mes == 1)
+			mes "J'ai dit que j'accepterais des pièces humaines juste pour vous, et vous refusez toujours de dépenser l'argent ?";
+		else
+			mes "Vous ne comptez vraiment pas obtenir un chef-d'œuvre gratuitement, n'est-ce pas ?";
+		close;
+	}
+	mes "[Fabricant de carquois]";
+	mes "Eh, voici.";
+	mes "^3131FFIl y a quelque chose que vous devez savoir^000000 - essayez de vous en souvenir.";
+	mes "^FF0000Vous ne pouvez pas utiliser de carquois lorsque votre encombrement dépasse 70%.^000000";
+	mes "Mieux vaut garder cela à l'esprit, sinon vous pourriez être dans la merde plus tard.";
+	set Zeny, Zeny-.@arrow_zeny01;
+	delitem .@item_req,.@arrows_used;
+	getitem getarg(3),.@quiver;
+	close;
+}
+
+//= Basic Shops
+//============================================================
+
+//= Arrows
+-	marketshop	Catch_Arrows	HIDDEN_NPC,1773:5:-1,1774:5:-1

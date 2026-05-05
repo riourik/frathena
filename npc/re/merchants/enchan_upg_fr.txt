@@ -1,0 +1,281 @@
+//===== rAthena Script =======================================
+//= Upgrade Weapon Enchants
+//===== By: ==================================================
+//= Skorm
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Adds enchantments to Upgrade weapons.
+//===== Additional Comments: =================================
+//= 1.0 First version.
+//= 1.1 Standardizing, grammar and bug fixes. [Euphy]
+//= 1.2 Moved to Cash Mall [Lemongrass]
+//============================================================
+
+// Main NPC :: 201105_luk_enc
+//============================================================
+itemmall,29,71,3	script	Devil Enchant Master#prq	63,{
+	disable_items;
+	if (checkweight(1201,1) == 0) {
+		mes "Vous portez trop d'objets, veuillez en réduire le nombre et revenez plus tard !";
+		close;
+	}
+	if (MaxWeight - Weight < 10000) {
+		mes "Vous dépassez la limite de poids, veuillez en réduire le nombre et revenez plus tard !";
+		close;
+	}
+	mes "[Maître de l'Enchantement Démoniaque]";
+	mes "Oui ?";
+	mes "Vous me cherchez ?";
+	next;
+	switch(select("This is the first time seeing you!:I heard that you are the best!:Please initialize the enchant.")) {
+	case 1:
+		mes "[Maître de l'Enchantement Démoniaque]";
+		mes "Ha ha ha~ Bien sûr, je ne suis pas le genre de personne qui traite simplement avec les gens.";
+		next;
+		mes "[Maître de l'Enchantement Démoniaque]";
+		mes "Y compris vous ! Même si vous m'offrez beaucoup d'argent, je n'enchanterai pas pour vous simplement !!";
+		next;
+		mes "[Maître de l'Enchantement Démoniaque]";
+		mes "Avez-vous vu mon titre ? Très peu de personnes ont ce titre pour une raison !";
+		next;
+		mes "[Maître de l'Enchantement Démoniaque]";
+		mes "Je n'enchanterai que si vous apportez un ^0000ffLivre d'Enchantement^000000 avec vous !";
+		next;
+		mes "[Maître de l'Enchantement Démoniaque]";
+		mes "Sinon, je n'enchanterai pas pour vous....";
+		close;
+	case 2:
+		if (!countitem(6484)) {
+			mes "[Maître de l'Enchantement Démoniaque]";
+			mes "Écoutez-moi ! Je ne ferai pour vous que si vous apportez le Livre d'Enchantement !";
+			close;
+		}
+		set .@select,1;
+		break;
+	case 3:
+		mes "[Maître de l'Enchantement Démoniaque]";
+		if (Zeny < 100000) {
+			mes "L'initialisation coûtera 100 000 zeny. Il semble que vous n'aiez pas assez de zeny...";
+			close;
+		}
+		mes "L'initialisation coûtera 100 000 zeny et confirmera si l'arme est enchantée !";
+		next;
+		if (select("Let me think about it.:Initialize it now!") == 1) {
+			mes "[Maître de l'Enchantement Démoniaque]";
+			mes "Revenez après avoir confirmé !";
+			close;
+		}
+		set .@select,2;
+		break;
+	}
+	set .@part, EQI_HAND_R;
+
+	mes "[Maître de l'Enchantement Démoniaque]";
+	if (!getequipisequiped(.@part)) {
+		mes "Vous essayez de retirer l'équipement enchanté ?";
+		close;
+	}
+	setarray .@equip_card[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3);
+	// if (!getequipisequiped(.@part)) {
+	// 	mes "Il est dangereux de retirer un équipement pendant le processus d'enchantement !";
+	// 	close;
+	// }
+	set .@equip_id, getequipid(.@part);
+	.@equip_refine = getequiprefinerycnt(.@part);
+	set .@item$, "|1292|1394|1491|1585|2015|13071|13115|16019|18112|21000|";
+	if (!compare(.@item$,"|"+.@equip_id+"|")) {
+		mes "Je ne veux pas toucher à votre équipement maintenant !";
+		close;
+	}
+
+	if (.@select == 1) {
+		if (!countitem(6484)) {
+			mes "Écoutez-moi ! Je ne ferai pour vous que si vous apportez le Livre d'Enchantement !";
+			close;
+		}
+		mes "Quel type d'effet souhaitez-vous enchanté ?";
+		next;
+		switch(select("Let me think about it.:Physical Series:Magical Series")) {
+		case 1:
+			mes "[Maître de l'Enchantement Démoniaque]";
+			mes "Revenez après avoir changé d'avis !";
+			close;
+		case 2:
+			set .@enc_type,1;
+			break;
+		case 3:
+			set .@enc_type,2;
+			break;
+		}
+		mes "[Maître de l'Enchantement Démoniaque]";
+		if (.@equip_card[3]) {
+			mes "Cet équipement a déjà été enchanté ! Vous devez le réinitialiser avant de pouvoir l'enchanter à nouveau.";
+			close;
+		}
+		mes "Le processus d'enchantement risque d'échouer, et ^ff0000il réduira le niveau de raffinement partiel^000000, mais la carte insérée et l'arme ne seront pas brisées ! Voulez-vous vraiment continuer ?";
+		next;
+		if (select("Next time!:Start now!") == 1) {
+			mes "[Maître de l'Enchantement Démoniaque]";
+			mes "Revenez après avoir pris votre décision !";
+			close;
+		}
+		if (.@equip_card[3]) {
+			mes "[Maître de l'Enchantement Démoniaque]";
+			mes "Il semble y avoir un problème, laissez-moi vérifier.";
+			close;
+		}
+
+		if (.@enc_type == 1) { // Physical Series
+			set .@i, rand(1,1300);
+			     if (.@i < 51)    set .@enchant,4734; //Agility5
+			else if (.@i < 76)    set .@enchant,4735; //Agility6
+			else if (.@i < 88)    set .@enchant,4736; //Agility7
+			else if (.@i < 93)    set .@enchant,4737; //Agility8
+			else if (.@i < 95)    set .@enchant,4738; //Agility9
+			else if (.@i < 96)    set .@enchant,4739; //Agility10
+			else if (.@i < 146)   set .@enchant,4724; //Dexterity5
+			else if (.@i < 171)   set .@enchant,4725; //Dexterity6
+			else if (.@i < 183)   set .@enchant,4726; //Dexterity7
+			else if (.@i < 188)   set .@enchant,4727; //Dexterity8
+			else if (.@i < 190)   set .@enchant,4728; //Dexterity9
+			else if (.@i < 191)   set .@enchant,4729; //Dexterity10
+			else if (.@i < 291)   set .@enchant,4704; //Strength5
+			else if (.@i < 341)   set .@enchant,4705; //Strength6
+			else if (.@i < 366)   set .@enchant,4706; //Strength7
+			else if (.@i < 378)   set .@enchant,4707; //Strength8
+			else if (.@i < 383)   set .@enchant,4708; //Strength9
+			else if (.@i < 384)   set .@enchant,4709; //Strength10
+			else if (.@i < 434)   set .@enchant,4754; //Luck5
+			else if (.@i < 459)   set .@enchant,4755; //Luck6
+			else if (.@i < 471)   set .@enchant,4756; //Luck7
+			else if (.@i < 476)   set .@enchant,4757; //Luck8
+			else if (.@i < 478)   set .@enchant,4758; //Luck9
+			else if (.@i < 479)   set .@enchant,4759; //Luck10
+			else if (.@i < 679)   set .@enchant,4744; //Vitality5
+			else if (.@i < 779)   set .@enchant,4745; //Vitality6
+			else if (.@i < 829)   set .@enchant,4746; //Vitality7
+			else if (.@i < 854)   set .@enchant,4747; //Vitality8
+			else if (.@i < 866)   set .@enchant,4748; //Vitality9
+			else if (.@i < 867)   set .@enchant,4749; //Vitality10
+			else if (.@i < 967)   set .@enchant,4808; //Fighting_Spirit4
+			else if (.@i < 992)   set .@enchant,4820; //Fighting_Spirit5
+			else if (.@i < 1092)  set .@enchant,4835; //Expert_Archer4
+			else if (.@i < 1117)  set .@enchant,4836; //Expert_Archer5
+			else if (.@i < 1217)  set .@enchant,4835; //Expert_Archer4
+			else if (.@i < 1242)  set .@enchant,4836; //Expert_Archer5
+			else set .@enchant,0;
+		} else if (.@enc_type == 2) { // Magical Series
+			set .@i, rand(1,1200);
+			     if (.@i < 51)    set .@enchant,4714; //Inteligence5
+			else if (.@i < 76)    set .@enchant,4715; //Inteligence6
+			else if (.@i < 88)    set .@enchant,4716; //Inteligence7
+			else if (.@i < 93)    set .@enchant,4717; //Inteligence8
+			else if (.@i < 95)    set .@enchant,4718; //Inteligence9
+			else if (.@i < 96)    set .@enchant,4719; //Inteligence10
+			else if (.@i < 146)   set .@enchant,4724; //Dexterity5
+			else if (.@i < 171)   set .@enchant,4725; //Dexterity6
+			else if (.@i < 183)   set .@enchant,4726; //Dexterity7
+			else if (.@i < 188)   set .@enchant,4727; //Dexterity8
+			else if (.@i < 190)   set .@enchant,4728; //Dexterity9
+			else if (.@i < 191)   set .@enchant,4729; //Dexterity10
+			else if (.@i < 291)   set .@enchant,4734; //Agility5
+			else if (.@i < 341)   set .@enchant,4735; //Agility6
+			else if (.@i < 366)   set .@enchant,4736; //Agility7
+			else if (.@i < 378)   set .@enchant,4737; //Agility8
+			else if (.@i < 383)   set .@enchant,4738; //Agility9
+			else if (.@i < 384)   set .@enchant,4739; //Agility10
+			else if (.@i < 484)   set .@enchant,4754; //Luck5
+			else if (.@i < 534)   set .@enchant,4755; //Luck6
+			else if (.@i < 559)   set .@enchant,4756; //Luck7
+			else if (.@i < 571)   set .@enchant,4757; //Luck8
+			else if (.@i < 576)   set .@enchant,4758; //Luck9
+			else if (.@i < 577)   set .@enchant,4759; //Luck10
+			else if (.@i < 777)   set .@enchant,4744; //Vitality5
+			else if (.@i < 877)   set .@enchant,4745; //Vitality6
+			else if (.@i < 927)   set .@enchant,4746; //Vitality7
+			else if (.@i < 952)   set .@enchant,4747; //Vitality8
+			else if (.@i < 964)   set .@enchant,4748; //Vitality9
+			else if (.@i < 969)   set .@enchant,4749; //Vitality10
+			else if (.@i < 1069)  set .@enchant,4812; //Spell4
+			else if (.@i < 1094)  set .@enchant,4826; //Spell5
+			else if (.@i < 1119)  set .@enchant,4761; //Matk2
+			else if (.@i < 1124)  set .@enchant,4806; //Matk3
+			else set .@enchant,0;
+		} else {
+			mes "[Maître de l'Enchantement Démoniaque]";
+			mes "Hmm ! Cet objet présente un problème, veuillez le revérifier !";
+			close;
+		}
+		mes "[Maître de l'Enchantement Démoniaque]";
+		if (.@equip_card[3]) {
+			mes "Cet objet a été enchanté !";
+			close;
+		}
+		if (!countitem(6484)) {
+			mes "Écoutez-moi ! Je ne ferai pour vous que si vous apportez le Livre d'Enchantement !";
+			close;
+		}
+		if (.@enchant == 0) {
+			specialeffect EF_SHIELDCHARGE;
+			mes "Oh ! Incroyable !! Cela a échoué !! Veuillez revenir !";
+			set .@lost_refine, rand(0,.@equip_refine);
+			set .@equip_refine, .@equip_refine - .@lost_refine;
+		} else {
+			specialeffect EF_REPAIRWEAPON;
+			mes "Le slot ^9900004^000000 a été enchanté !";
+		}
+		delitem 6484,1; //Enchant_Book
+
+		// anti-hack
+		if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine) || 
+		    callfunc("F_IsEquipCardHack", .@part, .@equip_card[0], .@equip_card[1], .@equip_card[2], .@equip_card[3]))
+			close;
+
+		delequip .@part;
+
+//		GetNonSlotItemSock2 .@equip_refine .@equip_id .@equip_card[0] .@equip_card[1] .@equip_card[2] .@enchant
+		getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@enchant;
+
+		if (.@lost_refine) {
+			next;
+			mes "[Maître de l'Enchantement Démoniaque]";
+			mes "The failure has reduced the refine by "+callfunc("F_InsertPlural",.@lost_refine,"level")+"! Don't be depressed!";
+		}
+		close;
+	} else if (.@select == 2) {
+		if (Zeny < 100000) {
+			mes "Vous devez apporter de l'argent pour initialiser !!";
+			close;
+		}
+		if (getiteminfo(.@equip_card[3], ITEMINFO_SUBTYPE) != CARD_ENCHANT) {
+			mes "Cet objet n'est pas enchanté !";
+			close;
+		}
+		if (!getequipisequiped(.@part)) {
+			mes "Vous déquipez maintenant ?";
+			close;
+		}
+		specialeffect EF_REPAIRWEAPON;
+		mes "J'ai initialisé les effets d'enchantement.";
+		set Zeny, Zeny - 100000;
+
+		// anti-hack
+		if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine) || 
+		    callfunc("F_IsEquipCardHack", .@part, .@equip_card[0], .@equip_card[1], .@equip_card[2], .@equip_card[3]))
+			close;
+
+		delequip .@part;
+
+//		GetNonSlotItemSock2 .@equip_refine .@equip_id .@equip_card[0] .@equip_card[1] .@equip_card[2] 0
+		getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],0;
+
+		close;
+	} else {
+		mes "Il semble que vous ayez choisi le mauvais métier ??";
+		close;
+	}
+}

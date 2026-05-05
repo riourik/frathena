@@ -1,0 +1,798 @@
+//===== rAthena Script ======================================= 
+//= Quest NPCs related to Niflheim
+//===== By: ================================================== 
+//= The rAthena Dev Team
+//===== Current Version: ===================================== 
+//= 1.6
+//===== Compatible With: ===================================== 
+//= rAthena Project; 7.15 +
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Piano Key Ouest
+//= - Escape from Niflheim
+//= - Variables in use: nif_esc, MISC_QUEST (Bit 32)
+//= Message Delivery Quest
+//= - Deliver a message to Erious' departed wife.
+//= - Variables in use: nif_revive, MISC_QUEST (Bit 16384)
+//===== Additional Comments: ================================= 
+//= 1.0 Initial release, moved Book of Devil and Piano quest
+//=     from npc/cities/niflheim.txt [Evera]
+//= 1.1 Optimized Book of Devil quest. used bit-wise var,
+//=     Optimized Piano Quest - now uses 1 variable [Lupus]
+//= 1.2 Fixed bad NPC header data to comply with rev. 11603. [L0ne_W0lf]
+//= 1.3 Moved the Book of Devil quest to custom folder. [L0ne_W0lf]
+//=     Updated to Aegis 10.3 Standed, added Message Delivery Quest.
+//=     Rescripted Piano Quest. Prior quest progress will be lost.
+//= 1.4 Fixed NPCs using ID 111 when it shoudl have been 139. [L0ne_W0lf]
+//= 1.5 Swapped NPC IDs back from last change (139 back to 111). [L0ne_W0lf]
+//=     Clicking will do nothing, you have to still "touch" the npc. 
+//= 1.6 Added questlog support. [Euphy]
+//============================================================ 
+
+// Piano Quest :: nif_ryu
+//============================================================
+niflheim,224,243,3	script	Alreg#nif	795,{
+	if (nif_piano) set nif_piano,0;
+	mes "[Alreg]";
+	mes "J'aime la viande, muheh.";
+	mes "Toi ! Tu as l'air appétissant.";
+	next;
+	mes "[Alreg]";
+	mes "Je veux goûter à toi.";
+	next;
+	mes "^FF3355*Crunch* Crunch*^000000";
+	if (nif_esc == 0 && (MISC_QUEST & 32) == 0) {
+		percentheal -60,0;
+		next;
+		mes "["+ strcharinfo(0) +"]";
+		mes "NooOOoOOoOoO~!";
+		next;
+		mes "[Alreg]";
+		mes "Il y a longtemps que je n'ai pas mangé de viande.";
+		mes "Donc... si bon. Tu as un goût";
+		mes "superbe. Alreg te donne ceci";
+		mes "en échange. Cadeau !";
+		mes "*Burrrp*";
+		set nif_esc,rand(1,2);
+		getitem 7184,1; //Piano_Keyboard
+		close;
+	}
+	percentheal -30,0;
+	next;
+	mes "["+ strcharinfo(0) +"]";
+	mes "Ow~! Que fais-tu";
+	mes "pour essayer de me tuer ?!";
+	next;
+	mes "[Alreg]";
+	mes "Hm ? Oh, non non non.";
+	mes "Je veux te manger.";
+	close;
+}
+
+nif_in,105,81,3	script	Crayu#nif	794,{
+	mes "Je me demande ce que signifient ces paroles...";
+	mes "Un vivant...";
+	mes "Écoutez cette chanson...";
+	mes "Elle a été chantée par bien des gens";
+	mes "depuis longtemps, mais personne ne sait";
+	mes "quand elle fut composée ni qui l'a écrite.";
+	next;
+	mes "Je me demande ce que signifient ces paroles...";
+	mes "^FF00001. Le coucher de soleil sur la montagne à l'ouest";
+	mes "^FF00002. Là où le crépuscule violet tombe";
+	mes "^FF00003. Entouré d'une mélodie magnifique";
+	mes "^FF00004. Vous devenez la clé qui ignore son maître^000000";
+	next;
+	if (nif_esc == 1 || nif_esc == 4) {
+		mes "Je me demande ce que signifient ces paroles...";
+		mes "D'accord, attendez ! Voici un test pour vous !";
+		switch(rand(1,4)) {
+		case 1:
+			set .@songline$,"Mountain sunset to the west";
+			mes "Écrivez la première ligne de la chanson.";
+			break;
+		case 2:
+			set .@songline$,"Where the purple dusk falls";
+			mes "Écrivez la deuxième ligne de la chanson.";
+			break;
+		case 3:
+			set .@songline$,"Surrounded by beautiful melody";
+			mes "Écrivez la troisième ligne de la chanson.";
+			break;
+		case 4:
+			set .@songline$,"You become the key that ignores its master";
+			mes "Écrivez la quatrième ligne de la chanson.";
+			break;
+		}
+		next;
+		input .@input$;
+		if (.@input$ == .@songline$) {
+			mes "Je me demande ce que signifient ces paroles...";
+			mes "Excellent... !";
+			mes "Donc vous avez écouté~ !";
+			mes "Vous faites partie de mes";
+			mes "invités préférés. Voici un";
+			mes "un petit cadeau pour toi.";
+			next;
+			if (nif_esc == 1) set nif_esc,3;
+			else set nif_esc,6;
+			getitem 7184,1; //Piano_Keyboard
+			mes "Je me demande ce que signifient ces paroles...";
+			mes "Enfin, j'espère que tu montreras ton";
+			mes "respect envers les autres Bardes,";
+			mes "tout comme tu l'as fait pour moi.";
+			close;
+		}
+		else {
+			mes "Je me demande ce que signifient ces paroles...";
+			mes "*Sigh*... Si seulement tu m'avais";
+			mes "écoutée, il aurait été facile de répondre.";
+			mes "Essaie de te souvenir du refrain";
+			mes "et réessaie !";
+			mes "[Crayu]";
+			close;
+		}
+	}
+	next;
+	mes "Je me demande ce que signifient ces paroles...";
+	mes "Elles semblent assez profondes...";
+	mes "J'ai l'impression que cette chanson";
+	mes "cache un secret.";
+	mes "[Kuzkahina]";
+	close;
+}
+
+nif_in,31,20,3	script	Kuzkahina#nif	794,{
+	if (nif_esc == 2 || nif_esc == 3) {
+		mes "pourquoi je ne peux pas gagner";
+		mes "Je ne comprends pas";
+		mes "d'argent avec cette boutique...";
+		mes "Même quand j'étais vivante";
+		mes "je n'ai jamais pu gagner";
+		mes "d'argent avec mes affaires...";
+		mes "^3355FFVous avez trouvé quelque chose^000000enterré à moitié près d'une tombe.";
+		next;
+		mes "pourquoi je ne peux pas gagner";
+		mes "Hé toi ! Sois utile et jette ça quand tu partiras.";
+		mes "[Kuzkahina]";
+		set nif_esc,nif_esc+2;
+		getitem 7184,1; //Piano_Keyboard
+		next;
+		mes "pourquoi je ne peux pas gagner";
+		mes "Comment ai-je pu embaucher un personnel aussi inutile... ?";
+		mes "*mumble mumble*";
+		mes "[Kuzkahina]";
+		mes "[Kuzkahina]";
+		close;
+	}
+	mes "pourquoi je ne peux pas gagner";
+	mes "Je ne comprends pas";
+	mes "d'argent avec cette boutique...";
+	mes "Même quand j'étais vivante";
+	mes "je n'ai jamais pu gagner";
+	mes "d'argent avec mes affaires...";
+	mes "^3355FFVous avez trouvé quelque chose^000000enterré à moitié près d'une tombe.";
+	close;
+}
+
+niflheim,208,103,1	script	#Graveyard1	111,1,1,{
+	end;
+
+OnTouch_:
+	if (nif_esc == 5 || nif_esc == 7 || nif_esc == 8 || nif_esc == 10) {
+		mes "^3355FFVous avez trouvé quelque chose";
+		mes "demie-enterrée près d'une tombe.";
+		mes "Elle semble très bien façonnée.^000000";
+		next;
+		mes "^3355FFSouhaitez-vous la ramasser ?^000000";
+		if (select("Yes:No") == 1) {
+			if (nif_esc < 10)
+				set nif_esc,nif_esc+2;
+			else if (nif_esc == 10)
+				set nif_esc,11;
+			getitem 7184,1; //Piano_Keyboard
+		}
+		close;
+	}
+	end;
+}
+
+niflheim,169,71,1	script	#Graveyard2	111,1,1,{
+	end;
+
+OnTouch_:
+	if (nif_esc == 6 || nif_esc == 9) {
+		mes "^3355FFVous avez trouvé quelque chose";
+		mes "demie-enterrée près d'une tombe.";
+		mes "Elle semble très bien façonnée.^000000";
+		next;
+		mes "^3355FFSouhaitez-vous la ramasser ?^000000";
+		if (select("Yes:No") == 1) {
+			set nif_esc,nif_esc+2;
+			getitem 7184,1; //Piano_Keyboard
+		}
+		close;
+	}
+	end;
+}
+
+nif_in,115,181,0	script	#Piano	111,1,1,{
+	end;
+
+OnTouch_:
+	if (nif_esc == 0 && (MISC_QUEST & 32) == 0) {
+		mes "^3355FFVous voyez un grand piano lourd.";
+		mes "Vous avez l'impression que";
+		mes "sa musique sonnerait magnifiquement.^000000";
+		next;
+		mes "^3355FFEn examinant le piano,";
+		mes "vous constatez qu'il manque 7 touches";
+		mes "au milieu du clavier.";
+		mes "middle of the keyboard.";
+		mes "Si vous aviez toutes les touches,";
+		mes "pourriez jouer de la musique...^000000";
+		close;
+	}
+	if (nif_esc == 11 && countitem(7184) > 5) {
+		set nif_esc,12;
+		delitem 7184,6; //Piano_Keyboard
+		mes "^3355FFVous avez pris les touches que vous avez trouvées";
+		mes "et les insérées dans chaque espace vide.^000000";
+		mes "each empty space.^000000";
+		next;
+		mes "^3355FFMais alors, vous réalisez";
+		mes "qu'il vous manque la dernière";
+		mes "touche pour l'espace le plus à gauche";
+		mes "du clavier...^000000";
+		close;
+	}
+	end;
+}
+
+-	script	Piano3	HIDDEN_NPC,{
+	end;
+
+OnTouch_:
+	if (nif_esc == 12 || nif_esc == 13 || (MISC_QUEST & 32)) {
+		mes "^3355FFEn vous penchant vers";
+		mes "la dernière case de clé vide";
+		mes "pour mieux l'observer...^000000";
+		next;
+		soundeffect "complete.wav",0;
+		next;
+		if (nif_esc == 12) {
+			set MISC_QUEST,MISC_QUEST | 32;
+			set nif_piano, 0;
+		}
+		mes "^3355FFVous commencez à vous sentir étourdi et";
+		mes "votre corps semble flotter dans les airs. Puis,";
+		mes "votre vision commence à se brouiller...^000000";
+		mes "[Kirkena]";
+		close2;
+		warp "nif_in",179,163;
+		end;
+	}
+	end;
+}
+
+nif_in,188,168,3	script	Witch#nif	792,{
+	mes "Si tu peux l'éviter, tu";
+	mes "Je ne sais pas comment d'autres parmi vous";
+	mes "ont pu arriver ici et je ne connais pas vos raisons,";
+	mes "mais cet endroit est dangereux pour";
+	mes "[Kirkena]";
+	mes "Je t'envoie dehors de cette ville.";
+	mes "les vivants.";
+	next;
+	mes "Si tu peux l'éviter, tu";
+	mes "mieux ne pas revenir à";
+	mes "[Erious]";
+	mes "Je te souhaite la sécurité et qu'il ne t'arrive aucun mal.";
+	mes "better not come back to";
+	mes "cet endroit.";
+	close2;
+	warp "umbala",138,208;
+	end;
+}
+
+// Message Delivery Quest :: nif_npc_lackee
+//============================================================
+prt_in,161,20,3	script	Erious#nif	92,{
+	if (MISC_QUEST & 16384) {
+		mes "[Erious]";
+		mes "I wish you safety from harm";
+		mes "dans tes voyages, aventurier.";
+		close;
+	}
+	if (nif_revive == 0) {
+		mes "[Erious]";
+		mes "*Hoche du menton*";
+		mes "*Pleure* Wahhh...!";
+		mes "Elly, comment as-tu pu";
+		mes "me laisser dans cet état...";
+		emotion ET_CRY;
+		next;
+		if (select("Comfort him.:Neglect him.") == 1) {
+			mes "[Erious]";
+			mes "Ah, merci pour ta gentillesse.";
+			mes "*Hoche du menton* Ma femme est morte alors que j'étais en";
+			mes "voyage. Je suis tellement désolé de ne pas avoir pu être avec elle quand";
+			mes "la fin est venue...";
+			mes "[Erious]";
+			next;
+			mes "[Erious]";
+			mes "bien que je sache qu'il est trop tard maintenant.";
+			mes "*Pleure* Mais... il y a une dernière";
+			mes "espérance que j'ai. Ma chance absolue";
+			mes "et finale...";
+			mes "[Erious]";
+			next;
+			mes "[Erious]";
+			mes "I was told that somewhere";
+			mes "dans ce monde, il existe une ville";
+			mes "où résident les morts. Je pourrais peut-être";
+			mes "rencontrer ma femme là-bas, mais";
+			mes "je ne peux pas laisser mes enfants ici";
+			mes "sans moi. *Pleure*";
+			next;
+			if (select("I can deliver your message to her.:I am so sorry to hear that.") == 1) {
+				mes "[Erious]";
+				mes "Oh, tu peux ?";
+				mes "Merci beaucoup pour votre";
+				mes "générosité. Si tu peux faire cela pour moi,";
+				mes "je te serais extrêmement reconnaissant.";
+				mes "greatly indebted to you.";
+				next;
+				mes "[Erious]";
+				mes "Tu es un aventurier, n'est-ce pas ?";
+				mes "Si tes voyages t'amènent dans cette";
+				mes "ville des morts, et si tu";
+				mes "rencontres par hasard...";
+				next;
+				mes "[Erious]";
+				mes "S'il te plaît, transmets un message à Elly de ma part,";
+				mes "dis-lui que tout ce qui est arrivé il y a";
+				mes "un mois était entièrement de ma faute.";
+				mes "Merci pour ton aide,";
+				mes "et s'il vous plaît, faites attention.";
+				set nif_revive,1;
+				setquest 11038;
+				close;
+			}
+			mes "[Erious]";
+			mes "*Cries* N'y a-t-il aucun moyen que je";
+			mes "puisse la revoir ? Si je pouvais";
+			mes "lui parler au moins une fois de plus,";
+			mes "même si c'est la dernière fois,";
+			mes "je ferais n'importe quoi...";
+			close;
+		}
+		mes "[Erious]";
+		mes "*Cries* Eeeeelllllyyyy~~~~!";
+		mes "Je n'avais jamais pensé que ce serait";
+		mes "la dernière fois que nous verrions";
+		mes "l'un l'autre...";
+		mes "*Sob*...";
+		close;
+	}
+	else if (nif_revive == 1) {
+		mes "[Erious]";
+		mes "Ce lieu dont on m'a parlé...";
+		mes "La ville des morts...";
+		mes "D'après ce que je me souviens, elle était";
+		mes "située près d'une zone de repos.";
+		next;
+		mes "[Erious]";
+		mes "Toute la journée et toute la nuit, elle est remplie";
+		mes "de cris sans fin de";
+		mes "la souffrance et le désespoir. J'espère que";
+		mes "cela vous sera utile dans votre recherche.";
+		close;
+	}
+	else if (nif_revive == 5 || nif_revive == 6) {
+		mes "[Erious]";
+		mes "Oh mon Dieu ! Vous avez vraiment trouvé la ville,";
+		mes "n'est-ce pas ? Je vous en suis très reconnaissant";
+		mes "d'avoir enduré toutes ces épreuves pour moi... Euh... Alors, au final...";
+		mes "[Erious]";
+		mes "Vous êtes sérieux ? Qu'a-t-elle dit ?";
+		next;
+		if (select("Yes.:Sorry, I couldn't.") == 1) {
+			if (nif_revive == 6 && countitem(934) > 0) {
+				mes "[Erious]";
+				mes "A-t-elle dit qu'elle me pardonnerait ?";
+				mes "[Erious]";
+				next;
+				select("Yes. And she gave me...this.");
+				delitem 934,1; //Mementos
+				mes "[Erious]";
+				mes "que je lui avais donnés lorsque nous avons commencé à";
+				mes "nous voir. Elle souffrait déjà d'une maladie grave avant même que nous";
+				mes "ne nous rencontrions, alors je lui ai promis de guérir sa maladie...";
+				mes "[Erious]";
+				mes "C'est pourquoi j'ai entrepris ce voyage...";
+				mes "would cure her illness...";
+				next;
+				mes "[Erious]";
+				mes "That's why I went on that trip...";
+				mes "pour trouver un remède ou des médicaments";
+				mes "pour elle... Mais mes efforts se sont";
+				mes "avérés inutiles.";
+				mes "...................";
+				mes "^FF0000 ........";
+				next;
+				mes "[Erious]";
+				mes "En tout cas, je vous remercie de votre";
+				mes "générosité. Je veux vous rembourser pour tous les ennuis";
+				mes "que j'ai causés, mais je n'ai que le médicament que j'ai trouvé";
+				mes "pour sa maladie lors de ce voyage.";
+				mes "[Erious]";
+				mes "J'espère que vous prendrez ces médicaments.";
+				next;
+				mes "[Erious]";
+				mes "Je vous souhaite chance et sécurité dans vos aventures.";
+				mes "^FF0000 comme symbole de ma gratitude.^";
+				next;
+				if (checkweight(610,26)) {
+					set MISC_QUEST,MISC_QUEST | 16384;
+					set nif_revive,0;
+					completequest 11043;
+					getitem 607,2; //Yggdrasilberry
+					getitem 608,2; //Seed_Of_Yggdrasil
+					getitem 610,10; //Leaf_Of_Yggdrasil
+					mes "[Erious]";
+					mes "Merci pour tout.";
+					mes "Je vous souhaite bonne chance et sécurité";
+					mes "mais vous portez trop de choses pour que je puisse vous le";
+					close;
+				}
+				mes "[Erious]";
+				mes "J'ai quelque chose à vous donner,";
+				mes "mais vous portez trop de";
+				mes "choses pour que je puisse le faire";
+				mes "maintenant. Pourquoi ne pas";
+				mes "stocker vos objets ailleurs ?";
+				close;
+			}
+			else if (nif_revive == 6 && countitem(934) < 1) {
+				mes "[Erious]";
+				mes "Hmm... c'est étrange. Je suis sûr qu'elle vous aurait donné quelque chose en souvenir de notre rencontre. Par hasard, n'avez-vous rien oublié de m'amener ?";
+				close;
+			}
+			mes "[Erious]";
+			mes "Je suppose que vous avez mal compris";
+			mes "quelque chose ou que vous essayez";
+			mes "de escroquer un homme dans le deuil.";
+			close;
+		}
+		if (nif_revive == 5) {
+			mes "[Erious]";
+			mes "Je vois... vous n'avez pas réussi à la trouver...";
+			mes "Cependant, je comprends également";
+			mes "que remplir ma demande peut";
+			mes "être impossible...";
+			next;
+			mes "[Erious]";
+			mes "Vous avez vraiment fait des efforts extraordinaires";
+			mes "pour m'aider, donc je veux vous donner";
+			mes "quelque chose en signe de ma";
+			mes "reconnaissance.";
+			next;
+			if (checkweight(610,10)) {
+				set MISC_QUEST,MISC_QUEST | 16384;
+				set nif_revive,0;
+				completequest 11042;
+				getitem 610,10; //Leaf_Of_Yggdrasil
+				mes "[Erious]";
+				mes "Merci pour tout.";
+				mes "Je vous souhaite bonne chance et sécurité";
+				mes "contre les dangers lors de vos voyages.";
+				close;
+			}
+			mes "[Erious]";
+			mes "J'ai quelque chose à vous donner,";
+			mes "mais vous portez trop de";
+			mes "choses pour que je puisse le faire";
+			mes "maintenant. Pourquoi ne pas";
+			mes "stocker vos objets ailleurs ?";
+			close;
+		}
+		mes "[Erious]";
+		mes "Je vois...";
+		mes "...Attends ! Cela n'appartient-il pas";
+		mes "à mon épouse, Elly ? Pourquoi essaies-tu";
+		mes "de tromper un homme en deuil... ?";
+		close;
+	}
+	end;
+}
+
+umbala,215,181,3	script	Billik	733,{
+	if (nif_revive > 1 || (MISC_QUEST & 16384)) {
+		mes "[Billik]";
+		mes "Eh bien, depuis longtemps que nous ne nous sommes pas vus.";
+		mes "Si tu as une chance dans le";
+		mes "futur, rencontrons-nous plus tard dans la";
+		mes "ville des morts.";
+		mes "Hahahaha~";
+		emotion ET_BEST;
+		close;
+	}
+	if (nif_revive == 1) {
+		mes "[Billik]";
+		mes "La Ville des Morts...";
+		mes "C'est un endroit très dangereux.";
+		mes "Pourquoi voudrais-tu y aller ?";
+		next;
+		if (select("I have to meet somebody there.:It's a part of my adventure.") == 1) {
+			mes "[Billik]";
+			mes "Quelqu'un que vous devez rencontrer là-bas...";
+			mes "Hm... Je suppose que vous souhaitez";
+			mes "entrer en contact avec les morts...";
+			mes "Je vois aussi que vous êtes";
+			mes "déterminé à y aller.";
+			next;
+			mes "[Billik]";
+			mes "*Soupir* D'accord, si vous voulez vraiment";
+			mes "y aller, vous devez trouver un homme nommé";
+			mes "'Feylin'. Il est très important de";
+			mes "lui faire savoir que je l'ai présenté";
+			mes "à vous.";
+			next;
+			mes "[Billik]";
+			mes "Il n'est pas très confiant, mais il";
+			mes "aime beaucoup les roses, donc apportez-en une";
+			mes "pour lui. Ainsi, il saura avec certitude que je vous ai envoyé.";
+			mes "[Billik]";
+			set nif_revive,2;
+			changequest 11038,11039;
+			next;
+			mes "[Billik]";
+			mes "au nord de cet endroit. Rappelez-vous, il";
+			mes "est très dangereux d'y aller,";
+			mes "is very dangerous to go there,";
+			mes "même pour les aventuriers bien expérimentés,";
+			mes "alors...";
+			mes "Faites attention.";
+			close;
+		}
+		mes "[Billik]";
+		mes "Hahaha~ Je suppose que vous aimez l'aventure";
+		mes "autant que moi. Bien qu'il s'agisse d'un";
+		mes "lieu très dangereux, vous serez";
+		mes "récompensé pour vos efforts une fois arrivé.";
+		mes "Mais faites attention.";
+		close;
+	}
+	else if (nif_revive == 0) {
+		mes "[Billik]";
+		mes "Que faites-vous ici ? Je suis occupé,";
+		mes "partez si vous n'avez rien à faire.";
+		close;
+	}
+}
+
+niflheim,153,215,3	script	Feylin	794,{
+	if (nif_revive == 2) {
+		mes "Qu'est-ce qui vous amène dans une telle";
+		mes "Poor "+((Sex == SEX_MALE)?"guy":"girl")+"...";
+		mes "Mourir à un si jeune âge...";
+		mes "Je suis toujours triste de voir les";
+		mes "jeunes partir trop tôt.";
+		next;
+		mes "Qu'est-ce qui vous amène dans une telle";
+		mes "............??";
+		mes "Oh, je vois que vous n'êtes pas encore mort,";
+		mes "n'est-ce pas ? C'est incroyable de";
+		mes "voir une autre personne vivante.";
+		mes "dans cette ville.";
+		next;
+		mes "Qu'est-ce qui vous amène dans une telle";
+		mes "Venez-vous sauver quelqu'un,";
+		mes "ou avez-vous un autre but ?";
+		mes "Si vous êtes venu(e) rencontrer";
+		mes "un ami décédé, vous êtes";
+		mes "venu(e) à la mauvaise personne.";
+		next;
+		mes "Qu'est-ce qui vous amène dans une telle";
+		mes "Personne dans Niflheim ne peut";
+		mes "accomplir ce genre de miracle...";
+		next;
+		mes "Qu'est-ce qui vous amène dans une telle";
+		mes "Je peux voir que vous avez enduré";
+		mes "beaucoup de souffrances, mais malheureusement,";
+		mes "vous êtes venu(e) ici pour rien. J'espère";
+		mes "que vous retourniez là d'où vous êtes";
+		mes "venu(e) avant qu'il ne soit trop tard.";
+		set nif_revive,3;
+		changequest 11039,11040;
+		close;
+	}
+	else if (nif_revive == 3) {
+		mes "Qu'est-ce qui vous amène dans une telle";
+		mes "Je vous ai demandé de quitter cette";
+		mes "ville immédiatement. Je suis désolé(e)";
+		mes "mais je ne sais rien de ce qui";
+		mes "ce que vous demandez.";
+		emotion ET_FRET;
+		next;
+		if (select("But...:I am sorry.") == 1) {
+			mes "Qu'est-ce qui vous amène dans une telle";
+			mes "Vous devez savoir quelque chose...";
+			mes "Sinon, vous ne seriez pas";
+			mes "si têtu. Je ne suis pas sûr";
+			mes "de qui vous a dit que contacter les";
+			mes "morts était possible...";
+			next;
+			mes "Qu'est-ce qui vous amène dans une telle";
+			mes "Mais je n'aurais sûrement pas dit";
+			mes "cela à vous. De plus, parler de";
+			mes "telles choses est tabou.";
+			set nif_revive,4;
+			changequest 11040,11041;
+			close;
+		}
+		mes "Qu'est-ce qui vous amène dans une telle";
+		mes "Veuillez envisager de quitter ce";
+		mes "lieu dès que possible.";
+		mes "Personne ne devrait rester dans";
+		mes "Niflheim trop longtemps.";
+		close;
+	}
+	else if (nif_revive == 4) {
+		if (countitem(748) > 0) {
+			mes "Qu'est-ce qui vous amène dans une telle";
+			mes "Hé, Billik doit t'avoir envoyé.";
+			mes "Puisque je lui dois quelque chose,";
+			mes "je suppose que je vais t'aider.";
+			mes "Mais laissez-moi vous avertir.";
+			mes "Le prix que je demande peut être";
+			mes "plus élevé que vous ne l'espérez...";
+			next;
+			if (select("I'm willing to do this.:I don't think I can do this.") == 1) {
+				if (BaseLevel > 79) {
+					mes "Qu'est-ce qui vous amène dans une telle";
+					mes "D'accord, mais vous devez promettre";
+					mes "que vous ne laisserez pas d'autres";
+					mes "personnes savoir ce que je vais";
+					mes "vous dire.";
+					next;
+					mes "Qu'est-ce qui vous amène dans une telle";
+					mes "Ce sortilège exige un grand";
+					mes "sacrifice. Inutile de dire qu'il y a";
+					mes "une chance que ce sort échoue.";
+					mes "Je dois également avoir";
+					mes "10 Feuilles d'Yggdrasil pour lancer ce";
+					mes "sortilège. Voulez-vous continuer ?";
+					next;
+					if (select("Yes:No") == 1) {
+						if (countitem(610) > 9) {
+							mes "Qu'est-ce qui vous amène dans une telle";
+							mes "Je vois. Alors commençons.";
+							mes "Woombahsokasabahah !";
+							mes "Woombah woombah hoombabah !";
+							mes "Yeeeeep !";
+							next;
+							set .@nif_revive1,rand(1,100);
+							if (.@nif_revive1 > 0) && (.@nif_revive1 < 88) {
+								mes "Qu'est-ce qui vous amène dans une telle";
+								mes "...Je suis désolé.";
+								mes "J'ai échoué à invoquer";
+								mes "celui que vous souhaitez voir. Je suis";
+								mes "vraiment désolé pour ce résultat.";
+								emotion ET_HUK;
+								delitem 748,1; //Witherless_Rose
+								delitem 610,10; //Leaf_Of_Yggdrasil
+								set nif_revive,5;
+								changequest 11041,11042;
+								percentheal -99,0;
+								next;
+								mes "Qu'est-ce qui vous amène dans une telle";
+								mes "Malheureusement, il peut être";
+								mes "impossible d'invoquer l'esprit de la personne avec";
+								mes "laquelle vous souhaitiez parler...";
+								mes "whom you wished to speak...";
+								close;
+							}
+							else if (.@nif_revive1 > 87) && (.@nif_revive1 < 101) {
+								delitem 748,1; //Witherless_Rose
+								delitem 610,10; //Leaf_Of_Yggdrasil
+								percentheal -50,0;
+								mes "Qu'est-ce qui vous amène dans une telle";
+								mes "..........";
+								mes "..........";
+								next;
+								mes "Au revoir...";
+								mes "..........";
+								mes ".....Euh...";
+								mes "...N'étais-je pas tout juste morte ?";
+								mes "Euh, je vous connais ?";
+								next;
+								select("I brought a message from your husband.");
+								mes "Au revoir...";
+								mes "Oh... Je vois... Je suis désolée de ne pas avoir pu le rencontrer avant ma mort...";
+								mes "Alors quel est son message pour moi ?";
+								next;
+								select("Forgive him for what happened a month ago.");
+								mes "Au revoir...";
+								mes "*Sigh* Il est un si bon mari...";
+								mes "Il prête une telle attention, même aux";
+								mes "petites choses. Pourtant, je devrais être celle qui s'excuse";
+								mes "devant lui...";
+								mes "[Elly]";
+								next;
+								mes "Au revoir...";
+								mes "d'oublier ma présence. Il devrait vivre le reste de sa vie heureux";
+								mes "avec quelqu'un d'autre. Oh, et faites-lui savoir que je l'ai pardonné.";
+								mes "[Elly]";
+								mes "Je suis ravie de recevoir une nouvelle de mon";
+								mes "mari une fois encore. Mais je pense qu'il est temps pour moi de partir.";
+								set nif_revive,6;
+								changequest 11040,11043;
+								getitem 934,1; //Mementos
+								next;
+								mes "Au revoir...";
+								mes "[Elly]";
+								mes "[Feylin]";
+								mes "Je suppose que vous avez accompli ce que";
+								mes "Merci pour votre aide.";
+								mes "vous désiriez. Très bien, faites attention lorsque vous retournerez...";
+								next;
+								mes "Au revoir...";
+								mes "....................";
+								mes "....................";
+								next;
+								mes "Qu'est-ce qui vous amène dans une telle";
+								mes "I guess you have accomplished what";
+								mes "you wanted. Well then, be careful";
+								mes "when you go back...";
+								close;
+							}
+						}
+						else {
+							mes "Qu'est-ce qui vous amène dans une telle";
+							mes "Si vous n'avez pas les";
+							mes "objets, nous ne pouvons pas continuer.";
+							mes "Rappelez-vous, j'ai besoin de 10 Feuilles d'Yggdrasil pour lancer ce sort.";
+							mes "Veuillez les apporter dès que possible.";
+							mes "[Feylin]";
+							mes "J'espère que vous apporterez les objets";
+							close;
+						}
+					}
+					mes "Qu'est-ce qui vous amène dans une telle";
+					mes "confiance de promettre que ce sort";
+					mes "sera lancé avec succès.";
+					mes "[Feylin]";
+					mes "Hm... Vous ne semblez pas avoir";
+					close;
+				}
+				mes "Qu'est-ce qui vous amène dans une telle";
+				mes "lancement de ce sort. À votre niveau actuel,";
+				mes "ce sort vous tuera.";
+				mes "Je ne peux pas prendre ce risque.";
+				mes "[Feylin]";
+				mes "spell will kill you.";
+				mes "I cannot take that risk.";
+				close;
+			}
+			mes "Qu'est-ce qui vous amène dans une telle";
+			mes "Vous avez fait un bon choix.";
+			mes "Ce n'est pas une bonne idée de pratiquer";
+			mes "ce genre de sorcellerie ici même à cause des";
+			mes "risques encourus...";
+			mes "[Feylin]";
+			close;
+		}
+		mes "Qu'est-ce qui vous amène dans une telle";
+		mes "je ne peux pas vous aider. Veuillez";
+		mes "quitter cet endroit dès que possible.";
+		mes "[Feylin]";
+		close;
+	}
+	mes "Qu'est-ce qui vous amène dans une telle";
+	mes "ville dangereuse ? Veuillez quitter";
+	mes "cet endroit dès que possible.";
+	mes "this place as soon as you can.";
+	close;
+}

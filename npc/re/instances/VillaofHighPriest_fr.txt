@@ -1,0 +1,1148 @@
+//===== rAthena Script =======================================
+//= Instance: Villa of High Priest.
+//===== Description: =========================================
+//- [Walkthrough conversion]
+//- Part of the Episode 18 main quest.
+//===== Changelogs: ==========================================
+//= 1.0 First version. [Capuche]
+//============================================================
+
+// Main Quest: Step 61.
+oz_dun01,219,117,5	script(CLOAKED)	Ira#c12_01	4_M_BRZ_JACI,{
+	if (ep18_main == 54) {
+		.@md_name$ = "High Priest's Villa";
+
+		mes "[Ira]";
+		mes "L'entrée de la villa ? La clé se trouve à l'entrée.";
+		mes "Une sorte de magie de téléportation y est appliquée.";
+		mes "Si vous êtes prêt(e), dois-je vous guider vers la villa ?";
+		next;
+		mes "[Ira]";
+		mes "Et... Nous ne savons pas ce qui pourrait se produire à l'intérieur.";
+		mes "Si vous avez des compagnons, je recommande d'y aller ensemble.";
+		next;
+		switch( select( "Apply for '" + .@md_name$ + "'.", "Enter '" + .@md_name$ + "'." ) ) {
+		case 1:
+			if (getcharid(1) == 0 || is_party_leader() == false) {
+				mes "^4d4dff Ceci est un événement commémoratif.^000000";
+				mes "Les demandes de donjon commémoratif doivent être faites en tant que chef de groupe.";
+				close;
+			}
+			mes "[Ira]";
+			mes "Alors permettez-moi de vous escorter.";
+			if (instance_create(.@md_name$) < 0) {
+				mes "Party: " + getpartyname(getcharid(1)) + "";
+				mes "Leader: " + strcharinfo(0) + "";
+				mes "^0000ff" + .@md_name$ + " ^000000- Unknown error";
+				close;
+			}
+			close;
+		case 2:
+			switch( instance_enter(.@md_name$) ) {
+			case IE_OTHER:
+				mes "[Ira]";
+				mes "^ff0000Une erreur inconnue s'est produite.^000000";
+				close;
+			case IE_NOINSTANCE:
+				mes "[Ira]";
+				mes "Hm ? Pourriez-vous vérifier si le chef de groupe a demandé l'entrée dans la villa ?";
+				close;
+			case IE_NOMEMBER:
+				mes "[Ira]";
+				mes "^ff0000Seulement un membre du groupe peut entrer dans le Donjon Commémoratif.^000000";
+				close;
+			case IE_OK:
+				mapannounce "oz_dun01", "" + strcharinfo(0) + " from the " + getpartyname( getcharid(1) ) + "'s party has entered the " + .@md_name$ + ".", bc_map, 0xFF99;
+				// warp "1@adv",123,17;
+				end;
+			}
+		}
+	}
+	end;
+}
+
+// warps
+1@adv,63,142,0	warp(DISABLED)	#left_room_in	1,1,1@adv,56,142
+1@adv,60,142,0	warp(DISABLED)	#left_room_out	1,1,1@adv,66,142
+1@adv,185,142,0	warp(DISABLED)	#right_room_in	1,1,1@adv,190,142
+1@adv,187,142,0	warp(DISABLED)	#right_room_out	1,1,1@adv,182,142
+1@adv,173,142,0	warp(DISABLED)	#center_room_in	1,1,1@adv,167,142
+1@adv,171,142,0	warp(DISABLED)	#center_room_out	1,1,1@adv,177,142
+1@adv,123,309,0	warp(DISABLED)	#boss_in	1,1,1@adv,123,321
+1@adv,123,312,0	warp(DISABLED)	#boss_out	1,1,oz_dun01,220,112
+
+
+1@adv,122,20,5	script	Ira#aira01	4_M_BRZ_JACI,{
+	npctalk "Don't worry about me. I'll stay near the door and leave immediately if it's dangerous.", "Ira#aira01";
+	end;
+
+OnInstanceInit:
+	'adv_step = 0;
+	'Knight_left = 0;
+	'Knight_righ = 0;
+	'flower_num = rand(1,5);
+
+	'map_adv$ = instance_mapname("1@adv");
+	end;
+}
+
+1@adv,125,23,3	script	Miriam#miriam01	EP18_NPC_MIRIAM,{
+	if (is_party_leader() == false) {
+		mes "[Miriam]";
+		mes "Êtes-vous tous réunis ?";
+		close;
+	}
+	if (ep18_main != 54)
+		end;
+	if ('adv_step == 0) {
+		'adv_step = 1;
+		// note: player can move and talk to other npc
+		.@ira$ = instance_npcname("Ira#aira01");
+
+		sleep 2500;
+		npctalk "Ira: Here it is. It should be okay since only users go to the first floor.", .@ira$;
+		sleep 2500;
+		npctalk "Miriam : Et quant au deuxième étage ?";
+		sleep 2500;
+		npctalk "Ira: Bunch of priests are staying there. I don't know if they're really a priest.", .@ira$;
+		sleep 2500;
+		npctalk "Ira: They seem to be armed.", .@ira$;
+		sleep 2500;
+		npctalk "Miriam : D'accord. Merci pour les indications. Nous ferons la recherche à l'intérieur.";
+		sleep 2500;
+		npctalk "Ira: Don't worry about me. Be careful, you two.", .@ira$;
+		sleep 2500;
+		npctalk "Miriam : Alors montons prudemment.";
+		sleep 2500;
+		npctalk "Ira: Find the key to the 2nd floor banquet hall. There must be something beyond that!", .@ira$;
+		sleep 2500;
+		npctalk "Miriam : Aventurier, allons-nous tous partager nos tâches ?";
+		'adv_step = 2;
+		end;
+	}
+	if ('adv_step == 2) {
+		mes "[Miriam]";
+		mes "Je pense que je devrais vérifier s'il y a d'autres employés et monter au deuxième étage.";
+		npctalk "Miriam: I think I should check to see if there are other employees and go up to the second floor.", instance_npcname("Miriam#miriam01");
+		cutin "ep18_miriam_01.png",0;
+		next;
+		mes "[Miriam]";
+		mes "J'éprouve une présence aiguë au-delà des escaliers centraux.";
+		mes "Probablement le Chasseur de Cœur qui a combattu dans le temple.";
+		npctalk "Miriam: I feel a fierce presence. Probably the Heart Hunter.", instance_npcname("Miriam#miriam01");
+		cutin "ep18_miriam_03.png",0;
+		next;
+		mes "[Miriam]";
+		mes "Je suis inquiet à propos du morceau manquant du cœur de Ymir.";
+		mes "Si c'est pour provoquer des troubles, ce qui s'est passé au temple suffit déjà.";
+		npctalk "Miriam: I'm worried about the missing Ymir's heart. What happened at the temple is enough.", instance_npcname("Miriam#miriam01");
+		next;
+		mes "[Miriam]";
+		mes "Et si mon père avait d'autres projets...";
+		mes "Si vous tentez encore une fois de prendre le mauvais chemin, je devrai l'arrêter.";
+		npctalk "Miriam: If my father has another plan and goes down the wrong path, I have to stop him.", instance_npcname("Miriam#miriam01");
+		next;
+		mes "[Miriam]";
+		mes "D'abord, allons chercher des informations auprès des employés de la villa ?";
+		mes "Je vois un employé masculin par là-bas.";
+		npctalk "Miriam: First, shall we get some information from the remaining employees?", instance_npcname("Miriam#miriam01");
+		cutin "ep18_miriam_02.png",0;
+		next;
+		mes "[Miriam]";
+		mes "Je vais chez cet employé.";
+		mes "Voyageur, veuillez trouver un autre employé et lui demander des nouvelles de la demeure.";
+		npctalk "Miriam: I'll go to that employee. Adventurer, please find another employee.", instance_npcname("Miriam#miriam01");
+		close2;
+		cutin "",255;
+		npctalk "Then I will go to the employee over there.", instance_npcname("Miriam#miriam01");
+		if ('adv_step == 2) {
+			'adv_step = 3;
+			npcwalkto 136,46;
+		}
+		end;
+	}
+	if ('adv_step == 3) {
+		npctalk "Miriam : Trouvez un autre employé.";
+		end;
+	}
+	if ('adv_step == 4) {
+		'adv_step = 5;
+
+		.@extra01$ = instance_npcname("Villa Employee#extra01");
+		.@extra02$ = instance_npcname("Villa Employee#extra02");
+		.@rh01$ = instance_npcname("Heart Hunter#rh01");
+		.@rh02$ = instance_npcname("Heart Hunter#rh02");
+
+		npctalk "Miriam: After all, it must be a Heart Hunter disguised as a priest, right?", instance_npcname("Miriam#miriam01");
+		specialeffect EF_SCREEN_QUAKE;
+		sleep 2000;
+		emotion ET_SURPRISE, getnpcid(0, instance_npcname("Miriam#miriam01"));
+		emotion ET_HUK, getnpcid(0, .@extra02$);
+		mapannounce 'map_adv$, "Crying Voice: Oh my! Why are you like this! Help me!", bc_map, 0xFF99;
+		sleep 1000;
+		npctalk "Miriam: Now there's screaming! What's happening?", instance_npcname("Miriam#miriam01");
+		sleep 1000;
+		mapannounce 'map_adv$, "Kyaaaaaaaaaaa-!", bc_map, 0xFF99;
+		sleep 1000;
+		npctalk "Miriam: Ira!!", instance_npcname("Miriam#miriam01");
+		sleep 2500;
+		npctalk "Miriam: I guess something happened. Let's go to Ira.", instance_npcname("Miriam#miriam01");
+		sleep 2500;
+		npctalk "Hans: Miss! Please take me with you!", .@extra02$;
+		sleep 2500;
+		npctalk "Miriam: Then I will come and see if Ira and the others are safe.", instance_npcname("Miriam#miriam01");
+		sleep 2500;
+		npctalk "Miriam: Adventurer, please enter first. Mr. Hans, let's go together.", instance_npcname("Miriam#miriam01");
+		sleep 2500;
+		disablenpc .@extra01$;
+		disablenpc .@extra02$;
+		disablenpc instance_npcname("Miriam#miriam01");
+		enablenpc .@rh01$;
+		enablenpc .@rh02$;
+		sleep 1000;
+		npctalk "Oh, isn't it our old friend?", .@rh01$;
+		npctalk "Thank you for your work on the Wolf Village!", .@rh02$;
+		sleep 2500;
+		disablenpc .@rh01$;
+		disablenpc .@rh02$;
+		donpcevent instance_npcname("adv_extra_02") + "::OnStart";
+		'adv_step = 6;
+		end;
+	}
+}
+
+1@adv,133,43,6	duplicate(dummy_disabled_npc)	Heart Hunter#rh01	EP18_MD_HEARTHUNTER_R
+1@adv,135,41,7	duplicate(dummy_disabled_npc)	Heart Hunter#rh02	EP18_MD_HEARTHUNTER_R
+
+1@adv,100,24,4	script	Villa Employee#extra01	4_F_SHABBY,{
+	if ('adv_step == 3) {
+		mes "[Employé de la Villa]";
+		mes "C'est la première fois que je vous rencontre. Qui êtes-vous ?";
+		mes "Êtes-vous l'invité du vieil homme ?";
+		next;
+		select( "Where is Amal?" );
+		mes "[Employé de la Villa]";
+		mes "Ne serait-il pas à la chapelle ?";
+		mes "À chaque fois que vous venez ici, veuillez d'abord chercher la chapelle...";
+		next;
+		unittalk getcharid(3), "" + strcharinfo(0) + " : Is there a chapel at the villa?";
+		mes "[Employé de la Villa]";
+		mes "Oui. Il semblait être un homme de foi, donc il a fait construire une chapelle à l'intérieur de la demeure.";
+		next;
+		select( "What about other people?" );
+		mes "[Employé de la Villa]";
+		mes "La plupart ont été licenciés d'un coup.";
+		mes "J'ai aussi entendu quelqu'un me dire de partir il y a un moment. Est-ce le signe d'une vague de licenciements ?!";
+		next;
+		mes "[Employé de la Villa]";
+		mes "L'atmosphère était si lourde que je n'ai même pas pu demander.";
+		mes "La chapelle est accessible en montant les escaliers centraux et en passant par le grand salon.";
+		mes "Alors, allez-y faire vos affaires.";
+		if ('adv_step == 3)
+			'adv_step = 4;
+		close;
+	}
+	mes "[Employé de la Villa]";
+	mes "M. Amal est allé à la chapelle.";
+	mes "Montez les escaliers centraux, passez le grand salon et vous arriverez à la chapelle.";
+	close;
+}
+
+1@adv,138,49,3	script	Villa Employee#extra02	4_M_MIDDLE,{
+	if ('adv_step < 4) {
+		mes "C'est la personne que Miriam a décidé d'enquêter. Trouvons-en une autre.";
+		close;
+	}
+	npctalk "Hans: The atmosphere of the villa is unusual. All of the attendant priests were armed.", instance_npcname("Villa Employee#extra02");
+	end;
+}
+
+1@adv,1,1,5	script	adv_extra_02	-1,{
+	end;
+OnStart:
+	.@label$ = instance_npcname("adv_extra_02") + "::OnMobDead";
+	monster 'map_adv$,133,43,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,135,41,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	end;
+OnMobDead:
+	if ('adv_step != 6)
+		end;
+	if (mobcount('map_adv$, instance_npcname("adv_extra_02") + "::OnMobDead") < 1) {
+		'adv_step = 7;
+		enablenpc instance_npcname("Ira#aira02");
+		enablenpc instance_npcname("Anna#anna01");
+		enablenpc instance_npcname("Hans#hans01");
+		enablenpc instance_npcname("Miriam#miriam02");
+	}
+	end;
+}
+
+1@adv,124,17,7	script(DISABLED)	Miriam#miriam02	EP18_NPC_MIRIAM,{
+	if ('adv_step < 10) {
+		if (is_party_leader() == false || 'adv_step != 7) {
+			npctalk "Miriam : Laissez-moi cela et occupez-vous du Chasseur de Cœur au deuxième étage.";
+			end;
+		}
+		'adv_step = 8;
+
+		setpcblock PCBLOCK_NPC, true;
+
+		.@miriam$ = instance_npcname("Miriam#miriam02");
+		.@label$ = .@miriam$ + "::OnMobDead";
+
+		enablenpc instance_npcname("Heart Hunter#rh03");
+		enablenpc instance_npcname("Heart Hunter#rh04");
+		enablenpc instance_npcname("Heart Hunter#rh05");
+		enablenpc instance_npcname("Heart Hunter#rh06");
+		enablenpc instance_npcname("Heart Hunter#rh07");
+
+		npctalk "Ha... didn't I clearly tell you to clear everything? Why are there still rats?", instance_npcname("Heart Hunter#rh05");
+		sleep2 2500;
+		npctalk "Miriam: Adventurer, I will take care of this.", instance_npcname("Miriam#miriam02");
+		sleep2 2500;
+		npctalk "Miriam: Adventurer, please break through the lobby. Let's process it separately.", instance_npcname("Miriam#miriam02");
+		sleep2 2000;
+		npctalk "You can't just leave like that. Block the stairs!", instance_npcname("Heart Hunter#rh05");
+		unitwalk getnpcid(0,instance_npcname("Heart Hunter#rh03")), 124,40, .@miriam$ + "::OnMove1";
+		unitwalk getnpcid(0,instance_npcname("Heart Hunter#rh07")), 124,41, .@miriam$ + "::OnMove2";
+		sleep2 3000;
+		npctalk "Miriam: Adventurer! Please stop them! I'll take care of this and evacuate everyone!", instance_npcname("Miriam#miriam02");
+		sleep2 1500;
+		npctalk "Are you going alone?", instance_npcname("Heart Hunter#rh05");
+		sleep2 1500;
+		npctalk "You can't run away!", instance_npcname("Heart Hunter#rh06");
+		sleep2 1000;
+		npctalk "How dare you!", instance_npcname("Heart Hunter#rh04");
+		sleep2 1500;
+		npctalk "Miriam: Please leave this to me and deal with the Heart Hunter on the second floor.", instance_npcname("Miriam#miriam02");
+		setpcblock PCBLOCK_NPC, false;
+
+		if ('adv_step != 8)
+			end;
+		'adv_step = 9;
+
+		monster 'map_adv$,125,42,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+		monster 'map_adv$,121,42,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+		monster 'map_adv$,126,43,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+		monster 'map_adv$,121,43,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+
+		monster 'map_adv$,123,63,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+		monster 'map_adv$,124,63,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+		monster 'map_adv$,122,65,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+
+		monster 'map_adv$,102,64,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+		monster 'map_adv$,102,64,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+
+		monster 'map_adv$,144,65,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+		monster 'map_adv$,146,66,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+		monster 'map_adv$,146,63,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+		end;
+	}
+	if (is_party_leader() == false)
+		end;
+	if ('adv_step == 10)	// npc is walking
+		end;
+	if ('adv_step == 11) {
+		'adv_step = 12;
+		setpcblock PCBLOCK_NPC, true;
+		npctalk "Miriam: The door is locked. Shall we split up and search for it?", instance_npcname("Miriam#miriam02");
+		sleep2 2500;
+		npctalk "Miriam: I'll go to the right hallway. Adventurer, please search the left side.", instance_npcname("Miriam#miriam02");
+		setpcblock PCBLOCK_NPC, false;
+		sleep 2500;
+		unitwalk getnpcid(0), 131,97, instance_npcname("Miriam#miriam02") + "::OnRight";
+		donpcevent instance_npcname("adv_key_left") + "::OnStart";
+		end;
+	}
+	end;
+
+OnMove1:
+	disablenpc instance_npcname("Heart Hunter#rh03");
+	end;
+OnMove2:
+	disablenpc instance_npcname("Heart Hunter#rh07");
+	end;
+OnMiddle1:
+	unitwalk getnpcid(0), 124,77, instance_npcname("Miriam#miriam02") + "::OnMiddle2";
+	end;
+OnMiddle2:
+	unitwalk getnpcid(0), 124,97, instance_npcname("Miriam#miriam02") + "::OnMiddle3";
+	end;
+OnMiddle3:
+	'adv_step = 11;
+	end;
+OnRight:
+	disablenpc instance_npcname("Miriam#miriam02");
+	enablenpc instance_npcname("Miriam#miriam03");
+	end;
+OnMobDead:
+	if ('adv_step != 9)
+		end;
+	if (mobcount('map_adv$, instance_npcname("Miriam#miriam02") + "::OnMobDead") < 1) {
+		'adv_step = 10;
+		disablenpc instance_npcname("Heart Hunter#rh04");
+		disablenpc instance_npcname("Heart Hunter#rh05");
+		disablenpc instance_npcname("Heart Hunter#rh06");
+		disablenpc instance_npcname("Ira#aira02");
+		disablenpc instance_npcname("Anna#anna01");
+		disablenpc instance_npcname("Hans#hans01");
+		unitwalk getnpcid(0), 124,47, instance_npcname("Miriam#miriam02") + "::OnMiddle1";
+	}
+	end;
+}
+
+1@adv,119,19,5	script(DISABLED)	Heart Hunter#rh04	EP18_MD_HEARTHUNTER_R,{
+	npctalk "Votre courage est imaginaire !";
+	end;
+}
+1@adv,124,21,3	script(DISABLED)	Heart Hunter#rh05	EP18_MD_HEARTHUNTER_R,{
+	npctalk "Allez-vous vous en occuper vous-même ?";
+	end;
+}
+1@adv,130,18,3	script(DISABLED)	Heart Hunter#rh06	EP18_MD_HEARTHUNTER_R,{
+	npctalk "Vous ne pouvez pas échapper à ça !";
+	end;
+}
+
+1@adv,114,14,5	duplicate(dummy_disabled_npc)	Heart Hunter#rh03	EP18_MD_HEARTHUNTER_R,3,5
+1@adv,133,14,3	duplicate(dummy_disabled_npc)	Heart Hunter#rh07	EP18_MD_HEARTHUNTER_R,2,5
+
+1@adv,122,14,7	duplicate(dummy_disabled_npc)	Ira#aira02	4_M_BRZ_JACI
+1@adv,124,14,6	duplicate(dummy_disabled_npc)	Anna#anna01	4_F_SHABBY
+1@adv,126,14,1	duplicate(dummy_disabled_npc)	Hans#hans01	4_M_MIDDLE
+
+
+1@adv,1,1,5	script	adv_key_left	-1,{
+	end;
+OnStart:
+	.@label$ = instance_npcname("adv_key_left") + "::OnMobDead";
+	monster 'map_adv$,69,117,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,65,118,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,65,118,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,68,140,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,68,140,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,69,141,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+
+	monster 'map_adv$,66,159,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,68,160,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,68,160,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,65,182,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,67,182,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	end;
+OnMobDead:
+	if ('adv_step != 12)
+		end;
+	if (mobcount('map_adv$, instance_npcname("adv_key_left") + "::OnMobDead") < 1) {
+		'adv_step = 13;
+		enablenpc instance_npcname("Silver Key#key01");
+	}
+	end;
+}
+
+1@adv,67,182,3	script(DISABLED)	Silver Key#key01	4_POINT_WHITE,{
+	if ('adv_step != 13)
+		end;
+	progressbar "4D4DFF",2;
+	if ('adv_step != 13)
+		end;
+	'adv_step = 14;
+	disablenpc instance_npcname("Silver Key#key01");
+	unittalk getcharid(3), "" + strcharinfo(0) + " : I found a small silver key.";
+	end;
+}
+
+1@adv,63,142,0	script	Locked Door#key01	4_POINT_WHITE,{
+	if ('adv_step < 14) {
+		mes "Porte fermée à double tour.";
+		mes "Il y a une fente pour la Clef d'Argent.";
+		unittalk getcharid(3), "" + strcharinfo(0) + " : I need a Silver Key.";
+		close;
+	}
+	progressbar "4D4DFF",2;
+	if ('adv_step != 14)
+		end;
+	'adv_step = 15;
+	disablenpc instance_npcname("Locked Door#key01");
+	enablenpc instance_npcname("#left_room_in");
+	enablenpc instance_npcname("#left_room_out");
+	donpcevent instance_npcname("adv_get_key02") + "::OnStart";
+	end;
+}
+
+1@adv,1,1,5	script	adv_get_key02	-1,{
+	end;
+OnStart:
+	.@label$ = instance_npcname("adv_get_key02") + "::OnMobDead";
+	monster 'map_adv$,40,142,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,40,141,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,39,143,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	end;
+OnMobDead:
+	if ('adv_step != 15)
+		end;
+	if (mobcount('map_adv$, instance_npcname("adv_get_key02") + "::OnMobDead") < 1) {
+		'adv_step = 16;
+		enablenpc instance_npcname("Gold Key#key02");
+	}
+	end;
+}
+
+1@adv,29,157,3	script(DISABLED)	Gold Key#key02	4_POINT_WHITE,{
+	if ('adv_step != 16)
+		end;
+	progressbar "4D4DFF",2;
+	if ('adv_step != 16)
+		end;
+	'adv_step = 17;
+	disablenpc instance_npcname("Gold Key#key02");
+	unittalk getcharid(3), "" + strcharinfo(0) + " : I found a small golden key.";
+	end;
+}
+
+
+
+
+1@adv,182,144,4	script(DISABLED)	Miriam#miriam03	EP18_NPC_MIRIAM,{
+	if ('adv_step < 17)
+		end;
+	if ('adv_step == 17) {
+		mes "[Miriam]";
+		mes "Vous avez trouvé la clé.";
+		mes "Il semble que plusieurs employés de la Villa soient coincés à l'intérieur.";
+		mes "Je resterai en garde, alors allez-y.";
+		cutin "ep18_miriam_01.png",0;
+		close2;
+		cutin "",255;
+		if ('adv_step == 17) {
+			'adv_step = 18;
+			enablenpc instance_npcname("#right_room_in");
+			enablenpc instance_npcname("#right_room_out");
+			enablenpc instance_npcname("Villa Employee#ex21");
+			enablenpc instance_npcname("Villa Employee#ex22");
+			enablenpc instance_npcname("Villa Employee#ex23");
+		}
+		end;
+	}
+	if ('adv_step == 18) {
+		npctalk "^FF0000Miriam^ : Je veillerai à l'entrée, veuillez donc fouiller l'intérieur de la pièce.";
+		end;
+	}
+	if ('adv_step == 19) {
+		mes "[Miriam]";
+		mes "Si nous laissons les choses telles quelles, toutes ces personnes seront éliminées.";
+		mes "Nous devons évacuer avant que plus de Chasseurs du Cœur n'entrent.";
+		cutin "ep18_miriam_01.png",0;
+		next;
+		mes "[Miriam]";
+		mes "Alors, je laisse l'enquête sur la chapelle à l'aventurier.";
+		mes "Je vais prendre ces personnes et les évacuer.";
+		mes "S'il vous plaît.";
+		npctalk "Miriam: People inside. I will escort you. Let's go out.", instance_npcname("Miriam#miriam03");
+		close2;
+		cutin "",255;
+		disablenpc instance_npcname("Miriam#miriam03");
+		end;
+	}
+	end;
+}
+
+1@adv,202,145,3	script(DISABLED)	Villa Employee#ex21	4_F_SHABBY,{
+	npctalk "Villa Employee: Please let me out of here...", instance_npcname("Villa Employee#ex21");
+	end;
+}
+
+1@adv,204,143,3	script(DISABLED)	Villa Employee#ex22	4_M_RACHMAN2,{
+	if ('adv_step == 18) {
+		mes "[Employé de la Villa]";
+		mes "^FF0000Vous^ allez éliminer les preuves hein ! Assassin !";
+		mes "Hein?";
+		next;
+		mes "[Employé de la Villa]";
+		mes "Toi ! Tu es là pour nous sauver, n'est-ce pas ?";
+		mes "La voix que j'ai entendue dehors était celle de Miriam, non ?";
+		next;
+		mes "[Employé de la Villa]";
+		mes "Enquêtez dans la chapelle ! Il y a quelque chose de vraiment suspect ici !";
+		mes "Quoi ? La salle des banquets est fermée ?";
+		next;
+		mes "[Employé de la Villa]";
+		mes "Voici la clé de la porte latérale.";
+		mes "Vous pouvez quitter cette pièce et ouvrir la porte juste devant vous.";
+		mes "J'ai une clé de rechange car c'est par là que j'apporte généralement la nourriture.";
+		next;
+		mes "[Employé de la Villa]";
+		mes "Et veuillez nous sauver.";
+		mes "Nous ne sommes coupables de rien.";
+		next;
+		mes "Vous avez obtenu une ^4d4dffClé de Rechange^000000.";
+		if ('adv_step == 18)
+			'adv_step = 19;
+		close;
+	}
+	npctalk "Villa Employee: You can open the door with the spare key.", instance_npcname("Villa Employee#ex22");
+	end;
+}
+
+1@adv,210,140,6	script(DISABLED)	Villa Employee#ex23	4_M_RACHMAN1,{
+	npctalk "Villa Employee: Are we really going to die?", instance_npcname("Villa Employee#ex23");
+	end;
+}
+
+1@adv,173,142,0	script	Locked Door#key03	4_POINT_YELLOW,{
+	if ('adv_step < 19) {
+		mes "Porte fermée à double tour.";
+		mes "Il y a une petite fente pour clé.";
+		unittalk getcharid(3), "" + strcharinfo(0) + " : I need a key.";
+		close;
+	}
+	mes "J'ai utilisé une clé de rechange.";
+	progressbar "4D4DFF",2;
+	if ('adv_step != 19)
+		close;
+	'adv_step = 20;
+	disablenpc instance_npcname("Locked Door#key03");
+	enablenpc instance_npcname("#center_room_in");
+	enablenpc instance_npcname("#center_room_out");
+	donpcevent instance_npcname("adv_center") + "::OnStart";
+	close;
+}
+
+1@adv,1,1,5	script	adv_center	-1,{
+	end;
+OnStart:
+	.@label$ = instance_npcname("adv_center") + "::OnMobDead";
+	monster 'map_adv$,156,133,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,156,132,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,155,132,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,156,154,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,155,156,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,124,124,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,123,124,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,122,126,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,126,182,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,122,182,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,126,183,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	end;
+OnMobDead:
+	if ('adv_step != 20)
+		end;
+	if (mobcount('map_adv$, instance_npcname("adv_center") + "::OnMobDead") < 1) {
+		'adv_step = 21;
+	}
+	end;
+}
+
+1@adv,124,210,0	script	Ornate Door#door01	4_POINT_WHITE,{
+	if ('adv_step < 20)
+		end;
+	if ('adv_step < 22) {
+		mes "La porte ne bouge pas.";
+		mes "Ça ressemble comme si une force magique puissante bloquait la porte.";
+		close;
+	}
+	warp 'map_adv$,124,217;
+	end;
+}
+
+// custom coordinates
+1@adv,124,213,0	warp	#garden_out	1,1,1@adv,124,206
+
+1@adv,115,208,0	script	Brilliant Article#Knight_left	4_POINT_WHITE,{
+	if ('adv_step < 20)
+		end;
+	specialeffect EF_BLUELINE;
+	specialeffect EF_SPELLBREAKER, AREA, instance_npcname("Ornate Door#door01");
+	if ('adv_step != 21)
+		end;
+	if ('Knight_left == 1)
+		npctalk "La magie du chevalier splendide a déjà disparu.";
+	else {
+		'Knight_left = 1;
+		if ('Knight_left == 1 && 'Knight_righ == 1) {
+			'adv_step = 22;
+			enablenpc instance_npcname("#flower01");
+			enablenpc instance_npcname("#flower02");
+			enablenpc instance_npcname("#flower03");
+			enablenpc instance_npcname("#flower04");
+			enablenpc instance_npcname("#flower05");
+		}
+	}
+	end;
+}
+
+1@adv,131,208,0	script	Brilliant Article#Knight_righ	4_POINT_WHITE,{
+	if ('adv_step < 20)
+		end;
+	specialeffect EF_BLUELINE;
+	specialeffect EF_SPELLBREAKER, AREA, instance_npcname("Ornate Door#door01");
+	if ('adv_step != 21)
+		end;
+	if ('Knight_righ == 1)
+		npctalk "La magie du chevalier splendide a déjà disparu.";
+	else {
+		'Knight_righ = 1;
+		if ('Knight_left == 1 && 'Knight_righ == 1) {
+			'adv_step = 22;
+			enablenpc instance_npcname("#flower01");
+			enablenpc instance_npcname("#flower02");
+			enablenpc instance_npcname("#flower03");
+			enablenpc instance_npcname("#flower04");
+			enablenpc instance_npcname("#flower05");
+		}
+	}
+	end;
+}
+
+
+// Garden
+1@adv,159,221,3	script(DISABLED)	#flower01	4_POINT_WHITE,{
+	if ('adv_step < 22)
+		end;
+	mes "Il y a un dispositif en forme de fleur.";
+	next;
+	if (select( "Use it.", "Leave it." ) == 2) {
+		unittalk getcharid(3), "" + strcharinfo(0) + " : Let's find another device.";
+		end;
+	}
+	progressbar "4D4DFF",5;
+	.@num = atoi( replacestr( strnpcinfo(2), "flower0", "" ) );
+	if ('flower_num == .@num) {
+		if ('adv_step != 22)
+			end;
+		'adv_step = 23;
+		specialeffect EF_BLUELINE;
+		specialeffect EF_SCREEN_QUAKE;
+		disablenpc instance_npcname( strnpcinfo(0) );
+		enablenpc instance_npcname("Schulang#shulang01");
+		end;
+	}
+	mes "Rien ne s'est passé.";
+	close;
+}
+
+1@adv,153,255,3	duplicate(#flower01)	#flower02	4_POINT_WHITE
+1@adv,129,238,3	duplicate(#flower01)	#flower05	4_POINT_WHITE
+1@adv,89,225,3	duplicate(#flower01)	#flower03	4_POINT_WHITE
+1@adv,88,244,3	duplicate(#flower01)	#flower04	4_POINT_WHITE
+
+1@adv,124,267,3	script	Elegant Door#door02	4_POINT_WHITE,{
+	if ('adv_step < 22)
+		end;
+	if ('adv_step == 22) {
+		mes "Il y a une porte avec un ^4d4dffLys^000000 élégant gravé dessus.";
+		mes "Je sens une puissance magique inconnue.";
+		close;
+	}
+	// (23 or more)
+	warp 'map_adv$,124,274;
+	end;
+}
+
+// Middle boss
+1@adv,124,301,3	script(DISABLED)	Schulang#shulang01	4_EP18_SHULANG,{
+	if ('adv_step != 23)
+		end;
+	if (is_party_leader() == false) {
+		mes "[Schulang]";
+		mes "Aventurier... n'êtes-vous pas venu seul ?";
+		mes "Qui est votre patron ?";
+		close;
+	}
+	mes "[Schulang]";
+	mes "Venir aussi loin n'est pas normal.";
+	mes "C'est un talent que vous ne voulez pas manquer.";
+	mes "Et si nous nouions nos forces ensemble ?";
+	cutin "ep18_shulang.png",2;
+	next;
+	switch( select( "Nonsense.", "What's in it for me?" ) ) {
+	case 1:
+		unittalk getcharid(3), "" + strcharinfo(0) + " : Nonsense.";
+		mes "[Schulang]";
+		mes "Je vois.";
+		mes "Je ne pensais pas que vous étiez aussi fou.";
+		next;
+		break;
+	case 2:
+		unittalk getcharid(3), "" + strcharinfo(0) + " : What's in it for me?";
+		break;
+	}
+	mes "[Schulang]";
+	mes "Les aventuriers recherchent toujours la force.";
+	mes "La force que vous désirez, nous pouvons vous la donner.";
+	next;
+	select( "Why are you offering me that?" );
+	mes "[Schulang]";
+	mes "Je pense pouvoir communiquer mieux que ce gars têtu.";
+	next;
+	select( "If you're a stubborn guy, what do you mean?" );
+	mes "[Schulang]";
+	mes "C'était un tel nom. Un talent qui peut devenir plus fort s'il change simplement sa personnalité dépassée.";
+	mes "Malheureusement, l'opportunité est passée.";
+	next;
+	mes "[Schulang]";
+	mes "Au vu des choses, il ne semble pas que vous acceptiez notre offre, hein ?";
+	mes "C'est inévitable.";
+	close2;
+	cutin "",255;
+	if ('adv_step != 23)
+		end;
+	'adv_step = 24;
+	npctalk "Schulang: You can no longer enter.", instance_npcname("Schulang#shulang01");
+	sleep 2500;
+	npctalk "Schulang: You must die here for the greater good.", instance_npcname("Schulang#shulang01");
+	sleep 2500;
+	disablenpc instance_npcname("Schulang#shulang01");
+	donpcevent instance_npcname("adv_middle_boss") + "::OnStart";
+	end;
+}
+
+1@adv,1,1,5	script	adv_middle_boss	-1,{
+	end;
+OnStart:
+	if ('adv_step != 24)
+		end;
+	.@label$ = instance_npcname("adv_middle_boss") + "::OnMobDead";
+	monster 'map_adv$,124,301,"Schulang the Traitor",21314,1, .@label$;	// EP18_MD_SCHULANG
+	monster 'map_adv$,120,303,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	monster 'map_adv$,127,303,"Heart Hunter",21312,1, .@label$;	// EP18_MD_HEARTHUNTER_R
+	end;
+OnMobDead:
+	if ('adv_step != 24)
+		end;
+	if (mobcount('map_adv$, instance_npcname("adv_middle_boss") + "::OnMobDead") < 1) {
+		'adv_step = 25;
+		enablenpc instance_npcname("#boss_in");
+		enablenpc instance_npcname("Yus Amal#jus01");
+		enablenpc instance_npcname("Illusion Bagot#bagot01");
+	}
+	end;
+}
+
+1@adv,123,355,5	duplicate(dummy_disabled_npc)	Miriam#miriam04	EP18_NPC_MIRIAM
+
+1@adv,124,357,3	duplicate(dummy_cloaked_npc)	Twisted God#demigod	4_EP18_DEMIFREYA
+1@adv,122,351,3	duplicate(dummy_cloaked_npc)	Schulang#shulang02	4_EP18_SHULANG
+
+// Boss room 1
+1@adv,127,356,3	script(DISABLED)	Illusion Bagot#bagot01	4_EP18_BAGOT,{
+	npctalk "C'est amusant.";
+	end;
+}
+
+1@adv,121,355,5	script(DISABLED)	Yus Amal#jus01	4_M_RACHOLD,{
+	if ('adv_step != 25)
+		end;
+	if (is_party_leader() == false) {
+		mes "[Jeune Homme]";
+		mes "Ne me touche pas ! La blasphème !";
+		npctalk "Jeune Homme : Ne me touche pas ! Profanité !";
+		close;
+	}
+	.@bagot01$ = instance_npcname("Illusion Bagot#bagot01");
+	.@demigod$ = instance_npcname("Twisted God#demigod");
+	.@shulang02$ = instance_npcname("Schulang#shulang02");
+	.@miriam04$ = instance_npcname("Miriam#miriam04");
+
+	mes "[Amal]";
+	mes "Ces hérétiques abominables ont quand même réussi à venir jusqu'ici.";
+	mes "Mais cela n'a plus d'importance.";
+	mes "Vous vous prosternerez bientôt devant la Divinité Suprême.";
+	npctalk "Amal : Ces hérétiques abominables ont quand même réussi à venir jusqu'ici. Mais vous vous prosternerez bientôt devant la Divinité Suprême.";
+	next;
+	mes "[Amal]";
+	mes "Je montrerai des miracles aux serviteurs arrogants d'Odin.";
+	mes "Bagot, veuillez continuer le rituel.";
+	npctalk "Amal : Je montrerai des miracles aux serviteurs arrogants d'Odin. Bagot, veuillez continuer le rituel.";
+	next;
+	mes "[Amal]";
+	mes "Ils assisteront personnellement aux miracles de Freyja.";
+	mes "Inclinez-vous aux pieds du Dieu et renaîtrez comme un serviteur du Dieu !";
+	npctalk "Amal : Ils assisteront personnellement aux miracles de Freyja. Inclinez-vous et renaîtrez comme un serviteur du Dieu !";
+	next;
+	cutin "ep18_bagot_01.png",2;
+	mes "[Bagot]";
+	mes "Wow... la façon dont tu parles... une telle inspiration. De toute façon,";
+	mes "J'ai fait une promesse, donc je vais tenir ma parole. Tu comprends ?";
+	npctalk "Bagot: Wow... the way you talk.. such inspiration. Anyway, I made a promise, so I will keep it.", .@bagot01$;
+	next;
+	cutin "ep18_bagot_03.png",2;
+	mes "[Bagot]";
+	mes "D'abord, es-tu LE aventurier ?";
+	mes "Voudriez-vous jeter un coup d'œil à mon travail ?";
+	mes "Vous aussi, vous pouvez ressentir la joie de sortir une poterie magnifiquement façonnée du four.";
+	npctalk "Bagot: Are you THE adventurer? Would you like to take a look at my work?", .@bagot01$;
+	close2;
+
+	setpcblock PCBLOCK_NPC, true;
+	npctalk "Bagot: It feels great to be able to check the results of the experiment right away.", .@bagot01$;
+	specialeffect EF_DQ9_CHARGE3, AREA, .@demigod$;
+	sleep2 500;
+	specialeffect EF_SCREEN_QUAKE, AREA, .@demigod$;
+	sleep2 1000;
+	specialeffect EF_BEGINSPELL_YB, AREA, .@demigod$;
+	// enablenpc .@demigod$;
+	cloakoffnpc .@demigod$;	// cloakoffnpc to display effect on rAthena
+	setpcblock PCBLOCK_NPC, false;
+
+	mes "[Bagot]";
+	mes "Ta-da~ L'essence de la science et de la magie est ici même !";
+	mes "Je vais faire descendre un être sous la forme d'un Dieu !";
+	npctalk "Bagot: Ta-da~ The essence of science and magic is right here!", .@bagot01$;
+	next;
+	mes "[Bagot]";
+	mes "Être le vase par lequel un Dieu descend n'est pas un problème pour cette auberge !";
+	npctalk "Bagot: Being a vessel for God to descend on is no problem for this bar!", .@bagot01$;
+	next;
+	cutin "ep18_demifreya.png",1;
+	mes "[Un Être nommé Dieu]";
+	mes "...";
+	npctalk "A Being Called God: ....", .@demigod$;
+	next;
+	mes "[Amal]";
+	mes "Oh... Oooh... ! Belle Freyja... ! Es-tu mon Dieu ?";
+	npctalk "Amal : Oh... Oooh... ! Belle Freyja... ! Es-tu mon Dieu ?";
+	next;
+	mes "^4d4dffL'être divin surnommé ressemble à une version adulte du Pape.^000000";
+	mes "^4d4dffUn vaisseau pour que la déesse Freyja descende dans ce monde. C'est son but essentiel.^000000";
+	next;
+	select( "Could it be the Pope?!" );
+	unittalk getcharid(3), "" + strcharinfo(0) + " : Could it be the Pope?!";
+	cutin "ep18_bagot_02.png",2;
+	mes "[Bagot]";
+	mes "Quel genre de bruit est-ce ?";
+	mes "Peu importe à quel point Bagot était mauvais, il n'était pas si méchant qu'il irait déranger le Pape !";
+	npctalk "Bagot: What kind of sound is that?", .@bagot01$;
+	next;
+	cutin "ep18_bagot_03.png",2;
+	mes "[Bagot]";
+	mes "Quelle impertinence envers mon chef-d'œuvre !?";
+	mes "As-tu peur de ma capacité à même créer un vaisseau pour que Dieu descende ?";
+	npctalk "Bagot: Are you afraid of my ability to even create a vessel for God to descend on?", .@bagot01$;
+	next;
+	cutin "",255;
+	mes "[Amal]";
+	mes "Oh... Oooh... ! Ma belle Déesse Freyja...";
+	npctalk "Amal : Oh... Oooh... ! Ma belle Déesse Freyja...";
+	next;
+	cutin "ep18_bagot_02.png",2;
+	mes "[Bagot]";
+	mes "Tu ne m'écoutes pas. Alors qu'est-ce que c'est ? Oh~ ! Oui, un miracle. Tout ce que tu as à faire, c'est me montrer un miracle, n'est-ce pas ?";
+	npctalk "Bagot: You're not listening to me. Then what is it? Oh~! Yes, a miracle.", .@bagot01$;
+	next;
+	cutin "ep18_demifreya.png",1;
+	mes "[Un Être nommé Dieu]";
+	mes "...";
+	npctalk "A Being Called God: .....", .@demigod$;
+	next;
+	mes "[Un Être nommé Dieu]";
+	mes "...";
+	sleep2 500;
+	mes "We";
+	npctalk "A Being Called God: ..We..", .@demigod$;
+	sleep2 1000;
+	mes "..a..";
+	npctalk "A Being Called God: ..a..", .@demigod$;
+	sleep2 1000;
+	mes "k..";
+	npctalk "A Being Called God: k...", .@demigod$;
+	close2;
+	cutin "",255;
+
+	setpcblock PCBLOCK_NPC, true;
+	sleep2 1500;
+	specialeffect EF_DQ9_CHARGE3, AREA, .@shulang02$;
+	sleep2 1000;
+	specialeffect EF_BEGINSPELL_YB, AREA, .@shulang02$;
+	cloakoffnpc .@shulang02$;
+	sleep2 2500;
+	npctalk "Bagot: What? Did you save him? Did you see the priest? What did Baggot say? I said it would be possible.", .@bagot01$;
+	sleep2 1500;
+	setpcblock PCBLOCK_NPC, false;
+
+	cutin "ep18_bagot_03.png",2;
+	mes "[Bagot]";
+	mes "Voici la preuve. Miracle~";
+	mes "Vieux prêtre. Puisque j'ai invoqué votre dieu comme promis, je vais emporter avec moi le ^4d4dffCœur^000000.";
+	npctalk "Bagot: Since I summoned your god as promised, I will take the Heart with me.", .@bagot01$;
+	next;
+	mes "[Bagot]";
+	mes "J'espère que vous vivrez éternellement~";
+	npctalk "Bagot: I hope you live forever~", .@bagot01$;
+	next;
+	cutin "",255;
+	mes "[Amal]";
+	mes "Un humble serviteur a assisté aux miracles de Dieu !";
+	npctalk "Amal : Un humble serviteur a assisté aux miracles de Dieu !";
+	next;
+	cutin "ep18_bagot_01.png",2;
+	mes "[Bagot]";
+	mes "Vous écoutez vraiment ?";
+	mes "Schulang est un peu perdu, mais c'est la fin de son rôle.";
+	npctalk "Bagot: Are you even listening? Schulang is a bit of a waste, but that's the end of his role.", .@bagot01$;
+	next;
+	cutin "ep18_bagot_03.png",2;
+	mes "[Bagot]";
+	mes "En attendant, j'ai tenu ma promesse car je vous ai laissé vivre avec du ^4d4dffgoût prononcé^000000.";
+	mes "Je m'en vais~ Alors, aventurier ? Bonjour~ !";
+	npctalk "Bagot: I have kept my promise since I have been able to live with the 'strong taste' for a while. So adventurer? Hello~!", .@bagot01$;
+	close2;
+	cutin "",255;
+
+	setpcblock PCBLOCK_NPC, true;
+	disablenpc .@bagot01$;
+	npctalk "Amal : Oh... Frejya ! Punissez ces hérétiques !";
+	sleep2 2500;
+	npctalk "A Being Called God: kkigigig kikikig kkigigig", .@demigod$;
+	sleep2 2500;
+	npctalk "Amal : ....? Qu'est-ce qu'il y a mon Dieu ? Votre humble serviteur est prêt à entendre la prophétie...";
+	sleep2 2500;
+	npctalk "A Being Called God: kkigigigi aaaaa!!!!", .@demigod$;
+	sleep2 2500;
+	npctalk "Amal : ...Je ne ressens aucune puissance divine...? pourquoi...?";
+	sleep2 2500;
+	specialeffect EF_BEGINSPELL5, AREA, .@demigod$;
+	sleep2 1000;
+	enablenpc .@miriam04$;
+	specialeffect EF_GUARD, AREA, .@miriam04$;
+	sleep2 1000;
+	npctalk "Amal : Comment le Dieu peut-il punir un serviteur loyal de Freyja ?";
+	sleep2 2500;
+	npctalk "Miriam: This is not the time. You must leave it! That's not God!", .@miriam04$;
+	sleep2 2500;
+	npctalk "A Being Called God: kikikig kikikig ....", .@demigod$;
+	sleep2 2500;
+	npctalk "Amal : Bêtises ! Miriam, écarte-toi !";
+	sleep2 2500;
+	npctalk "Miriam: You just almost died. Look straight ahead. Which part of that vile being is God?", .@miriam04$;
+	sleep2 2500;
+	npctalk "Miriam: It seems like you need to open your eyes. Father.", .@miriam04$;
+	sleep2 2000;
+	npctalk "Amal : Ça ne peut pas arriver ! Lâche-moi, Miriam !";
+	sleep2 2000;
+	npctalk "A Being Called God: kkigig...? kkigigi kkyahahahahahahaha!!", .@demigod$;
+	sleep2 1000;
+	specialeffect EF_BEGINSPELL5, AREA, .@demigod$;
+	sleep2 700;
+	specialeffect EF_BEGINSPELL_YB, AREA, .@demigod$;
+	npctalk "Miriam: What are you doing!!!!", .@miriam04$;
+	sleep2 800;
+	disablenpc instance_npcname("Yus Amal#jus01");
+	disablenpc .@miriam04$;
+	sleep2 800;
+	npctalk "A Being Called God: kyahahahahahahaha!!", .@demigod$;
+	sleep2 1000;
+	setpcblock PCBLOCK_NPC, false;
+
+	specialeffect EF_BEGINSPELL_YB, AREA, .@demigod$;
+	mapannounce 'map_adv$, "The chapel has been sealed off.", bc_map, 0x4D4DFF;
+	disablenpc .@demigod$;
+	disablenpc .@shulang02$;
+	donpcevent instance_npcname("adv_demigod_boss") + "::OnStart";
+	end;
+}
+
+1@adv,1,1,5	script	adv_demigod_boss	-1,{
+	end;
+OnStart:
+	if ('adv_step != 25)
+		end;
+	'adv_step = 26;
+	monster 'map_adv$,124,356,"Twisted God",21315,1, instance_npcname("adv_demigod_boss") + "::OnMobDead";	// EP18_MD_DEMI_FREYJA
+	monster 'map_adv$,122,351,"Resurrected Schulang",21314,1, instance_npcname("adv_demigod_boss") + "::OnMobDead2";	// EP18_MD_SCHULANG
+	.@boss_gid = $@mobid[0];
+
+	unitskillusepos .@boss_gid,"NPC_CANE_OF_EVIL_EYE",3,123,349,-50,0,0,1;
+	unitskillusepos .@boss_gid,"NPC_CANE_OF_EVIL_EYE",3,133,338,-50,0,0,1;
+	unitskillusepos .@boss_gid,"NPC_CANE_OF_EVIL_EYE",3,113,338,-50,0,0,1;
+	unitskillusepos .@boss_gid,"NPC_CANE_OF_EVIL_EYE",3,123,330,-50,0,0,1;
+	end;
+OnMobDead:
+	if ('adv_step != 26)
+		end;
+	if (mobcount('map_adv$, instance_npcname("adv_demigod_boss") + "::OnMobDead") < 1) {
+		'adv_step = 27;
+		killmonster 'map_adv$, instance_npcname("adv_demigod_boss") + "::OnMobDead2";
+		mapannounce 'map_adv$, "Amal's Voice: Oh God--!!!", bc_map, 0xFF0000;
+		enablenpc instance_npcname("#boss_out");
+		enablenpc instance_npcname("Miriam#miriam05");
+		enablenpc instance_npcname("Yus Amal#jus02");
+	}
+	end;
+OnMobDead2:
+	end;
+}
+
+
+// Boss room out
+1@adv,121,321,6	script(DISABLED)	Miriam#miriam05	EP18_NPC_MIRIAM,{
+	if ('adv_step < 27)
+		end;
+	if ('adv_step == 27 && ep18_main == 54) {
+		npctalk "Miriam: Father!", instance_npcname("Miriam#miriam05");
+		mes "[Miriam]";
+		mes "Qu'a-t-il fait ? Il s'est soudainement envolé.";
+		mes "vous avez croisé mon père !";
+		cutin "ep18_miriam_03.png",0;
+		next;
+		cutin "",255;
+		mes "[Amal]";
+		mes "Que lui as-tu donc fait à Dieu!!!!!!!!!!";
+		mes "Tu ne peux pas faire ça !";
+		mes "Que faisais-je pendant que j'attendais ce jour... !";
+		next;
+		cutin "ep18_miriam_03.png",0;
+		mes "[Miriam]";
+		mes "Tu crois toujours que c'est Dieu ?";
+		mes "Tu dis vraiment cela ?";
+		next;
+		select( "This Embryo fell out." );
+		mes "[Miriam]";
+		mes "En effet...";
+		mes "C'était similaire à celui du Pape...";
+		mes "Si tu regardes l'Embryon qui est tombé, il doit s'agir de quelque chose créé par quelqu'un nommé Bagot.";
+		next;
+		select( "I'll do the analysis here." );
+		cutin "",255;
+		mes "[Amal]";
+		mes "Miriam ! Attrape ce fou insolent !";
+		mes "Cette personne mérite une punition divine !";
+		mes "Tu es un blasphémateur !";
+		next;
+		cutin "ep18_miriam_03.png",0;
+		mes "[Miriam]";
+		mes "Ce n'est pas possible.";
+		mes "L'aventurier est venu jusqu'ici pour nous aider.";
+		next;
+		mes "[Miriam]";
+		mes "C'était pareil au temple aussi.";
+		mes "Il semble qu'ils aient égaré la vue de mon père également.";
+		next;
+		cutin "",255;
+		mes "[Amal]";
+		mes "Tu veux me dire que j'ai tombé dans leur piège !";
+		next;
+		cutin "ep18_miriam_03.png",0;
+		mes "[Miriam]";
+		mes "Sortons d'ici d'abord.";
+		mes "^FF0000Vous pouvez discuter des détails après avoir examiné l'Embryon.[/]";
+		next;
+		mes "[Miriam]";
+		mes "^FF0000Adventurier, veuillez me faire savoir si l'identité du Dieu Tordu est révélée une fois l'enquête terminée.[/]";
+		mes "^FF0000Je vais prendre soin de mon père.[/]";
+		ep18_main = 55;
+		erasequest 18083;
+		setquest 18084;
+		if (is_party_leader() == true)
+			enablenpc instance_npcname("#boss_out");
+		close3;
+	}
+	cutin "ep18_miriam_01.png",0;
+	mes "[Miriam]";
+	mes "^FF0000Je dois prendre soin de mon père, alors sortons d'ici.[/]";
+	close3;
+}
+
+1@adv,119,320,6	script(DISABLED)	Yus Amal#jus02	4_M_RACHOLD,{
+	npctalk "Amal: ...Oh my... It can't be like this...", instance_npcname("Yus Amal#jus02");
+	end;
+}

@@ -1,0 +1,153 @@
+//===== rAthena Script =======================================
+//= Merchant Skills Quests
+//===== Description: =========================================
+//= [Official Conversion]
+//- NPC for skills Pushcart Decoration.
+//===== Changelogs: ==========================================
+//= 1.0 First version. [Capuche]
+//============================================================
+
+alberta,47,37,5	script	Cart Remodel Expert	4_M_REPAIR,{
+	.@max_skill_lvl = 1;
+	if (cart_remodel == 0) {
+		mes "[Jason]";
+		mes "Le chariot d'origine est magnifique !";
+		next;
+		mes "[Jason]";
+		mes "Le chariot de couleur gris foncé.";
+		next;
+		mes "[Jason]";
+		mes "Je peux le remodeler dans de nouveaux designs mignons.";
+		next;
+		switch( select( "What is Pushcart Decoration?", "Learn Pushcart Decoration", "End Dialog" ) ) {
+		case 1:
+			mes "[Jason]";
+			mes "J'aimerais complètement remodeler ce pauvre chariot.";
+			next;
+			mes "[Jason]";
+			mes "Un petit remodelage ne suffit pas, n'est-ce pas ?";
+			next;
+			mes "[Jason]";
+			mes "C'est pourquoi j'ai inventé quelques nouveaux designs.";
+			next;
+			mes "[Jason]";
+			mes "C'est mignon et rafraîchissant !";
+			close;
+		case 2:
+			if (BaseClass != Job_Merchant) {
+				mes "[Jason]";
+				mes "Pourquoi voulez-vous apprendre la Décoration de Chariot ? Ne me dérangez pas !";
+				close;
+			}
+			if (countitem(6606) == 0) {
+				mes "[Jason]";
+				mes "Il est difficile d'apprendre la Décoration de Chariot.";
+				next;
+				mes "[Jason]";
+				mes "Je vous enseignerai si vous m'apportez le ^3131FFCute Cart Remodel Coupon^000000.";
+				close;
+			}
+			mes "[Jason]";
+			mes "Vous avez apporté le Cute Cart Remodel Coupon. Êtes-vous sûr de vouloir apprendre la Décoration de Chariot ?";
+			next;
+			if (select("YES", "NO") == 2) {
+				mes "[Jason]";
+				mes "Revenez après avoir changé d'avis !";
+				close;
+			}
+			mes "[Jason]";
+			mes "D'accord ! Suivez-moi.";
+			next;
+			mes "[Jason]";
+			mes "Ce design";
+			mes "doit attraper le chariot...";
+			next;
+			mes "[Jason]";
+			mes "Ce design";
+			mes "doit attraper le chariot.";
+			mes "Ensuite, ajoutez ceci....";
+			mes "...";
+			next;
+			mes "[Jason]";
+			mes "Vous êtes un génie ! Vous l'avez appris !";
+			next;
+			mes "[Jason]";
+			mes "Maintenant, c'est à votre tour de faire cela.";
+			mes "Appuyez sur Alt+S pour changer votre charrette !";
+			next;
+			mes "[Jason]";
+			mes "Voici le nouveau design mignon de la charrette. Vous faites maintenant partie de notre famille... !";
+			delitem 6606,1;	// P_Cart_C
+			cart_remodel = 1;
+			skill "MC_CARTDECORATE",1,SKILL_PERM;
+			close;
+		case 3:
+			close;
+		}
+	}
+	mes "[Jason]";
+	mes "Avez-vous décoré la charrette ?";
+	next;
+	switch( select( "Is there more to learn?", "I forgot how to decorate my pushcart" ) ) {
+	case 1:
+		if (cart_remodel == .@max_skill_lvl) {
+			mes "[Jason]";
+			mes "Non. Je suis toujours en train d'explorer de nouveaux designs. Je vous enseignerai une fois que j'aurai appris cela.";
+			close;
+		}
+		mes "[Jason]";
+		mes "J'ai quelque chose à enseigner, voulez-vous apprendre ?";
+		next;
+		mes "[Jason]";
+		mes "J'ai besoin d'un ^3131FFCoupon de Remodelage de Charrette Mignone^000000.";
+		next;
+		if (select("I want to learn", "No") == 2) {
+			mes "[Jason]";
+			mes "Vous pouvez revenir n'importe quand.";
+			close;
+		}
+		if (countitem(6606) < 0) {
+			mes "[Jason]";
+			mes "Vous n'avez aucun Coupon de Remodelage de Charrette Mignone ?";
+			close;
+		}
+		mes "[Jason]";
+		mes "D'accord, commençons !";
+		next;
+		mes "[Jason]";
+		mes "Faire ainsi est mieux.";
+		mes "Faites cela comme ceci aussi...";
+		next;
+		mes "[Jason]";
+		mes "...";
+		mes "C'est parti !";
+		next;
+		mes "[Jason]";
+		mes "Je vous ai enseigné la compétence, vous pouvez l'essayer maintenant.";
+		delitem 6606,1;	// P_Cart_C
+		cart_remodel++;
+		skill "MC_CARTDECORATE", cart_remodel ,SKILL_PERM;
+		close;
+	case 2:
+		mes "[Jason]";
+		mes "Oh ? Laissez-moi voir.";
+		next;
+		if (BaseClass != Job_Merchant) {
+			mes "[Jason]";
+			mes "Veuillez revenir une fois que vous pourrez utiliser la charrette !";
+			close;
+		}
+		mes "[Jason]";
+		mes "Vous ne vous souvenez pas de ce que je vous ai enseigné ?";
+		mes "Je vous ai enseigné cette méthode.";
+		next;
+		mes "[Jason]";
+		mes "Vous avez oublié ?";
+		mes "Rappelons-nous maintenant !";
+		next;
+		mes "[Jason]";
+		mes "Réfléchissez bien, vous vous en souviendrez à nouveau.";
+		skill "MC_CARTDECORATE",1,SKILL_PERM;
+		close;
+	}
+}

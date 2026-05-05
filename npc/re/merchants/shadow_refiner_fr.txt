@@ -1,0 +1,168 @@
+//===== rAthena Script =======================================
+//= Shadow Blacksmith
+//===== Description: =========================================
+//= [Official Conversion]
+//= Shadow equipments refining NPC.
+//===== Changelog: ===========================================
+//= 1.0 First version [Aleos]
+//= 1.1 Removed re-roll behavior and fetch materials from db
+//=     [Secret]
+//= 1.2 Added Refine UI [Atemo, Lemongrass]
+//= 1.3 Moved to Cash Mall [Lemongrass]
+//============================================================
+-	script	::ShadowBlacksmith	-1,{
+	if( getbattleflag( "feature.refineui" ) ){
+		mes "[Forgeur Ombre]";
+		mes "Maintenant, Basta est en charge de l'affûtage des objets d'ombre.";
+		mes "Si vous souhaitez affûter un objet d'ombre, veuillez le consulter.";
+		close;
+	}
+
+	.@zeny_cost = 200000; // Zeny cost is 200,000 according to official script [Secret]
+	disable_items;
+	mes "[Forgeur Ombre]";
+	mes "Vous voulez affûter un objet d'ombre ? Choisissez votre poison !";
+	next;
+	setarray .@indices[1], EQI_SHADOW_ARMOR, EQI_SHADOW_WEAPON, EQI_SHADOW_SHIELD, EQI_SHADOW_SHOES, EQI_SHADOW_ACC_R, EQI_SHADOW_ACC_L;
+	.@indlen = getarraysize(.@indices) - 1;
+	for(.@i = 1; .@i <= .@indlen; .@i++)
+		.@menu$ = .@menu$ + (getequipisequiped(.@indices[.@i]) ? getequipname(.@indices[.@i]) : F_getpositionname(.@indices[.@i]) +"-[Not equipped]") +":";
+	.@menu$ = .@menu$ + "Refine info";
+	.@choice = select(.@menu$);
+	if (.@choice == .@indlen + 1) { // Refine info
+		mes "[Forgeur Ombre]";
+		mes "Lorsqu'un objet d'ombre est affûté, il gagne des bonus supplémentaires très similaires aux objets normaux.";
+		next;
+		mes "[Forgeur Ombre]";
+		mes "Arme : +1 de Dégâts et de Magie pour chaque réussite d'affûtage +1.";
+		mes "Autres : +10 PV pour chaque réussite d'affûtage +1.";
+		next;
+		mes "[Forgeur Ombre]";
+		mes "Tous les types d'Oridecon et d'Elunium peuvent être utilisés pour affûter des objets d'ombre. Chaque tentative coûtera également 20 000 zeny.";
+		next;
+		mes "[Forgeur Ombre]";
+		mes "Les minerais HD peuvent être utilisés pour l'équipement qui est au moins au niveau d'affûtage +7 et empêcheront la rupture tant que vous restez en contact avec moi.";
+		close;
+	}
+
+	.@part = .@indices[.@choice];
+
+	if (!getequipisequiped(.@part)) {
+		mes "[Forgeur Ombre]";
+		mes "Rien ici !";
+		close;
+	}
+	.@equip_id = getequipid(.@part);
+	setarray .@card[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3);
+
+	while(1) {
+		.@equip_refine = getequiprefinerycnt(.@part);
+		mes "[Forgeur Ombre]";
+		mes "I require " + callfunc("F_InsertComma", .@zeny_cost) + " zeny as a fee for EACH refine attempt.";
+		mes "Choisissez votre minerai et commencez l'affûtage.";
+		next;
+
+		.@material[0] = getequiprefinecost(.@part, REFINE_COST_NORMAL, REFINE_MATERIAL_ID);
+		.@material[1] = getequiprefinecost(.@part, REFINE_COST_ENRICHED, REFINE_MATERIAL_ID);
+		.@material[2] = getequiprefinecost(.@part, REFINE_COST_HD, REFINE_MATERIAL_ID);
+		.@is_enriched = false;
+
+		if (countitem(.@material[0]))
+			.@mate$[0] = getitemname(.@material[0]);
+		else
+			.@mate$[0] = "^8C8C8C"+ getitemname(.@material[0]) +"^000000";
+		if (countitem(.@material[1]))
+			.@mate$[1] = getitemname(.@material[1]);
+		else
+			.@mate$[1] = "^8C8C8C"+ getitemname(.@material[1]) +"^000000";
+		if (.@equip_refine > 6 && countitem(.@material[2]))
+			.@mate$[2] = getitemname(.@material[2]);
+		else
+			.@mate$[2] = "^8C8C8C"+ getitemname(.@material[2]) +"^000000";
+
+		switch( select( .@mate$[0], .@mate$[1], .@mate$[2], "Cancel" ) ) {
+		case 1:// NORMAL
+			.@choose = .@material[0];
+			break;
+		case 2:// ENRICHED
+			.@is_enriched = true;
+			.@choose = .@material[1];
+			break;
+		case 3:// HD
+			if (.@equip_refine < 7) {
+				mes "[Forgeur Ombre]";
+				mes "Les minerais HD ne peuvent être utilisés que pour les objets au niveau d'affûtage +7 ou supérieur.";
+				close;
+			}
+			.@hoihoi = 1;
+			.@choose = .@material[2];
+			break;
+		case 4:
+			mes "[Forgeur Ombre]";
+			mes "Vous avez annulé l'affinement.";
+			close;
+		}
+		if (!countitem(.@choose)) {
+			mes "[Forgeur Ombre]";
+			mes "You do not have enough "+ getitemname(.@choose) +".";
+			close;
+		}
+		if (Zeny < .@zeny_cost) {
+			mes "[Forgeur Ombre]";
+			mes "Vous n'avez pas assez de zeny.";
+			close;
+		}
+		if (.@equip_refine > 9) {
+			mes "[Forgeur Ombre]";
+			mes "L'équipement Ombre peut être affiné jusqu'à un maximum de +10...";
+			close;
+		}
+		if (!getequipisenableref(.@part)) {
+			mes "[Forgeur Ombre]";
+			mes "Cet objet ne peut pas être affûté.";
+			close;
+		}
+		if (getequippercentrefinery(.@part) < 100) {
+			mes "[Forgeur Ombre]";
+			mes "Le niveau d'affinement sécuritaire pour l'équipement Ombre est +4.";
+			if (!.@hoihoi)
+				mes "L'équipement Ombre peut être détruit lors des affinements ultérieurs. Voulez-vous commencer ?";
+			else
+				mes "Si le prochain affinement échoue, il dégradera le niveau d'affinement actuel. Voulez-vous procéder à l'affinement ?";
+			next;
+			if (select("Proceed","Cancel") == 2) {
+				mes "[Forgeur Ombre]";
+				mes "Heh, je le savais !";
+				close;
+			}
+		}
+		mes "[Forgeur Ombre]";
+		mes "Bon alors.. c'est parti pour rien !";
+		next;
+		delitem .@choose,1;
+		Zeny -= .@zeny_cost;
+
+		// anti-hack
+		if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine))
+			close;
+
+		if (getequippercentrefinery(.@part, .@is_enriched) > rand(100)) {
+			successrefitem .@part;
+			mes "[Forgeur Ombre]";
+			mes "Ça a marché ! Ça a marché !";
+			next;
+		} else {
+			if (.@hoihoi)
+				downrefitem .@part;
+			else
+				failedrefitem .@part;
+			mes "[Forgeur Ombre]";
+			mes "Oh Odin Non !";
+			close;
+		}
+	}
+}
+
+//moc_paraup,45,185,5	duplicate(ShadowBlacksmith)	Shadow Blacksmith#eden1	4_F_JOB_BLACKSMITH // Commented out until it's added to the map index
+//prt_in,61,54,3	duplicate(ShadowBlacksmith)	Shadow Blacksmith#itemmall	4_F_JOB_BLACKSMITH
+itemmall,31,76,3	duplicate(ShadowBlacksmith)	Shadow Blacksmith#itemmall	4_F_JOB_BLACKSMITH

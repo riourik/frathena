@@ -1,0 +1,485 @@
+//===== rAthena Script =======================================
+//= Episode 17.2 - Sage's Legacy Enchants
+//===== Description: =========================================
+//= [Walkthrough Conversion]
+//= Sage's Legacy related merchants and enchanters
+//===== Changelog: ===========================================
+//= 1.0 Initial release [crazyarashi]
+//= 1.1 Optimizations and cleanup [Everade]
+//= 1.2 Cleanup [Capuche]
+//============================================================
+
+ba_in01,87,370,3	script	Lisa#ep172_merchant	20698,{
+	if (checkweight(1201,3) == 0) {
+		mes "^FF0000Il semble que le type ou le poids de l'objet que vous possédez soit trop élevé. Veuillez organiser votre inventaire.^000000";
+		close;
+	}
+	disable_items;
+	mes "[Lise]";
+	mes "Bienvenue bienvenue~";
+	next;
+	switch( select( "Explore Devices", "Automatic Engine Wing Enhancement", "Automatic Armor Enhancement", "Automatic Leg Enhancement", "Automatic Accessories(R) Enhancement", "Automatic Accessories(L) Enhancement" ) ) {
+	case 1:
+		mes "[Lise]";
+		mes "Si vous apportez un équipement automatique et des modules de renforcement, nous pouvons enchanter le module approprié sur l'équipement.";
+		next;
+		mes "[Lise]";
+		mes "Ceci est fait selon la spécification du module, donc l'équipement ne sera pas détruit. Cependant, le nombre de niveaux d'amélioration peut varier en fonction du module.";
+		next;
+		mes "[Lise]";
+		mes "Alors veuillez revenir nous voir lorsque vous aurez besoin d'aide~";
+		close;
+	case 2:
+		.@part = EQI_GARMENT;
+		setarray .@equip_required[0],480020,480021;
+		break;
+	case 3:
+		.@part = EQI_ARMOR;
+		setarray .@equip_required[0],450127,450128;
+		break;
+	case 4:
+		.@part = EQI_SHOES;
+		setarray .@equip_required[0],470022,470023;
+		break;
+	case 5:
+		.@part = EQI_ACC_R;
+		setarray .@equip_required[0],490024,490026;
+		break;
+	case 6:
+		.@part = EQI_ACC_L;
+		setarray .@equip_required[0],490025,490027;
+		break;
+	}
+	.@equip_id = getequipid(.@part);
+	.@equip_name$ = getequipname(.@part);
+	.@refine = getequiprefinerycnt(.@part);
+	for ( .@i = 0; .@i < 4; ++.@i )
+		.@card[.@i] = getequipcardid(.@part,.@i);
+
+	mes "[Lise]";
+	mes "Si vous apportez un équipement automatique et des modules de renforcement, nous pouvons enchanter le module approprié sur l'équipement.";
+	next;
+	mes "[Lise]";
+	mes strcharinfo(0) + ".";
+	mes "Veuillez sélectionner le grade du module que vous souhaitez utiliser.";
+	next;
+	switch( select( "Cancel", "Normal Grade", "Rare Grade", "Unique Grade", "Legendary Grade", "Epic Grade 1", "Epic Grade 2", "Epic Grade 3" ) ) {
+	case 1:
+		mes "[Lise]";
+		mes "Arrêt de la conversation.";
+		close;
+	case 2:
+		setarray .@module_etc[0],1000105,1000106,1000107,1000108,1000109,1000110,1000111,1000112;
+		break;
+	case 3:
+		setarray .@module_etc[0],1000113,1000114,1000115,1000116,1000117,1000118,1000119,1000120,1000121,1000122,1000123,1000124,1000125,1000126,1000127;
+		break;
+	case 4:
+		setarray .@module_etc[0],1000128,1000129,1000130,1000131,1000132,1000133,1000134,1000135,1000136,1000137,1000138,1000139,1000140,1000141,1000142,1000143,1000207,1000208;
+		break;
+	case 5:
+		setarray .@module_etc[0],1000144,1000145,1000146,1000147,1000148,1000149;
+		break;
+	case 6:
+		setarray .@module_etc[0],1000152,1000153,1000154,1000155,1000156,1000157,1000158,1000159,1000160,1000161,1000162,1000163,1000164,1000165,1000166,1000167,1000168;
+		break;
+	case 7:
+		setarray .@module_etc[0],1000169,1000170,1000171,1000172,1000173,1000174,1000175,1000176,1000177,1000178,1000179,1000180,1000181,1000182,1000183,1000184,1000185;
+		break;
+	case 8:
+		setarray .@module_etc[0],1000186,1000187,1000188,1000189,1000190,1000191,1000192,1000193,1000194,1000195,1000196,1000197,1000198,1000199,1000200,1000201,1000202;
+		break;
+	}
+	.@size = getarraysize(.@module_etc);
+	.@menu$ = "Cancel:";
+
+	// Build the menu according to all the modules with the given grade in inventory
+	for ( .@i = 0; .@i < .@size; ++.@i ) {
+		if (countitem(.@module_etc[.@i]) < 1)
+			.@menu$ += "^808080(Module Amount 0)^000000" + ":";
+		else {
+			.@item_name$ = getitemname(.@module_etc[.@i]);
+			.@item_name$ = replacestr(.@item_name$, "Automatic Modification Module(", "");
+			.@item_name$ = replacestr(.@item_name$, ")", "");
+			.@menu$ += .@item_name$ + ":";
+		}
+	}
+	.@s = select(.@menu$) - 2;
+	if (.@s == -1) {
+		mes "[Lise]";
+		mes "Arrêt de la conversation.";
+		close;
+	}
+	.@module_id = .@module_etc[.@s];
+
+	if (countitem(.@module_id) < 1) {
+		mes "[Lise]";
+		mes "Vous devez posséder un module dans votre inventaire correspondant à l'efficacité pour procéder à l'amélioration.";
+		close;
+	}
+	if (.@equip_required[0] != .@equip_id && .@equip_required[1] != .@equip_id) {
+		mes "[Lise]";
+		mes "Veuillez vous assurer d'avoir équipé le bon équipement automatique que vous souhaitez améliorer.";
+		close;
+	}
+	if (.@card[1] > 0) {
+		mes "[Lise]";
+		mes "Cet équipement automatique est déjà à sa capacité maximale.";
+		mes "Veuillez essayer un autre équipement automatique.";
+		close;
+	}
+	if (.@module_id < 1000105 || .@module_id == 1000150 || .@module_id == 1000151 || (.@module_id >= 1000203 && .@module_id != 1000207 && .@module_id != 1000208)) {
+		mes "[Lise]";
+		mes "Une erreur inconnue s'est produite.";
+		close;
+	}
+
+	// Each part has a list of allowed module and a maximum allowed number of the same module
+	switch( .@part ) {
+	case EQI_GARMENT:
+		setarray .@module_etc_data[0],1000105,3,1000106,3,1000125,2,1000126,2,1000127,2,1000135,1,1000142,1,1000208,1;
+		break;
+	case EQI_ARMOR:
+		setarray .@module_etc_data[0],1000105,3,1000106,3,1000122,2,1000123,2,1000124,2,1000128,1,1000129,1,1000130,1,1000131,1,1000132,1,1000133,1,1000207,1,1000140,1;
+		.@size = getarraysize(.@module_etc_data);
+
+		// Epic enchants. Max 2 epic enchants of the same enchant allowed
+		for (.@i = 1000152; .@i < 1000203; .@i++) {
+			setarray .@module_etc_data[.@size], .@i, 2;
+			.@size += 2;
+		}
+		break;
+	case EQI_SHOES:
+		setarray .@module_etc_data[0],
+			1000105,3,1000106,3,1000119,2,1000120,2,1000121,2,1000134,1,1000141,1,
+			1000144,1,1000145,1,1000146,1,1000147,1,1000148,1,1000149,1;	// Legendary enchants (must be unique on EQI_SHOES)
+		break;
+	case EQI_ACC_L:
+	case EQI_ACC_R:
+		setarray .@module_etc_data[0],1000107,3,1000108,3,1000109,3,1000110,3,1000111,3,1000112,3,1000113,2,1000114,2,1000115,1,1000116,1,1000117,1,1000118,1,1000136,1,1000137,1,1000138,1,1000139,1,1000143,1;
+		break;
+	}
+
+	.@data_index = inarray(.@module_etc_data, .@module_id);
+
+	if (.@data_index == -1) {
+		mes "[Lise]";
+		mes "Vous ne pouvez pas enchanter ce module sur cet équipement automatique.";
+		close;
+	}
+	// Max number of the selected module allowed
+	.@max_module = .@module_etc_data[.@data_index+1];
+	
+	// Bind the module etc to the specific enchant
+	for ( .@i = 1000105; .@i < 1000203; ++.@i ) {
+		if (.@i == 1000150 || .@i == 1000151)
+			continue;
+		.@auto_module[.@i] = 310082 + .@size_auto_module;
+		.@size_auto_module++;
+	}
+	.@auto_module[1000207] = 310178;
+	.@auto_module[1000208] = 310179;
+
+	// Check the count of the corresponding enchant in card slots
+	.@enchant_id = .@auto_module[.@module_id];
+	if (.@enchant_id == 0) {
+		mes "[Lise]";
+		mes "Une erreur inconnue s'est produite.";
+		close;
+	}
+	if (countinarray(.@card[0], .@enchant_id) >= .@max_module) {
+		mes "[Lise]";
+		mes "Cet équipement automatique a déjà maximisé l'amélioration provenant de ce module.";
+		mes "Veuillez essayer un autre module.";
+		close;
+	}
+	mes "[Lise]";
+	mes "Are you sure you want to enchance your ^FF0000" + .@equip_name$ + "^000000 with ^0000CD" + getitemname(.@module_id) + "^000000? This process cannot be reversed.";
+	next;
+	if (select( "Wait... Don't", "I'm sure. Do it." ) == 1) {
+		mes "[Lise]";
+		mes "Arrêt de la conversation.";
+		close;
+	}
+	delitem .@module_id,1;
+
+	if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipRefineHack", .@part, .@refine) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]))
+		end;
+
+	for ( .@i = 3; .@i > 0; .@i--) {
+		if (.@card[.@i] == 0) {
+			.@card[.@i] = .@enchant_id;
+			break;
+		}
+	}
+	delequip .@part;
+	getitem2 .@equip_id,1,1,.@refine,0,.@card[0],.@card[1],.@card[2],.@card[3];
+	mes "[Lise]";
+	mes "Woaaaah~ Je sens déjà la puissance de votre équipement automatique~!";
+	close;
+}
+
+//= Merchants
+-	marketshop	ep172littlemanager00	-1,1000227:172:999999
+
+ba_in01,87,386,3	script	Child Manager #ep172_pet	EP17_2_CHILD_ADMIN1,{
+	if (checkweight(1201,3) == 0) {
+		mes "- Vous avez trop d'objets.";
+		mes "Veuillez vider votre inventaire et réessayez.";
+		close;
+	}
+	mes "[Gestionnaire d'enfants]";
+	mes "J'ai toute une pile de petites choses !";
+	next;
+	switch( select( "Little Manager", "Cloud Cotton", "Little Headress", "Cancel" ) ) {
+	case 1:
+		mes "[Gestionnaire d'enfants]";
+		mes "Si vous voulez jouer avec le petit gestionnaire, cela vous coûtera 30 Barmeal Tickets.";
+		next;
+		if (select( "Exchange.", "Stop." ) == 2) {
+			mes "[Gestionnaire d'enfants]";
+			mes "Alors, c'est l'heure pour moi de jouer !";
+			close;
+		}
+		if (countitem(1000103) < 30) {
+			mes "[Gestionnaire d'enfants]";
+			mes "Comme je vous l'ai dit, si vous voulez jouer avec le petit gestionnaire, vous aurez besoin de 30 Barmeal Tickets !";
+			close;
+		}
+		mes "[Gestionnaire d'enfants]";
+		mes "Amusez-vous bien avec votre nouveau ami !";
+		delitem 1000103,30;
+		getitem 9123,1;
+		close;
+	case 2:
+		callshop "ep172littlemanager00";
+		end;
+	case 3:
+		callshop "barter_Ep_17_2_C_Admin_Acc";
+		end;
+	case 4:
+		mes "[Gestionnaire d'enfants]";
+		mes "Alors, c'est l'heure pour moi de jouer !";
+		close;
+	}
+	end;
+}
+
+//= Cube Shop
+-	marketshop	ep172cubeshop00	-1,100251:10000000:-1,100252:30000000:-1
+
+ba_in01,87,376,3	script	Cube Lane#ep172cube	4_EP17_GUARD_B,{
+	mes "[Cube Lane]";
+	mes "Nous offrons des cubes de renforcement qui affineraient votre ^0000CD+4^000000 Illusion et Automatic Equipment en ^FF0000+7^000000 instantanément !";
+	mes "Varmundt est sans aucun doute l'homme le meilleur du monde !";
+	close2;
+	callshop "ep172cubeshop00";
+	end;
+}
+
+//= Module Shop
+ba_in01,87,373,3	script	Spiera#ep172_soapstone	MD_ASSISTANT,{
+	callshop "barter_EP17_2_EP";
+	end;
+}
+
+//= Equipment Shop
+ba_in01,87,383,3	script	Yeoncheong#equipment_exchange	4_EP17_CLEANER_W,{
+	if (checkweight(1201,3) == 0) {
+		cutin "ep172_omega.bmp",2;
+		mes "[Yeoncheong]";
+		mes "Le sac est plein. Veuillez vérifier le poids et le nombre d'objets en votre possession avant de parler à nouveau.";
+		close3;
+	}
+	disable_items;
+	cutin "ep172_omega",2;
+	mes "[Yeoncheong]";
+	mes "Nous acceptons les Barmeal Tickets pour mettre à niveau votre Équipement Illusion vers des Équipements Automatic Requip.";
+	mes "Que souhaitez-vous échanger ?";
+	next;
+	switch( select( "Exchange Information", "Automatic Equipment Exchange", "Automatic Accessory Exchange", "Quit" ) ) {
+	case 1:
+		mes "[Yeoncheong]";
+		mes "Vous pouvez échanger votre Armure d'Illusion ^0000CD+9^000000, Moteur ou Jambe contre 900 Tickets Barmeal pour obtenir un Moteur ou une Jambe ^FF0000Automatique^000000.";
+		next;
+		mes "[Yeoncheong]";
+		mes "Les Accessoires ^FF0000Automatiques^000000 peuvent être échangés contre des Accessoires d'Illusion et 1500 Tickets Barmeal.";
+		next;
+		mes "[Yeoncheong]";
+		mes "L'équipement que vous souhaitez échanger doit se trouver dans votre inventaire. Parlez-moi ensuite.";
+		mes "^FF0000Apportez uniquement un seul équipement que vous souhaitez échanger et procédez.^000000";
+		close3;
+	case 2:
+		.@shop$ = "barter_auto_equip_1";
+		break;
+	case 3:
+		.@shop$ = "barter_auto_equip_2";
+		break;
+	case 4:
+		mes "[Yeoncheong]";
+		mes "Bonne journée, cher invité~";
+		close3;
+	}
+	mes "[Yeoncheong]";
+	mes "^FF0000Apportez uniquement un seul équipement que vous souhaitez échanger et procédez.^000000";
+	mes "S'il y a plusieurs équipements dans votre inventaire, l'un d'eux sera choisi au hasard pour l'échange s'il remplit les conditions.";
+	close2;
+	cutin "",255;
+	callshop .@shop$;
+	end;
+}
+
+//= Device Module Exchange
+ba_in01,87,380,3	script	Yecheon#ep172module_trader	4_EP17_CLEANER_W,{
+	if (checkweight(1201,3) == 0) {
+		cutin "ep172_omega",2;
+		mes "[Yecheon]";
+		mes "Le sac est plein. Veuillez vérifier le poids et le nombre d'objets en votre possession avant de parler à nouveau.";
+		close3;
+	}
+	disable_items;
+	cutin "ep172_omega",2;
+	mes "[Yecheon]";
+	mes "Je peux vous fournir un Module Automatique, un Dispositif d'Amélioration Physique Automatique et un Dispositif d'Amélioration Magique Automatique. Cela vous aidera à améliorer les capacités de vos équipements automatiques.";
+	next;
+	cutin "",255;
+	switch( select( "More information.", "Get Automatic Module", "Get Physical Automatic Improvement Device", "Get Magical Automatic Improvement Device", "Cancel" ) ) {
+	case 1:
+		cutin "ep172_omega",2;
+		mes "[Yecheon]";
+		mes "Vous pouvez obtenir un ^FF0000module automatique^000000 contre ^0000CD90 Tickets Barmeal^000000. Je vous donnerai un module automatique aléatoire, excluant les modules de rang épique.";
+		next;
+		mes "[Yecheon]";
+		mes "Je fournis également l'Appareil d'Amélioration Automatique Physique et l'Appareil d'Amélioration Automatique Magique^000000. Vous pouvez les échanger contre des Tickets Barmeal^0000CD45 ou ^0000CD1500000 Zeny^000000.";
+		next;
+		mes "[Yecheon]";
+		mes "Alors, invité spécialisé dans le combat, améliorez vos capacités en toute sécurité.";
+		close3;
+	case 2:
+		.@price = 90;
+		cutin "ep172_omega",2;
+		mes "[Yecheon]";
+		mes "I will exchange 1 random Automatic Module excluding the epic grade modules for " + .@price + " " + mesitemlink(1000103) + ".";
+		next;
+		cutin "",255;
+		if (select( "Exchange Barmeal Ticket.", "Do not exchange" ) == 2) {
+			mes "[Yecheon]";
+			mes "Transaction terminée.";
+			close3;
+		}
+		cutin "ep172_omega",2;
+		if (countitem(1000103) < .@price) {
+			mes "[Yecheon]";
+			mes "Vous n'avez pas assez de tickets Barmeal pour l'échange.";
+			close3;
+		}
+		mes "[Yecheon]";
+		mes "Je l'ai échangé contre un Module Automatique aléatoire.";
+		delitem 1000103,.@price;
+		getitem rand(1000105,1000149),1;
+		close3;
+	case 3:
+		.@price = 45;
+		.@zeny = 1500000;
+		cutin "ep172_omega",2;
+		mes "[Yecheon]";
+		mes "I will exchange ^FF00001 Physical Automatic Improvement Device^000000 for " + .@price + " " + mesitemlink(1000103) + " or " + .@zeny + " Zeny.";
+		next;
+		cutin "",255;
+		switch( select( "Exchange for Barmeal Ticket.", "Exchange for 1500000 Zeny.", "Do not exchange." ) ) {
+		case 1:
+			cutin "ep172_omega",2;
+			if (countitem(1000103) < .@price) {
+				mes "[Yecheon]";
+				mes "Vous n'avez pas assez de tickets Barmeal pour l'échange.";
+				close3;
+			}
+			delitem 1000103,.@price;
+			break;
+		case 2:
+			cutin "ep172_omega",2;
+			if (Zeny < .@zeny) {
+				mes "[Yecheon]";
+				mes "Vous n'avez pas assez de Zeny pour l'échange.";
+				close3;
+			}
+			Zeny -= .@zeny;
+			break;
+		case 3:
+			mes "[Yecheon]";
+			mes "Transaction terminée.";
+			close3;
+		}
+		mes "[Yecheon]";
+		mes "Je l'ai échangé contre un Appareil d'Amélioration Automatique Physique aléatoire.";
+		.@r = rand(100);
+		if (.@r < 50)
+			getitem 100164,1;
+		else if (.@r < 80)
+			getitem 100165,1;
+		else
+			getitem 100166,1;
+		close3;
+	case 4:
+		.@price = 45;
+		.@zeny = 1500000;
+		cutin "ep172_omega",2;
+		mes "[Yecheon]";
+		mes "I will exchange ^FF00001 Magical Automatic Improvement Device^000000 for " + .@price + " " + mesitemlink(1000103) + " or " + .@zeny + " Zeny.";
+		next;
+		cutin "",255;
+		switch( select( "Exchange for Barmeal Ticket.", "Exchange for 1500000 Zeny.", "Do not exchange." ) ) {
+		case 1:
+			cutin "ep172_omega",2;
+			if (countitem(1000103) < .@price) {
+				mes "[Yecheon]";
+				mes "Vous n'avez pas assez de tickets Barmeal pour l'échange.";
+				close3;
+			}
+			delitem 1000103,.@price;
+			break;
+		case 2:
+			cutin "ep172_omega",2;
+			if (Zeny < .@zeny) {
+				mes "[Yecheon]";
+				mes "Vous n'avez pas assez de Zeny pour l'échange.";
+				close3;
+			}
+			Zeny -= .@zeny;
+			break;
+		case 3:
+			mes "[Yecheon]";
+			mes "Transaction terminée.";
+			close3;
+		}
+		mes "[Yecheon]";
+		mes "Je l'ai échangé contre un dispositif d'amélioration automatique magique aléatoire.";
+		.@r = rand(100);
+		if (.@r < 50)
+			getitem 100167,1;
+		else if (.@r < 80)
+			getitem 100168,1;
+		else
+			getitem 100169,1;
+		close3;
+	case 5:
+		mes "[Yecheon]";
+		mes "Transaction terminée.";
+		close3;
+	}
+	end;
+}
+
+ba_in01,87,389,2	script	Butterfly Merchant#ba_in01	4_EP17_MASTER_A,{
+	if (ep17_2_main < 8) {
+		mes "[Commerçante de Papillons]";
+		mes "Désolé. L'inscription est requise pour acheter des papillons.";
+		close;
+	}
+	mes "[Commerçante de Papillons]";
+	mes "Accueillir.";
+	mes "Avez-vous besoin de ailes pour vous déplacer vers la Villa Barmund ?";
+	close2;
+	callshop "barter_Teleport_Ep17_02";
+	end;
+}

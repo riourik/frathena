@@ -1,0 +1,126 @@
+//===== rAthena Script ======================================= 
+//= Renewal Swordman Job Quest
+//===== By: ================================================== 
+//= Kisuka
+//===== Current Version: ===================================== 
+//= 1.1
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Job Change to Swordman Class
+//===== Additional Comments: ================================= 
+//= 1.0 First Version. [Kisuka]
+//= 1.1 Added support for Baby classes. [Euphy]
+//============================================================ 
+izlude_in,74,172,4	script	Swordman#swd	119,{
+	if (Upper == 1) {
+		if (Class == Job_Novice_High && (ADVJOB == Job_Lord_Knight || ADVJOB == Job_Paladin)) {
+			mes "[Guerrier]";
+			mes "^FF0000It...^0";
+			mes "^FF0000Can't be...^0";
+			mes "Tu as été renaître, n'est-ce pas?";
+			next;
+			mes "[Guerrier]";
+			mes "Je vois que tu remarches le chemin du Swordman ! Une fois que tu es habitué à manier l'épée, tu ne peux jamais revenir en arrière!!";
+			next;
+			if (!callfunc("F_CanChangeJob")) {
+				mes "[Guerrier]";
+				mes "Hm ? Ah, tu dois d'abord maîtriser les Techniques de Base avant d'être prêt à devenir un Swordman.";
+				next;
+				mes "[Guerrier]";
+				mes "Reviens vers moi lorsque tu auras terminé l'apprentissage des Techniques de Novice de Base.";
+				close;
+			}
+			mes "[Guerrier]";
+			mes "Excellent ! Laisse-moi te promouvoir en Swordman tout de suite!";
+			next;
+			skill "NV_TRICKDEAD",0,SKILL_PERM;
+			jobchange Job_Swordman_High;
+			skill "SM_MOVINGRECOVERY",1,SKILL_PERM;
+			skill "SM_FATALBLOW",1,SKILL_PERM;
+			skill "SM_AUTOBERSERK",1,SKILL_PERM;
+			mes "[Guerrier]";
+			mes "Hmm... Tu sembles être un Swordman très expérimenté. Cependant, je suis sûr que tu dois t'entraîner pour améliorer tes compétences et gagner en force !";
+			close;
+		}else{
+			mes "[Guerrier]";
+			mes "Hum...?";
+			mes "Tu es un guerrier renaît";
+			mes ", n'est-ce pas?";
+			next;
+			mes "[Guerrier]";
+			mes "Hmmm...";
+			mes "Il semble que d'être";
+			mes "un Swordman ne soit pas une partie";
+			mes "^FF0000 de votre destinée. Je suis désolé(e),";
+			mes "mais il semble qu'il n'y a rien";
+			mes "que je puisse faire pour vous.";
+			close;
+		}
+	}
+	mes "[Membre du Guild des Guerriers]";
+	mes "Ceci est la Guilde des Épéistes.";
+	mes "Pourquoi es-tu ici ?";
+	next;
+	switch(select("Tell me about being a Swordman.:I want to be a Swordman.:Nothing.")) {
+	case 1:
+		mes "[Membre du Guild des Guerriers]";
+		mes "Alors vous souhaitez en savoir plus sur le puissant Épéiste ? Très bien !";
+		next;
+		mes "[Membre du Guild des Guerriers]";
+		mes "La caractéristique la plus distinctive de l'Épéiste est qu'il peut nous montrer ses véritables capacités au corps à corps.";
+		mes "Il y a trois raisons !";
+		next;
+		mes "[Membre du Guild des Guerriers]";
+		mes "Premièrement, l'Épéiste possède plus de PV que les autres métiers.";
+		mes "Deuxièmement, sauf pour les Arcs et les Baguettes, l'Épéiste peut utiliser toutes les autres armes afin de combattre à son plein potentiel.";
+		mes "Et troisièmement, la plupart des compétences de l'Épéiste offrent d'puissants attaques physiques.";
+		next;
+		mes "[Membre du Guild des Guerriers]";
+		mes "Bien que je vous aie donné une explication simple, je crois que vous comprenez le sens fondamental de ce qu'est un Épéiste.";
+		mes "À mon avis, l'Épéiste est le meilleur métier qui soit !";
+		close;
+	case 2:
+		mes "[Membre du Guild des Guerriers]";
+		if(BaseJob != Job_Novice) {
+			if(BaseJob == Job_Swordman) {
+				mes "Vous êtes déjà un excellent Épéiste, n'est-ce pas ?";
+				mes "Il ne vous reste plus qu'à vous dévouer pour devenir un grand Épéiste.";
+			}else{
+				mes "Vous possédez déjà l'un des autres métiers, n'est-ce pas ?";
+				mes "Vous avez poussé cette blague trop loin.";
+			}
+			close;
+		}else{
+			if (!callfunc("F_CanChangeJob")) {
+				mes "Je suis désolé de vous le dire, mais pour devenir un Épéiste, vous devez atteindre au moins le niveau de métier ^4A4AFF10^000000.";
+				mes "et ^4A4AFFNiveau de Compétence de Base 9^000000.";
+				next;
+				mes "[Membre du Guild des Guerriers]";
+				mes "Vous voulez devenir un Guerrier sans avoir le niveau minimum requis ?";
+				mes "Pensez-vous qu'être un Guerrier soit si facile ?";
+				close;
+			}
+			mes "Hum, votre Niveau de Job et votre Niveau de Compétence de Base sont validés.";
+			mes "Bien. Voulez-vous devenir un Guerrier tout de suite ?";
+			next;
+			if(select("Yes, I do.:I'll consider it again.") == 2) {
+				mes "[Membre du Guild des Guerriers]";
+				mes "Oui. Une décision prudente est nécessaire pour choisir un métier.";
+				mes "Mais je suis désolé... que vous reconsidériez après avoir surmonté toutes les épreuves....";
+				close;
+			}
+			mes "[Membre du Guild des Guerriers]";
+			mes "Félicitations ! À partir de maintenant, vous allez mener la vie d'un Guerrier !";
+			mes "Faisons-le tout de suite !";
+			next;
+			mes "[Membre du Guild des Guerriers]";
+			mes "Encore une fois, félicitations pour être devenu un Guerrier et j'espère que vous participerez à de nombreuses activités pour le renouveau de notre guilde.";
+			callfunc "Job_Change",Job_Swordman;
+			getitem 13415,1; // N_Falchion
+			close;
+		}
+	case 3:
+		close;
+	}
+}

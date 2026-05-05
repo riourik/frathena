@@ -1,0 +1,481 @@
+//===== rAthena Script =======================================
+//= Horror Toy Factory merchants
+//===== Description: =========================================
+//= [Official Conversion]
+//= Horror Toy Factory enchants / exchange in xmas
+//===== Changelogs: ==========================================
+//= 1.0 First version. Uses official script structure and text
+//=     from iRO. [Capuche]
+//============================================================
+
+xmas,240,291,3	script	Billy The Golden Hands#1	4_F_05,{
+	disable_items;
+	if (checkweight(1201,1) == 0) {
+		mes "Les types d'objets que tu as sont trop variés. Réessaie après avoir réduit le nombre de types d'objets.";
+		close;
+	}
+	if ((MaxWeight - Weight) < 10000) {
+		mes "Vous êtes surchargé et ne pouvez plus avancer. Veuillez réessayer après avoir réduit votre poids.";
+		close;
+	}
+	mes "[Billy The Golden Hands]";
+	mes "Huhu. Avez-vous apporté quelques pièces ? Je vendrais n'importe quoi, mais pas mon âme, si vous avez des pièces.";
+	next;
+
+	setarray .@xm_item[0],
+		22534, 100,		// Closedmind_Box
+		18848, 500,		// Lush_Rose
+		19687, 1000,	// C_Lush_Rose
+		19686, 500,		// C_SantaHairband
+		19701, 500,		// C_Red_Bonnet
+		13442, 1000,	// Old_Parasol
+		11563, 7,		// Hot_Tee
+		11564, 5,		// Sweet_Canape
+		523,   1,		// Holy_Water
+		12020, 1;		// Water_Of_Darkness
+
+	.@s = ( select( "Cancel", "Closed Mind Box (100 Coins)", "Lush Rose (500 Coins)", "C Lush Rose (1000 Coins)", "C Santa Hairband (500 Coins)", "C Red Bonnet (500 Coins)", "Old Parasol (1000 Coins)", "Hot Tea (7 Coins)", "Sweet Canape (5 Coins)", "Holy Water (1 Coin)", "Water Of Darkness (1 Coin)" ) -2 ) * 2;
+	if (.@s == -2) {
+		mes "[Billy The Golden Hands]";
+		mes "Khaha, ressentez-vous des scrupules ou quelque chose comme ça ? Bon alors. Revenez quand vous changerez d'avis.";
+		close;
+	}
+	if (countitem(7642) >= .@xm_item[.@s+1]) {
+		mes "[Billy The Golden Hands]";
+		mes "You need ^0000ff" + .@xm_item[.@s+1] + "^000000 Bloody Coins to buy ^0000ff" + getitemname(.@xm_item[.@s]) + "^000000. Are you going to buy it?";
+		next;
+		if (select( "Cancel", "Purchase" ) == 1) {
+			mes "[Billy The Golden Hands]";
+			mes "Khaha, quel ami inconstant ! Si vous décidez vraiment de l'acheter, revenez.";
+			close;
+		}
+		if (countitem(7642) >= .@xm_item[.@s+1]) {
+			delitem 7642,.@xm_item[.@s+1];// Bloody_Coin
+			getitem .@xm_item[.@s], 1;
+			mes "[Billy The Golden Hands]";
+			mes "Vous avez payé. J'ai hâte de vous revoir !";
+			close;
+		}
+	}
+	mes "[Billy The Golden Hands]";
+	mes "You need ^0000ff" + .@xm_item[.@s+1] + "^000000 Bloody Coins to buy ^0000ff" + getitemname(.@xm_item[.@s]) + "^000000. You are short of them.";
+	close;
+}
+
+
+xmas,240,297,3	script	Vagrant Cain#1	4_M_06,{
+	disable_items;
+	if (checkweight(1201,1) == 0) {
+		mes "Les types d'objets que tu as sont trop variés. Réessaie après avoir réduit le nombre de types d'objets.";
+		close;
+	}
+	if ((MaxWeight - Weight) < 10000) {
+		mes "Vous êtes surchargé et ne pouvez plus avancer. Veuillez réessayer après avoir réduit votre poids.";
+		close;
+	}
+	mes "[Vagrant Cain]";
+	mes "Oh, je suis sûr que vous êtes venu ici car vous n'aimez pas les choses ordinaires. Parlez-moi simplement. Je ferai tout ce que vous voudrez si vous avez préparé la rémunération raisonnable et les matériaux appropriés.";
+	next;
+	.@s = select( "Nothing that I want.", "I want Celine's Ribbon.", "I'm seeking Noble Cross.", "I'd like to get Evilspirit Gloves." );
+	switch(.@s) {
+	case 1:
+		mes "[Vagrant Cain]";
+		mes "Oui, oui. Tout le monde dit cela au début. À bientôt.";
+		close;
+	case 2:
+		.@string$[0] = "Ho~ You are looking for a very unique headgear, my friend. You have great discernment.";
+		.@string$[1] = "I need ^0000ff1000 ^000000Bloody Coins and ^0000ff+9 or greater Lush Rose^000000 for ^0000ffCeline's Ribbon^000000. Do you have enough materials?";
+		.@string$[2] = "You should prepare ^0000ff1000 ^000000Bloody Coins and one ^0000ff +9 or greater Lush Rose^000000 for ^0000ffCeline's Ribbon^000000. Don't forget!";
+		.@string$[3] = "Are you really going to trade them? ^ff0000The refine levels, effects, and card of the item will disappear and you cannot get a refund^000000. Please consider it!";
+		break;
+	case 3:
+		.@string$[0] = "Ho~ You are looking for a very precious weapon, my friend. You have great discernment.";
+		.@string$[1] = "I need ^0000ff2000 ^000000Bloody Coins and one ^0000ffGrand Cross (slot)^000000 for ^0000ffNoble Cross^000000. Do you have enough materials?";
+		.@string$[2] = "You should prepare ^0000ff 2000 ^000000Bloody Coins and one ^0000ff Grand Cross (slot)^000000 for ^0000ffNoble Cross^000000. Don't forget!";
+		.@string$[3] = "Are you really going to trade them? ^ff0000The refine levels, effects, and card of the item will disappear and you cannot get a refund^000000. Please consider it!";
+		break;
+	case 4:
+		.@string$[0] = "Ho~ You are looking for a very rare accessory, my friend. You have great discernment.";
+		.@string$[1] = "I need ^0000ff1000 ^000000Bloody Coins, one ^0000ffHurt Mind, Kind Heart, and Red Lantern ^000000each for ^0000ffEvilspirit Gloves^000000. Do you have enough materials?";
+		.@string$[2] = "You should prepare ^0000ff1000 ^000000Bloody Coins, one ^0000ffHurt Mind, Kind Heart, and Red Lantern ^000000each for ^0000ffEvilspirit Gloves^000000. Don't forget!";
+		.@string$[3] = "Are you really going to trade them? ^ff0000The effects, and card of the item will disappear and you cannot get a refund^000000. Besides, if you have the same sort of things, I don't know which one will be chosen. Think about that.";
+		break;
+	}
+	mes "[Vagrant Cain]";
+	mes .@string$[0];
+	next;
+	mes "[Vagrant Cain]";
+	mes .@string$[1];
+	next;
+	if (select( "I don't have them now", "I will trade it right away" ) == 1) {
+		mes "[Vagrant Cain]";
+		mes "Reviens quand tu seras prêt(e). Laisse-moi te rappeler les matériaux nécessaires.";
+		next;
+		mes "[Vagrant Cain]";
+		mes .@string$[2];
+		close;
+	}
+	mes "[Vagrant Cain]";
+	mes .@string$[3];
+	next;
+	if (select( "I will try it next time", "Exchange them right away" ) == 1) {
+		mes "[Vagrant Cain]";
+		mes "D'accord, tu es déterminé(e). J'espère qu'on se reverra la prochaine fois, hein hein.";
+		close;
+	}
+	switch(.@s) {
+	case 2:
+		mes "[Vagrant Cain]";
+		if (getequipid(EQI_HEAD_TOP) != 18848)// Lush_Rose
+			mes "Le chapeau que tu portes n'est pas une Rose de Luxe. Apporte-moi le bon matériau dont je t'ai parlé, kuku.";
+		else if (getequiprefinerycnt(EQI_HEAD_TOP) < 9)
+			mes "Le chapeau que tu portes n'est pas raffiné au niveau +9 ou supérieur. On ne peut pas échanger avec ça.";
+		else if (countitem(7642) < 1000)
+			mes "Eh bien, tu manques de Pièces Sanguinaires. Tu dois en rassembler exactement 1000. Moins que cela... C'est inévitable.";
+		else {
+			delitem 7642,1000;// Bloody_Coin
+			delequip EQI_HEAD_TOP;
+			getitem 18849,1;// Celines_Ribbon
+			mes "L'échange est terminé. Jette un œil à ça.";// custom
+		}
+		close;
+	case 3:
+		mes "[Vagrant Cain]";
+		if (getequipid(EQI_HAND_R) != 1540)// Grand_Cross_
+			mes "L'objet de ta main droite n'est pas une Grande Croix (emplacement). Apporte-moi l'objet correct dont je t'ai parlé, kuku.";
+		else if (countitem(7642) < 2000)
+			mes "Eh bien, tu manques de Pièces Sanguinaires. Tu dois en rassembler exactement 2000. Moins que cela... C'est inévitable.";
+		else {
+			delitem 7642,2000;// Bloody_Coin
+			delequip EQI_HAND_R;
+			getitem 16029,1;// Noble_Cross
+			mes "L'échange est terminé. Jette un œil à ça.";// custom
+		}
+		close;
+	case 4:
+		mes "[Vagrant Cain]";
+		if (countitem(7642) > 999 && countitem(2977) > 0 && countitem(2978) > 0 && countitem(2976) > 0) {
+			delitem 7642,1000;// Bloody_Coin
+			delitem 2977,1;// Hurt_Mind
+			delitem 2978,1;// KindHeart
+			delitem 2976,1;// Red_Lantern
+			getitem 2980,1;// Evilspirit_Gloves
+			mes "L'échange est terminé. Jette un œil à ça.";// custom
+		}
+		else {
+			mes "Vous n'avez pas assez de matériaux.";
+			next;
+			mes "[Vagrant Cain]";
+			mes "Tu devrais préparer ^0000ff1000 ^000000Pièces Sanguinaires, une ^0000ffEsprit Brisé^000000 et un ^0000ffLampion Rouge^000000 pour chaque paire de ^0000ffGants d'Esprit Maléfique^000000.";
+		}
+		close;
+	}
+}
+
+xmas,240,294,3	script	Black Beard Joe#pa0829	4_M_05,{
+	disable_items;
+	if (checkweight(1201,1) == 0) {
+		mes "Les types d'objets que tu as sont trop variés. Réessaie après avoir réduit le nombre de types d'objets.";
+		close;
+	}
+	if ((MaxWeight - Weight) < 10000) {
+		mes "Vous êtes surchargé et ne pouvez plus avancer. Veuillez réessayer après avoir réduit votre poids.";
+		close;
+	}
+	mes "[Black Beard Joe]";
+	mes "Huhu, la cupidité des humains est naturellement insatiable. Que voulez-vous que je fasse ?";
+	next;
+	switch( select( "What can you do for me?", "Enchant accessory of Toy Factory", "Enchant weapon of Toy Factory", "Enchant headgear of Toy Factory", "Enchant footwear of Toy Factory" ) ) {
+	case 1:
+		mes "[Black Beard Joe]";
+		mes "Que dois-je faire ? C'est très simple. Vous me rapportez simplement des Bloody Coins et j'encaisse pour enchanter votre accessoire.";
+		next;
+		mes "[Black Beard Joe]";
+		mes "Je prendrai 15 Bloody Coins par tentative. J'enchanterai une case d'équipement pour chaque 15 pièces. Bien sûr, le maximum est de 3.";
+		next;
+		mes "[Black Beard Joe]";
+		mes "Eh bien, il est tout à fait naturel que le taux de destruction augmente lorsque le niveau de l'amélioration progresse. Je vous recommande d'arrêter après la première ou la deuxième tentative, tee-hee.";
+		close;
+	case 2:
+		.@eq_num = EQI_ACC_R;
+		break;
+	case 3:
+		.@eq_num = EQI_HAND_R;
+		break;
+	case 4:
+		.@eq_num = EQI_HEAD_TOP;
+		break;
+	case 5:
+		.@eq_num = EQI_SHOES;
+		break;
+	}
+	.@item_id = getequipid(.@eq_num);
+	.@refine = getequiprefinerycnt(.@eq_num);
+	setarray .@card[0],
+		getequipcardid(.@eq_num,0),
+		getequipcardid(.@eq_num,1),
+		getequipcardid(.@eq_num,2),
+		getequipcardid(.@eq_num,3);
+
+	switch(.@item_id) {
+	case 2976:	// Red_Lantern
+	case 2977:	// Hurt_Mind
+	case 2978:	// KindHeart
+	case 2980:	// Evilspirit_Gloves
+		.@sc_type = 1;// acc
+		break;
+	case 2486:	// Shadow_Walk_
+	case 18848:	// Lush_Rose
+	case 18849:	// Celines_Ribbon
+		.@sc_type = 2;// armor
+		break;
+	case 13442:	// Old_Parasol
+		.@sc_type = 3;// weapon
+		break;
+	case 16029:	// Noble_Cross
+		mes "[Black Beard Joe]";// custom
+		mes "Oh, vous êtes équipé du ^0000ffNoble Cross^000000 ! Cet objet doit trouver quelqu'un d'autre pour l'enchanter.";
+		next;
+		mes "[Black Beard Joe]";
+		mes "J'ai essayé plusieurs fois, mais sans succès.";
+		next;
+		mes "[Black Beard Joe]";
+		mes "Si vous voulez enchanter cette arme, trouvez ^0000ffMayomayo^000000 à l'île de Malangdo ! Il devrait pouvoir le faire.";
+		close;
+	default:
+		break;
+	}
+	switch(.@eq_num) {
+	case EQI_ACC_R:
+		mes "[Black Beard Joe]";
+		mes "Vous pouvez choisir l'un des deux types et la redevance par tentative est de 15 Bloody Coins. Je les encaisserai juste avant d'enchanter l'objet.";
+		next;
+		.@enchant_type = select( "Quit", "A random stat one among STR/AGI/DEX", "A random stat among INT/VIT/DEX" ) - 1;// enchant_type [1-2]
+		mes "[Black Beard Joe]";
+		if (.@enchant_type == 0) {
+			mes "D'accord, revenez quand vous le souhaitez, kuku.";
+			close;
+		}
+		if (.@sc_type < 1) {
+			mes "Ce matériel n'est pas issu de l'Usine à Jouets. Je ne peux traiter que les objets provenant de l'Usine à Jouets.";
+			close;
+		}
+		if (.@card[3] == 0) {
+			.@slot_num = 3;
+			mes "D'accord, essayons la première enchantement. Habituellement, elles ne sont pas cassées. Un taux de réussite d'environ 95 % ?";
+			.@string$ = "You blow hot and cold, this fickle friend.!";
+		}
+		else if (.@card[2] == 0) {
+			.@slot_num = 2;
+			mes "Ho~ Deuxième enchantement. Maintenant, c'est devenu dangereux. Le taux de réussite est d'environ 70 %. Voulez-vous continuer ? L'ensemble de l'accessoire sera détruit en cas d'échec.";// custom
+			.@string$ = "You blow hot and cold, this fickle friend.!";
+		}
+		else if (.@card[1] == 0) {
+			.@slot_num = 1;
+			mes "Ceci est le dernier enchantement. Voulez-vous continuer ? À ce stade, ^ff0000le taux de réussite est inférieur à 50%^000000. Bien sûr, ce serait formidable si cela réussissait... Hmm, je suivrai votre décision, mais gardez cela en tête.";// custom
+			.@string$ = "Wise! The third enchantment is too greedy.";// custom translation
+		}
+		else {
+			mes "Ho~ Cela a déjà atteint le sommet. Il est impossible d'enchanter davantage, alors soyez satisfait et utilisez-le bien.";// custom
+			close;
+		}
+		break;
+	case EQI_HAND_R:
+		mes "[Black Beard Joe]";
+		if (.@sc_type < 1) {
+			mes "Ce matériel n'est pas issu de l'Usine à Jouets. Je ne peux traiter que les objets provenant de l'Usine à Jouets.";
+			close;
+		}
+		.@enchant_type = 3;
+		.@slot_num = 3;
+		mes "J'enchanterai les armes uniquement une fois. Il n'y a pas d'échec, donc vous pouvez simplement y voir un effet bonus, tee-hee.";
+		.@string$ = "You blow hot and cold, this fickle friend.!";
+		break;
+	case EQI_HEAD_TOP:
+	case EQI_SHOES:
+		mes "[Black Beard Joe]";
+		if (.@sc_type < 1) {
+			mes "Ce matériel n'est pas issu de l'Usine à Jouets. Je ne peux traiter que les objets provenant de l'Usine à Jouets.";
+			close;
+		}
+		if (.@card[3] == 0) {
+			.@slot_num = 3;
+			.@enchant_type = 4;
+			mes "Bien. Commençons la première enchantement. J'ajouterai un des effets de combat spéciaux. Bien sûr, vous n'avez pas besoin d'avoir peur car il n'y a pas d'échec, kuku.";
+		}
+		else if (.@card[2] == 0) {
+			.@slot_num = 2;
+			.@enchant_type = 5;
+			mes "Le deuxième enchantement. Je renforcerais l'un des états précédents. Il n'y a également pas d'échec, donc ne vous inquiétez pas, kukuku.";// custom
+		}
+		else {
+			mes "Ho~ Cela a déjà atteint le sommet. Il est impossible d'enchanter davantage, alors soyez satisfait et utilisez-le bien.";// custom
+			close;
+		}
+		.@string$ = "You blow hot and cold, this fickle friend.!";
+		break;
+	default:
+		mes "[Black Beard Joe]";
+		mes "Je n'enchanterai pas cela !";// custom
+		close;
+	}
+	next;
+	if (select( "I will com back later", "Please do it" ) == 1) {
+		mes "[Black Beard Joe]";
+		mes .@string$;
+		close;
+	}
+	mes "[Black Beard Joe]";
+	if (.@slot_num == 3)
+		setarray .@range[0],550,1050;
+	else if (.@slot_num == 2)
+		setarray .@range[0],450,1125;
+	else if (.@slot_num == 1)
+		setarray .@range[0],1,1161;
+	else {
+		mes "Il y a un problème, veuillez revenir plus tard !";// custom
+		close;
+	}
+	.@enchant = 9;
+	switch(.@enchant_type) {
+	case 1:
+		.@r = rand(.@range[0],.@range[1]);
+			 if (.@r < 601)  .@enchant = 0;
+		else if (.@r < 701)  .@enchant = 4700;	// Strength1
+		else if (.@r < 801)  .@enchant = 4730;	// Agility1
+		else if (.@r < 901)  .@enchant = 4720;	// Dexterity1
+		else if (.@r < 951)  .@enchant = 4701;	// Strength2
+		else if (.@r < 1001) .@enchant = 4731;	// Agility2
+		else if (.@r < 1051) .@enchant = 4721;	// Dexterity2
+		else if (.@r < 1076) .@enchant = 4702;	// Strength3
+		else if (.@r < 1101) .@enchant = 4732;	// Agility3
+		else if (.@r < 1126) .@enchant = 4722;	// Dexterity3
+		else if (.@r < 1138) .@enchant = 4703;	// Strength4
+		else if (.@r < 1150) .@enchant = 4733;	// Agility4
+		else if (.@r < 1162) .@enchant = 4723;	// Dexterity4
+		else .@enchant = 9;
+		break;
+	case 2:
+		.@r = rand(.@range[0],.@range[1]);
+			 if (.@r < 601)  .@enchant = 0;
+		else if (.@r < 701)  .@enchant = 4710;	// Inteligence1
+		else if (.@r < 801)  .@enchant = 4740;	// Vitality1
+		else if (.@r < 901)  .@enchant = 4720;	// Dexterity1
+		else if (.@r < 951)  .@enchant = 4711;	// Inteligence2
+		else if (.@r < 1001) .@enchant = 4741;	// Vitality2
+		else if (.@r < 1051) .@enchant = 4721;	// Dexterity2
+		else if (.@r < 1076) .@enchant = 4712;	// Inteligence3
+		else if (.@r < 1101) .@enchant = 4742;	// Vitality3
+		else if (.@r < 1126) .@enchant = 4722;	// Dexterity3
+		else if (.@r < 1138) .@enchant = 4713;	// Inteligence4
+		else if (.@r < 1150) .@enchant = 4743;	// Vitality4
+		else if (.@r < 1162) .@enchant = 4723;	// Dexterity4
+		else .@enchant = 9;
+		break;
+	case 3:
+		.@r = rand(1,2555);
+			 if (.@r < 301)  .@enchant = 4820;	// Fighting_Spirit5
+		else if (.@r < 501)  .@enchant = 4821;	// Fighting_Spirit6
+		else if (.@r < 601)  .@enchant = 4822;	// Fighting_Spirit7
+		else if (.@r < 651)  .@enchant = 4823;	// Fighting_Spirit8
+		else if (.@r < 676)  .@enchant = 4824;	// Fighting_Spirit9
+		else if (.@r < 686)  .@enchant = 4825;	// Fighting_Spirit10
+		else if (.@r < 986)  .@enchant = 4816;	// Sharp3
+		else if (.@r < 1086) .@enchant = 4843;	// Sharp4
+		else if (.@r < 1096) .@enchant = 4844;	// Sharp5
+		else if (.@r < 1396) .@enchant = 4760;	// Matk1
+		else if (.@r < 1496) .@enchant = 4761;	// Matk2
+		else if (.@r < 1506) .@enchant = 4806;	// Matk3
+		else if (.@r < 1806) .@enchant = 4872;	// Attack_Delay_2
+		else if (.@r < 2006) .@enchant = 4873;	// Attack_Delay_3
+		else if (.@r < 2106) .@enchant = 4881;	// Attack_Delay_4
+		else if (.@r < 2116) .@enchant = 4807;	// Atk_Speed1
+		else if (.@r < 2416) .@enchant = 4827;	// Spell6
+		else if (.@r < 2516) .@enchant = 4828;	// Spell7
+		else if (.@r < 2546) .@enchant = 4829;	// Spell8
+		else if (.@r < 2556) .@enchant = 4830;	// Spell9
+		else .@enchant = 9;
+		break;
+	case 4:
+		.@r = rand(1,1950);
+			 if (.@r < 301)  .@enchant = 4810;	// Fighting_Spirit2
+		else if (.@r < 401)  .@enchant = 4809;	// Fighting_Spirit3
+		else if (.@r < 451)  .@enchant = 4808;	// Fighting_Spirit4
+		else if (.@r < 471)  .@enchant = 4820;	// Fighting_Spirit5
+		else if (.@r < 771)  .@enchant = 4818;	// Sharp1
+		else if (.@r < 871)  .@enchant = 4817;	// Sharp2
+		else if (.@r < 891)  .@enchant = 4816;	// Sharp3
+		else if (.@r < 991)  .@enchant = 4760;	// Matk1
+		else if (.@r < 1011) .@enchant = 4761;	// Matk2
+		else if (.@r < 1311) .@enchant = 4869;	// Attack_Delay_1
+		else if (.@r < 1411) .@enchant = 4872;	// Attack_Delay_2
+		else if (.@r < 1461) .@enchant = 4873;	// Attack_Delay_3
+		else if (.@r < 1481) .@enchant = 4881;	// Attack_Delay_4
+		else if (.@r < 1781) .@enchant = 4813;	// Spell3
+		else if (.@r < 1881) .@enchant = 4812;	// Spell4
+		else if (.@r < 1931) .@enchant = 4826;	// Spell5
+		else if (.@r < 1951) .@enchant = 4827;	// Spell6
+		else .@enchant = 9;
+		break;
+	case 5:
+		.@r = rand(1,1970);
+			 if (.@r < 301)  .@enchant = 4700;	// Strength1
+		else if (.@r < 401)  .@enchant = 4701;	// Strength2
+		else if (.@r < 451)  .@enchant = 4702;	// Strength3
+		else if (.@r < 471)  .@enchant = 4730;	// Agility1
+		else if (.@r < 771)  .@enchant = 4731;	// Agility2
+		else if (.@r < 871)  .@enchant = 4732;	// Agility3
+		else if (.@r < 891)  .@enchant = 4710;	// Inteligence1
+		else if (.@r < 991)  .@enchant = 4711;	// Inteligence2
+		else if (.@r < 1011) .@enchant = 4712;	// Inteligence3
+		else if (.@r < 1311) .@enchant = 4720;	// Dexterity1
+		else if (.@r < 1411) .@enchant = 4721;	// Dexterity2
+		else if (.@r < 1461) .@enchant = 4722;	// Dexterity3
+		else if (.@r < 1481) .@enchant = 4740;	// Vitality1
+		else if (.@r < 1781) .@enchant = 4741;	// Vitality2
+		else if (.@r < 1881) .@enchant = 4742;	// Vitality3
+		else if (.@r < 1931) .@enchant = 4750;	// Luck1
+		else if (.@r < 1951) .@enchant = 4751;	// Luck2
+		else if (.@r < 1971) .@enchant = 4752;	// Luck3
+		else .@enchant = 9;
+		break;
+	default:
+		break;
+	}
+	if (.@enchant == 9) {
+		mes "Il y a un problème, veuillez revenir plus tard !";// custom
+		close;
+	}
+	if (.@card[3] == 0 && .@sc_type < 4)
+		.@index_slot = 3;
+	else if (.@card[2] == 0 && .@sc_type < 3)
+		.@index_slot = 2;
+	else if (.@card[1] == 0 && .@sc_type < 2)
+		.@index_slot = 1;
+	else {
+		mes "Je ne sais pas ce que c'est, mais je pense que ce n'est pas quelque chose que je puisse gérer.";// custom
+		close;
+	}
+	if (countitem(7642) > 14) {// Bloody_Coin
+		delitem 7642,15;// Bloody_Coin
+
+		// anti-hack
+		if (callfunc("F_IsEquipIDHack", .@eq_num, .@item_id) || callfunc("F_IsEquipCardHack", .@eq_num, .@card[0], .@card[1], .@card[2], .@card[3]) || callfunc("F_IsEquipRefineHack", .@eq_num, .@refine))
+			close;
+
+		delequip .@eq_num;
+		if (.@enchant == 0) {
+			mes "Ouch ! Pauvre vous, l'enchantement a échoué et votre équipement est cassé, Geez !";
+			close2;
+			specialeffect2 EF_LORD;
+			end;
+		}
+		.@card[ .@index_slot ] = .@enchant;
+		getitem2 .@item_id,1,1,.@refine,0,.@card[0],.@card[1],.@card[2],.@card[3];
+		mes "Hmm.. Ça a réussi. Jetez un coup d'œil.";
+		specialeffect2 EF_REPAIRWEAPON;
+		close;
+	}
+	mes "Hmm.. D'ailleurs, vous devez remplir vos pièces sanglantes. Vous ne pouvez même pas payer les frais.";
+	close;
+}

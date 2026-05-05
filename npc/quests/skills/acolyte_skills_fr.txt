@@ -1,0 +1,121 @@
+//===== rAthena Script =======================================
+//= Acolyte Skill Quest
+//===== By: ==================================================
+//= kobra_k88
+//===== Current Version: =====================================
+//= 1.8
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Quest for skills: Holy Light
+//===== Additional Comments: ================================= 
+//= 1.5 Rescripted to Aegis 10.3 stadards. [L0ne_W0lf]
+//= 1.6 Fixed a typo in job check. (Bugreport:1531) [L0ne_W0lf]
+//= 1.7 Updated to latest available official file. [Masao]
+//= 1.8 Fixed JobLevel requirements. [Euphy]
+//============================================================
+
+prt_church,173,23,4	script	Cleric	79,{
+	mes "[Acolyte Klift]";
+	mes "Ah . Frères ! La tâche de";
+	mes "soigner nos brebis égarées vous pèse-t-elle et vous fatigue-t-elle ?";
+	mes "and tire you ?";
+	mes "Je suis ici pour vous aider.";
+	next;
+	switch (select("^3355FF' About acolyte's hidden ability '^000000 ..:^3355FF' Holy light '^000000 training:End conversation")) {
+	case 1:
+		mes "[Acolyte Klift]";
+		mes "Nos membres du clergé";
+		mes "apprennent naturellement une compétence au fur et à mesure qu'ils mûrissent. À mesure qu'ils approchent de leurs années avancées d'acolyte,";
+		mes "as they mature. As they approach ";
+		mes "their senior years as an acolyte";
+		mes "cette compétence spéciale.";
+		next;
+		mes "[Acolyte Klift]";
+		mes "Face à un grand danger et";
+		mes "à une lutte sans fin contre le mal,";
+		mes "nos frères ont beaucoup besoin d'aide.";
+		mes "^3355FF' Holy Light '^000000est cette compétence.";
+		mes "Pour acquérir cette capacité pour vous-même,";
+		mes "cela demande un peu de travail.";
+		next;
+		mes "[Acolyte Klift]";
+		mes "Pour obtenir la compétence, vous devez trouver ces objets.";
+		mes "^FF3355 Opal^000000";
+		mes "^FF3355 Cristal Bleu^000000";
+		mes "^FF3355 Chapelet^000000";
+		next;
+		mes "[Acolyte Klift]";
+		mes "Pour pouvoir utiliser cette compétence,";
+		mes "il faut posséder une expérience suffisante.";
+		mes "^FF3355 Niveau de métier 30^000000";
+		mes "est requis pour apprendre cette compétence.";
+		next;
+		mes "[Acolyte Klift]";
+		mes "En ce qui concerne un prêtre, en raison de leur";
+		mes "déjà vaste quantité d'expérience,";
+		mes "ils sont capables d'acquérir cette compétence à n'importe quel";
+		mes "niveau de métier.";
+		close;
+	case 2:
+		if (getskilllv("AL_HOLYLIGHT") == 1) {
+			mes "[Acolyte Klift]";
+			mes "Frère, vous possédez déjà la compétence ` Holy Light ' .";
+			mes "Vous ne pouvez pas acquérir une compétence que vous";
+			mes "possédez déjà ..";
+			mes "already possess ..";
+			mes "Je prie pour que vous utilisiez";
+			mes "cette compétence dans le but du bien . .";
+			close;
+		}
+		if ((countitem(727) > 0) && (countitem(991) > 0) && (countitem(2608) > 0) && (JobLevel > 29 || (BaseJob == Job_Priest || BaseJob == Job_Monk)) && (BaseClass == Job_Acolyte)) {
+			mes "[Acolyte Klift]";
+			mes "Votre foi s'est révélée digne";
+			mes "pour acquérir la compétence ' Holy Light '.";
+			mes "Votre compétence est suffisante";
+			mes "pour utiliser cette compétence.";
+			mes "Utilisez-la avec sagesse... . .";
+			next;
+			delitem 727,1; //White_Jewel
+			delitem 991,1; //Crystal_Blue
+			delitem 2608,1; //Rosary
+			skill "AL_HOLYLIGHT",1,SKILL_PERM;
+			mes "[Acolyte Klift]";
+			mes "Vous connaissez désormais ' Holy Light '";
+			mes "Puissiez-vous n'utiliser cette compétence que dans les";
+			mes "meilleurs cas de figure . . . . .";
+			close;
+		}
+		mes "[Acolyte Klift]";
+		mes "Oh, c'est clair... . .";
+		mes "Vous n'êtes pas encore prêt à";
+		mes "recevoir la compétence ' Holy Light '.";
+		next;
+		mes "[Acolyte Klift]";
+		mes "Vous devriez écouter attentivement ce qui";
+		mes "est nécessaire pour cette compétence.";
+		mes "Si vous écoutez de près,";
+		mes "vous pourrez apprendre ce qui vous manque.";
+		mes "Afin que vous puissiez vous améliorer.";
+		close;
+	case 3:
+		mes "[Acolyte Klift]";
+		mes ". . . . .";
+		mes "Je comprends votre zèle.";
+		mes "Vous avez encore beaucoup de temps pour";
+		mes "vous entraîner et gagner de l'expérience.";
+		mes "Bénédiction sur vous . . . . .";
+		close;
+	}
+}
+
+//============================================================ 
+// Old changelog
+//============================================================ 
+//= 1.0a Now using functions found in "Global_Functions.txt"
+//=     for class checks.
+//= 1.2 Added Baby Class Support [Lupus]
+//= 1.3 Removed callfunc Is_####_Class in favor of baseClass [Silentdragon]
+//= 1.4 Fixed an exploit [Lupus]
+//= 1.4a changed perm. variables to temp ones [Lupus]
+//============================================================

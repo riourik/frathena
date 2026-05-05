@@ -1,0 +1,632 @@
+//===== rAthena Script =======================================
+//= Clan masters
+//===== Description: =========================================
+//= The clan master NPCs that allow you to join and leave
+//= one of the clans.
+//===== Changelogs: ==========================================
+//= 1.0 Initial release. [Lemongrass]
+//= 1.1 iRO translation. [RagnarokNova]
+//= 1.2 Dialogue cleanup. [Aleos]
+//= 1.3 Added clan helper. [exneval]
+//============================================================
+
+prontera,138,183,7	script	Clan Helper	703,{
+	mes "[Clan Helper]";
+	mes "Vous voulez créer des liens sans être dans une guilde ?";
+	next;
+	mes "[Clan Helper]";
+	mes "Impossible de trouver la guilde parfaite pour vous ?";
+	next;
+	mes "[Clan Helper]";
+	mes "Vous pouvez rejoindre ou quitter les clans librement ! Rejoignez-nous simplement !";
+	next;
+	mes "[Clan Helper]";
+	mes "Allez, entrez et rencontrez les maîtres des meilleurs clans du Royaume !";
+	close;
+}
+
+prt_in,33,114,5	script	Raffam Oranpere	10058,{
+	cutin "laperm01.bmp", 2;
+	mes "[Raffam Oranpere]";
+	mes "Salut ! Je suis Raffam, maître du ^3131FFClan Sword^000000 dans le Royaume de Rune-Midgarts.";
+	next;
+	switch( select( "Clan Information:Join.:Leave." ) ){
+		case 1:
+			switch( select( "What are Clans?:About the Sword Clan:Cancel." ) ){
+				case 1:
+					mes "[Raffam Oranpere]";
+					mes "Les ^3131FFClans^000000 sont un type de guilde géré par le Royaume.";
+					mes "Ils ne participent pas au Siège, donc les membres peuvent rejoindre ou quitter à tout moment.";
+					next;
+					mes "[Raffam Oranpere]";
+					mes "J'aimerais pouvoir participer au Siège. J'adorerais survoler sur mon dragon et brûler tout le monde sur mon passage !";
+					mes "Oups, trop enthousiaste !";
+					next;
+					mes "[Raffam Oranpere]";
+					mes "Rejoignez-nous si aucun Clan ne vous convient.";
+					mes "Les nouveaux membres reçoivent des ^3131FFbonus de statistiques gratuits^000000.";
+					next;
+					mes "[Raffam Oranpere]";
+					mes "Les statistiques de combat rapproché sont offertes comme le nom ^3131FFSword Clan^000000 l'indique, mais tous les membres ne sont pas des classes de combat rapproché.";
+					mes "Ne vous sentez pas obligé, comptez simplement sur moi !";
+					next;
+					cutin "laperm02.bmp", 2;
+					mes "[Raffam Oranpere]";
+					mes "La variété dans la diversité crée le plaisir.";
+					mes "Ces groupes étranges ne m'ennuient jamais en partie.";
+					next;
+					mes "[Raffam Oranpere]";
+					mes "Et qui sait, vous pourriez rencontrer votre âme sœur dans le Clan ? Hahah !";
+					break;
+				case 2:
+					mes "[Raffam Oranpere]";
+					mes "Le ^3131FFSword Clan^000000 soutient principalement les aventuriers de combat rapproché.";
+					mes "Rejoignez gratuitement ^FF0000<STR+1, VIT+1, MHP+30, MSP+10>^000000 !";
+					next;
+					mes "[Raffam Oranpere]";
+					mes "N'oubliez pas : aucune participation aux sièges.";
+					mes "Vous devriez contacter d'autres guildes pour les sièges.";
+					next;
+					mes "[Raffam Oranpere]";
+					mes "Une question ?";
+					mes "Excité(e) de rejoindre moi ? Hahah !";
+					break;
+				case 3:
+					break;
+			}			
+			break;
+		case 2:
+			mes "[Raffam Oranpere]";
+			mes "Oh, vous allez rejoindre ? Bonne décision !";
+			mes "Vérifions la politique du clan pour commencer les procédures d'admission.";
+			next;
+			mes "[Raffam Oranpere]";
+			mes "^3131FFLes membres du clan^000000 ne peuvent pas participer au Siège.";
+			mes "Les nouveaux membres reçoivent ces bonus de statistiques : ^FF0000<STR+1, VIT+1, MHP+30, MSP+10>^000000.";
+			mes "Vous suivez toujours ?";
+			next;
+			if( select( "Yes.:No." ) == 1 ){
+				mes "[Raffam Oranpere]";
+				mes "Vous pouvez rejoindre ou quitter un clan à tout moment, mais si vous ne vous connectez pas pendant ^FF0000plus de 2 semaines^000000, vous serez ^FF0000expulsé^000000.";
+				mes "Les maîtres de clans existent pour une raison, comme moi.";
+				mes "Compris ?";
+				next;
+				if( select( "Yes.:No." ) == 1 ){
+					mes "[Raffam Oranpere]";
+					mes "Parfait, signez votre nom ici pour vous inscrire.";
+					next;
+					input .@name$;
+					mes "[Raffam Oranpere]";
+					mes "So, you're ^3131FF" + strcharinfo( 0 ) + "^000000! Nice name!";
+					mes "Laissez-moi vous inscrire.";
+					next;
+					if( getcharid( 2 ) ){
+						mes "[Raffam Oranpere]";
+						mes "Revenez rejoindre après avoir quitté votre guild actuelle.";
+						close3;
+					}else if( getcharid( 5 ) != 0 ){
+						cutin "laperm04.bmp", 2;
+						mes "[Raffam Oranpere]";
+						mes "Eh ? Oh, vous êtes dans un clan.";
+						mes "Ne me faites pas ça, ce n'est pas cool !";
+					}else{
+						cutin "laperm02.bmp", 2;
+						if (clan_join(SWORDCLAN)) {
+							sc_start2 SC_SWORDCLAN, INFINITE_TICK, 0, SWORDCLAN;
+							mes "[Raffam Oranpere]";
+							mes "Bienvenue au ^3131FFSword Clan^000000 !";
+							mes "Vous pouvez consulter les informations du Clan avec ^3131FFCtrl+G^000000.";
+							mes "À votre service !";
+						} else
+							mes "Une erreur s'est produite.";
+					}
+				}else{
+					mes "[Raffam Oranpere]";
+					mes "Euh oh. Retournons au début.";
+				}
+			}else{
+				cutin "laperm03.bmp", 2;
+				mes "[Raffam Oranpere]";
+				mes "Euh oh. Retournons au début.";
+			}
+			break;
+		case 3:
+			cutin "laperm01.bmp", 2;
+			mes "[Raffam Oranpere]";
+			mes "Vous voulez partir ?";
+			mes "Pas de problème. J'espère que vous trouverez une guilde plus adaptée.";
+			mes "Prêt pour le retrait ?";
+			next;
+			if( select( "Continue.:Cancel." ) == 1 ){
+				if( getcharid( 5 ) == 0 ){
+					cutin "laperm04.bmp", 2;
+					mes "[Raffam Oranpere]";
+					mes "Attendez, vous n'êtes pas avec nous ! Grr, ne me forcez pas à souffler du feu sur vous !";
+				}else if( getcharid( 5 ) != SWORDCLAN ){
+					cutin "laperm04.bmp", 2;
+					mes "[Raffam Oranpere]";
+					mes "Hé, parlez à votre chef de guilde si vous voulez partir.";
+				}else{
+					if (clan_leave()) {
+						sc_end SC_SWORDCLAN;
+						mes "[Raffam Oranpere]";
+						mes "D'accord, c'est fait. Mais ne soyons pas des étrangers, d'accord ?";
+						mes "Ce fut un plaisir de vous avoir !";
+					} else
+						mes "Une erreur s'est produite.";
+				}
+			}
+			break;
+	}
+	close2;
+	cutin "", 255;
+	end;
+
+OnInit:
+	sc_start2 SC_SWORDCLAN, INFINITE_TICK, 0, SWORDCLAN, 10000, SCSTART_NOAVOID, getnpcid(0);
+	end;
+}
+
+prt_in,35,114,5	script	Devon Aire	10059,{
+	cutin "debon01.bmp", 2;
+	mes "[Devon Aire]";
+	mes "Je suis Devon, maître du ^3131FFArc Wand Clan^000000.";
+	next;
+	switch( select( "Clan Information:Join.:Leave." ) ){
+		case 1:
+			switch( select( "What are Clans?:About the Arc Wand Clan:Cancel." ) ){
+				case 1:
+					mes "[Devon Aire]";
+					mes "Les ^3131FFClans^000000 sont gérés par le Royaume, et non en privé comme les autres.";
+					mes "Et je gère l'un d'eux.";
+					next;
+					cutin "debon02.bmp", 2;
+					mes "[Devon Aire]";
+					mes "...";
+					mes "Qu'est-ce que tu as dans l'œil ? Tu as un problème ?";
+					next;
+					cutin "birman01.bmp", 2;
+					mes "[Berman Aire]";
+					mes "Frère, tu effraies un futur membre, sois gentil.";
+					next;
+					cutin "debon02.bmp", 2;
+					mes "[Devon Aire]";
+					mes "...";
+					next;
+					cutin "debon01.bmp", 2;
+					mes "[Devon Aire]";
+					mes "Rejoignez-nous si vous cherchez une place où vous sentir à l'aise. Nous offrons des bonus de statistiques ^3131FFgratuits^000000. Mais aucune participation aux Sièges.";
+					next;
+					mes "[Devon Aire]";
+					mes "La plupart des membres sont des classes magiciennes offensives, comme le suggere le nom du clan ^3131FFArc Wand Clan^000000, mais ce n'est pas une obligation.";
+					next;
+					cutin "debon02.bmp", 2;
+					mes "[Devon Aire]";
+					mes "...Hé, Shaam Rumi.";
+					mes "Arrête de draguer mon frère et mets-toi au travail.";
+					next;
+					cutin "sham03.bmp", 2;
+					mes "[Shaam Rumi]";
+					mes "Qu'importe !";
+					next;
+					cutin "debon02.bmp", 2;
+					mes "[Devon Aire]";
+					mes "...Hmpf !";
+					mes "Écoute, le maître du Clan des Arbalétriers est méchant.";
+					next;
+					cutin "sham02.bmp", 2;
+					mes "[Shaam Rumi]";
+					mes "Laisse-moi tranquille, Devon ! Ne répands pas de rumeurs !";
+					next;
+					cutin "birman01.bmp", 2;
+					mes "[Berman Aire]";
+					mes "Haha. Arrêtez. Vous deux faites une scène.";
+					mes "Allez, retournez au travail, les gars.";
+					break;
+				case 2:
+					cutin "debon01.bmp", 2;
+					mes "[Devon Aire]";
+					mes "Le clan ^3131FFArc Wand Clan^000000 soutient principalement les classes de Mage offensives.";
+					mes "Nous offrons aux nouveaux membres ^FF0000<INT+1, DEX+1, MHP+30, MSP+10>^000000. Ne demandez pas plus ; c'est la règle du Royaume.";
+					next;
+					mes "[Devon Aire]";
+					mes "Les membres du clan ^3131FFClansmen^000000 ne peuvent pas participer au Siège.";
+					mes "Si vous aimez le Siège, rejoignez alors une guilde régulière.";
+					next;
+					mes "[Devon Aire]";
+					mes "C'est tout. Pas de questions.";
+					break;
+				case 3:
+					break;
+			}
+			break;
+		case 2:
+			cutin "debon01.bmp", 2;
+			mes "[Devon Aire]";
+			mes "...";
+			mes "Vérifions la politique du clan pour commencer les procédures d'admission.";
+			next;
+			mes "[Devon Aire]";
+			mes "^3131FFLes membres du clan^000000 ne peuvent pas participer au Siège.";
+			mes "Les nouveaux membres reçoivent ces bonus de statistiques : ^FF0000<INT+1, DEX+1, MHP+30, MSP+10>^000000.";
+			mes "Vous suivez toujours ?";
+			next;
+			if( select( "Yes.:No." ) == 1 ){
+				mes "[Devon Aire]";
+				mes "Vous pouvez rejoindre ou quitter un clan à tout moment, mais si vous ne vous connectez pas pendant ^FF0000plus de 2 semaines^000000, vous serez ^FF0000expulsé^000000.";
+				mes "Êtes-vous d'accord ?";
+				next;
+				if( select( "Yes.:No." ) == 1 ){
+					mes "[Devon Aire]";
+					mes "Signez votre nom ici.";
+					next;
+					input .@name$;
+					mes "[Devon Aire]";
+					mes "^3131FF" + strcharinfo( 0 ) + "^000000.....";
+					mes "Bien, laissez-moi vous inviter.";
+					next;
+					if( getcharid( 2 ) ){
+						mes "[Devon Aire]";
+						mes "Quittez d'abord votre guilde pour rejoindre mon Clan, évident.";
+						close3;
+					}else if( getcharid( 5 ) != 0 ){
+						cutin "debon03.bmp", 2;
+						mes "[Devon Aire]";
+						mes "Vous êtes déjà dans un Clan. Vous rigolez ?!";
+						mes "Oh, je peux être drôle aussi -- PILLIER DE FEU !";
+					}else{
+						if (clan_join(ARCWANDCLAN)) {
+							sc_start2 SC_ARCWANDCLAN, INFINITE_TICK, 0, ARCWANDCLAN;
+							mes "[Devon Aire]";
+							mes "Vous avez rejoint le ^3131FFArc Wand Clan^000000.";
+							next;
+							mes "[Devon Aire]";
+							mes "Vous pouvez consulter les informations du Clan avec ^3131FFCtrl+G^000000.";
+							mes "Alors ne me dérangez plus tard.";
+							next;
+							mes "[Devon Aire]";
+							mes "C'est tout. Visitez souvent ou vous serez expulsé. Cessez de m'importuner.";
+						} else
+							mes "Une erreur s'est produite.";
+					}
+				}else{
+					mes "[Devon Aire]";
+					mes "Alors je ne veux pas de vous.";
+				}
+			}else{
+				mes "[Devon Aire]";
+				mes "Oh, écoutez la politique à nouveau.";
+			}
+			break;
+		case 3:
+			mes "[Devon Aire]";
+			mes "Vous voulez partir, hein ?";
+			mes "Je comprends, c'est à propos des Sièges. Sinon, pourquoi... Peu importe...";
+			mes "Je vais traiter votre retrait.";
+			next;
+			if( select( "Continue.:Cancel." ) == 1 ){
+				if( getcharid( 5 ) == 0 ){
+					cutin "debon03.bmp", 2;
+					mes "[Devon Aire]";
+					mes "Les enfants mal élevés méritent un bon Jupitel Thunder.";
+				}else if( getcharid( 5 ) != ARCWANDCLAN ){
+					cutin "debon02.bmp", 2;
+					mes "[Devon Aire]";
+					mes "Vous cherchez chez le mauvais arbre. Allez voir votre maître de Clan.";
+				}else{
+					if (clan_leave()) {
+						sc_end SC_ARCWANDCLAN;
+						mes "[Devon Aire]";
+						mes "Vous êtes retiré du Clan.";
+						mes "Maintenant, partez. Je n'ai plus envie de parler.";
+					} else
+						mes "Une erreur s'est produite.";
+				}
+			}		
+			break;
+	}
+	close2;
+	cutin "", 255;
+	end;
+
+OnInit:
+	sc_start2 SC_ARCWANDCLAN, INFINITE_TICK, 0, ARCWANDCLAN, 10000, SCSTART_NOAVOID, getnpcid(0);
+	end;
+}
+
+prt_in,37,114,5	script	Berman Aire	10060,{
+	cutin "birman01.bmp", 2;
+	mes "[Berman Aire]";
+	mes "Enchanté de vous rencontrer. Je suis Berman Aire, maître du ^3131FFGolden Mace Clan^000000.";
+	mes "Je suis aussi le frère aîné de Devon Aire. Devon a l'air dur, mais il a un grand cœur.";
+	next;
+	switch( select( "Clan Information:Join.:Leave." ) ){
+		case 1:
+			switch( select( "What are Clans?:About the Golden Mace Clan:Cancel." ) ){
+				case 1:
+					mes "[Berman Aire]";
+					mes "Les ^3131FFClans^000000 sont établis par le Royaume pour aider les aventuriers à se connecter et partager des informations.";
+					next;
+					mes "[Berman Aire]";
+					mes "Puisque le Royaume gère le Clan, il n'y a pas de participation aux Sièges, mais au moins les membres reçoivent des ^3131FFbonus de statistiques^000000.";
+					mes "Les bonus de statistiques sont faibles, mais peuvent être très utiles pour les aventuriers débutants.";
+					next;
+					mes "[Berman Aire]";
+					mes "Nous sommes nommés le ^3131FFGolden Mace Clan^000000, mais nous ne discriminons pas les candidats en fonction de leur classe.";
+					mes "Le nom est juste pour vous aider à choisir facilement votre Clan.";
+					next;
+					cutin "sham02.bmp", 2;
+					mes "[Shaam Rumi]";
+					mes "Berman, assez d'explications. Allons nous promener à Glast Heim.";
+					next;
+					cutin "debon03.bmp", 2;
+					mes "[Devon Aire]";
+					mes "... Hé.";
+					next;
+					cutin "sham03.bmp", 2;
+					mes "[Shaam Rumi]";
+					mes "Ouf, tu m'effraies.";
+					mes "Berman, appelle-moi quand tu peux !~";
+					next;
+					cutin "birman03.bmp", 2;
+					mes "[Berman Aire]";
+					mes "Hah hah, je m'excuse pour leurs chamailleries.";
+					next;
+					cutin "birman01.bmp", 2;
+					mes "[Berman Aire]";
+					mes "Avez-vous une question ?";
+					mes "Si vous en avez marre de voyager seul(e), rejoignez-nous ! Vous pouvez rejoindre et quitter le Clan à tout moment.";
+					break;
+				case 2:
+					mes "[Berman Aire]";
+					mes "Le ^3131FFGolden Mace Clan^000000 aide principalement les classes support.";
+					mes "Nous offrons ^FF0000<INT+1, LUK+1, MHP+30, MSP+10>^000000 aux nouveaux membres.";
+					next;
+					mes "[Berman Aire]";
+					mes "Comme je vous l'ai dit plus tôt, les Clans ne peuvent pas rejoindre le Siège car ils appartiennent déjà au Royaume.";
+					mes "Si vous voulez participer au Siège, je vous recommande de rejoindre une guilde classique.";
+					next;
+					mes "[Berman Aire]";
+					mes "Avez-vous compris à quoi servent les Clans maintenant ?";
+					break;
+				case 3:
+					break;
+			}
+			break;
+		case 2:
+			mes "[Berman Aire]";
+			mes "Génial !";
+			mes "Vérifions la politique du clan pour commencer les procédures d'admission.";
+			next;
+			mes "[Berman Aire]";
+			mes "^3131FFLes membres du clan^000000 ne peuvent pas participer au Siège.";
+			mes "En tant que nouveau membre, vous recevrez les bonus de statistiques suivants : ^FF0000<INT+1, LUK+1, MHP+30, MSP+10>^000000.";
+			mes "Êtes-vous d'accord ?";
+			next;
+			if( select( "Yes.:No." ) == 1 ){
+				mes "[Berman Aire]";
+				mes "Vous pouvez rejoindre ou quitter un clan à tout moment, mais si vous ne vous connectez pas pendant ^FF0000plus de 2 semaines^000000, vous serez ^FF0000expulsé^000000.";
+				mes "Acceptez-vous de maintenir une bonne réputation au sein du clan ?";
+				next;
+				if( select( "Yes.:No." ) == 1 ){
+					mes "[Berman Aire]";
+					mes "Veuillez maintenant écrire votre nom ici.";
+					next;
+					input .@name$;
+					mes "[Berman Aire]";
+					mes "^3131FF" + strcharinfo( 0 ) + "^000000! What a good name!";
+					mes "D'accord, alors...";
+					next;
+					if( getcharid( 2 ) ){
+						mes "[Berman Aire]";
+						mes "Oh non.";
+						mes "Pour rejoindre, vous devez d'abord quitter votre guilde actuelle.";
+						close3;
+					}else if( getcharid( 5 ) != 0 ){
+						mes "[Berman Aire]";
+						mes "Vous êtes déjà dans un clan.";
+						mes "Vous êtes simplement confus, n'est-ce pas ?";
+					}else{
+						if (clan_join(GOLDENMACECLAN)) {
+							sc_start2 SC_GOLDENMACECLAN, INFINITE_TICK, 0, GOLDENMACECLAN;
+							cutin "birman02.bmp", 2;
+							mes "[Berman Aire]";
+							mes "Bienvenue au ^3131FFGolden Mace Clan^000000 !";
+							next;
+							mes "[Berman Aire]";
+							mes "Vous pouvez consulter les informations du Clan avec ^3131FFCtrl+G^000000.";
+							next;
+							mes "[Berman Aire]";
+							mes "N'oubliez pas les quelques précautions que je vous ai données, et profitez de vos activités de clan !";
+						} else
+							mes "Une erreur s'est produite.";
+					}
+				}
+			}
+			break;
+		case 3:
+			mes "[Berman Aire]";
+			mes "Avec la réunion, il y a le départ.";
+			mes "J'espère que vous avez apprécié votre temps passé dans le ^3131FFGolden Mace Clan^000000.";
+			mes "Voulez-vous que je procède à votre retrait maintenant ?";
+			next;
+			if( select( "Continue.:Cancel." ) == 1 ){
+				if( getcharid( 5 ) == 0 ){
+					mes "[Berman Aire]";
+					mes "Vous ne pouvez pas quitter un clan sans y avoir d'abord adhéré.";
+				}else if( getcharid( 5 ) != GOLDENMACECLAN ){
+					mes "[Berman Aire]";
+					mes "Je suis désolé, mais je ne peux pas vous retirer d'un autre clan...";
+				}else{
+					if (clan_leave()) {
+						sc_end SC_GOLDENMACECLAN;
+						mes "[Berman Aire]";
+						mes "C'est traité.";
+						mes "Revenez quand vous voulez au ^3131FFGolden Mace Clan^000000. Je serai là.";
+					} else
+						mes "Une erreur s'est produite.";
+				}
+			}
+			break;
+	}
+	close2;
+	cutin "", 255;
+	end;
+
+OnInit:
+	sc_start2 SC_GOLDENMACECLAN, INFINITE_TICK, 0, GOLDENMACECLAN, 10000, SCSTART_NOAVOID, getnpcid(0);
+	end;
+}
+
+prt_in,39,114,5	script	Shaam Rumi	10027,{
+	cutin "sham01.bmp", 2;
+	mes "[Shaam Rumi]";
+	mes "Salut ! Je suis Shaam, maître du ^3131FFCrossbow Clan^000000";
+	mes "^FF0000Que puis-je faire pour vous?";
+	next;
+	switch( select( "Clan Information:Join.:Leave." ) ){
+		case 1:
+			switch( select( "What are Clans?:About the Crossbow Clan:Cancel." ) ){
+				case 1:
+					mes "[Shaam Rumi]";
+					mes "Les clans ont été établis par le Royaume de Rune-Midgarts pour...";
+					mes "Raffam, pourquoi nos ^3131FFclans^000000 ont-ils été créés ?";
+					next;
+					cutin "laperm01.bmp", 2;
+					mes "[Raffam Oranpere]";
+					mes "As-tu dormi en cours ? Oh là là.";
+					mes "Les Clans aident les aventuriers solitaires à se connecter entre eux et à partager des informations.";
+					next;
+					cutin "sham01.bmp", 2;
+					mes "[Shaam Rumi]";
+					mes "A-ha, j'ai compris ! Merci, Capitaine !";
+					mes "Tu as aussi entendu ça, n'est-ce pas ?";
+					next;
+					mes "[Shaam Rumi]";
+					mes "Gérés par le Royaume lui-même, les Clans ne sont pas autorisés à participer au Siège, mais la bonne nouvelle est que leurs membres reçoivent certains bonus de ^3131FFstat^000000.";
+					next;
+					mes "[Shaam Rumi]";
+					mes "Au cas où vous vous demanderiez si le ^3131FFCrossbow Clan^000000 recrute uniquement des Arbalétriers, non ce n'est pas le cas.";
+					mes "Tous les Clans acceptent toutes les classes. Vous pouvez choisir celui qui correspond le mieux à vos besoins.";
+					next;
+					cutin "sham02.bmp", 2;
+					mes "[Shaam Rumi]";
+					mes "Cela devrait couvrir tout ce qu'il y a à savoir.";
+					mes "Berman, allons nous promener à Glast Heim.";
+					next;
+					cutin "debon03.bmp", 2;
+					mes "[Devon Aire]";
+					mes "Toi...";
+					next;
+					cutin "sham03.bmp", 2;
+					mes "[Shaam Rumi]";
+					mes "Oh, c'est effrayant ! Tu es si protecteur envers ton frère.";
+					break;
+				case 2:
+					mes "[Shaam Rumi]";
+					mes "Le ^3131FFCrossbow Clan^000000 est idéal pour les classes à distance.";
+					next;
+					mes "[Shaam Rumi]";
+					mes "Eh, laisse-moi vérifier le manuel du Clan. Ah, et nous offrons des bonus de stat aux nouveaux membres : ^FF0000<DEX+1, AGI+1, MHP+30, MSP+10>^000000.";
+					next;
+					mes "[Shaam Rumi]";
+					mes "Les clans ne sont pas autorisés à participer au Siège ; vous devriez rejoindre un guilde privée pour le Siège.";
+					mes "Les clans sont destinés aux aventuriers qui détestent être liés par des contraintes.";
+					next;
+					mes "[Shaam Rumi]";
+					mes "Avez-vous une question ?";
+					break;
+				case 3:
+					break;
+			}
+			break;
+		case 2:
+			mes "[Shaam Rumi]";
+			mes "Oh, oui ? Excellent choix !";
+			mes "Vérifions la politique du clan pour commencer les procédures d'admission.";
+			next;
+			mes "[Shaam Rumi]";
+			mes "^3131FFLes membres du clan^000000 ne peuvent pas participer au Siège.";
+			mes "En tant que nouveau membre, vous recevrez les bonus de statistiques suivants : ^FF0000<DEX+1, AGI+1, MHP+30, MSP+10>^000000.";
+			mes "Êtes-vous d'accord ?";
+			next;
+			if( select( "Yes.:No." ) == 1 ){
+				mes "[Shaam Rumi]";
+				mes "Vous pouvez rejoindre ou quitter un clan à tout moment, mais si vous ne vous connectez pas pendant ^FF0000plus de 2 semaines^000000, vous serez ^FF0000expulsé^000000.";
+				mes "Promettez-vous de maintenir un bon standing ?";
+				next;
+				if( select( "Yes.:No." ) == 1 ){
+					mes "[Shaam Rumi]";
+					mes "Très bien, écrivez votre nom ici.";
+					next;
+					input .@name$;
+					mes "[Shaam Rumi]";
+					mes "^3131FF" + strcharinfo( 0 ) + "^000000..!";
+					mes "Ouf, votre écriture laisse à désirer. Laissez-moi traiter votre demande d'adhésion.";
+					next;
+					if( getcharid( 2 ) ){
+						mes "[Shaam Rumi]";
+						mes "Avez-vous fini vos démarches avec votre guilde ?";
+						close3;
+					}else if( getcharid( 5 ) != 0 ){
+						mes "[Shaam Rumi]";
+						mes "Eh, tu es déjà dans un Clan. Hé, ce n'est pas drôle.";
+					}else{
+						if (clan_join(CROSSBOWCLAN)) {
+							sc_start2 SC_CROSSBOWCLAN, INFINITE_TICK, 0, CROSSBOWCLAN;
+							cutin "sham02.bmp", 2;
+							mes "[Shaam Rumi]";
+							mes "Bienvenue au ^3131FFCrossbow Clan^000000 !";
+							next;
+							cutin "sham01.bmp", 2;
+							mes "[Shaam Rumi]";
+							mes "Vous pouvez consulter les informations du Clan avec ^3131FFCtrl+G^000000.";
+							next;
+							mes "[Shaam Rumi]";
+							mes "Ne vous mêlez pas de querelles avec d'autres membres du Clan. Soyez sociables.";
+							mes "Si vous avez besoin d'aide, vous pouvez toujours me murmurer, d'accord ? À plus tard !";
+						} else
+							mes "Une erreur s'est produite.";
+					}
+				}else{
+					mes "[Shaam Rumi]";
+					mes "D'accord alors. Je vais juste aller m'amuser.";
+				}
+			}else{
+				mes "[Shaam Rumi]";
+				mes "Ah, vous avez besoin de temps pour réfléchir à cela ? Aucun problème.";
+			}
+			break;
+		case 3:
+			mes "[Shaam Rumi]";
+			mes "Pourquoi, avez-vous trouvé un meilleur Clan ?";
+			mes "Je suis déçu, mais c'est votre choix. Laissez-moi traiter votre retrait.";
+			next;
+			if( select( "Continue.:Cancel." ) == 1 ){
+				if( getcharid( 5 ) == 0 ){
+					cutin "sham04.bmp", 2;
+					mes "[Shaam Rumi]";
+					mes "Je ne peux pas vous laisser partir -- vous n'êtes même pas dans mon Clan !";
+				}else if( getcharid( 5 ) != CROSSBOWCLAN ){
+					mes "[Shaam Rumi]";
+					mes "Désolé, mais je ne me mêle pas des affaires d'autres Clans.";
+				}else{
+					if (clan_leave()) {
+						sc_end SC_CROSSBOWCLAN;
+						mes "[Shaam Rumi]";
+						mes "C'est fait.";
+						mes "Si vous nous manquez jamais, n'hésitez pas à revenir, d'accord ?";
+					} else
+						mes "Une erreur s'est produite.";
+				}
+			}
+			break;
+	}
+	close2;
+	cutin "", 255;
+	end;
+
+OnInit:
+	sc_start2 SC_CROSSBOWCLAN, INFINITE_TICK, 0, CROSSBOWCLAN, 10000, SCSTART_NOAVOID, getnpcid(0);
+	end;
+}

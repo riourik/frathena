@@ -1,0 +1,125 @@
+//===== rAthena Script ======================================= 
+//= Renewal Merchant Job Quest
+//===== By: ================================================== 
+//= Kisuka
+//===== Current Version: ===================================== 
+//= 1.1
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Job Change to Merchant Class
+//===== Additional Comments: ================================= 
+//= 1.0 First Version. [Kisuka]
+//= 1.1 Added support for Baby classes. [Euphy]
+//============================================================ 
+alberta_in,53,43,6	script	Merchant#mer	86,{
+	if (Upper == 1) {
+		if (Class == Job_Novice_High && (ADVJOB == Job_Whitesmith || ADVJOB == Job_Creator)) {
+			mes "[Chef Mahnsoo]";
+			mes "Ça fait longtemps !";
+			mes "Alors, tu n'as pas arrêté";
+			mes "ton activité ?";
+			mes "Qu'est-ce qui s'est passé?";
+			next;
+			mes "[Chef Mahnsoo]";
+			mes "Waouh...";
+			mes "Tu es vraiment allé à Valhalla?! Incroyable, tu as fait un grand bond en avant...";
+			next;
+			if (!callfunc("F_CanChangeJob")) {
+				mes "[Chef Mahnsoo]";
+				mes "Hmmm...";
+				mes "Il semble que tu n'es pas prêt à redevenir un Marchand. Va d'abord terminer l'apprentissage des Compétences de Novice de Base.";
+				next;
+				mes "[Chef Mahnsoo]";
+				mes "Ne t'inquiète pas, nous aurons toujours une place pour toi en tant que Marchand. Viens me voir quand tu seras prêt, d'accord ?";
+				close;
+			}
+			mes "[Chef Mahnsoo]";
+			mes "Je suppose que c'est le destin qui fait qu'on se retrouve comme ça. D'accord. Encore une fois, laisse-moi te transformer en Marchand !";
+			next;
+			skill "NV_TRICKDEAD",0,SKILL_PERM;
+			jobchange Job_Merchant_High;
+			skill "MC_CARTREVOLUTION",1,SKILL_PERM;
+			skill "MC_CHANGECART",1,SKILL_PERM;
+			skill "MC_LOUD",1,SKILL_PERM;
+			mes "[Chef Mahnsoo]";
+			mes "Ah~ Comme c'était agréable autrefois ! D'accord, fais de ton mieux !";
+			close;
+		}else{
+			mes "[Chef Mahnsoo]";
+			mes "^333333*Soupir*^000000";
+			mes "Je suis tellement ennuyé...";
+			mes "Quand vais-je entendre parler de ma chère Blossom ?";
+			close;
+		}
+	}
+	mes "[Guérisseur Mahnsoo]";
+	mes "Eh, pourquoi es-tu ici ?";
+	next;
+	switch(select("I want to be a merchant.:I want to know more about merchants.:Ask him the requirements to be a merchant.:Nothing.")) {
+	case 1:
+		mes "[Guérisseur Mahnsoo]";
+		if(BaseJob != Job_Novice) {
+			if(BaseJob == Job_Merchant) {
+				mes "..... ? Pardon ? Que dis-tu ?";
+				mes "Tu es déjà un marchand. Oh mon Dieu...";
+				mes "Huh?! ...Dois-je rire maintenant !?";
+			}else{
+				mes "Ahh ? Tu veux avoir les deux pieds dans l'eau ?";
+				mes "Comment te sens-tu de t'adonner simplement à ton métier d'origine ?";
+				next;
+				mes "[Guérisseur Mahnsoo]";
+				mes "Nous avons une éthique commerciale, tu sais.";
+			}
+			close;
+		}else{
+			mes "Tu veux devenir marchand ? Hmm...";
+			next;
+			if (!callfunc("F_CanChangeJob")) {
+				mes "[Guérisseur Mahnsoo]";
+				mes "Mais si tu veux être marchand, ton niveau de compétence de base doit atteindre le Niveau 9 ou bien tu dois dépenser tous tes points de compétences.";
+				next;
+				mes "[Guérisseur Mahnsoo]";
+				mes "Ne penses-tu pas que nous devons apprendre quelques compétences de base, même si nous ne faisons qu'échanger de l'argent ?";
+				close;
+			}
+			mes "[Guérisseur Mahnsoo]";
+			mes "Bien, je pense que tu es entièrement prêt pour cela vu que ton niveau de compétence de base est atteint.";
+			mes "Je t'autorise maintenant à être marchand.";
+			next;
+			mes "[Guérisseur Mahnsoo]";
+			mes "Félicitations pour être devenu marchand !";
+			mes "Encore une fois félicitations pour être membre de la guilde marchande et l'un de nos collègues. Je m'attends à votre participation active dès maintenant !";
+			callfunc "Job_Change",Job_Merchant;
+			getitem 1381,1;	// N_Battle_Axe
+			next;
+			mes "[Guérisseur Mahnsoo]";
+			mes "Absolument, nous avons besoin de jeunes gens passionnés pour atteindre notre grand objectif : sécuriser 20 % du volume monétaire mondial. Vous comprenez ? Euh ?";
+			mes "Bon, je disais juste... cela signifie qu'à la fin, nous allons faire beaucoup d'argent. Vous le savez bien~";
+			close;
+		}
+	case 2:
+		mes "[Guérisseur Mahnsoo]";
+		mes "Marchand ? Pour simplifier, celui qui vend des biens et gagne de l'argent est un marchand.";
+		mes "Pas doué pour les combats et sans compétences spéciales d'attaque ou de récupération... mais un marchand peut acheter à bas prix puis revendre pour gagner de l'argent.";
+		next;
+		mes "[Guérisseur Mahnsoo]";
+		mes "Bon, un marchand possède une compétence ultime appelée Mammonite qui frappe un ennemi avec son argent... Nous pouvons équiper tout sauf les Arcs, les Baguettes et les Épées à deux mains. Mais nous pouvons toujours vendre et acheter ces objets.";
+		mes "Oui... nous marchands avons toujours l'argent en tête, compris ?";
+		close;
+	case 3:
+		mes "[Guérisseur Mahnsoo]";
+		mes "Pour devenir marchand, bien que vendre et recevoir de l'argent soit notre métier, vous devez atteindre au moins le niveau de compétence de base 9.";
+		next;
+		mes "[Guérisseur Mahnsoo]";
+		mes "Bon, nous recevions auparavant une taxe d'installation. N'était-ce pas difficile de réunir cet argent ?";
+		mes "Trop de personnes ne pouvaient pas rassembler cet argent et continuaient à pleurer.";
+		next;
+		mes "[Guérisseur Mahnsoo]";
+		mes "Ainsi, récemment, nous avons décidé d'autoriser tout Novice souhaitant devenir marchand à le faire.";
+		mes "Car survivre ou non dépend ensuite uniquement de ses capacités.";
+		close;
+	case 4:
+		close;
+	}
+}

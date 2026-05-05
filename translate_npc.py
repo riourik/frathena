@@ -27,6 +27,7 @@ _ollama_batch    = 20  # strings per Ollama request
 _lmstudio_host   = 'localhost'
 _lmstudio_model  = 'local-model'
 _lmstudio_batch  = 20  # strings per LM Studio request
+_verbose         = False
 
 # keyword "text"; — first string arg
 KEYWORDS = ('mes', 'dispbottom', 'npctalk')
@@ -311,6 +312,8 @@ def _batch_translate(texts: list[str]) -> dict[str, str]:
 
 
 def translate_file(input_path: Path, output_path: Path) -> bool:
+    if _verbose:
+        print(f"  [translating] {input_path.name}", flush=True)
     try:
         lines = input_path.read_text(encoding='utf-8', errors='ignore').splitlines(keepends=True)
     except Exception as e:
@@ -334,6 +337,8 @@ def translate_file(input_path: Path, output_path: Path) -> bool:
     # Phase 3: apply cached translations
     for i, m, g, text in hits:
         translated = cache.get(text, text)
+        if _verbose and translated != text:
+            print(f"    {text!r} → {translated!r}", flush=True)
         lines[i] = lines[i][:m.start(g)] + translated + lines[i][m.end(g):]
 
     try:
@@ -355,7 +360,7 @@ def process_folder(folder: str, output_suffix: str = '_fr',
 
     pattern = '**/*.txt' if recursive else '*.txt'
     files = [f for f in root.glob(pattern)
-             if f.is_file() and '_fr' not in f.stem]
+             if f.is_file() and not f.stem.endswith('_fr')]
 
     # Group by subdirectory for display
     by_subdir = defaultdict(list)
@@ -523,9 +528,14 @@ if __name__ == "__main__":
         '--gen-conf', action='store_true',
         help="Generate French .conf files and patch scripts_main.conf"
     )
+    parser.add_argument(
+        '--verbose', action='store_true',
+        help="Print each translated string"
+    )
     args = parser.parse_args()
 
     # Apply engine config
+    _verbose = args.verbose
     _engine = args.engine
     if args.engine == 'ollama':
         if not args.ollama_host:

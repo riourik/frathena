@@ -1,0 +1,280 @@
+//===== rAthena Script =======================================
+//= Training Zone
+//===== Description: =========================================
+//= NPCs related to the training zone.
+//===== Changelog: ===========================================
+//= 1.0 Initial Release [Atemo]
+//============================================================
+
+// Storage
+tra_fild01,204,110,2	script	Training Ground Warehouse Soldier#fild01_1	8W_SOLDIER,{
+	mes "[Soldat de l'Entrepôt du Terrain d'Entraînement]";
+	mes "Souhaitez-vous utiliser le Stockage ? 1000 Zeny sont nécessaires pour utiliser le Stockage du terrain d'entraînement. Veuillez sélectionner le Stockage que vous souhaitez utiliser.";
+	next;
+	// switch( select( " Storage 1", " Storage 2", " Storage 3", " Guild Storage", " Cancel" ) ) {
+	switch( select( " Storage 1", "", "", " Guild Storage", " Cancel" ) ) {
+	case 1:
+		.@storage_num = 1;
+		break;
+	case 2:
+		.@storage_num = 2;
+		break;
+	case 3:
+		.@storage_num = 3;
+		break;
+	case 4:
+		// copied from npc/re/merchants/guild_warehouse.txt
+		.@guildid = getcharid( 2 );
+
+		if( .@guildid == 0 ){
+			mes "[Soldat de l'Entrepôt du Terrain d'Entraînement]";
+			mes "Le stockage de la guilde n'est disponible que pour les membres de la guilde.";
+			close;
+		}
+
+		if( getgdskilllv( .@guildid, "GD_GUILD_STORAGE" ) == 0 || !guild_has_permission( GUILD_PERM_STORAGE ) ){
+			mes "[Soldat de l'Entrepôt du Terrain d'Entraînement]";
+			mes "Il semble que votre guilde ne puisse pas encore utiliser l'entrepôt de guilde ou que vous n'avez pas les permissions d'accès requises.";
+			mes "Veuillez revenir après avoir vérifié la compétence de guilde et les permissions d'accès à l'entrepôt.";
+			close;
+		}
+
+		if( Zeny < 1000 ){
+			mes "[Soldat de l'Entrepôt du Terrain d'Entraînement]";
+			mes "Je crains que vous n'ayez pas assez d'argent pour régler les frais.";
+			mes "Les frais s'élèvent à 1000 Zeny.";
+			close;
+		}
+
+		mes "[Soldat de l'Entrepôt du Terrain d'Entraînement]";
+		mes "Je vais alors ouvrir le stockage de la guilde pour vous. Passez un moment inoubliable !";
+		close2;
+
+		if( Zeny < 1000 ){
+			// Cheat prevention
+			end;
+		}
+
+		if( guildopenstorage() == GSTORAGE_OPEN ){
+			Zeny -= 1000;
+			end;
+		}else{
+			mes "[Soldat de l'Entrepôt du Terrain d'Entraînement]";
+			mes "Il semble qu'une autre personne utilise actuellement l'entrepôt.";
+			mes "Veuillez réessayer dans quelques instants.";
+			close;
+		}
+	case 5:
+		end;
+	}
+	// TODO (custom text)
+	if (!callfunc("F_CanOpenStorage")) {
+		mes "[Soldat de l'Entrepôt du Terrain d'Entraînement]";
+		mes "Je suis désolé, mais toi";
+		mes "j'ai besoin du statut d'apprenti";
+		mes "Niveau de compétence basique 6 pour";
+		mes "utiliser le service de stockage.";
+		close2;
+		cutin "",255;
+		end;
+	}
+
+	if (Zeny < 1000) {
+		mes "[Soldat de l'Entrepôt du Terrain d'Entraînement]";
+		mes "^4d4dff1000 Zeny sont nécessaires pour utiliser le Stockage des terrains d'entraînement.^000000";
+		close;
+	}
+	Zeny -= 1000;
+	openstorage; // TODO: open correct storage 1-3
+	end;
+}
+tra_fild01,15,110,6	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild01_2	8W_SOLDIER
+tra_fild01,113,32,0	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild01_3	8W_SOLDIER
+tra_fild01,111,100,4	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild01_4	8W_SOLDIER
+
+tra_fild02,204,110,2	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild02_1	8W_SOLDIER
+tra_fild02,15,110,6	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild02_2	8W_SOLDIER
+tra_fild02,113,32,0	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild02_3	8W_SOLDIER
+tra_fild02,111,100,4	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild02_4	8W_SOLDIER
+
+tra_fild03,204,110,2	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild03_1	8W_SOLDIER
+tra_fild03,15,110,6	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild03_2	8W_SOLDIER
+tra_fild03,113,32,0	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild03_3	8W_SOLDIER
+tra_fild03,111,100,4	duplicate(Training Ground Warehouse Soldier#fild01_1)	Training Ground Warehouse Soldier#fild03_4	8W_SOLDIER
+
+
+// Misc NPCs
+
+// Cleaner
+tra_fild01,142,113,6	script	Cleaning Robot#fild01	EP17_2_OMEGA_CLEANER,{
+OnStart:
+	.@num = atoi( charat(strnpcinfo(2), 5) );
+
+	if (.is_moving[.@num])
+		end;
+	.is_moving[.@num] = true;
+	stopnpctimer;
+
+	setarray .@emotions[0], ET_SWEAT, ET_PROFUSELY_SWEAT, ET_HUNGRY, ET_OHNO;
+	.@r = rand( getarraysize(.@emotions) );
+	emotion .@emotions[.@r];
+
+	setarray .@speed[0], 300, 400, 500, 600;
+	.@r = rand( getarraysize(.@speed) );
+	npcspeed .@speed[.@r];
+
+	getmapxy .@map$,.@x,.@y, BL_NPC;
+	switch( .@num ) {
+	case 1:
+		if (.@x <= 126)
+			.sens[.@num] = 1;
+		else if (.@x >= 198)
+			.sens[.@num] = -1;
+		.@x += 8 * .sens[.@num];
+		break;
+	case 2:
+		if (.@x <= 21)
+			.sens[.@num] = 1;
+		else if (.@x >= 85)
+			.sens[.@num] = -1;
+		.@x += 8 * .sens[.@num];
+		break;
+	case 3:
+		if (.@y <= 33)
+			.sens[.@num] = 1;
+		else if (.@y >= 89)
+			.sens[.@num] = -1;
+		.@y += 8 * .sens[.@num];
+		break;
+	}
+	unitwalk getnpcid(0),.@x,.@y, strnpcinfo(0) + "::OnMoveEnd";
+	end;
+OnMoveEnd:
+	.@num = atoi( charat(strnpcinfo(2), 5) );
+	.is_moving[.@num] = false;
+	initnpctimer;
+	end;
+OnTimer30000:
+	donpcevent strnpcinfo(0) + "::OnStart";
+	end;
+
+OnInit:
+	.@num = atoi( charat(strnpcinfo(2), 5) );
+	.sens[.@num] = 1;
+	initnpctimer;
+	end;
+}
+tra_fild02,53,113,2	duplicate(Cleaning Robot#fild01)	Cleaning Robot#fild02	EP17_2_OMEGA_CLEANER
+tra_fild03,110,57,4	duplicate(Cleaning Robot#fild01)	Cleaning Robot#fild03	EP17_2_OMEGA_CLEANER
+
+
+// Chitchat
+tra_fild01,122,75,6	script	Neighborhood Grandmother#npc02	4_F_JPNOBA,{
+	mes "[Grand-mère du Quartier]";
+	mes "Hohoho - Voir les jeunes transpirer et travailler dur me donne un peu d'énergie.";
+	next;
+	mes "[Grand-mère du Quartier]";
+	mes "Oh, au fait. Saviez-vous cela ?";
+	next;
+	mes "[Grand-mère du Quartier]";
+	mes "Les mannequins des terrains d'entraînement résistants aux attaques physiques ont une icône d'épée au-dessus de leur tête, et les mannequins résistants aux attaques magiques ont une icône de bâton au-dessus de leur tête.";
+	next;
+	mes "[Grand-mère du Quartier]";
+	mes "Si vous le savez, vous pourrez les frapper plus fort, non ?";
+	close;
+}
+
+tra_fild01,34,102,3	script	Cat#npc03	4_CAT_REST,{
+	npctalk "Meow-", "", bc_self;
+	end;
+}
+
+tra_fild01,34,120,3	script	Fress#npc05	4_M_SITDOWN,{
+	mes "[Fress]";
+	mes "Si vous voulez aller à Prontera, vous pouvez sortir par les gardes situés dans tout le secteur ou via les portes de warp situées à 3 et 9 heures. Sérieusement.";
+	close;
+}
+
+tra_fild01,128,142,7	script	Nine Oranges#npc04	4_F_ROGUE,{
+	mes "[Nine Oranges]";
+	mes "Rappelez-vous ! Une fois qu'on a choisi un nom, il est difficile de le changer, alors choisissez avec sagesse.";
+	next;
+	mes "[Nine Oranges]";
+	mes "Au fait, où se trouve le Mannequin Zombie ?";
+	next;
+	mes "[Nine Oranges]";
+	mes "Mon ami dit qu'il a une icône d'os au-dessus de sa tête... ? Vous devez le voir vous-même pour en être sûr.";
+	close;
+}
+
+tra_fild01,97,64,3	script	Village#npc01	4_M_CHN8GUEK,{
+	mes "[Village ]";
+	mes "Salut ! Le temps est vraiment beau, n'est-ce pas ? Je suis venu vérifier les nouveaux terrains d'entraînement.";
+	next;
+	mes "[Village ]";
+	mes "Les anciens terrains d'entraînement n'étaient pas mauvais, mais ils louaient en réalité un espace que des débutants utilisaient depuis longtemps, ce qui causait quelques inconvénients.";
+	next;
+	mes "[Village ]";
+	mes "Mais ils construisent de tels nouveaux terrains d'entraînement spacieux et agréables. Il semble qu'ils soient assez solides financièrement ces jours-ci !";
+	close;
+}
+
+tra_fild02,101,90,5	script	Jar Cat#npc09	4_CAT_SAILOR5,{
+	mes "[Jar Cat]";
+	mes "C'est votre première visite aux terrains d'entraînement ? Je vais m'expliquer, en tant que vétérans.";
+	next;
+	mes "[Jar Cat]";
+	mes "Il y a trois terrains d'entraînement : le terrain d'entraînement de base, le terrain d'entraînement 1/10 et le terrain d'entraînement 1/100. Je laisse la différence entre chaque terrain à votre découverte personnelle.";
+	next;
+	mes "[Jar Cat]";
+	mes "Oh, oui ! Pour passer à un autre terrain d'entraînement, vous pouvez utiliser les portails de warp situés à 3 heures et 9 heures. Rappelez-vous bien !";
+	close;
+}
+
+tra_fild02,166,46,3	script	Little One#npc06	4_M_KID2,{
+	mes "[Petit Un]";
+	mes "Papa me l'a dit ! Les Mannequins avec une icône de bâton au-dessus de leur tête sont forts contre la magie !";
+	next;
+	mes "[Petit Un]";
+	mes "Alors... si vous pouvez vaincre ces Dummy avec la magie, vous êtes vraiment fort, non ?!";
+	close;
+}
+
+tra_fild02,129,93,6	script	Kekekekereurur#npc10	4_GEFFEN_02,{
+	mes "[Kekekekereurur]";
+	mes "On dit que s'entraîner avec les Dummy ayant des icônes de chats au-dessus d'eux vous aidera à combattre Doram en PvP.";
+	next;
+	mes "[Kekekekereurur]";
+	mes "Je ne m'entraîne certainement pas ici après avoir été battu par un Doram qui passait. Rappelez-vous !";
+	close;
+}
+
+tra_fild03,98,46,7	script	Lumberjack#npc13	4_M_NOV_HUNT,{
+	mes "[Bûcheron]";
+	mes "Oua- Tch-Oua-Tch-";
+	close;
+}
+
+tra_fild03,53,140,5	script	Dong#npc15	4_M_CACTUSMAN1,{
+	mes "[Dong]";
+	mes "Aaaah- Arrêtez ! Arrêtez ! Je ne suis pas un monstre. Ne m'attaquez pas.";
+	next;
+	mes "[Dong]";
+	mes "Phouh- Merci. Certaines personnes me confondent souvent avec le monstre Mukka, mais je suis un cactus provenant d'un lieu appelé RockRidge.";
+	next;
+	mes "[Dong]";
+	mes "Si vous visitez RockRidge, vous pourrez rencontrer nos Cacti vivants et respirants, le Cactus. Venez visiter. Hahaha.";
+	close;
+}
+
+tra_fild03,92,108,7	script	Cat#npc12	4_CAT_REST,{
+	npctalk "Gororong-", "", bc_self;
+	end;
+}
+
+tra_fild03,180,102,4	script	Coco#npc14	4_COCO,{
+	emotion ET_QUESTION;
+	mes "[Coco]";
+	mes "?";
+	close;
+}

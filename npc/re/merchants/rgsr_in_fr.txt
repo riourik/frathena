@@ -1,0 +1,451 @@
+//===== rAthena Script ======================================= 
+//= Reform NPCs in rgsr_in
+//===== Changelogs: ==========================================
+//= 1.0 First Version. [Capuche]
+//============================================================
+
+itemmall,14,50,3	script	Equipment Reform PR Agent#it01	4_F_ZONDAGIRL,{
+	mes "[Agent de communication du Réformateur d'Équipement]";
+	mes "Bonjour, aventurier !";
+	mes "Vous n'êtes pas satisfait de votre équipement maintenant ?";
+	mes "Ne voulez-vous pas essayer une nouvelle méthode de modification plutôt qu'une méthode normale ?";
+	mes "Rejoignez l'Institut Regenschirm !";
+	next;
+	switch( select( "Let's go.", "Listen to the explanation.", "Quit." ) ) {
+	case 1:
+		mes "[Agent de communication du Réformateur d'Équipement]";
+		mes "Excellent ! Les autres installations de l'institut sont confidentielles et non accessibles, donc nous vous guiderons sur un chemin spécial où les outsiders peuvent entrer !";
+		close2;
+		warp "rgsr_in",125,170;
+		end;
+	case 2:
+		mes "[Agent de communication du Réformateur d'Équipement]";
+		mes "Dans le monde entier, des recherches sont menées à l'Institut Regenschirm pour modifier armes, armures, accessoires et autres objets d'équipement...";
+		mes "Nous sommes toujours en train de collecter des données et de rechercher des modifications, donc nous avons besoin de beaucoup d'équipements d'aventurier pour augmenter nos recherches de modification.";
+		next;
+		mes "[Agent de communication du Réformateur d'Équipement]";
+		mes "Les recherches sont en cours, veuillez donc attendre l'ajout de plusieurs nouveaux équipements dès leur achèvement !";
+		close;
+	case 3:
+		mes "[Agent de communication du Réformateur d'Équipement]";
+		mes "Si vous êtes intéressé plus tard, revenez !";
+		close;
+	}
+}
+lighthalzen,99,156,3	duplicate(Equipment Reform PR Agent#it01)	Equipment Reform PR Agent#lh01	4_F_ZONDAGIRL
+
+rgsr_in,112,167,7	script	Enchant Researcher#rg02-1	MD_ED_M_SCIENCE,{
+	mes "[Torus]";
+	mes "Euh ? Avez-vous quelqu'un d'autre à voir dans notre équipe en dehors du chef ?";
+	mes "Alors c'est moi~";
+	mes "Je suis en charge des Enchantements.";
+	mes "Voyons ce que vous avez ?";
+	next;
+	if (select( "Modified OS Weapon Enchant", "Quit" ) == 2) {
+		mes "[Torus]";
+		mes "Revenez quand vous en aurez besoin.";
+		mes "Et nous avons besoin de la recherche.";
+		close;
+	}
+	mes "[Torus]";
+	mes "Où...";
+	close2;
+	item_enchant(33);
+	end;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Atnad" );
+	end;
+}
+
+rgsr_in,115,169,5	script	Weapon Researcher#rg02	MD_ED_M_SCIENCE,{
+	mes "[Frasa]";
+	mes "Voyons... Vous êtes un invité.";
+	mes "J'aime les gens qui savent ce qu'ils veulent.";
+	mes "Les objets modifiables peuvent également être lus comme <TIPBOX>[Liste]<INFO>9163</INFO></TIPBOX>.";
+	mes "Je ferai de mon mieux pour répondre à toutes vos questions.";
+	next;
+	switch( select( "Thanos Weapons", "OS Weapons", "Quit" ) ) {
+	case 1:
+		mes "[Frasa]";
+		mes "^0000FFLes modifications d'armes Thanos^000000 ont des niveaux inférieurs et intermédiaires dans la méthode de modification.";
+		next;
+		switch( select( "Lower mods", "Intermediate mods", "Quit" ) ) {
+		case 1:
+			mes "[Frasa]";
+			mes "Modification à niveau inférieur pour les armes Thanos.";
+			mes "^FF0000Le niveau d'affinement est réduit de 5^000000, mais consomme moins de matériaux.";
+			mes "Et pour les modifications, l'arme doit être au niveau d'affinement +9 ou supérieur.";
+			close2;
+			item_reform("Thanos_W_Reform_1");
+			end;
+		case 2:
+			mes "[Frasa]";
+			mes "Modification à niveau intermédiaire pour les armes Thanos.";
+			mes "^FF0000Le niveau de raffinage est réduit de 1^000000, mais consomme plus de matériaux.";
+			mes "Et pour les modifications, l'arme doit être au niveau d'affinement +9 ou supérieur.";
+			close2;
+			item_reform("Thanos_W_Reform_2");
+			end;
+		case 3:
+			mes "[Frasa]";
+			mes "Si vous avez besoin de modifications, revenez.";
+			mes "Vous êtes le bienvenu à tout moment lorsque vous nous aidez dans nos recherches.";
+			close;
+		}
+		end;
+	case 2:
+		mes "[Frasa]";
+		mes "^0000FFOS Weapons^000000...";
+		mes "Pour la modification, le niveau de raffinement doit être +7 ou supérieur.";
+		mes "Le niveau de raffinement ne diminue pas.";
+		mes "Avez-vous apporté les objets ?";
+		next;
+		if (select( "Convert", "Quit" ) == 2) {
+			mes "[Frasa]";
+			mes "Si vous avez besoin de modifications, revenez.";
+			mes "Vous êtes le bienvenu à tout moment lorsque vous nous aidez dans nos recherches.";
+			close;
+		}
+		mes "[Frasa]";
+		mes "Voyons ce que vous avez apporté.";
+		close2;
+		item_reform("OS_Weapon_Reform");
+		end;
+	case 3:
+		mes "[Frasa]";
+		mes "Si vous avez besoin de modifications, revenez.";
+		mes "Vous êtes le bienvenu à tout moment lorsque vous nous aidez dans nos recherches.";
+		close;
+	}
+	end;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Atnad");
+	end;
+}
+
+rgsr_in,115,180,5	script	Armor Researcher#rg02	MD_ED_M_SCIENCE,{
+	mes "[Algebra]";
+	mes "Ah, nous sommes allés aussi loin que possible, mais les recherches de notre équipe manquent encore d'expériences.";
+	mes "Je l'améliorerai un peu la prochaine fois et j'obtiendrai la permission du capitaine, alors continuons.";
+	mes "D'accord ?";
+	npctalk "Grimace.", "", bc_self;
+	close;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Fresa" );
+	end;
+}
+
+rgsr_in,135,186, 7	script	Assistant#rg02	4_M_ALCHE_D,{
+	npctalk "Assistant: Don't touch it... It's dangerous...", "", bc_self;
+	sleep2 300;
+	npctalk "Assistant: ...Oh..............", "Assistant#rg04", bc_self;
+	npctalk "Assistant: Don't worry, it's nothing...", "Assistant#rg03", bc_self;
+	end;
+}
+
+rgsr_in,135,189,5	script	Assistant#rg03	4_M_REPAIR,{
+	npctalk "Assistant: ...Paycheck... Give it to me...? Then ask unnecessary questions...", "", bc_self;
+	npctalk "Assistant: Of course...", "Assistant#rg02", bc_self;
+	end;
+}
+
+rgsr_in,137,187,3	script	Assistant#rg04	4_F_HUWOMAN,{
+	npctalk "Assistant: No, not that.... That's it. That's it...", "", bc_self;
+	sleep2 300;
+	npctalk "Assistant: Hick... It was almost a big day... You didn't see him, did you?", "Assistant#rg02", bc_self;
+	npctalk "Grid: ?", "Ore Researcher#rg02", bc_self;
+	end;
+}
+
+rgsr_in,146,169,3	script	Assistant#rg05	4_M_REPAIR,{
+	npctalk "Assistant: Quiet... I'm...", "", bc_self;
+	end;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Licht");
+	end;
+}
+
+rgsr_in,146,167,3	script	Assistant#rg06	4_M_REPAIR,{
+	npctalk "Assistant: Our leader is a great guy. I'm still young...", "", bc_self;
+	end;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Licht");
+	end;
+}
+
+rgsr_in,144,170,5	script	Assistant#rg07	4_M_REPAIR,{
+	npctalk "Assistant: Hey, this data was really cool. I was wise to follow you.", "", bc_self;
+	end;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Licht");
+	end;
+}
+
+rgsr_in,106,167,5	script	Assistant#rg11	4_M_REPAIR,{
+	npctalk "Assistant: Can we move to a larger lab one day after we do more research?", "", bc_self;
+	sleep2 300;
+	npctalk "Assistant: ....Hang.", "Assistant#rg10", bc_self;
+	end;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Atnad" );
+	end;
+}
+
+rgsr_in,109,167,3	script	Assistant#rg10	4_M_REPAIR,{
+	npctalk "Assistant: ....I'm.", "", bc_self;
+	sleep2 300;
+	npctalk "Assistant: Adventurer, please walk carefully. The building is old and the floor is a little creaky.", "Assistant#rg11", bc_self;
+	end;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Atnad" );
+	end;
+}
+
+rgsr_in,146,178,3	script	Assistant#rg20	4_M_REPAIR,{
+	npctalk "Assistant: Ask our lead about any questions you have.", "", bc_self;
+	end;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Atnad" );
+	end;
+}
+
+rgsr_in,143,180,5	script	Assistant#rg21	4_M_REPAIR,{
+	npctalk "Assistant: Isn't it a little noisy outside?", "", bc_self;
+	sleep2 200;
+	npctalk "Assistant: I wish I could move to a good soundproofed place.", "Assistant#rg20", bc_self;
+	end;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Atnad" );
+	end;
+}
+
+rgsr_in,131,187,5	script	Ore Researcher#rg02	MD_ED_M_SCIENCE,{
+	mes "[Grille]";
+	mes "Allez donc.";
+	mes "C'est un laboratoire à petit budget, c'est toujours comme ça.";
+	mes "Mes assistants et moi affinons les gemmes utilisées dans ce laboratoire. Contre rémunération.";
+	next;
+	switch( select( "View the exchange list", "What are you exchanging?", "Quit" ) ) {
+	case 1:
+		mes "[Grille]";
+		mes "Voyons...";
+		mes "Maintenant, il y a ces choses-ci.";
+		next;
+		switch( select( "Gemstone refining", "Top ore exchange", "Buy additional ore", "Cancel" ) ) {
+		case 1:
+			mes "[Grille]";
+			mes "Affinage de gemmes.";
+			close2;
+			callshop("barter_rgsr_in_1");
+			end;
+		case 2:
+			mes "[Grille]";
+			mes "Échange d'ores premium.";
+			close2;
+			callshop("barter_rgsr_in_2");
+			end;
+		case 3:
+			mes "[Grille]";
+			mes "Pas assez d'ore ? Alors il y a quelque chose que je collecte spécifiquement...";
+			mes "Avez-vous une décon de l'Ombre ?";
+			close2;
+			callshop("barter_rgsr_in_3");
+			end;
+		case 4:
+			mes "[Grille]";
+			mes "Si vous avez besoin de quoi que ce soit, revenez.";
+			close;
+		}
+		end;
+	case 2:
+		mes "[Grille]";
+		mes "Comme nous le voyons dans nos recherches, les matériaux sont très rares. Des aventuriers sont embauchés par notre équipe, mais la matière n'est pas comparable à la quantité dont nous avons besoin.";
+		mes "Ainsi, lorsque les aventuriers sont venus avec les matériaux, ils ont décidé de fournir la valeur de recherche correspondante.";
+		next;
+		mes "[Grille]";
+		mes "Heureusement, nous faisons des recherches et les aventuriers qui viennent chez nous fournissent des matériaux pour utiliser notre technologie.";
+		mes "Si vous voulez modifier quelque chose, il vous suffit d'apporter les matériaux présentés.";
+		next;
+		mes "[Grille]";
+		mes "Vous êtes un aventurier, alors vous savez ce que cela signifie ?";
+		close;
+	case 3:
+		mes "[Grille]";
+		mes "Si vous avez besoin de quoi que ce soit, revenez.";
+		close;
+	}
+}
+
+rgsr_in,137,178,3	script	Accessories Researcher#rg02	MD_ED_M_SCIENCE,{
+	mes "[Champ]";
+	mes "Enfin, j'ai parlé à un aventurier et lui ai demandé de confirmer mes recherches, c'était toi ?";
+	mes "Malheureusement, notre équipe n'a pas encore fait assez pour aller là-bas.";
+	next;
+	mes "[Champ]";
+	mes "C'est toujours incomplet.";
+	mes "Je te verrai la prochaine fois que j'aurai l'autorisation du capitaine.";
+	close;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Zerter");
+	end;
+}
+
+rgsr_in,136,171,5	script	Special Equipment Researcher#rg02	MD_ED_M_SCIENCE,{
+	mes "[Stack]";
+	mes "As-tu vu les performances de l'équipe Licht ?";
+	mes "Nous sommes fiers de ce laboratoire.";
+	mes "Lequel souhaites-tu modifier ?";
+	mes "Les objets modifiables se trouvent dans <TIPBOX>[Liste]<INFO>9166</INFO></TIPBOX>.";
+	next;
+	switch( select( "Non-standard armor", "Non-standard weapon", "Quit" ) ) {
+	case 1:
+		mes "[Stack]";
+		mes "^0000FFArmures non standard^000000, il existe des niveaux Inférieur, Intermédiaire et Supérieur pour la méthode de modification.";
+		mes "Les armures non raffinables ne sont capables que de modifications Supérieures.";
+		next;
+		switch( select( "Lower mods", "Intermediate mods", "Upper mods", "Quit" ) ) {
+		case 1:
+			mes "[Stack]";
+			mes "Modifications d'armure niveau inférieur ? D'accord.";
+			mes "^FF0000Le niveau de raffinement est réduit de 5^000000, mais consomme moins de matériaux.";
+			mes "Et pour la modification, l'équipement doit avoir un niveau de raffinage de +9 ou supérieur.";
+			close2;
+			item_reform("C_Armor_Reform_1");
+			end;
+		case 2:
+			mes "[Stack]";
+			mes "Mods d'armure intermédiaires ? D'accord.";
+			mes "^FF0000Le niveau de raffinage est réduit de 1^000000, mais consomme plus de matériaux.";
+			mes "Et pour la modification, l'équipement doit avoir un niveau de raffinage de +9 ou supérieur.";
+			close2;
+			item_reform("C_Armor_Reform_2");
+			end;
+		case 3:
+			mes "[Stack]";
+			mes "Mods d'armure supérieurs ? D'accord.";
+			mes "^FF0000Le niveau de raffinage augmente de 1^000000, mais consomme plus de matériaux.";
+			mes "Et pour la modification, l'équipement doit avoir un niveau de raffinage de +9 ou supérieur.";
+			mes "^FF0000L'équipement non raffinable^000000 peut également bénéficier de modifications avancées, mais le niveau de raffinement n'augmente pas.";
+			close2;
+			item_reform("C_Armor_Reform_3");
+			end;
+		case 4:
+			mes "[Stack]";
+			mes "Déjà parti ?";
+			mes "Vous devez voir davantage de nos performances exceptionnelles !";
+			close;
+		}
+	case 2:
+		mes "[Stack]";
+		mes "^0000FFArme non standard^000000, il existe des niveaux inférieur, intermédiaire et supérieur pour la méthode de modification.";
+		next;
+		switch( select( "Lower mods", "Intermediate mods", "Upper mods", "Quit" ) ) {
+		case 1:
+			mes "[Stack]";
+			mes "Mods d'arme inférieurs ? D'accord.";
+			mes "^FF0000Le niveau de raffinement est réduit de 5^000000, mais consomme moins de matériaux.";
+			mes "Et pour la modification, l'équipement doit avoir un niveau de raffinage de +9 ou supérieur.";
+			close2;
+			item_reform("C_Weapon_Reform_1");
+			end;
+		case 2:
+			mes "[Stack]";
+			mes "Mods d'arme intermédiaires ? D'accord.";
+			mes "^FF0000Le niveau de raffinage est réduit de 1^000000, mais consomme plus de matériaux.";
+			mes "Et pour la modification, l'équipement doit avoir un niveau de raffinage de +9 ou supérieur.";
+			close2;
+			item_reform("C_Weapon_Reform_2");
+			end;
+		case 3:
+			mes "[Stack]";
+			mes "Mods avancés d'arme ? D'accord.";
+			mes "^FF0000Le niveau de raffinage augmente de 1^000000, mais consomme plus de matériaux.";
+			mes "Et pour la modification, l'équipement doit avoir un niveau de raffinage de +9 ou supérieur.";
+			close2;
+			item_reform("C_Weapon_Reform_3");
+			end;
+		case 4:
+			mes "[Stack]";
+			mes "Déjà parti ?";
+			mes "Vous devez voir davantage de nos performances exceptionnelles !";
+			close;
+		}
+		end;
+	case 3:
+		mes "[Stack]";
+		mes "Déjà parti ?";
+		mes "Vous devez voir davantage de nos performances exceptionnelles !";
+		close;
+	}
+	end;
+
+OnInit:
+	setunittitle( getnpcid(0), "Team Licht");
+	end;
+}
+
+rgsr_in,128,174,5	script	Director#rg02	1_M_LIBRARYMASTER,{
+	mes "[Directeur]";
+	mes "...Allez donc.";
+	mes "Vous avez peut-être entendu l'explication lorsque vous êtes arrivé, mais pour vous présenter brièvement cet endroit, il reste encore un long chemin à parcourir. Nous travaillons sur la conversion de nombreuses armes, armures, accessoires, etc., en quelque chose de différent.";
+	next;
+	mes "[Directeur]";
+	mes "Il est essentiel de réduire le niveau de raffinage de l'équipement à convertir, mais c'est un travail pour une puissance supérieure.";
+	next;
+	mes "[Directeur]";
+	mes "La recherche est en cours, donc il n'est pas connu quand et où quelque chose sera soudainement terminé et offert aux aventuriers.";
+	mes "Cela viendra... Dès que les données seront collectées, cela se fera d'une manière ou d'une autre.";
+	next;
+	mes "[Directeur]";
+	mes "Cette fois, l'équipe Licht a réussi.";
+	mes "Si vous êtes intéressé(e), consultez les recherches effectuées.";
+	next;
+	mes "[Directeur]";
+	mes "Tout le monde aime la tranquillité, alors ne parlez pas trop fort.";
+	close;
+}
+
+rgsr_in,122,160,5	script	Exit Guard#rg01	4_M_LGTGUARD,{
+	mes "[Garde de sortie]";
+	mes "Avez-vous terminé ?";
+	mes "^FF0000Retour à Lighthalzen^000000 ?";
+	next;
+	if (select( "Return.", "Work remaining." ) == 2) {
+		mes "[Garde de sortie]";
+		mes "Dites-nous tout moment lorsque vous aurez fini.";
+		close;
+	}
+	mes "[Garde de sortie]";
+	mes "Laissez-moi vous guider sur le chemin du retour.";
+	close2;
+	warp "lighthalzen",101,156;
+	end;
+}
+
+rgsr_in,129,160,3	script	Exit Guard#rg02	4_M_LGTGUARD,{
+	mes "[Garde de sortie]";
+	mes "Avez-vous terminé ?";
+	mes "^FF0000Retour à la Boutique d'Objets^000000 ?";
+	next;
+	if (select( "Return.", "Work remaining." ) == 2) {
+		mes "[Garde de sortie]";
+		mes "Dites-nous tout moment lorsque vous aurez fini.";
+		close;
+	}
+	mes "[Garde de sortie]";
+	mes "Laissez-moi vous guider sur le chemin du retour.";
+	close2;
+	warp "itemmall",16,47;
+	end;
+}

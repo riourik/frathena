@@ -1,0 +1,408 @@
+//===== rAthena Script =======================================
+//= HD Refiners
+//===== Description: =========================================
+//= [Official Conversion]
+//= Refiners that use HD ores to refine equipment. Upon
+//= failure, the equipment is not destroyed; rather, its
+//= refine level decreases by 1. The success rate is identical
+//= to that for Enriched ores.
+//= - "Blacksmith Mighty Hammer" only refines from +7~9.
+//= - "Basta" only refines from +10 and up.
+//===== Changelog: ===========================================
+//= 1.0 First version. [Euphy]
+//= 1.1 Removed re-roll behavior. [Secret]
+//============================================================
+
+// Blacksmith Mighty Hammer (+7~9) :: cash_smelting79
+//============================================================
+-	script	::MightyHammer	-1,{
+	disable_items;
+	mes "[Forgeron Marteau Puissant]";
+	mes "Contrairement aux autres, je suis un forgeron qui affine un très petit nombre d'objets.";
+	mes "Je n'affine que les objets de niveau ^CC0000+7 à +9^000000.";
+	next;
+	mes "[Forgeron Marteau Puissant]";
+	mes "Ma spécialité est que même si mon affinage échoue, le niveau d'affinage diminue de 1 sans perdre l'équipement. N'est-ce pas génial ?";
+	next;
+	mes "[Forgeron Marteau Puissant]";
+	mes "Alors lançons cela à fond, qu'en pensez-vous ? Quel objet souhaitez-vous affiner ?";
+	next;
+	setarray .@indices[1], EQI_HEAD_TOP, EQI_ARMOR, EQI_HAND_L, EQI_HAND_R, EQI_GARMENT, EQI_SHOES, EQI_ACC_L, EQI_ACC_R, EQI_HEAD_MID, EQI_HEAD_LOW;
+	for ( .@i = 1; .@i <= 10; ++.@i )
+		.@menu$ = .@menu$ + ( getequipisequiped(.@indices[.@i]) ? getequipname(.@indices[.@i]) : F_getpositionname(.@indices[.@i]) + "-[Not equipped]" ) + ":";
+	.@part = .@indices[ select(.@menu$) ];
+	if (!getequipisequiped(.@part)) {
+		mes "[Forgeron Marteau Puissant]";
+		switch(.@part) {
+		case EQI_HEAD_TOP:
+			mes "Je suis un forgeron, pas un coiffeur.";
+			break;
+		case EQI_ARMOR:
+			mes "Avec mon marteau, je ferai de vous une étoile du ciel.";
+			break;
+		case EQI_HAND_L:
+		case EQI_HAND_R:
+			mes "La fabrication de mains artificielles n'est pas ma spécialité.";
+			break;
+		case EQI_GARMENT:
+			mes "Sortez l'objet afin que je puisse le raffiner !";
+			break;
+		case EQI_SHOES:
+			mes "D'où vient cette odeur de pieds ?";
+			break;
+		case EQI_ACC_L:
+		case EQI_ACC_R:
+			mes "Où est l'accessoire ?";
+			break;
+		case EQI_HEAD_MID:
+			mes "Que voulez-vous que je rafine ?";
+			break;
+		case EQI_HEAD_LOW:
+			mes "Euh ? Que voulez-vous que je fasse ?";
+			break;
+		}
+		close;
+	}
+	if (!getequipisenableref(.@part)) {
+		mes "[Forgeron Marteau Puissant]";
+		mes "Cet objet ne peut pas être affiné.";
+		close;
+	}
+	switch( getequiprefinerycnt(.@part) ) {
+	case 7:
+		.@blacksmith_blessing_count = 1;
+		break;
+	case 8:
+		.@blacksmith_blessing_count = 2;
+		break;
+	case 9:
+		.@blacksmith_blessing_count = 4;
+		break;
+	default:
+		mes "[Forgeron Marteau Puissant]";
+		mes "Je ne traite que les objets avec des niveaux d'affinage allant de +7 à +9.";
+		close;
+	}
+
+	.@refineitemid = getequipid(.@part); // save id of the item
+	.@itemtype = getiteminfo( .@refineitemid, ITEMINFO_TYPE );
+	.@refinerycnt = getequiprefinerycnt(.@part); //save refinery count
+	setarray .@card[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3);
+	.@price = getequiprefinecost(.@part, REFINE_COST_HD, REFINE_ZENY_COST);
+	.@material = getequiprefinecost(.@part, REFINE_COST_HD, REFINE_MATERIAL_ID);
+
+	mes "[Forgeron Marteau Puissant]";
+	mes "In order to refine the gear you selected you need ^ff9999" + getitemname(.@material) + "^000000 and 20,000 zeny as a fee.";
+	mes "Les avez-vous prêts ?";
+	next;
+	if (select("Yes:No") == 2) {
+		mes "[Forgeron Marteau Puissant]";
+		mes "J'attendrai jusqu'à ce que vous soyez prêt.";
+		close;
+	}
+	if (getequippercentrefinery(.@part) < 100) {
+		mes "[Forgeron Marteau Puissant]";
+		mes "Il semble que cet objet risque fort d'échouer à l'affinage.";
+		mes "Eh bien, même s'il échoue, il ne diminue que de 1 niveau d'affinage.";
+		mes "Souhaitez-vous continuer l'affinage ?";
+		next;
+		if (countitem(6635) < .@blacksmith_blessing_count)
+			setarray .@menu$[0], "", "Yes", "Not yet";
+		else {
+			mes "[Forgeron Marteau Puissant]";
+			mes "Ah ! Est-ce la ^0000ffBénédiction du Forgeron^000000 ?";
+			mes "Avec la Bénédiction du Forgeron, l'équipement ne disparaîtra pas en cas d'échec de l'affinage !";
+			next;
+			mes "[Forgeron Marteau Puissant]";
+			if ( .@itemtype != IT_WEAPON )
+				mes "For +" + getequiprefinerycnt(.@part) + " equipment, refine with^316AC5 " + .@blacksmith_blessing_count + " unit(s) Blacksmith Blessing^000000 can prevent the equipment from vanishing. Do you want use it to refine?";
+			else
+				mes "For +" + getequiprefinerycnt(.@part) + " weapon, refine with^316AC5 " + .@blacksmith_blessing_count + " unit(s) Blacksmith Blessing^000000 can prevent the equipment from vanishing. Do you want use it to refine?";
+			next;
+			setarray .@menu$[0], "Use it to refine", "Refine directly without it", "Don't refine yet";
+		}
+		switch( select(.@menu$[0], .@menu$[1], .@menu$[2]) ) {
+		case 1:
+			.@bless_who = 1;
+			break;
+		case 2:
+			break;
+		case 3:
+			mes "[Forgeron Marteau Puissant]";
+			mes "Seuls ceux qui surmontent leur peur de l'échec obtiendront une œuvre maîtresse.";
+			close;
+		}
+	}
+	if ((.@bless_who && countitem(6635) < .@blacksmith_blessing_count) || countitem(.@material) == 0 || Zeny < .@price) {
+		mes "[Forgeron Marteau Puissant]";
+		mes "N'avez-vous pas tout à l'heure dit que vous aviez tout prêt ?";
+		close;
+	}
+	if (.@bless_who)
+		delitem 6635, .@blacksmith_blessing_count;
+	delitem .@material,1;
+	Zeny = Zeny - .@price;
+
+	// anti-hack
+	if (callfunc("F_IsEquipIDHack", .@part, .@refineitemid) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) ||
+		callfunc("F_IsEquipRefineHack", .@part, .@refinerycnt)) {
+		mes "[Forgeron Marteau Puissant]";
+		emotion ET_FRET;
+		mes "Attends une seconde...";
+		mes "Croyez-vous que je suis stupide ?!";
+		mes "Vous avez échangé l'objet quand je ne regardais pas ! Fichez le camp d'ici !";
+		close;
+	}
+
+	mes "[Forgeron Marteau Puissant]";
+	mes "Tac ! Tac ! Tac !";
+	if (getequippercentrefinery(.@part, true) > rand(100)) {
+		successrefitem .@part;
+		next;
+		emotion ET_BEST;
+		mes "[Forgeron Marteau Puissant]";
+		mes "Ce son rafraîchit mon esprit chaque fois que je l'entends.";
+		mes "Voilà, prenez-le. L'affinage a réussi sans faille !";
+		close;
+	}
+	if (.@bless_who == 1) {
+		specialeffect EF_HOLYHIT;
+		next;
+		emotion ET_HUK;
+		mes "[Forgeron Marteau Puissant]";
+		mes "Quoi ?!!";
+		next;
+		mes "[Forgeron Marteau Puissant]";
+		mes "Aiya ! Je suis devenu invisible maintenant. HmHm.";
+		close;
+	}
+	downrefitem .@part;
+	next;
+	emotion ET_HUK;
+	mes "[Forgeron Marteau Puissant]";
+	mes "Oh là là !!";
+	next;
+	mes "[Forgeron Marteau Puissant]";
+	mes "Je suis sûr qu'une personne comme toi ne me blâmerait jamais pour une baisse de niveau de raffinement d'un seul point. Hmm.";
+	close;
+}
+prt_in,59,54,3	duplicate(MightyHammer)	Mighty Hammer#prt	4_M_DWARF
+morocc_in,65,30,3	duplicate(MightyHammer)	Mighty Hammer#morocc	4_M_DWARF
+payon,148,176,3	duplicate(MightyHammer)	Mighty Hammer#pay	4_M_DWARF
+alberta_in,16,56,3	duplicate(MightyHammer)	Mighty Hammer#alb	4_M_DWARF
+yuno_in01,171,18,3	duplicate(MightyHammer)	Mighty Hammer#yuno	4_M_DWARF
+ein_in01,22,82,3	duplicate(MightyHammer)	Mighty Hammer#ein	4_M_DWARF
+lhz_in02,280,19,3	duplicate(MightyHammer)	Mighty Hammer#lhz	4_M_DWARF
+
+// iRO NPC locations:
+// payon,174,133,4	duplicate(MightyHammer)	Mighty Hammer#im	4_M_DWARF
+
+// Basta (+10 and up) :: cash_smelting
+//============================================================
+-	script	::Basta	-1,{
+	disable_items;
+	mes "[Basta]";
+	mes "Je suis le meilleur forgeron du monde entier, Basta.";
+	mes "Mais je n'offre pas un service de raffinement normal.";
+	mes "Je ne raffine que l'équipement ^CC0000au-delà de +10^000000.";
+	next;
+	mes "[Basta]";
+	mes "Quel équipement souhaites-tu faire raffiner ?";
+	next;
+	setarray .@indices[1], EQI_HEAD_TOP, EQI_ARMOR, EQI_HAND_L, EQI_HAND_R, EQI_GARMENT, EQI_SHOES, EQI_ACC_L, EQI_ACC_R, EQI_HEAD_MID, EQI_HEAD_LOW;
+	for ( .@i = 1; .@i <= 10; ++.@i )
+		.@menu$ = .@menu$ + ( getequipisequiped(.@indices[.@i]) ? getequipname(.@indices[.@i]) : F_getpositionname(.@indices[.@i]) + "-[Unequipped]" ) + ":";
+	.@part = .@indices[ select(.@menu$) ];
+	if (!getequipisequiped(.@part)) {
+		mes "[Basta]";
+		switch(.@part) {
+		case EQI_HEAD_TOP:
+			mes "Est-ce que ta tête est un équipement ?";
+			break;
+		case EQI_ARMOR:
+			mes "Que veux-tu que je fasse ?";
+			break;
+		case EQI_HAND_L:
+		case EQI_HAND_R:
+			mes "La fabrication de mains artificielles n'est pas ma spécialité.";
+			break;
+		case EQI_GARMENT:
+			mes "Sais-tu même ce qu'est une robe ?";
+			break;
+		case EQI_SHOES:
+			mes "Si tu souhaites raffiner tes pieds, ne viens pas chez moi, essaie plutôt de courir un marathon.";
+			break;
+		case EQI_ACC_L:
+		case EQI_ACC_R:
+			mes "Où est l'accessoire ?";
+			break;
+		case EQI_HEAD_MID:
+			mes "Eh bien... Je ne vois aucun équipement worthy d'être raffiné.";
+			break;
+		case EQI_HEAD_LOW:
+			mes "Je ne peux pas te rendre intelligent. Va voir un enseignant pour cela.";
+			break;
+		}
+		close;
+	}
+	if (!getequipisenableref(.@part)) {
+		mes "[Basta]";
+		mes "Même moi, je ne peux pas raffiner cet objet. C'est impossible.";
+		close;
+	}
+	.@refine_count = getequiprefinerycnt(.@part);
+	if (.@refine_count < 10) {
+		mes "[Basta]";
+		mes "Ne t'ai-je pas dit ? Je ne raffine que l'équipement qui est +10 et plus.";
+		close;
+	}
+	else if (.@refine_count == 10)
+		.@blacksmith_blessing_count = 7;
+	else if (.@refine_count == 11)
+		.@blacksmith_blessing_count = 11;
+	else if (.@refine_count == 20) {
+		mes "[Basta]";
+		mes "Cette arme est parfaite, inutile de la raffiner davantage~";
+		close;
+	}
+	.@refineitemid = getequipid(.@part); // save id of the item
+	.@itemtype = getiteminfo( .@refineitemid, ITEMINFO_TYPE );
+	.@refinerycnt = getequiprefinerycnt(.@part); //save refinery count
+	setarray .@card[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3);
+	.@price = getequiprefinecost(.@part, REFINE_COST_HD, REFINE_ZENY_COST);
+	.@material = getequiprefinecost(.@part, REFINE_COST_HD, REFINE_MATERIAL_ID);
+
+	if ( .@itemtype != IT_WEAPON )
+		.@type$ = "armor";
+	else
+		.@type$ = "weapon";
+	mes "[Basta]";
+	mes "Hmm... c'est bien celle que vous souhaitez raffiner ?";
+	mes "To refine this equipment, I need 1 ^ff9999" + getitemname(.@material) + "^000000 and " + callfunc("F_InsertComma",.@price) + " zeny as a fee.";
+	mes "Voulez-vous vraiment raffiner cette arme ?";
+	next;
+	if (select("Yes:No") == 2) {
+		mes "[Basta]";
+		mes "D'accord. Si tel est votre souhait...";
+		close;
+	}
+	if (getequippercentrefinery(.@part, true) < 100) {
+		mes "[Basta]";
+		mes "This " + .@type$ + " has already been refined pretty high.";
+		mes "Si vous tentez de la raffiner davantage, le niveau de raffinage pourrait diminuer.";
+		next;
+		mes "[Basta]";
+		mes "Je suis différent des forgerons d'autres lieux.";
+		mes "Il est impossible que le niveau de raffinage baisse de 3 ou 4 niveaux... cela fait peur.";
+		mes "Ici, il ne peut diminuer que d'un seul niveau.";
+		next;
+		if (.@blacksmith_blessing_count == 0 || countitem(6635) < .@blacksmith_blessing_count) {
+			mes "[Basta]";
+			mes "Par rapport aux autres forgerons, les risques sont moindres.";
+			mes "J'ai pris toutes les précautions. Voulez-vous essayer ?";
+			next;
+			setarray .@menu$[0], "", "Yes", "No";
+		}
+		else {
+			mes "[Basta]";
+			mes "Wow~ C'est la ^316AC5Bénédiction du Forgeron^000000 ? Elle est difficile à obtenir~ Mais, vous l'avez !";
+			next;
+			mes "[Basta]";
+			mes "For +" + .@refine_count + " " + .@type$ + " need ^316AC5" + .@blacksmith_blessing_count + " unit(s) Blacksmith Blessing^000000 can prevent the equipment from vanishing. Do you want to refine with Blacksmith Blessing?";
+			next;
+			setarray .@menu$[0], "Refine with Blacksmith Blessing", "Refine without Blacksmith Blessing", "Don't refine yet";
+		}
+		switch( select(.@menu$[0], .@menu$[1], .@menu$[2]) ) {
+		case 1:
+			.@bless_who = 1;
+			break;
+		case 2:
+			break;
+		case 3:
+			mes "[Basta]";
+			mes "Bon~";
+			mes "Ne pas relever le défi peut aussi être une forme de sagesse dans la vie.";
+			close;
+		}
+	}
+	if ((.@bless_who && countitem(6635) < .@blacksmith_blessing_count) || countitem(.@material) == 0 || Zeny < .@price) {
+		mes "[Basta]";
+		mes "Hmm... Vous n'avez pas apporté tous les matériaux nécessaires.";
+		mes "Revenez quand vous aurez tout ce dont vous avez besoin.";
+		close;
+	}
+	if (.@bless_who)
+		delitem 6635, .@blacksmith_blessing_count;
+	delitem .@material,1;
+	Zeny = Zeny - .@price;
+
+	// anti-hack
+	if (callfunc("F_IsEquipIDHack", .@part, .@refineitemid) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) ||
+		callfunc("F_IsEquipRefineHack", .@part, .@refinerycnt)) {
+		mes "[Basta]";
+		emotion ET_FRET;
+		mes "Attends une seconde...";
+		mes "Croyez-vous que je suis stupide ?!";
+		mes "Vous avez échangé l'objet quand je ne regardais pas ! Fichez le camp d'ici !";
+		close;
+	}
+
+	mes "Pow ! Pow ! Pow ! Pow !";
+	if (getequippercentrefinery(.@part, true) > rand(100)) {
+		successrefitem .@part;
+		next;
+		emotion ET_BEST;
+		mes "[Basta]";
+		mes "Super ! Bien joué !!";
+		mes "Je suis vraiment le meilleur forgeron du monde entier !";
+		close;
+	}
+	if (.@bless_who == 1) {
+		specialeffect EF_HOLYHIT;
+		next;
+		emotion (!rand(5))?ET_MONEY:ET_HUK;
+		mes "[Basta]";
+		mes "Aaaaaaaaaaak !!!";
+		next;
+		mes "[Basta]";
+		mes "L'affinement a échoué !";
+		mes "Même le meilleur forgeron du monde comme moi...";
+		mes "...ne garantit pas un succès à 100 %~";
+	}
+	else {
+		downrefitem .@part;
+		next;
+		emotion (!rand(5))?ET_MONEY:ET_HUK;
+		mes "[Basta]";
+		mes "Aaaaaaaaaaak !!!";
+		next;
+		mes "[Basta]";
+		mes "Bon sang!";
+		mes "L'affinement a échoué et le niveau d'affinement a diminué !";
+		mes "Même le meilleur forgeron du monde ne garantit pas un succès à 100 % !";
+	}
+	mes "Dommage.";
+	next;
+	mes "[Basta]";
+	mes "[Nom du PNJ] Je ferai mieux la prochaine fois ! Ne vous inquiétez pas !";
+	close;
+}
+
+prt_in,57,54,3	duplicate(Basta)	Basta#prt	4_M_DWARF
+morocc_in,68,30,3	duplicate(Basta)	Basta#morocc	4_M_DWARF
+payon,148,174,3	duplicate(Basta)	Basta#payon	4_M_DWARF
+alberta_in,18,56,3	duplicate(Basta)	Basta#alberta	4_M_DWARF
+yuno_in01,173,18,3	duplicate(Basta)	Basta#yuno	4_M_DWARF
+ein_in01,24,82,3	duplicate(Basta)	Basta#einbroch	4_M_DWARF
+lhz_in02,280,17,3	duplicate(Basta)	Basta#lighthalzen	4_M_DWARF
+
+// Refine UI makes these NPCs useless
+-	script	RefineUI_Init	-1,{
+	end;
+OnInit:
+	if (getbattleflag("feature.refineui")) {
+		unloadnpc "Basta";
+		unloadnpc "MightyHammer";
+	}
+	end;
+}

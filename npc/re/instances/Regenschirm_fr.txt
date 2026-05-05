@@ -1,0 +1,887 @@
+//===== rAthena Script =======================================
+//= Regenschirm
+//===== Description: =========================================
+//= [Walkthrough Conversion]
+//= Episode 17.1 - Regenschirm
+//===== Changelog: ===========================================
+//= 1.0 Initial release [crazyarashi]
+//= 1.1 Optimizations and cleanup [Everade]
+//============================================================
+
+1@rgsr,1,1,0	script	#171_rgsr_control	HIDDEN_WARP_NPC,{
+	end;
+
+OnInstanceInit:
+	'map$ = instance_mapname("1@rgsr");
+	'rgsr = 'activate = 0;
+	deletearray 'rescued;
+	deletearray 'rsgr_c;
+
+	disablenpc instance_npcname("Researcher#rgsr_ev_0");
+	disablenpc instance_npcname("Access Controller#rgsr");
+	disablenpc instance_npcname("#rgsr_touch_mob_0");
+	disablenpc instance_npcname("#rgsr_touch_mob_1");
+	disablenpc instance_npcname("#rgsr_warp_0");
+	disablenpc instance_npcname("Est#rgsr");
+	disablenpc instance_npcname("Rebellion Crew#rgsr_dum01");
+	disablenpc instance_npcname("Aas#rgsr3");
+	disablenpc instance_npcname("Goni#rgsr");
+	disablenpc instance_npcname("Est#rgsr2");
+	disablenpc instance_npcname("Central Room#rgsr");
+	disablenpc instance_npcname("Restrained Specimen#rgsr");
+	disablenpc instance_npcname("Control Device#rgsr0");
+	disablenpc instance_npcname("Control Device#rgsr1");
+	disablenpc instance_npcname("Control Device#rgsr2");
+	disablenpc instance_npcname("Control Device#rgsr3");
+	disablenpc instance_npcname("Aas#rgsr4");
+	end;
+
+OnEvent01:
+	enablenpc instance_npcname("#rgsr_touch_mob_0");
+	enablenpc instance_npcname("#rgsr_touch_mob_1");
+	donpcevent instance_npcname("#rgsr_mob_1") + "::OnSummon";
+	end;
+
+OnEvent02:
+	enablenpc instance_npcname("#rgsr_warp_0");
+	donpcevent instance_npcname("#rgsr_mob_2") + "::OnSummon";
+	end;
+
+OnEvent03:
+	enablenpc instance_npcname("Restrained Specimen#rgsr");
+	enablenpc instance_npcname("Control Device#rgsr0");
+	enablenpc instance_npcname("Control Device#rgsr1");
+	enablenpc instance_npcname("Control Device#rgsr2");
+	enablenpc instance_npcname("Control Device#rgsr3");
+	end;
+
+OnEvent04:
+	if ('rgsr == 13) {
+		'rgsr = 14;
+		donpcevent instance_npcname("#rgsr_boss") + "::OnSummon";
+	}
+	end;
+}
+
+1@rgsr,123,42,5	script	Oscar#rgsr	4_M_LGTGUARD,{
+	mes "[Oscar]";
+	mes "Le capitaine s'est glissé dans la salle du panneau de contrôle.";
+	mes "Avancez silencieusement.";
+	close;
+}
+
+1@rgsr,131,58,3	script	Aas#rgsr	4_EP17_AS,{
+	cutin "ep171_as02",1;
+	mes "[Aas]";
+	mes "La porte est normalement verrouillée par le système de sécurité, donc je dois rester ici et travailler avec le contrôleur.";
+	mes "Comme vous pouvez le voir, la plupart des entrées ont déjà été bloquées.";
+	mes "Hi";
+	next;
+	mes "[Aas]";
+	mes "Il faudra du temps pour les passer un par un.";
+	mes "Je vais continuer à vous aider via l'interphone.";
+	next;
+	mes "[Aas]";
+	mes "Vous devrez traverser le restaurant pour atteindre le couloir.";
+	mes "Est effectuera l'opération seule.";
+	next;
+	mes "[Aas]";
+	mes "S'il y a une perturbation, Est en est peut-être la cause. Veuillez donc vérifier avec elle avant de continuer.";
+	next;
+	mes "[Aas]";
+	mes "Vous devriez partir maintenant, aventurier. Je vais continuer à travailler sur la sécurisation du contrôleur de sécurité.";
+	mes "Des chercheurs pourraient être retenus à l'intérieur.";
+	next;
+	mes "[Aas]";
+	mes "Veuillez prendre en compte leur sécurité en priorité.";
+	mes "Allez-y maintenant.";
+	close2;
+	if ('rgsr == 0) {
+		'rgsr = 1;
+		donpcevent instance_npcname("#171_rgsr_control") + "::OnEvent01";
+	}
+	warp 'map$,127,67;
+	end;
+}
+
+1@rgsr,60,138,0	script	Access Controller#rgsr	4_ENERGY_WHITE,{
+	enablenpc instance_npcname("Researcher#rgsr_ev_0");
+	if ('rgsr == 2) {
+		'rgsr = 3;
+		npctalk "Communication demandée.";
+		sleep2 2750;
+		npctalk "Analyse du signal...";
+		sleep2 2750;
+		npctalk "Activation de la transmission vocale...";
+		sleep2 2750;
+		npctalk "Êtes-vous connecté ? C'est Aas ici.";
+		sleep2 2750;
+		npctalk "J'ai pris le contrôle d'une partie du système de sécurité, mais je n'y ai pas encore accès complet.";
+		sleep2 2750;
+		npctalk "À moins qu'il n'y ait une grande perturbation, les alarmes et les dispositifs de sécurité ne fonctionneront pas.";
+		sleep2 2750;
+		npctalk "Je pense que vous devriez ouvrir cette porte pour accéder au couloir.";
+		sleep2 2750;
+		npctalk "Demandez à un Chercheur détenu de poser sa main sur le dispositif.";
+		sleep2 2750;
+		npctalk "...*Zap*...";
+		sleep2 2750;
+		npctalk "Transmission vocale terminée.";
+		sleep2 2750;
+		hideonnpc();
+		enablenpc();
+		npctalk "Researcher : Do you mind If I open the door?",instance_npcname("Researcher#rgsr_ev_0");
+		'rgsr = 4;
+	}
+	end;
+}
+
+1@rgsr,59,132,7	script	Researcher#rgsr_ev_0	4_M_NFMAN,{
+	if ('rgsr == 4 && 'activate == 0) {
+		'activate = 1;
+		mes "[Rechercheur]";
+		mes "Le scan biométrique est toujours opérationnel, je vais rester ici pour maintenir la porte ouverte.";
+		mes "Si vous êtes pressé, veuillez partir...";
+		dispbottom "Contrôle : Identité confirmée.";
+		donpcevent instance_npcname("#171_rgsr_control") + "::OnEvent02";
+		close2;
+		sleep2 800;
+		npctalk "Chercheur : ...hé... qu'est-ce que c'est au diable...";
+		end;
+	}
+}
+
+1@rgsr,36,211,3	script	Est#rgsr	4_F_ESTLOVELOY,{
+	if ('rgsr < 7) {
+		cutin "ep162_est03",2;
+		mes "[Est]";
+		mes "Êtes-vous celui qui a retiré le gaz toxique à l'extérieur ?";
+		mes "Vous êtes arrivé au bon moment.";
+		mes "À cause du gaz, la porte s'est verrouillée de force !";
+		next;
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "Il faut du temps à Aas pour pirater le contrôleur et libérer le gaz.";
+		mes "Je comptais le faire moi-même.";
+		next;
+		cutin "ep162_est02",2;
+		mes "[Est]";
+		mes "The guards here were wearing the same clothes as those Heart Hunters we saw before.";
+		mes "[Commander Est] Je ne pense pas pouvoir sauver tous les chercheurs tout seul.";
+		next;
+		mes "[Est]";
+		mes "Il semble que nous ayons déjà réuni la plupart d'entre eux ici.";
+		mes "Organisons notre prochaine stratégie.";
+		next;
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "Il y a des laboratoires de l'autre côté et cela risque d'être un véritable chaos.";
+		mes "Je me demande s'il va y avoir une grande bataille.";
+		next;
+		mes "[Est]";
+		mes "À partir de maintenant, les Forces Spéciales de la Rébellion vont prioriser le sauvetage des chercheurs retenus prisonniers.";
+		mes "Si vous avez compris, bougez-vous vite !";
+		next;
+		mes "[Est]";
+		mes "D'accord, aventurier, trouvez un dispositif de communication et mettez-vous en contact avec Aas.";
+		next;
+		mes "[Est]";
+		mes "Vous devez ouvrir l'entrée des laboratoires privés.";
+		if ('rgsr == 4)
+			'rgsr = 5;
+		close3;
+	}
+	cutin "ep162_est02",2;
+	mes "[Est]";
+	mes "Euh... Nous allons d'abord nous concentrer sur le sauvetage des otages.";
+	mes "Cherchez la pièce du gardien dont parlait Aas.";
+	close3;
+}
+
+1@rgsr,26,219,0	script	Access Controller#rgsr2	4_ENERGY_WHITE,{
+	if ('rgsr < 5) {
+		mes "Le code est inactif.";
+		mes "La communication a été interrompue.";
+		close;
+	}
+	if ('rgsr == 5) {
+		mes "Transmission vocale connectée.";
+		close2;
+		if ('rgsr == 5)
+			'rgsr = 6;
+		npctalk "En attente de réponse à la communication...";
+		sleep2 2750;
+		npctalk "[Aas] Commandant Est ? Nous avons verrouillé le hall, mais quel est le problème ?";
+		sleep2 2750;
+		npctalk "[Aas] Oh, vous êtes l'aventurier. Je vais vous faire un rapport. Je n'ai pas encore totalement pris le contrôle du système de sécurité.";
+		sleep2 2750;
+		npctalk "[Aas] Cela semble prendre un certain temps, mais j'ai déjà pris le contrôle de la plupart des modules de surveillance.";
+		sleep2 2750;
+		npctalk "[Aas] La majorité des troupes ennemies se trouvaient dans l'entrée principale et la zone de repos, donc la zone des laboratoires est moins gardée.";
+		sleep2 2750;
+		npctalk "[Aas] Cependant, pour sécuriser la salle de contrôle centrale, vous devez passer par la pièce du Gardien où plusieurs sujets de test ont été détectés.";
+		sleep2 2750;
+		npctalk "Aas : La priorité doit être de sécuriser les laboratoires, puis la Salle des Gardes.... *clique*";
+		sleep2 2000;
+		npctalk "Est : Eh, what was that?",instance_npcname("Est#rgsr");
+		if ('rgsr == 6)
+			'rgsr = 7;
+		end;
+	}
+	if ('rgsr < 7)
+		end;
+	else {
+		mes "Le code est inactif.";
+		mes "La communication a été interrompue.";
+		close;
+	}
+}
+
+1@rgsr,235,44,5	script	Aas#rgsr2	4_EP17_AS,{
+	if ('rgsr == 7) {
+		for (.@i = 0; .@i < 3; .@i++) {
+			if (!'rescued[.@i])
+				.@miss++;
+		}
+		if (.@miss) {
+			cutin "ep171_as02",2;
+			mes "[Aas]";
+			mes "Eh bien, as-tu vérifié tous les laboratoires ?";
+			mes "Vérifie s'il y a encore des Chercheurs détenus.";
+			close3;
+		}
+		cutin "ep171_as02",1;
+		mes "[Aas]";
+		mes "La clé maîtresse de rechange reste toujours là.";
+		mes "Sans elle, je n'aurais pas pu contrôler les systèmes de sécurité. Tu vas bien ?";
+		next;
+		mes "[Aas]";
+		mes "Maintenant, tu n'as plus qu'à vérifier la Salle Centrale.";
+		mes "As-tu dit Heart Hunters ?";
+		mes "Les traîtres de Schlein ont déjà fui.";
+		next;
+		mes "[Aas]";
+		mes "Nous concentrons notre attention sur cette salle.";
+		mes "C'est l'idée principale.";
+		mes "Où est Est ?";
+		next;
+		cutin "16go_01",0;
+		mes "[Goni]";
+		mes "... ... ...";
+		next;
+		cutin "ep171_as02",1;
+		mes "[Aas]";
+		mes "Tu dois continuer à chercher tous les chercheurs ?";
+		mes "C'est nécessaire, je comprends.";
+		next;
+		mes "[Aas]";
+		mes "Voyageur, nous allons vers la Salle Centrale.";
+		mes "Rencontre-moi là-bas.";
+		close2;
+		cutin "",255;
+		if ('rgsr == 7) {
+			enablenpc instance_npcname("Central Room#rgsr");
+			'rgsr = 8;
+			disablenpc instance_npcname("#rgsr_mob_2");
+		}
+		end;
+	}
+	cutin "ep171_as02",1;
+	mes "[Aas]";
+	mes "Voyageur, nous allons vers la Salle Centrale.";
+	mes "Rencontre-moi là-bas.";
+	close3;
+}
+
+1@rgsr,235,143,5	script	Detained Researcher#rgsr_q01	4_F_SCIENCE,{
+	if (!'rescued[0]) {
+		mes "[Rechercheur]";
+		mes "Ma... ma recherche... les matériaux...";
+		mes "Ils ont tout pris !";
+		mes "Ils ont emporté tout !";
+		next;
+		cutin "16go_01",0;
+		mes "[Goni]";
+		mes "... ... ...";
+		next;
+		cutin "",255;
+		npctalk "Je vais survivre ! Merci !";
+		mes "Oh, vous êtes là pour me protéger ?";
+		mes "Je viendrai avec vous, merci !";
+		next;
+		mes "[Rechercheur]";
+		mes "Oh, vous êtes là pour me protéger ?";
+		mes "Je viendrai avec vous, merci !";
+		'rescued[0] = 1;
+		close2;
+		disablenpc();
+	}
+	end;
+}
+
+1@rgsr,237,108,3	script	Detained Researcher#rgsr_q02	4_LGTSCIENCE,{
+	if (!'rescued[1]) {
+		mes "[Rechercheur]";
+		mes "Je pensais qu'ils avaient expulsé tous les fous...";
+		mes "J'ai reçu un coup sur la tête comme ça.";
+		mes "Tch.";
+		next;
+		mes "[Rechercheur]";
+		mes "Vous êtes ici pour nous sauver ?";
+		mes "Dépêchez-vous de me sortir d'ici!";
+		mes "Nous n'avons pas pu fuir car ils ont fait entrer un gaz toxique à l'extérieur des portes !";
+		next;
+		mes "[Rechercheur]";
+		mes "Oui, je connais un peu les Chasseurs de Cœur, je te dirai tout !";
+		next;
+		cutin "ep162_est02",2;
+		mes "[Est]";
+		mes "Ah ? Tu as plus d'informations à partager ?";
+		mes "Veux-tu sortir et en parler calmement avec moi ?";
+		next;
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "Je vais emmener ce type d'ici et toi, regarde les autres pièces.";
+		'rescued[1] = 1;
+		close2;
+		cutin "",255;
+		disablenpc();
+	}
+	end;
+}
+
+1@rgsr,237,71,3	script	Detained Researcher#rgsr_q03	4_F_FRUIT,{
+	if (!'rescued[2]) {
+		mes "[Rechercheur]";
+		mes "Veuillez m'aider !";
+		mes "J'ai travaillé beaucoup et je ne suis pas payé !";
+		next;
+		mes "[Rechercheur]";
+		mes "Schlein, où est Schlein ?";
+		mes "C'est un traître !";
+		mes "Je l'ai vu de mes propres yeux, il a juste tué les gardes...";
+		next;
+		select("Calm down.");
+		mes "[Rechercheur]";
+		mes "Est-ce que c'est sûr maintenant ?";
+		mes "J'étais content quand j'ai été embauché chez Rekenber, mais qu'est-ce qui se passe avec une telle grande entreprise...";
+		next;
+		mes "[Rechercheur]";
+		mes "Dis donc ? Les Rébellions viennent nous sauver ?";
+		mes "Je ne peux pas juste fuir avec toi à la place ?";
+		next;
+		mes "[Rechercheur]";
+		mes "Oh... tu fais partie de l'équipe de reconnaissance ?";
+		mes "D'accord. Je vais attendre l'équipe de secours.";
+		mes "Beaucoup de gens ont échappé en brisant les fenêtres et en courant...";
+		next;
+		mes "[Rechercheur]";
+		mes "Ah, tu le sais déjà.";
+		mes "D'accord. Je vais me taire maintenant et attendre.";
+		mes "Ton uniforme est vraiment cool d'ailleurs.";
+		'rescued[2] = 1;
+		close;
+	}
+	mes "[Rechercheur]";
+	mes "Je sais. Je sais.";
+	mes "Si j'attends ici, les Rébellions viendront-elles me sauver ?";
+	mes "Je serai bien alors.";
+	next;
+	mes "[Rechercheur]";
+	mes "Mais encore une fois, votre uniforme est vraiment cool.";
+	close;
+}
+
+1@rgsr,241,51,0	script	Scattered Documents#rgsr	4_ENERGY_BLUE,{
+	if (isbegin_quest(7863) == 0) {
+		mes "Voici la liste des équipes de sécurité de l'Enterprise.";
+		mes "Certains ont un cercle autour d'eux... d'autres sont barrés.";
+		next;
+		cutin "ep171_as01",2;
+		mes "[Aas]";
+		mes "Ceux qui ont un cercle sont probablement ceux qui ont accepté d'être recrutés...";
+		mes "Mon équipe est celle avec une X marquée à côté.";
+		next;
+		mes "[Aas]";
+		mes "C'est un contrat mercenaire...";
+		mes "Il y a un plan sommaire pour le jour de l'assaut.";
+		mes "Je ne peux pas croire que cela en soit arrivé là...";
+		next;
+		mes "[Aas]";
+		mes "C'est fait exprès pour me provoquer.";
+		mes "Ça ne marchera pas cette fois. Je suivrai cela jusqu'au bout.";
+		next;
+		mes "[Aas]";
+		mes "Je ferait mieux de le rapporter à Tess et de l'analyser.";
+		setquest 7863;
+		close3;
+	}
+	mes "J'ai déjà les données ici.";
+	mes "Rien d'autre à voir ici.";
+	close;
+
+OnInstanceInit:
+	questinfo(QTYPE_CLICKME,QMARK_YELLOW,"isbegin_quest(7863) == 0");
+	end;
+}
+
+1@rgsr,125,157,0	script	Central Room#rgsr	4_ENERGY_BLUE,{
+	if ('rgsr == 8) {
+		'rgsr = 9;
+		enablenpc instance_npcname("Aas#rgsr3");
+		enablenpc instance_npcname("Goni#rgsr");
+		enablenpc instance_npcname("Est#rgsr2");
+		npctalk "Am I late?",instance_npcname("Aas#rgsr3");
+		sleep2 1800;
+		npctalk "No you arrived just in time.",instance_npcname("Est#rgsr2");
+		end;
+	}
+	mes "L'appareil ne fonctionne pas.";
+	close;
+}
+
+1@rgsr,128,157,3	script	Aas#rgsr3	4_EP17_AS,{
+	if ('rgsr > 13)
+		end;
+	if ('rgsr == 9) {
+		'rgsr = 10;
+		.@aas$ = instance_npcname("Aas#rgsr3");
+		.@gonie$ = instance_npcname("Goni#rgsr");
+		.@erst$ = instance_npcname("Est#rgsr2");
+		npctalk "Aas : The Central Room seems to be empty. I'll go in and check it out.",.@aas$;
+		sleep2 3000;
+		npctalk "Aas : I'll go ahead and take the researchers out of here. Will that be okay?",.@erst$;
+		sleep2 3000;
+		npctalk "Aas : Yes. Nothing else is being detected on the system. With our progress so far, the enemies have all been restrained.",.@aas$;
+		sleep2 3000;
+		npctalk "Est : What are you scared of something else? I'm going back already!",.@erst$;
+		sleep2 3000;
+		npctalk "Goni : ... Me too.",.@gonie$;
+		sleep2 3000;
+		npctalk "Est : There were couple of researchers left in the labs, I'll go bring them along. I'll be waiting.",.@erst$;
+		sleep2 3000;
+		npctalk "Est : Alright, Goni. You go to the main lobby first and secure the road. I'll take the others at the conference room.",.@erst$;
+		sleep2 3000;
+		npctalk "Goni : *Nods*",.@gonie$;
+		sleep2 3000;
+		disablenpc instance_npcname("Goni#rgsr");
+		disablenpc instance_npcname("Est#rgsr2");
+		npctalk "Aas : So adventurer, let's check out the Central Room.",.@aas$;
+		if ('rgsr == 10)
+			'rgsr = 11;
+		end;
+	}
+	cutin "ep171_as02",1;
+	mes "[Aas]";
+	mes "C'est la Chambre Centrale juste devant.";
+	next;
+	if (select("Enter.:Wait.") == 2) {
+		mes "[Aas]";
+		mes "Parlez-moi lorsque vous serez prêt(e).";
+		mes "Je ne sais pas pourquoi, mais elle est fermée hermétiquement. Il faut du temps pour maintenir l'accès.";
+		next;
+		mes "[Aas]";
+		mes "Comme confirmé par le système de sécurité, rien n'est détecté à l'intérieur...";
+		mes "Je veux tout de même confirmer à l'intérieur de la pièce.";
+		close3;
+	}
+	mes "[Aas]";
+	mes "D'abord, je devrai désactiver le mécanisme de verrouillage automatique, puis j'entrerai immédiatement.";
+	if ('rgsr == 11) {
+		'rgsr = 12;
+		donpcevent instance_npcname("#171_rgsr_control") + "::OnEvent03";
+	}
+	close2;
+	cutin "",255;
+	warp 'map$,126,164;
+	end;
+}
+
+1@rgsr,124,152,5	script	Goni#rgsr	4_M_GONY,{
+	cutin "16go_01",0;
+	mes "[Goni]";
+	mes "... ... ...";
+	close3;
+}
+
+1@rgsr,125,154,5	script	Est#rgsr2	4_F_ESTLOVELOY,{
+	cutin "ep162_est01",2;
+	mes "[Est]";
+	mes "Je ne pense pas qu'il reste des ennemis à l'intérieur ; je vais sortir.";
+	mes "Vérifiez simplement la Chambre Centrale et sortez ensuite.";
+	close3;
+}
+
+1@rgsr,125,188,3	script	Restrained Specimen#rgsr	20353,2,3,{
+	if ('rgsr == 12) {
+		specialeffect EF_RED_HIT;
+		specialeffect EF_BEGINSPELL3;
+		npctalk "Ne... ne... vous approchez pas de moi...!! Euh, ma tête... ça fait mal...";
+		mapannounce 'map$,"Do... do not... come close to me...!! Huh, my head... it hurts...",bc_map,0x00FF00;
+		'rgsr = 13;
+	}
+	end;
+
+OnFail:
+	specialeffect EF_FREEZE;
+	npctalk "Incroyable-!! C'est bon... Qu'avez-vous fait !!";
+	mapannounce 'map$,"Awesome-!! That's it... What did you do!!",bc_map,0x00FF00;
+	end;
+}
+
+1@rgsr,144,180,0	script	Control Device#rgsr0	4_ENERGY_BLUE,{
+	if ('rgsr < 13) {
+		mes "Cet appareil a une fonction inconnue.";
+		mes "Il y a quatre boutons dans la pièce.";
+		close;
+	}
+	.@index = atoi(replacestr(strnpcinfo(2),"rgsr",""));
+	if (.@index > 0) {
+		if (!'rsgr_c[ (.@index - 1) ]) {
+			mes "Cet appareil a une fonction inconnue.";
+			mes "Il y a quatre boutons dans la pièce.";
+			next;
+			select("Press the button.");
+			donpcevent instance_npcname("Restrained Specimen#rgsr") + "::OnFail";
+			close;
+		}
+	}
+	if (!'rsgr_c[.@index]) {
+		switch (.@index) {
+			case 0: .@answer = 2; .@string$ = "three phases"; break;
+			case 1: .@answer = 1; .@string$ = "two phases"; break;
+			case 2: .@answer = 4; .@string$ = "one phase"; break;
+			case 3: .@answer = 3;
+		}
+		mes "Cet appareil a une fonction inconnue.";
+		mes "Il y a quatre boutons dans la pièce.";
+		next;
+		.@s = select("Red Button.:Blue Button.:White Button.:Yellow Button.");
+		if (.@s != .@answer)
+			donpcevent instance_npcname("Restrained Specimen#rgsr") + "::OnFail";
+		else {
+			specialeffect EF_BEGINSPELL3,AREA,instance_npcname("Restrained Specimen#rgsr");
+			if (.@index < 3) {
+				mapannounce 'map$,"Gravity control adjustment... completed... There are " + .@string$ +" remaining.",bc_map,0x0D98BA;
+				'rsgr_c[.@index] = 1;
+			} else {
+				'rsgr_c[.@index] = 1;
+				mapannounce 'map$,"Gravity control adjustment... completed... Restraints have been disengaged.",bc_map,0x0D98BA;
+				sleep2 2500;
+				donpcevent instance_npcname("#171_rgsr_control") + "::OnEvent04";
+			}
+		}
+		close;
+	}
+	mes "Cet appareil a déjà été activé.";
+	close;
+}
+
+1@rgsr,108,168,0	duplicate(Control Device#rgsr0)	Control Device#rgsr1	4_ENERGY_RED
+1@rgsr,114,191,0	duplicate(Control Device#rgsr0)	Control Device#rgsr2	4_ENERGY_WHITE
+1@rgsr,143,168,0	duplicate(Control Device#rgsr0)	Control Device#rgsr3	4_ENERGY_YELLOW
+
+1@rgsr,127,164,3	script	Aas#rgsr4	4_EP17_AS,{
+	if ('rgsr != 15)
+		end;
+	cutin "ep171_as01",2;
+	mes "[Aas]";
+	mes "Est s'est occupé de tout le reste à l'intérieur.";
+	mes "Désolé de ne pas pouvoir vous aider du tout.";
+	next;
+	mes "[Aas]";
+	mes "Retournons à Einbroch.";
+	mes "Je vais... je vais aller dans mon bureau et rejoindre vos côtés.";
+	next;
+	.@s = select("Move to Einbroch.:Move to Lighthalzen.:Stay for a while.");
+	if (.@s == 3) {
+		cutin "ep171_as02",2;
+		mes "[Aas]";
+		mes "Avez-vous autre chose à enquêter ?";
+		mes "Je vais attendre ici.";
+		close3;
+	}
+	mes "[Aas]";
+	mes "Nous allons vous attendre au Cat on Bullet.";
+	mes "Veuillez y aller et nous rejoindre au quartier général.";
+	completequest 7862;
+	close2;
+	if (.@s == 1)
+		warp "einbroch",301,324;
+	else
+		warp "lighthalzen",54,272;
+	end;
+}
+
+//= Monster
+1@rgsr,1,1,0	script	#rgsr_mob_1	HIDDEN_WARP_NPC,{
+OnSummon:
+	.@event$ = instance_npcname(strnpcinfo(0))+"::OnMobKill";
+	setarray .@xy,
+	153,80,155,81,154,82, //= Bottom Right
+	138,85,136,87,138,89, //= Center Right
+	152,94,152,98,153,98, //= Stairs Right
+	145,114,151,114,156,114, //= Top Right
+	97,114,102,114,107,114, //= Top Left
+	102,98,101,96,101,95, //= Stairs Left
+	116,88,118,88,121,87, //= Center Left
+	117,101,117,101,117,102, //= Center Top
+	93,66,93,67,94,68, //= Bottom Door
+	58,65,56,57,44,59,31,53,15,55, //= Bottom Room
+	59,94,48,98,53,103,36,110,33,126,46,132,55,131; //= Upper Room
+	for (.@i = 0; .@i < getarraysize(.@xy); .@i += 2)
+		monster 'map$,.@xy[.@i],.@xy[.@i+1],"Special Guard",3627,1,.@event$;
+	end;
+
+OnMobKill:
+	.@event$ = instance_npcname(strnpcinfo(0))+"::OnMobKill";
+	if (!mobcount('map$,.@event$) && 'rgsr == 1) {
+		'rgsr = 2;
+		disablenpc();
+		enablenpc instance_npcname("Access Controller#rgsr");
+	}
+	end;
+}
+
+1@rgsr,1,1,0	script	#rgsr_mob_2	HIDDEN_WARP_NPC,{
+OnSummon:
+	setarray .@xy,102,137,104,136,104,135,126,139,138,137,139,134,137,133,151,135,150,136,151,137,85,151,82,215,84,216,84,218,107,216;
+	setarray .@left_xy,85,170,54,186,55,183,58,181,59,186,62,183,62,216,59,214,56,217,54,214,52,217;
+	setarray .@right_xy,167,136,167,135,168,135,208,138,208,134,203,138,200,134,187,123,188,
+	123,187,122,186,108,188,107,186,105,196,106,203,109,205,105,208,109,187,92,186,90,188,91,
+	187,69,187,67,188,67,201,74,202,77,207,76,211,74,187,48,188,45,186,46,197,45,202,45,208,42,211,42;
+	setarray .@top_xy,169,217,169,214,172,217,172,214,176,217,176,214,180,217,180,214,184,217,184,214,167,204,168,203,168,203,167,176,167,176,166,175;
+	for (.@i = 0; .@i < getarraysize(.@xy); .@i += 2)
+		monster 'map$,.@xy[.@i],.@xy[.@i+1],"Special Guard",3627,1;
+	for (.@i = 0; .@i < getarraysize(.@left_xy); .@i += 2)
+		monster 'map$,.@left_xy[.@i],.@left_xy[.@i+1],"Poisonous Gas",20352,1,instance_npcname(strnpcinfo(0))+"::OnLeftKill";
+	for (.@i = 0; .@i < getarraysize(.@right_xy); .@i += 2)
+		monster 'map$,.@right_xy[.@i],.@right_xy[.@i+1],"Poisonous Gas",20352,1,instance_npcname(strnpcinfo(0))+"::OnRightKill";
+	for (.@i = 0; .@i < getarraysize(.@top_xy); .@i += 2)
+		monster 'map$,.@top_xy[.@i],.@top_xy[.@i+1],"Poisonous Gas",20352,1,instance_npcname(strnpcinfo(0))+"::OnTopKill";
+	end;
+
+OnLeftKill:
+	.@event$ = instance_npcname(strnpcinfo(0))+"::OnLeftKill";
+	if (!mobcount('map$,.@event$)) {
+		mapannounce 'map$,"Est : Who is it? Are you Aas? Are you the adventurer?",bc_map,0x0D98BA;
+		enablenpc instance_npcname("Est#rgsr");
+		enablenpc instance_npcname("Rebellion Crew#rgsr_dum01");
+	}
+	end;
+
+OnRightKill:
+OnTopKill:
+	end;
+}
+
+1@rgsr,1,1,0	script	#rgsr_boss	HIDDEN_WARP_NPC,{
+	end;
+OnSummon:
+	mapannounce 'map$,"Ahahaha.. ahahaha... I'll kill you all!!!!",bc_map,0x00FF00;
+	sleep 2000;
+	mapannounce 'map$,"Aas : What is going on? *click* The lock is...!!",bc_map;
+	sleep 2000;
+	mapannounce 'map$,"I'm not a defect! I'm not a monster!",bc_map,0x00FF00;
+	specialeffect EF_LORD,AREA,instance_npcname("Restrained Specimen#rgsr");
+	disablenpc instance_npcname("Restrained Specimen#rgsr");
+	monster 'map$,125,188,"Failed Specimen",20353,1,instance_npcname(strnpcinfo(0))+"::OnBossKill";
+	end;
+
+OnBossKill:
+	if ('rgsr == 14) {
+		'rgsr = 15;
+		hideonnpc instance_npcname("Aas#rgsr3");
+		disablenpc instance_npcname("Aas#rgsr3");
+		enablenpc instance_npcname("Aas#rgsr4");
+		disablenpc();
+	}
+	end;
+}
+
+1@rgsr,94,68,5	script	#rgsr_touch_mob_0	3622,4,6,{
+	end;
+
+OnTouch:
+	disablenpc();
+	.@v = atoi(replacestr(strnpcinfo(2),"rgsr_touch_mob_",""));
+	if (!.@v)
+		setarray .@xy,98,66,94,68,95,70,92,68;
+	else
+		setarray .@xy,91,91,91,93,95,93,94,97,97,92;
+	for (.@i = 0; .@i < getarraysize(.@xy); .@i += 2)
+		monster 'map$,.@xy[.@i],.@xy[.@i+1],"Special Guard",3622,1;
+	end;
+}
+
+1@rgsr,95,93,5	duplicate(#rgsr_touch_mob_0)	#rgsr_touch_mob_1	3622,4,6
+
+//= Warp/Other
+1@rgsr,59,136,0	warp	#rgsr_warp_0	1,2,1@rgsr,66,136
+
+1@rgsr,51,184,0	script	#rgsr_warp_1	WARPNPC,1,2,{
+	end;
+
+OnTouch:
+	.@event$ = instance_npcname("#rgsr_mob_2")+"::OnLeftKill";
+	if (mobcount('map$,.@event$)) {
+		dispbottom "Voix derrière la porte : Qui est dehors ? Éliminez ce gaz toxique étrange !!";
+		end;
+	}
+	switch (atoi(replacestr(strnpcinfo(2),"rgsr_warp_",""))) {
+		case 1: warp 'map$,46,184; break;
+		case 2:	warp 'map$,46,216; break;
+		case 3: warp 'map$,54,184; break;
+		case 4: warp 'map$,54,216;
+	}
+	end;
+}
+
+1@rgsr,51,216,0	duplicate(#rgsr_warp_1)	#rgsr_warp_2	WARPNPC,1,2
+1@rgsr,49,184,0	duplicate(#rgsr_warp_1)	#rgsr_warp_3	WARPNPC,1,2
+1@rgsr,49,216,0	duplicate(#rgsr_warp_1)	#rgsr_warp_4	WARPNPC,1,2
+
+1@rgsr,186,216,0	script	#rgsr_warp_5	WARPNPC,1,2,{
+	.@event$ = instance_npcname("#rgsr_mob_2")+"::OnTopKill";
+	if (mobcount('map$,.@event$)) {
+		mes "Une entité inconnue a été détectée. Accès refusé.";
+		close;
+	}
+	switch (atoi(replacestr(strnpcinfo(2),"rgsr_warp_",""))) {
+		case 5: warp 'map$,191,216; break;
+		case 6: warp 'map$,183,216;
+	}
+	end;
+}
+
+1@rgsr,188,216,0	duplicate(#rgsr_warp_5)	#rgsr_warp_6	WARPNPC,1,2
+
+1@rgsr,214,136,0	script	#rgsr_warp_7	WARPNPC,1,2,{
+	.@event$ = instance_npcname("#rgsr_mob_2")+"::OnRightKill";
+	if (mobcount('map$,.@event$) > 0 || 'rgsr < 7) {
+		mes "Une entité inconnue a été détectée. Accès refusé.";
+		close;
+	}
+	switch (atoi(replacestr(strnpcinfo(2),"rgsr_warp_",""))) {
+		case 7: warp 'map$,219,136; break;
+		case 8: warp 'map$,211,136; break;
+		case 9: warp 'map$,219,108; break;
+		case 10: warp 'map$,211,108; break;
+		case 11: warp 'map$,219,76; break;
+		case 12: warp 'map$,211,76; break;
+		case 13: warp 'map$,219,44; break;
+		case 14:  warp 'map$,211,44;
+	}
+	end;
+}
+
+1@rgsr,216,136,0	duplicate(#rgsr_warp_7)	#rgsr_warp_8	WARPNPC,1,2
+1@rgsr,214,108,0	duplicate(#rgsr_warp_7)	#rgsr_warp_9	WARPNPC,1,2
+1@rgsr,216,108,0	duplicate(#rgsr_warp_7)	#rgsr_warp_10	WARPNPC,1,2
+1@rgsr,214,76,0	duplicate(#rgsr_warp_7)	#rgsr_warp_11	WARPNPC,1,2
+1@rgsr,216,76,0	duplicate(#rgsr_warp_7)	#rgsr_warp_12	WARPNPC,1,2
+1@rgsr,214,44,0	duplicate(#rgsr_warp_7)	#rgsr_warp_13	WARPNPC,1,2
+1@rgsr,216,44,0	duplicate(#rgsr_warp_7)	#rgsr_warp_14	WARPNPC,1,2
+
+1@rgsr,37,126,0	script	Researcher#rgsr_dum00	4_F_SCIENCE,{
+	mes "[Chercheur détenu]";
+	mes "Pourquoi dois-je nourrir ces traîtres ?";
+	close;
+}
+
+1@rgsr,35,136,7	script	Researcher#rgsr_dum01	4_LGTSCIENCE,{
+	mes "[Chercheur détenu]";
+	mes "Je veux rentrer chez moi... Je veux juste rentrer chez moi...";
+	close;
+}
+
+1@rgsr,38,139,3	script	Researcher#rgsr_dum02	4_M_NFMAN,{
+	mes "[Chercheur détenu]";
+	mes "Vous êtes ici pour nous sauver ?";
+	mes "Merci ! Merci !";
+	close;
+}
+
+1@rgsr,31,186,3	script	Researcher#rgsr_dum03	4_LGTSCIENCE,{
+	mes "[Chercheur détenu]";
+	mes "Qu'est-ce qui se passe au nom du ciel ?";
+	mes "Aaaah... Je veux juste rentrer chez moi...";
+	close;
+}
+
+1@rgsr,24,186,5	script	Researcher#rgsr_dum04	4_F_SCIENCE,{
+	mes "[Chercheur détenu]";
+	mes "Pourquoi êtes-vous venu ici pour me sauver ?";
+	mes "Les gardes de l'Enterprise... non, attendez...";
+	next;
+	mes "[Chercheur détenu]";
+	mes "Je pensais que c'était vous qui nous teniez en custody !";
+	mes "Pourquoi auraient-ils fait cela ?";
+	close;
+}
+
+1@rgsr,25,182,7	script	Researcher#rgsr_dum05	4_M_HUMAN_01,{
+	mes "[Chercheur détenu]";
+	mes "Ces salopards ont pris mon rapport de recherche et je suis échappé ici.";
+	mes "C'était un répulsif en spray pour bloquer les insectes suceurs de sang !";
+	next;
+	mes "[Chercheur détenu]";
+	mes "C'était ma recherche privée, je ne sais pas pourquoi ils l'ont pris !";
+	mes "On ne peut pas simplement prendre le rapport de recherche d'autrui.";
+	close;
+}
+
+1@rgsr,40,186,3	script	Rebellion Crew#rgsr_dum01	4_M_ILYA,{
+	mes "[Équipage de la Rébellion]";
+	mes "Je suis venu préparé, mais c'était plus facile que prévu.";
+	mes "Maintenant, je suis coincé ici. Hehehehe !";
+	close;
+}
+
+1@rgsr,33,185,3	script	Rebellion Crew#rgsr_dum02	4_M_REBELLION2,{
+	mes "[Équipage de la Rébellion]";
+	mes "Les chercheurs restants se sont rassemblés ici pour leur sécurité.";
+	mes "La Rébellion les protégera et les aidera à s'échapper.";
+	close;
+}
+
+1@rgsr,31,183,5	script	Rebellion Crew#rgsr_dum03	4_F_ANYA,{
+	mes "[Équipage de la Rébellion]";
+	mes "Je pensais qu'ils avaient moins de forces à l'intérieur, mais je n'aurais pas pensé qu'ils auraient installé du gaz toxique.";
+	mes "La plupart des gens ont déjà fui ; seuls les ennemis restent.";
+	close;
+}
+
+1@rgsr,195,205,0	script	Research Report#rgsr_00	4_ENERGY_BLUE,{
+	mes "Il s'agit d'une donnée sur la nouvelle efficacité et les effets secondaires des nouvelles potions.";
+	mes "Cependant, il y a des informations concernant les ingrédients de base.";
+	close;
+}
+
+1@rgsr,198,199,0	script	Research Report#rgsr_01	4_ENERGY_BLUE,{
+	mes "Une partie du dessin a été déchirée.";
+	mes "Quelqu'un a volontairement détruit les parties pertinentes.";
+	close;
+}
+
+1@rgsr,207,210,0	script	Research Report#rgsr_02	4_ENERGY_BLUE,{
+	mes "Des parties des documents ont été gravement endommagées.";
+	mes "Il semble qu'il s'agisse d'une tentative de créer un dispositif utilisant la réfraction de la lumière.";
+	close;
+}
+
+1@rgsr,226,226,0	script	Research Report#rgsr_03	4_ENERGY_BLUE,{
+	mes "Les données d'enchantement et de traitement de Lloyd.";
+	mes "Seul le titre est resté ; tout le texte a été supprimé.";
+	close;
+}
+
+1@rgsr,231,223,0	script	Research Report#rgsr_04	4_ENERGY_BLUE,{
+	mes "Le livret manque de pages. Quelqu'un a délibérément omis le matériel.";
+	close;
+}
+
+1@rgsr,243,223,0	script	Research Report#rgsr_05	4_ENERGY_BLUE,{
+	mes "Les données expérimentales ont été supprimées. Il y a des traces claires de quelqu'un détruisant les informations.";
+	close;
+}

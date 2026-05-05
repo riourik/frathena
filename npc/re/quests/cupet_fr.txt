@@ -1,0 +1,243 @@
+//===== rAthena Script =======================================
+//= Cute Pet Manager
+//===== By: ==================================================
+//= Z3R0
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Exchanges Hunted Items for Tames
+//===== Additional Comments: =================================
+//= 1.0 First / Optimized Version
+//= 1.1 Little clean-up & added a delitem. [Capuche]
+//============================================================
+
+// 1st NPC
+-	script	CPM1	-1,{
+	
+	set .@npc$, "[Cute Pet Manager]";
+	
+	setarray .@tame_id[0],619,620,622,623,624,627,628,629,630;
+	setarray .@tame_amount[0],3,3,3,3,3,3,3,3,3;
+	setarray .@hunt_id[0],909,909,705,916,935,919,919,940,921;
+	setarray .@hunt_amount[0],500,600,500,500,500,500,600,500,500;
+	setarray .@mob_id[0],1002,1113,1063,1049,1011,1167,1107,1052,1014;
+	set .@tame_gets, 3;
+
+	if (cpm_one == .@tame_gets) {
+		mes "[Gestionnaire de Mascotte Mignonne]";
+		mes "Vous avez déjà échangé";
+		mes .@tame_amount + " times for a taming item.";
+		mes "Vous ne pouvez plus échanger.";
+		next;
+		
+		mes "[Gestionnaire de Mascotte Mignonne]";
+		mes "Outre moi, il y a d'autres";
+		mes "Gestionnaires de Familiers Mignons. Si vous souhaitez";
+		mes "apprivoiser d'autres animaux de compagnie, je vous suggère";
+		mes "de les consulter.";
+		close;
+	}
+	
+	callfunc "cute_pet_manager",.@tame_id,.@tame_amount,.@hunt_id,.@hunt_amount,.@mob_id,cpm_one,.@tame_gets,.@hunt_id2,.@hunt_amount2;
+
+}
+
+// 2nd NPC
+-	script	CPM2	-1,{
+	
+	set .@npc$, "[Cute Pet Manager]";
+	
+	setarray .@tame_id[0],621,625,632,631,633,634,635,636,659,637,639,640;
+	setarray .@tame_amount[0],2,2,2,2,2,2,2,2,2,2,2,2;
+	setarray .@hunt_id[0],938,935,925,7033,945,942,931,901,1094,1021,936,1035;
+	setarray .@hunt_amount[0],500,600,500,300,500,500,500,500,500,500,500,500;
+	setarray .@mob_id[0],1031,1042,1019,1077,1056,1057,1023,1026,1188,1110,1029;
+	set .@tame_gets, 2;
+
+	if (cpm_two == .@tame_gets) {
+		mes "[Gestionnaire de Mascotte Mignonne]";
+		mes "Vous avez déjà échangé";
+		mes .@tame_amount + " times for a taming item.";
+		mes "Vous ne pouvez plus échanger.";
+		next;
+		
+		mes "[Gestionnaire de Mascotte Mignonne]";
+		mes "Outre moi, il y a d'autres";
+		mes "Gestionnaires de Familiers Mignons. Si vous souhaitez";
+		mes "apprivoiser d'autres animaux de compagnie, je vous suggère";
+		mes "de les consulter.";
+		close;
+	}
+	
+	callfunc "cute_pet_manager",.@tame_id,.@tame_amount,.@hunt_id,.@hunt_amount,.@mob_id,cpm_two,.@tame_gets,.@hunt_id2,.@hunt_amount2;
+
+}
+
+// 3rd NPC
+-	script	CPM3	-1,{
+	
+	set .@npc$, "[Cute Pet Manager]";
+	
+	setarray .@tame_id[0],638,626,641,661,660,642;
+	setarray .@tame_amount[0],1,1,1,1,1,1;
+	setarray .@hunt_id[0],1020,943,1038,7047,1970,923;
+	setarray .@hunt_amount[0],600,600,600,500,1,100;
+	setarray .@hunt_id2[0],0,0,0,0,7017,0;
+	setarray .@hunt_amount2[0],0,0,0,0,20,0;
+	setarray .@mob_id[0],1170,1035,1109,1275,1200,1101;
+	set .@tame_gets, 1;
+
+	if (cpm_three == .@tame_gets) {
+		mes "[Gestionnaire de Mascotte Mignonne]";
+		mes "Vous avez déjà échangé";
+		mes .@tame_amount + " times for a taming item.";
+		mes "Vous ne pouvez plus échanger.";
+		next;
+		
+		mes "[Gestionnaire de Mascotte Mignonne]";
+		mes "Outre moi, il y a d'autres";
+		mes "Gestionnaires de Familiers Mignons. Si vous souhaitez";
+		mes "apprivoiser d'autres animaux de compagnie, je vous suggère";
+		mes "de les consulter.";
+		close;
+	}
+	
+	callfunc "cute_pet_manager",.@tame_id,.@tame_amount,.@hunt_id,.@hunt_amount,.@mob_id,cpm_three,.@tame_gets,.@hunt_id2,.@hunt_amount2;
+
+}
+
+function	script	cute_pet_manager	{
+	// getarg(0) -> .@tame_id Array
+	// getarg(1) -> .@tame_amount Array
+	// getarg(2) -> .@hunt_id Array
+	// getarg(3) -> .@hunt_amount Array
+	// getarg(4) -> .@mob_id Array
+	// getarg(5) ->  Attempt Variable
+	// getarg(6) -> .@tame_gets Variable
+	// getarg(7) -> .@hunt_id2 Array
+	// getarg(8) -> .@hunt_amount2 Array
+
+	mes "[Gestionnaire de Mascotte Mignonne]";
+	mes "Bonjour~ ! Je suis un Gestionnaire de Familiers Mignons";
+	mes "chargé des relations publiques";
+	mes "pour le Nouveau Système de Familiers Mignons amélioré.";
+	next;
+	
+	mes "[Gestionnaire de Mascotte Mignonne]";
+	mes "Si vous avez des préoccupations concernant";
+	mes "le système de Familiers Mignons, je suis là pour vous guider.";
+	mes "Dites-moi quel objet d'apprivoisement";
+	mes "vous souhaitez,";
+	mes "et je vous indiquerai le monstre";
+	mes "que vous pouvez apprivoiser avec cet objet.";
+	next;
+	
+	mes "[Gestionnaire de Mascotte Mignonne]";
+	mes "De plus, j'expliquerai quels matériaux";
+	mes "vous devez apporter afin d'obtenir";
+	mes "l'objet d'apprivoisement.";
+	next;
+	
+	mes "[Gestionnaire de Mascotte Mignonne]";
+	mes "Si vous avez déjà apporté les matériaux";
+	mes "pour échanger contre l'objet d'apprentissage,";
+	mes "je peux immédiatement vous les échanger.";
+	next;
+	
+	mes "[Gestionnaire de Mascotte Mignonne]";
+	mes "Cependant, il y a une limite";
+	mes "pour l'échange des objets d'apprentissage.";
+	mes "Vous ne pouvez obtenir des objets d'apprentissage";
+	mes getarg(6) + " times. So please make sure";
+	mes "que selon le nombre de fois où vous avez échangé.";
+	next;
+	
+	mes "[Gestionnaire de Mascotte Mignonne]";
+	mes "Alors, quel objet d'apprentissage souhaitez-vous ?";
+	mes "Veuillez en choisir un dans la liste.";
+	next;
+	
+	// Create Menu System
+	set .@size, getarraysize(getarg(0));
+	for (set .@a, 0; .@a < .@size; set .@a, .@a + 1)
+		set .@menu$, .@menu$ + (.@menu$ == "" ? "" : ":") + getitemname(getelementofarray(getarg(0), .@a));
+	
+	// Query Player Choice
+	set .@choice, select(.@menu$) - 1;
+
+	// Store Variables (Less Lookup)
+	set .@tame_id, getelementofarray(getarg(0), .@choice);
+	set .@tame_amount, getelementofarray(getarg(1), .@choice);
+	set .@hunt_id, getelementofarray(getarg(2), .@choice);
+	set .@hunt_amount, getelementofarray(getarg(3), .@choice);
+	set .@mob_id, getelementofarray(getarg(4), .@choice);
+	set .@hunt_id2, getelementofarray(getarg(7), .@choice);
+	set .@hunt_amount2, getelementofarray(getarg(8), .@choice);
+
+	// dispbottom "Tame ID: " + .@tame_id;
+	// dispbottom "Tame Amount: " + .@tame_amount;
+	// dispbottom "Hunt ID: " + .@hunt_id;
+	// dispbottom "Hunt Name: " + getitemname(.@hunt_id);
+	// dispbottom "Hunt Amount: " + .@hunt_amount;
+	// dispbottom "Mob ID: " + .@mob_id;
+	if (.@hunt_id2) { 
+		// dispbottom "Hunt ID2: " + .@hunt_id2;
+		// dispbottom "Hunt Amount2: " + .@hunt_amount2;
+		set .@hunt2_count, countitem(.@hunt_id2);
+	}
+	if (countitem(.@hunt_id) >= .@hunt_amount && countitem(6083) > 0 && .@hunt2_count >= .@hunt_amount2) {
+		mes "[Gestionnaire de Mascotte Mignonne]";
+		mes "Ah, vous avez rassemblé tous les objets";
+		mes "avec vos amis. Vous pouvez maintenant";
+		mes "exchange for an " + getitemname(.@tame_id) + ".";
+		mes "Échanger avec moi ?";
+		next;
+		if  (select("Exchange:Don't Exchange") == 2) { 
+			mes "[Gestionnaire de Mascotte Mignonne]";
+			mes "Vous ne voulez pas ? Vous reviendrez sûrement.";
+			close;
+		}
+		delitem .@hunt_id, .@hunt_amount;
+		delitem 6083, 1;
+		if (.@hunt_id2)
+			delitem .@hunt_id2, .@hunt_amount2;
+		set getarg(5), getarg(5) + 1;
+		getitem .@tame_id, .@tame_amount;
+		
+		mes "[Gestionnaire de Mascotte Mignonne]";
+		mes "Bon choix.";
+		mes "J'espère que vous et votre compagnon s'entendront bien.";
+		close;
+	} else {
+		mes "[Gestionnaire de Mascotte Mignonne]";
+		mes "You have chosen " + getitemname(.@tame_id) + ".";
+		mes "Vous pouvez l'utiliser pour apprivoiser";
+		mes "^FF0000" + getmonsterinfo(.@mob_id, MOB_NAME) + "^000000 monsters.";
+		next;
+		mes "[Gestionnaire de Mascotte Mignonne]";
+		mes "Bring ^FF0000" + .@hunt_amount + " " + getitemname(.@hunt_id) + "^000000" + (.@hunt_id2 ? ", ^FF0000" + .@hunt_amount2 + " " + getitemname(.@hunt_id2) : "") + " ^000000 and ^FF00001 Dolly Capsule^000000";
+		mes "puis vous pourrez les échanger";
+		mes "for an " + getitemname(.@tame_id) + ".";
+		close;
+	}
+}
+
+// NPC Duplicates
+prontera,67,212,5	duplicate(CPM1)	Cute Pet Manager#1	4_M_ALCHE_C
+prontera,242,92,3	duplicate(CPM2)	Cute Pet Manager#2	4_M_ALCHE_C
+prontera,179,92,3	duplicate(CPM3)	Cute Pet Manager#3	4_M_ALCHE_C
+
+geffen,180,125,5	duplicate(CPM1)	Cute Pet Manager#4	4_M_ALCHE_C
+geffen,152,66,3	duplicate(CPM2)	Cute Pet Manager#5	4_M_ALCHE_C
+geffen,197,95,3	duplicate(CPM3)	Cute Pet Manager#6	4_M_ALCHE_C
+
+morocc,115,83,5	duplicate(CPM1)	Cute Pet Manager#7	4_M_ALCHE_C
+morocc,218,130,3	duplicate(CPM2)	Cute Pet Manager#8	4_M_ALCHE_C
+morocc,236,225,3	duplicate(CPM3)	Cute Pet Manager#9	4_M_ALCHE_C
+
+payon,109,278,5	duplicate(CPM1)	Cute Pet Manager#10	4_M_ALCHE_C
+payon,157,124,3	duplicate(CPM2)	Cute Pet Manager#11	4_M_ALCHE_C
+payon,85,237,3	duplicate(CPM3)	Cute Pet Manager#12	4_M_ALCHE_C

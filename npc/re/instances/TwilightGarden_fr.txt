@@ -1,0 +1,923 @@
+//===== rAthena Script =======================================
+//= Twilight Garden
+//===== Description: =========================================
+//= [Walkthrough Conversion]
+//= Episode 17.2 Twilight Garden
+//= Episode 17.2 Hey Sweety
+//= Note:
+// - NPC_LOCKON_LASER skill is currently no implemented.
+//===== Changelog: ===========================================
+//= 1.0 Initial release [crazyarashi]
+//= 1.1 Optimizations and cleanup [Everade]
+//= 1.2 Cleanup [Capuche]
+//============================================================
+
+1@bamn,1,1,0	script	#twilight_garden_control	-1,{
+	end;
+OnInstanceInit:
+	'twilight_story = 0;
+	'sweety = 0;
+	'map_bamn$ = instance_mapname("1@bamn");
+	'map_bamq$ = instance_mapname("1@bamq");
+
+	// npcs from story
+	//----------------------------
+	// npcs on 1@bamn
+
+	// disablenpc instance_npcname("Repeater#wifi03");	// (not disabled)
+	// disablenpc instance_npcname("Repeater#wifi02");	// (not disabled)
+	// disablenpc instance_npcname("Repeater#wifi01");	// (not disabled)
+
+	//----------------------------
+	// Daily: Hey! Sweety
+	if (instance_live_info(ILI_NAME) == "Hey! Sweety")
+		disablenpc instance_npcname("#bamn_evt01");	// story starter npc
+	else
+		disablenpc instance_npcname("#sweety_evt01");	// daily starter npc
+	end;
+}
+
+// Story
+1@bamn,100,320,0	script	#bamn_evt01	HIDDEN_WARP_NPC,2,2,{
+	end;
+OnTouch:
+	if (!is_party_leader())
+		end;
+	disablenpc();
+	enablenpc instance_npcname("Est#est01");
+	end;
+}
+
+1@bamn,96,318,5	script(DISABLED)	Est#est01	4_F_ESTLOVELOY,{
+	if (!is_party_leader())
+		end;
+	if ('twilight_story == 0) {
+		'twilight_story = 1;
+		npctalk "^FF0000Est : Il fait sombre et il est calme. Si vous voulez exécuter le plan, c'est maintenant le moment parfait. Non ?^";
+		sleep 2000;
+		npctalk "^FF0000Est : Elena a dit qu'elle nous rejoindrait plus tard, mais il y a de bonnes chances qu'elle ne puisse pas venir.^";
+		sleep 2000;
+		npctalk "^FF0000Est : De toute façon, il n'y a aucune raison de s'inquiéter. Les autres sont prêts et attendent le signal pour l'embuscade.^";
+		sleep 2000;
+		npctalk "^FF0000Est : Tout ce que nous avons à faire, c'est marcher comme une patrouille et les prendre par surprise.^";
+		sleep 2000;
+		npctalk "^FF0000Est : Allez vers la route menant au bâtiment principal de la villa. Je vous surveillerai depuis derrière.^";
+		sleep 2000;
+		npctalk "^FF0000Est : Ne regardez pas trop autour de vous, et faites semblant de ne pas être vigilant, compris ?^";
+		sleep 2000;
+		npctalk "^FF0000Est : Maintenant, partons.^";
+		for ( .@i = 1; .@i < 6; ++.@i )
+			enablenpc instance_npcname("Heart Hunter#md_hh0" + .@i);
+		end;
+	}
+	if ('twilight_story == 1)
+		end;
+	if ('twilight_story == 2) {
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "Ils doivent aussi nous attendre.";
+		mes "Faisons-le plus discrètement.";
+		close3;
+	}
+	end;
+}
+
+1@bamn,119,299,3	script(DISABLED)	Heart Hunter#md_hh01	G_EP17_2_HEART_HUNTER,3,3,{
+	end;
+OnTouch_:
+	if (!is_party_leader())
+		end;
+	if ('twilight_story == 1) {
+		'twilight_story = 2;
+		npctalk "Surrendez silencieusement ou retournez là d'où vous êtes venus.";
+		sleep 2000;
+		npctalk "Eh bien, cela ne signifie pas que nous allons vous laisser repartir.";
+		sleep 1000;
+		for ( .@i = 1; .@i < 6; ++.@i )
+			disablenpc instance_npcname("Heart Hunter#md_hh0" + .@i);
+		donpcevent instance_npcname("twilight_story_mob_1") + "::OnStart";
+	}
+	end;
+}
+
+1@bamn,119,305,3	duplicate(dummy_disabled_npc)	Heart Hunter#md_hh02	G_EP17_2_HEART_HUNTER
+1@bamn,119,302,3	duplicate(dummy_disabled_npc)	Heart Hunter#md_hh03	G_EP17_2_HEART_HUNTER
+1@bamn,119,296,3	duplicate(dummy_disabled_npc)	Heart Hunter#md_hh04	G_EP17_2_HEART_HUNTER
+1@bamn,119,293,3	duplicate(dummy_disabled_npc)	Heart Hunter#md_hh05	G_EP17_2_HEART_HUNTER
+
+
+1@bamn,1,1,0	script	twilight_story_mob_1	-1,{
+	end;
+OnStart:
+	.@event$ = instance_npcname("twilight_story_mob_1") + "::OnMobDead";
+	monster 'map_bamn$,119,308,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,128,308,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,121,300,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,118,293,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,124,294,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,130,308,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	end;
+OnMobDead:
+	.@event$ = instance_npcname("twilight_story_mob_1") + "::OnMobDead";
+	if (mobcount('map_bamn$, .@event$) < 1) {
+		disablenpc instance_npcname("Est#est01");
+		enablenpc instance_npcname("Est#est02");
+		if ('twilight_story == 2)
+			'twilight_story = 3;
+	}
+	end;
+}
+
+1@bamn,119,299,5	script(DISABLED)	Est#est02	4_F_ESTLOVELOY,{
+	if (!is_party_leader())
+		end;
+	if ('twilight_story == 3) {
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "Je ne sais pas si nous devrions tendre un piège ou vous donner une chance.";
+		mes "Activez le traceur que nous avons obtenu d'Elyumina.";
+		next;
+		cutin "",255;
+		unittalk getcharid(3), "" + strcharinfo(0) + " : Tracker : According to the intuition of the great Elyumina... Too Doo Too Doo Too~";
+		sleep2 2000;
+		unittalk getcharid(3), "" + strcharinfo(0) + " : Tracker : Over there!! Beep!";
+		navigateto("1@bamn",206,273);
+		sleep2 2000;
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "C'est un bruit fort.";
+		mes "Voulez-vous partir en premier ?";
+		mes "J'ai quelque part où aller pour l'instant.";
+		next;
+		mes "[Est]";
+		mes "Je vous rejoindrai bientôt.";
+		close2;
+		if ('twilight_story == 3) {
+			'twilight_story = 4;
+			donpcevent instance_npcname("twilight_story_mob_2") + "::OnStart";
+		}
+		cutin "",255;
+		disablenpc();
+		end;
+	}
+	end;
+}
+
+1@bamn,1,1,0	script	twilight_story_mob_2	-1,{
+	end;
+OnStart:
+	.@event$ = instance_npcname("twilight_story_mob_2") + "::OnMobDead";
+	monster 'map_bamn$,208,283,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,210,285,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,210,282,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,213,284,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,213,281,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	end;
+OnMobDead:
+	.@event$ = instance_npcname("twilight_story_mob_2") + "::OnMobDead";
+	if (mobcount('map_bamn$, .@event$) < 1) {
+		enablenpc instance_npcname("Est#est03");
+		enablenpc instance_npcname("Almond#amond01");
+		if ('twilight_story == 4)
+			'twilight_story = 5;
+	}
+	end;
+}
+
+1@bamn,202,274,5	script(DISABLED)	Est#est03	4_F_ESTLOVELOY,{
+	if ('twilight_story == 5) {
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "J'avais pensé qu'il serait mieux de mettre plus d'appâts, donc je suis allé demander l'aide des poupées automatiques.";
+		mes "De plus, Almond a dit qu'elle devait sortir vérifier quelque chose.";
+		next;
+		cutin "ep172_beta",0;
+		mes "[Almond]";
+		mes "Le répéteur est à nouveau hors service. C'est pourquoi je dois le réparer.";
+		mes "Le répéteur est la cible favorite des intrus, donc on ne peut pas simplement le laisser en panne, non ?";
+		next;
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "Pour cette raison, j'aimerais vous demander d'escorter Almond ici pour vérifier le répéteur.";
+		mes "Je vais regarder autour et trouver d'autres itinéraires.";
+		next;
+		cutin "ep172_beta",0;
+		mes "[Almond]";
+		mes "Partons ensemble dès que vous serez prêt(e).";
+		close2;
+		cutin "",255;
+		if ('twilight_story == 5)
+			'twilight_story = 6;
+		end;
+	}
+	if ('twilight_story == 6) {
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "Parlez à Almond lorsque vous serez prêt(e) à bouger.";
+		close3;
+	}
+	end;
+}
+
+1@bamn,199,275,5	script(DISABLED)	Almond#amond01	EP17_2_BETA_BASIC,{
+	if ('twilight_story < 6) {
+		cutin "ep172_beta",2;
+		mes "[Almond]";
+		mes "Tout le monde était censé être dans la manoir aujourd'hui.";
+		mes "Une chose importante est survenue. C'est pourquoi je suis ici avec Est.";
+		close3;
+	}
+	if ('twilight_story == 6) {
+		'guide = getnpcid(0);
+		'twilight_story = 7;
+		npcspeed 200;
+		npctalk "Alors, partons.";
+		unitwalk 'guide,199,248, instance_npcname("Almond#amond01") + "::OnEvent00";
+		enablenpc instance_npcname("Intruder#sweety02");
+		end;
+	}
+	if ('twilight_story == 7)
+		end;
+	if ('twilight_story == 8) {
+		'twilight_story = 9;
+		unittalk getcharid(3), "" + strcharinfo(0) + " : Tracker : Pyo-o-o-o-o! There!!";
+		setpcblock PCBLOCK_NPC, true;
+		navigateto("1@bamn",242,206);
+		sleep2 2000;
+		npctalk "Ahahaha, c'est bruyant.";
+		sleep2 2000;
+		npctalk "Je suis curieux(se), devrions-nous partir rapidement ?";
+		sleep2 2000;
+		npctalk "Invité, il y a un intrus !";
+		donpcevent instance_npcname("twilight_story_mob_3") + "::OnStart";
+		setpcblock PCBLOCK_NPC, false;
+		sleep 200;
+		npcspeed 80;
+		unitwalk 'guide,245,229, instance_npcname("Almond#amond01") + "::OnEvent02";
+		end;
+	}
+	if ('twilight_story == 10 || 'twilight_story == 11 || 'twilight_story == 12) {
+		npctalk "Faites attention !";
+		end;
+	}
+	if ('twilight_story == 13) {
+		'twilight_story = 14;
+		npcspeed 200;
+		setpcblock PCBLOCK_NPC, true;
+		npctalk "Allons vérifier le répéteur.";
+		sleep2 2000;
+		setpcblock PCBLOCK_NPC, false;
+		sleep2 1000;
+		unitwalk 'guide,244,208, instance_npcname("Almond#amond01") + "::OnEvent04";
+		end;
+	}
+	if ('twilight_story == 14)
+		end;
+	if ('twilight_story == 15) {
+		'twilight_story = 16;
+		setpcblock PCBLOCK_NPC, true;
+		for ( .@i = 1; .@i < 5; ++.@i )
+			enablenpc instance_npcname("Rebellion#md_rb0" + .@i);
+		for ( .@i = 6; .@i < 9; ++.@i )
+			enablenpc instance_npcname("Heart Hunter#md_hh0" + .@i);
+		unittalk getcharid(3), "" + strcharinfo(0) + " : Tracker : Kakakakakakakil! The culprit is around! They're on my radar! It's that way!";
+		navigateto("1@bamn",332,143);
+		sleep2 2000;
+		setpcblock PCBLOCK_NPC, false;
+		sleep2 1000;
+		npcspeed 80;
+		npctalk "Il y a encore un autre intrus ! Pas étonnant que je commence à m'exciter~!";
+		unitwalk 'guide,332,169;
+		end;
+	}
+	if ('twilight_story < 18)
+		end;
+	if ('twilight_story == 18) {
+		npcspeed 200;
+		'twilight_story = 19;
+		npctalk "Vous allez bien, aventurier ? Alors, nous pouvons continuer.";
+		unitwalk 'guide,332,143, instance_npcname("Almond#amond01") + "::OnEvent11";
+		end;
+	}
+	if ('twilight_story == 19)
+		end;
+	if ('twilight_story == 20) {
+		npctalk "Ne devriez-vous pas parler à Est ? Elle semble attendre depuis un moment.";
+		end;
+	}
+	end;
+
+OnEvent00:
+	npctalk "Par ici.";
+	sleep 1000;
+	unitwalk 'guide,225,248, instance_npcname("Almond#amond01") + "::OnFollow00";
+	end;
+OnFollow00:
+	unitwalk 'guide,245,248, instance_npcname("Almond#amond01") + "::OnEvent01";
+	end;
+OnEvent01:
+	npctalk "Allons voir le répéteur qui est souvent piraté.";
+	sleep 2000;
+	npctalk "Euh ? Qu'est-ce que vous portez en ce moment ? Sortez-le et montrez-le-moi.";
+	'twilight_story = 8;
+	end;
+
+OnEvent02:
+	npctalk "Voyageur, il y a un intrus !";
+	unitwalk 'guide,245,215, instance_npcname("Almond#amond01") + "::OnEvent03";
+	end;
+OnEvent03:
+	'twilight_story = 10;
+	end;
+
+OnEvent04:
+	npctalk "...vérification du signal.";
+	sleep 2000;
+	npctalk "...canal de piratage vérifié.";
+	sleep 2000;
+	npctalk "...récupération...";
+	sleep 2000;
+	npctalk "...récupération...84%";
+	sleep 2000;
+	npctalk "...récupération terminée.";
+	sleep 2000;
+	npctalk "Allons-nous au répéteur ?";
+	sleep 2000;
+	unitwalk 'guide,245,204, instance_npcname("Almond#amond01") + "::OnEvent05";
+	end;
+OnEvent05:
+	npctalk "Voyageur. Vous aimez les amandes ? Un client qui aimait les amandes m'a nommé. Cela me va bien ?";
+	sleep 3000;
+	unitwalk 'guide,265,204, instance_npcname("Almond#amond01") + "::OnEvent06";
+	end;
+OnEvent06:
+	npctalk "Ce gamin à l'instant, je l'ai déjà vu.";
+	unitwalk 'guide,285,204, instance_npcname("Almond#amond01") + "::OnEvent07";
+	end;
+OnEvent07:
+	npctalk "Mais il courait toujours si bien, c'est la première fois que je le vois vraiment~";
+	unitwalk 'guide,300,204, instance_npcname("Almond#amond01") + "::OnEvent08";
+	end;
+OnEvent08:
+	npctalk "La Pitaya ici est mignonne~ On dit que les amandes sont délicieuses ? Avez-vous mangé des amandes avant ?";
+	sleep 2000;
+	npctalk "Par ici.";
+	unitwalk 'guide,300,190, instance_npcname("Almond#amond01") + "::OnEvent09";
+	end;
+OnEvent09:
+	npctalk "Il y a longtemps que je ne me suis sentie aussi à l'aise~";
+	unitwalk 'guide,327,189, instance_npcname("Almond#amond01") + "::OnEvent10";
+	end;
+OnEvent10:
+	npctalk "Voyageur. Est-ce que cet objet bruyant clignote encore ? Vérifions-le une seconde.";
+	'twilight_story = 15;
+	end;
+
+OnEvent11:
+	npctalk "...vérification du signal.";
+	sleep 2000;
+	npctalk "...canal de piratage vérifié.";
+	sleep 2000;
+	npctalk "...récupération...";
+	sleep 2000;
+	npctalk "...récupération...72%";
+	sleep 2000;
+	npctalk "...récupération terminée.";
+	sleep 2000;
+	npctalk "Allons au répéteur suivant~";
+	sleep 2000;
+	unitwalk 'guide,320,139, instance_npcname("Almond#amond01") + "::OnFollow12";
+	end;
+OnFollow12:
+	unitwalk 'guide,300,139, instance_npcname("Almond#amond01") + "::OnEvent12";
+	end;
+OnEvent12:
+	npctalk "C'est bien le gamin d'avant, non ? C'est un intrus. C'est étrange, ça ressemble aux amandes...";
+	unitwalk 'guide,285,139, instance_npcname("Almond#amond01") + "::OnEvent13";
+	end;
+OnEvent13:
+	npctalk "Allons plus vite ? Il y a un bruit qui vient d'ailleurs...";
+	unitwalk 'guide,285,118, instance_npcname("Almond#amond01") + "::OnEvent14";
+	end;
+OnEvent14:
+	npctalk "C'est plus calme que je ne pensais. Où sont passés les intrus ?";
+	unitwalk 'guide,285,98, instance_npcname("Almond#amond01") + "::OnEvent15";
+	end;
+OnEvent15:
+	npctalk "Par ici.";
+	unitwalk 'guide,261,98, instance_npcname("Almond#amond01") + "::OnEvent16";
+	end;
+OnEvent16:
+	npcspeed 80;
+	npctalk "C'est Est !";
+	'twilight_story = 20;
+	unitwalk 'guide,261,87;
+	end;
+}
+
+1@bamn,1,1,0	script	twilight_story_mob_3	-1,{
+	end;
+OnStart:
+	.@event$ = instance_npcname("twilight_story_mob_3") + "::OnMobDead";
+	monster 'map_bamn$,246,208,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,248,208,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,246,206,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	monster 'map_bamn$,248,206,"Heart Hunter","G_EP17_2_HEART_HUNTER",1, .@event$;
+	enablenpc instance_npcname("Intruder#sweety02");
+	end;
+OnMobDead:
+	.@event$ = instance_npcname("twilight_story_mob_3") + "::OnMobDead";
+	if (mobcount('map_bamn$, .@event$) < 1) {
+		if ('twilight_story == 10)
+			'twilight_story = 11;
+	}
+	end;
+}
+
+1@bamn,243,208,5	script	Repeater#wifi03	CLEAR_NPC,{
+	mes "Il n'y a aucun moyen de savoir dans quel état se trouve le répéteur. La puce de communication semble correctement installée.";
+	close;
+}
+
+1@bamn,242,206,7	script(DISABLED)	Intruder#sweety02	4_EP17_SWEETY,{
+	if ('twilight_story < 11) {
+		npctalk "Vous êtes d'un cran en retard ! Vous bande d'idiot !";
+		end;
+	}
+	if ('twilight_story == 11) {
+		'twilight_story = 12;
+		npctalk "Hah ! Pensez-vous que vous puissiez m'attraper ?";
+		sleep 2000;
+		npctalk "Allez souffrir !";
+		sleep 500;
+		disablenpc();
+		donpcevent instance_npcname("twilight_story_mob_4") + "::OnStart";
+		end;
+	}
+	end;
+}
+
+1@bamn,1,1,0	script	twilight_story_mob_4	-1,{
+	end;
+OnStart:
+	.@event$ = instance_npcname("twilight_story_mob_4") + "::OnMobDead";
+	monster 'map_bamn$,248,206,"Heart Hunter Commander","G_BELLARE3",1, .@event$;
+	monster 'map_bamn$,248,208,"Heart Hunter Commander","G_BELLARE3",1, .@event$;
+	end;
+OnMobDead:
+	.@event$ = instance_npcname("twilight_story_mob_4") + "::OnMobDead";
+	if (mobcount('map_bamn$, .@event$) < 1) {
+		if ('twilight_story == 12)
+			'twilight_story = 13;
+	}
+	end;
+}
+
+
+1@bamn,331,161,3	script(DISABLED)	Rebellion#md_rb02	4_F_REBELLION,7,7,{
+	end;
+OnTouch:
+	if ('twilight_story == 16) {
+		'twilight_story = 17;
+		npctalk "Nous allons prendre ce lieu, regardez bien !";
+		sleep 1000;
+		specialeffect EF_DESPERADO, AREA, instance_npcname("Heart Hunter#md_hh06");
+		sleep 1000;
+		npctalk "Kakaka, Let's beat them down with a blast!", instance_npcname("Rebellion#md_rb04");
+		specialeffect EF_TRIPLEACTION, AREA, instance_npcname("Heart Hunter#md_hh07");
+		sleep 1000;
+		specialeffect EF_DESPERADO, AREA, instance_npcname("Heart Hunter#md_hh07");
+		sleep 2000;
+		npctalk "Thank you for showing yourselves! You bastards!", instance_npcname("Rebellion#md_rb03");
+		sleep 2000;
+		specialeffect EF_DESPERADO, AREA, instance_npcname("Heart Hunter#md_hh08");
+		sleep 2000;
+		npctalk "...", instance_npcname("Heart Hunter#md_hh07");
+		sleep 2000;
+		npctalk "...(Nods)", instance_npcname("Heart Hunter#md_hh06");
+		sleep 1000;
+		npctalk "...", instance_npcname("Heart Hunter#md_hh08");
+		sleep 1000;
+		npctalk "Quel signal envoyez-vous les uns aux autres ?";
+		sleep 1000;
+		specialeffect EF_DESPERADO, AREA, instance_npcname("Heart Hunter#md_hh07");
+		for ( .@i = 1; .@i < 5; ++.@i )
+			specialeffect EF_SPREADATTACK, AREA, instance_npcname("Rebellion#md_rb0" + .@i);
+		sleep 1000;
+		for ( .@i = 6; .@i < 9; ++.@i )
+			disablenpc instance_npcname("Heart Hunter#md_hh0" + .@i);
+		sleep 1000;
+		npctalk "Quoi ? Ils ont fui ? Dégageons !";
+		sleep 2000;
+		for ( .@i = 1; .@i < 5; ++.@i )
+			disablenpc instance_npcname("Rebellion#md_rb0" + .@i);
+		enablenpc instance_npcname("Intruder#sweety03");
+		npctalk "What...?", instance_npcname("Intruder#sweety03");
+	}
+	end;
+}
+1@bamn,321,161,5	duplicate(dummy_disabled_npc)	Rebellion#md_rb01	4_M_REBELLION
+1@bamn,331,155,1	duplicate(dummy_disabled_npc)	Rebellion#md_rb03	4_M_REBELLION
+1@bamn,321,155,7	duplicate(dummy_disabled_npc)	Rebellion#md_rb04	4_F_REBELLION
+1@bamn,324,158,7	duplicate(dummy_disabled_npc)	Heart Hunter#md_hh06	G_EP17_2_HEART_HUNTER
+1@bamn,326,159,3	duplicate(dummy_disabled_npc)	Heart Hunter#md_hh07	G_EP17_2_HEART_HUNTER
+1@bamn,328,158,1	duplicate(dummy_disabled_npc)	Heart Hunter#md_hh08	G_EP17_2_HEART_HUNTER
+
+
+1@bamn,333,141,7	script(DISABLED)	Intruder#sweety03	4_EP17_SWEETY,{
+	if ('twilight_story == 17) {
+		setpcblock PCBLOCK_NPC, true;
+		'twilight_story = 18;
+		npctalk "Quoi ? Où sont passés les autres ?";
+		sleep2 2000;
+		npctalk "Vous l'avez fait ?";
+		sleep2 2000;
+		npctalk "Vous êtes pas mal, n'est-ce pas ?";
+		sleep2 2000;
+		npctalk "Repeater : (... .. ..)", instance_npcname("Repeater#wifi02");
+		npctalk "Oh, il y a un message. Restez là un moment. Oui, bonjour.";
+		sleep2 2000;
+		npctalk "Repeater : (... ??... ??)", instance_npcname("Repeater#wifi02");
+		sleep2 2000;
+		npctalk "Maintenant ? Plus de temps... Oui, non... Ah...";
+		sleep2 2000;
+		npctalk "... ... jusqu'à présent... non?!... D'accord...";
+		sleep2 2000;
+		emotion ET_THINK;
+		sleep2 2000;
+		npctalk "Vous ! Vous êtes la raison pour laquelle je n'ai pas le temps en ce moment ! Je vous tuerai la prochaine fois que nous nous reverrons !";
+		sleep2 2000;
+		disablenpc();
+		enablenpc instance_npcname("Est#est04");
+		for ( .@i = 5; .@i < 9; ++.@i )
+			enablenpc instance_npcname("Rebellion#md_rb0" + .@i);
+		for ( .@i = 0; .@i < 3; ++.@i )
+			enablenpc instance_npcname("Heart Hunter#md_hh1" + .@i);
+		setpcblock PCBLOCK_NPC, false;
+	}
+	end;
+}
+1@bamn,334,143,5	duplicate(dummy_npc)	Repeater#wifi02	2_POSTBOX
+
+
+1@bamn,257,84,3	script(DISABLED)	Est#est04	4_F_ESTLOVELOY,{
+	if ('twilight_story == 20) {
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "J'ai entendu le rapport. Vous avez trouvé un type qui ressemblait au leader ?";
+		mes "Je pense que le reste des membres est aussi plutôt bon.";
+		next;
+		mes "[Est]";
+		mes "Qu'est-il arrivé au répéteur ?";
+		next;
+		cutin "ep172_beta",2;
+		mes "[Almond]";
+		mes "Nous étions en route vers l'autre.";
+		mes "Mais c'est assez loin d'ici.";
+		next;
+		cutin "ep162_est01",2;
+		mes "[Est]";
+		mes "Hmm... Faisons cela ?";
+		mes "Le gars que vous avez manqué est un garçon aux cheveux violets, n'est-ce pas ?";
+		mes "Nous allons l'appâter pour le faire sortir.";
+		next;
+		mes "[Est]";
+		mes "Je m'occuperai du reste qui se cache dans le jardin.";
+		mes "Ah. Je vais aussi escorter Almond.";
+		next;
+		mes "[Est]";
+		mes "Il a probablement pris la direction de la partie ouest de la villa, donc allez-y.";
+		mes "Vous avez le traceur d'Elyumina. Il s'activera si vous vous approchez de lui.";
+		if ('twilight_story == 20) {
+			'twilight_story = 21;
+			enablenpc instance_npcname("#to_bamq");
+			enablenpc instance_npcname("Intruder#sweety");
+			enablenpc instance_npcname("#to_swty01");
+			enablenpc instance_npcname("#to_swty02");
+		}
+		close3;
+	}
+	if ('twilight_story == 21) {
+		mes "[Est]";
+		mes "Il a probablement pris la direction de la partie ouest de la villa, donc allez-y.";
+		mes "Vous avez le traceur d'Elyumina ; il s'activera si vous vous approchez de lui.";
+		next;
+		mes "[Est]";
+		mes "Ne vous inquiétez pas, je m'occuperai d'Almond d'ici.";
+		close3;
+	}
+	end;
+}
+
+1@bamn,250,80,7	script(DISABLED)	Rebellion#md_rb05	4_M_REBELLION,{
+	npctalk "Laissez le reste à nous.";
+	end;
+}
+
+// 1@bamn,254,80,7	script	Rebellion#md_rb06	4_F_REBELLION,7,7,{	// unknown effect
+1@bamn,254,80,7	script(DISABLED)	Rebellion#md_rb06	4_F_REBELLION,{
+	npctalk "Hehehe... C'est enfin l'heure de la vengeance... Hehehe...";
+	end;
+}
+
+1@bamn,258,80,1	script(DISABLED)	Rebellion#md_rb07	4_M_REBELLION,{
+	npctalk "S'il y a un ennemi qui cause du tumulte, nous devrions les attaquer avec plus de nombres.";
+	end;
+}
+
+1@bamn,202,84,3	script(DISABLED)	Rebellion#md_rb08	4_M_REBELLION2,{
+	npctalk "Vous cherchez un garçon aux cheveux violets, n'est-ce pas ? Il est allé vers les laboratoires.";
+	end;
+}
+
+
+1@bamn,67,173,0	script(DISABLED)	#to_swty01	HIDDEN_WARP_NPC,5,5,{
+	end;
+OnTouch:
+	if ('twilight_story == 21) {
+		unittalk getcharid(3), "" + strcharinfo(0) + " : Tracker : Pyo-o-o-o-o! That way! Pyo-pyo~!";
+		navigateto("1@bamn",33,224);
+	}
+	end;
+}
+
+1@bamn,121,204,0	duplicate(#to_swty01)	#to_swty02	HIDDEN_WARP_NPC,7,7
+
+1@bamn,67,195,3	script(DISABLED)	Heart Hunter#md_hh10	G_BELLARE3,5,5,{
+	end;
+OnTouch:
+	monster 'map_bamn$,67,195,"Heart Hunter Commander","G_BELLARE3",1;
+	monster 'map_bamn$,65,199,"Heart Hunter Commander","G_BELLARE3",1;
+	monster 'map_bamn$,71,197,"Heart Hunter Commander","G_BELLARE3",1;
+	disablenpc();
+	end;
+}
+
+1@bamn,78,204,5	script(DISABLED)	Heart Hunter#md_hh11	G_BELLARE3,5,5,{
+	end;
+OnTouch:
+	emotion ET_GO;
+	monster 'map_bamn$,78,204,"Heart Hunter Commander","G_BELLARE3",1;
+	monster 'map_bamn$,83,204,"Heart Hunter Commander","G_BELLARE3",1;
+	monster 'map_bamn$,76,200,"Heart Hunter Commander","G_BELLARE3",1;
+	disablenpc();
+	end;
+}
+
+1@bamn,61,214,7	script(DISABLED)	Heart Hunter#md_hh12	G_BELLARE3,5,5,{
+	end;
+OnTouch:
+	emotion ET_GO;
+	monster 'map_bamn$,61,214,"Heart Hunter Commander","G_BELLARE3",1;
+	monster 'map_bamn$,58,212,"Heart Hunter Commander","G_BELLARE3",1;
+	monster 'map_bamn$,64,214,"Heart Hunter Commander","G_BELLARE3",1;
+	disablenpc();
+	end;
+}
+
+1@bamn,145,106,5	duplicate(dummy_npc)	Repeater#wifi01	CLEAR_NPC
+
+
+1@bamq,125,39,3	script(DISABLED)	Intruder#sweety	4_EP17_SWEETY,5,5,{
+	end;
+OnTouch:
+	if ('twilight_story == 21) {
+		setpcblock PCBLOCK_NPC, true;
+		'twilight_story = 22;
+		npctalk "Vous êtes trop tard. Vous idiots !";
+		sleep2 2000;
+		npctalk "Ils ont déjà fui en utilisant les aérostats !";
+		sleep2 2000;
+		npctalk "Maintenant, moi, Sweety, je vais m'occuper des idiots qui viennent d'entrer !";
+		sleep2 2000;
+		setpcblock PCBLOCK_NPC, false;
+		disablenpc();
+		donpcevent instance_npcname("twilight_story_mob_5") + "::OnStart";
+		end;
+	}
+	end;
+}
+
+1@bamq,1,1,7	script	twilight_story_mob_5	-1,{
+	end;
+OnStart:
+	monster 'map_bamq$,125,39,"Sweety",20642,1, instance_npcname("twilight_story_mob_5") + "::OnMobDead";
+	setunitdata $@mobid[0],UMOB_HP,500000;
+	end;
+OnMobDead:
+	killmonster 'map_bamq$, instance_npcname("twilight_story_mob_5") + "::OnMobDead";
+	if ('twilight_story == 22)
+		'twilight_story = 23;
+	mapannounce 'map_bamq$, "Est: Did you hear a loud noise from here?", bc_map, 0xFF00;
+	enablenpc instance_npcname("Broken Sweety#sweety04");
+	enablenpc instance_npcname("Est#est05");
+	enablenpc instance_npcname("#tgd_bamq_exit");
+	end;
+}
+
+1@bamq,123,39,3	script(DISABLED)	Broken Sweety#sweety04	4_EP17_SWEETY,{
+	specialeffect EF_NPC_STOP;
+	npctalk "... oui ... s ... va ... non ... deux ...";
+	mes "L'électricité rebondit et ne bouge pas, comme si la machine était cassée.";
+	mes "Voyant qu'il détourne le regard, il n'a pas l'air complètement brisé.";
+	close;
+}
+
+1@bamq,108,41,5	script(DISABLED)	Est#est05	4_F_ESTLOVELOY,{
+	cutin "ep162_est01",2;
+	mes "[Est]";
+	mes "C'est un peu tard, mais c'est fini.";
+	mes "Donc c'est toi. Le type qui traînait les pieds dans le jardin.";
+	next;
+	mes "[Est]";
+	mes "Ce type pensait-il que contrôler les poupées automatiques lui permettrait de gagner du temps ?";
+	next;
+	cutin "ep162_est02",2;
+	mes "[Est]";
+	mes "Après tout, ce ne sont que des poupées automatiques, non ?";
+	mes "Je n'ai eu d'autre choix que de faire sauter les poupées automatiques du manoir...";
+	next;
+	cutin "ep162_est01",2;
+	mes "[Est]";
+	mes "Sortons d'ici.";
+	mes "Je t'attendrai à la maison d'hôtes.";
+	close3;
+}
+
+// warps story
+1@bamn,33,224,0	script(DISABLED)	#to_bamq	WARPNPC,1,1,{
+	end;
+OnTouch_:
+	if ('twilight_story == 21)
+		warp 'map_bamq$,103,39;
+	end;
+}
+
+1@bamq,101,39,0	warp2(DISABLED)	#tgd_bamq_exit	1,1,ba_maison,33,220
+
+
+// Daily
+1@bamq,16,39,0	script	#sweety_evt01	HIDDEN_WARP_NPC,2,2,{
+	end;
+OnTouch:
+	if (!is_party_leader())
+		end;
+	disablenpc();
+	enablenpc instance_npcname("Almond#amond02");
+	enablenpc instance_npcname("Sweety#sweety_boss");
+	enablenpc instance_npcname("#to_bamq2");
+	enablenpc instance_npcname("#to_bamn");
+
+	monster 'map_bamn$,120,257,"--ja--",20681,1;	// G_EP17_2_HEART_HUNTER
+	monster 'map_bamn$,130,255,"--ja--",20681,1;
+	monster 'map_bamn$,130,244,"--ja--",20681,1;
+	monster 'map_bamn$,127,184,"--ja--",20681,1;
+	monster 'map_bamn$,188,240,"--ja--",20699,1;	// G_BELLARE3
+	monster 'map_bamn$,203,248,"--ja--",20699,1;
+	monster 'map_bamn$,203,252,"--ja--",20699,1;
+	monster 'map_bamn$,301,234,"--ja--",20681,1;
+	monster 'map_bamn$,302,239,"--ja--",20681,1;
+	monster 'map_bamn$,297,244,"--ja--",20681,1;
+	monster 'map_bamn$,197,52,"--ja--",20699,1;
+	monster 'map_bamn$,120,83,"--ja--",20681,1;
+	monster 'map_bamn$,117,84,"--ja--",20681,1;
+	monster 'map_bamn$,137,176,"--ja--",20681,1;
+	monster 'map_bamn$,143,181,"--ja--",20681,1;
+	monster 'map_bamn$,62,165,"--ja--",20699,1;
+	end;
+}
+
+1@bamq,32,49,3	script(DISABLED)	Sweety#sweety_boss	4_EP17_Sweety,{
+	if ('sweety == 0) {
+		cutin "ep172_Sweety01",2;
+		mes "[Sweety]";
+		mes "Eh, tu es prêt ?";
+		mes "Viens m'affronter quand tu veux.";
+		mes "Je suis sûr que je me sentirai mieux une fois que je t'aurai battu.";
+		next;
+		if (select( "Wait a bit.", "Let's go!" ) == 1) {
+			mes "[Sweety]";
+			mes "Quoi, tu es venu explorer le jardin ?";
+			mes "Le chasseur de cœurs ne sait pas ce qui m'est arrivé, mais...";
+			next;
+			cutin "ep172_Sweety02",2;
+			mes "[Sweety]";
+			mes "Quoi, pourquoi ?";
+			mes "Je ne suis pas du tout comme eux, je suis une créature excellente !";
+			mes "Les professeurs aussi.";
+			mes "Mais, ces gars-là ne sont que des échecs.";
+			close3;
+
+		}
+		cutin "",255;
+		npctalk "Je ne vais pas perdre contre toi cette fois !";
+		disablenpc();
+		donpcevent instance_npcname("twilight_daily") + "::OnStart";
+		'sweety = 1;
+		close;
+	}
+	specialeffect EF_NPC_STOP;
+	mes "Il ne répond à rien.";
+	mes "Je pense qu'il est évanoui à cause de mes attaques.";
+	npctalk "... ...";
+	close;
+}
+
+1@bamq,1,1,7	script	twilight_daily	-1,{
+	end;
+OnStart:
+	monster 'map_bamq$,32,49,"Sweety",20642,1, instance_npcname("twilight_daily") + "::OnMobDead";
+	end;
+OnMobDead:
+	killmonster 'map_bamq$, instance_npcname("twilight_daily") + "::OnMobDead";
+	mapannounce 'map_bamq$, "Almond: Sweety~ Do it in moderation~", bc_map, 0xFF00;
+	enablenpc instance_npcname("Sweety#sweety_boss");
+	'sweety = 2;
+	end;
+}
+
+1@bamq,32,43,3	script(DISABLED)	Stunned Sweety#sweety_bo	4_EP17_SWEETY,{
+	setpcblock PCBLOCK_NPC, true;
+	specialeffect EF_NPC_STOP;
+	sleep2 500;
+	setpcblock PCBLOCK_NPC, false;
+	npctalk " ... ... ";
+	mes "J'ai perdu connaissance suite au choc.";
+	mes "Il semble qu'il ait perdu connaissance.";
+	close;
+}
+	
+1@bamq,37,59,3	script(DISABLED)	Almond#amond02	EP17_2_BETA_BASIC,{
+	if ('sweety < 2) {
+		cutin "ep172_beta",2;
+		mes "[Almond]";
+		mes "Je ne comprends pas.";
+		mes "Pourquoi Sweety pousse-t-il son corps à la limite...";
+		next;
+		mes "[Almond]";
+		mes "Et c'est mon travail de réparer son corps détruit.";
+		mes "S'il te plaît, traite-le assez pour le satisfaire.";
+		close3;
+	}
+	cutin "ep172_beta",2;
+	mes "[Almond]";
+	mes "Je m'occuperai du déplacement de Sweety.";
+	mes "Tu veux en finir maintenant ?";
+	next;
+	if (select( "Let's wrap up.", "I'll explore the garden first." ) == 2) {
+		mes "[Almond]";
+		mes "Il reste encore des intrus dehors.";
+		mes "Tu t'en rends compte ?";
+		close3;
+	}
+	mes "[Almond]";
+	mes "Alors, allons-y ?";
+	close2;
+	warp "ba_in01",18,255;
+	end;
+}
+
+
+// warps daily
+1@bamn,33,224,0	warp2(DISABLED)	#to_bamq2	1,1,1@bamq,13,39
+1@bamq,8,39,0	warp2(DISABLED)	#to_bamn	1,1,1@bamn,33,220
+
+
+// Daily quest
+1@bamn,150,47,3	script	#bam_body01	4_EP17_BROKENBETA,{
+	if (isbegin_quest(18024) == 1) {
+		if (checkweight(1000226,1) == 0) {	// (custom)
+			mes "^008800Attendez une seconde !!";
+			mes "Vous ne pouvez recevoir aucun objet supplémentaire car vous êtes trop chargé d'objets. Veuillez réessayer après avoir allégé votre inventaire.^000000";
+			close;
+		}
+		.@id = atoi(replacestr(strnpcinfo(2), "bam_body0", ""));
+
+		if ('broken_beta[.@id] == 0) {
+			mes "Le corps du Manager Beta est dissimulé sous les paysages.";
+			next;
+			if (rand(1,10) < 5)
+				mes "L'emplacement central est vide.";
+			else {
+				mes "J'ai récupéré le noyau.";
+				getitem 1000226,1;
+			}
+			mes "Je laisserai Alpha savoir plus tard pour qu'elle puisse récupérer le corps de la poupée.";
+			'broken_beta[.@id] = 1;
+		}
+	}
+	mes "La partie centrale est vide.";
+	close;
+
+OnInstanceInit:
+	questinfo( QTYPE_CLICKME, QMARK_YELLOW, "isbegin_quest(18024) == 1" );
+	end;
+}
+1@bamn,221,193,3	duplicate(#bam_body01)	#bam_body02	4_EP17_BROKENBETA
+1@bamn,208,87,3	duplicate(#bam_body01)	#bam_body03	4_EP17_BROKENBETA
+1@bamn,314,146,3	duplicate(#bam_body01)	#bam_body04	4_EP17_BROKENBETA
+1@bamn,207,276,3	duplicate(#bam_body01)	#bam_body05	4_EP17_BROKENBETA
+1@bamn,70,256,3	duplicate(#bam_body01)	#bam_body06	4_EP17_BROKENBETA
+1@bamn,64,187,3	duplicate(#bam_body01)	#bam_body07	4_EP17_BROKENBETA
+1@bamn,275,313,3	duplicate(#bam_body01)	#bam_body08	4_EP17_BROKENBETA
+1@bamn,338,267,3	duplicate(#bam_body01)	#bam_body09	4_EP17_BROKENBETA

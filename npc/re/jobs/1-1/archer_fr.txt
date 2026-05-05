@@ -1,0 +1,129 @@
+//===== rAthena Script ======================================= 
+//= Renewal Archer Job Quest
+//===== By: ================================================== 
+//= Kisuka
+//===== Current Version: ===================================== 
+//= 1.1
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Job Change to Archer Class
+//===== Additional Comments: ================================= 
+//= 1.0 First Version. [Kisuka]
+//= 1.1 Added support for Baby classes. [Euphy]
+//============================================================ 
+payon_in02,64,71,4	script	Archer Guildsman#archer	85,{
+	if (Upper == 1) {
+		if (Class == Job_Novice_High && (ADVJOB == Job_Sniper || ADVJOB == Job_Clown || ADVJOB == Job_Gypsy)) {
+			mes "[Archery Master]";
+			mes "Salut, je te connais.";
+			mes "Tu as déjà passé ce test";
+			mes ", n'est-ce pas?";
+			next;
+			mes "[Archery Master]";
+			mes "Ah, tu dois être allé à Valhalla et y avoir été renaclé.";
+			mes "Waouh, c'est impressionnant!";
+			mes "[Archery Master]";
+			next;
+			if (!callfunc("F_CanChangeJob")) {
+				mes "[Archery Master]";
+				mes "Euh...";
+				mes "[Archery Master]";
+				next;
+				mes "[Archery Master]";
+				mes "[Archery Master]";
+				close;
+			}
+			mes "[Archery Master]";
+			mes "rien d'autre à ajouter.";
+			mes "Je sais que tu feras un excellent Archer...";
+			mes "[Archery Master]";
+			next;
+			skill "NV_TRICKDEAD",0,SKILL_PERM;
+			jobchange Job_Archer_high;
+			skill "AC_MAKINGARROW",1,SKILL_PERM;
+			skill "AC_CHARGEARROW",1,SKILL_PERM;
+			mes "[Archery Master]";
+			mes "[Archery Master]";
+			mes "Voici votre récompense cette fois-ci, j'espère que vous comprenez. Prenez soin de vous.";
+			close;
+		}else{
+			mes "[Archery Master]";
+			mes "Oh...?";
+			mes "Hey, qu'est-ce que";
+			mes "tu fais ici...?";
+			next;
+			mes "[Archery Master]";
+			mes "Je peux dire que tu n'es pas taillé pour être un Archer. Ça ressemble plutôt à ce que tu es censé faire";
+			mes "autre chose...";
+			close;
+		}
+	}
+	mes "[Archery Master]";
+	mes "Enchanté de vous rencontrer. Comment puis-je vous aider ?";
+	next;
+	switch(select("I want to be an Archer.:I need the requirements, please.:Nothing, thanks.")) {
+	case 1:
+		mes "[Archery Master]";
+		if(BaseJob != Job_Novice) {
+			if(BaseJob == Job_Archer)
+				mes "Haha, vous me faites rire...";
+			else {
+				mes "Je suis désolé mais seuls les Novices peuvent changer de métier.";
+				mes "Vous avez déjà un emploi décent, n'est-ce pas ?";
+			}
+			close;
+		}else{
+			mes "You are... "+strcharinfo(0)+", right?";
+			next;
+			if (!callfunc("F_CanChangeJob")) {
+				mes "[Archery Master]";
+				mes "Eh bien, votre niveau de compétence n'est pas encore suffisant.";
+				mes "Votre niveau de métier doit être d'au moins ^4A4AFF10^000000 et votre niveau de Compétence de Base devrait atteindre ^4A4AFFniveau 9";
+				next;
+				mes "[Archery Master]";
+				mes "Car un Archer nécessite une concentration extrêmement élevée, nous n'acceptons donc pas ceux qui ont peu de patience.";
+				close;
+			}
+			mes "[Archery Master]";
+			mes "Votre Compétence de Base est maintenant suffisante...";
+			mes "....Hm~~ alors vous êtes maintenant prêt à devenir Archer. Je vais procéder immédiatement.";
+			next;
+			mes "[Archery Master]";
+			mes "Félicitations ! Vous êtes désormais un Archer ! De plus, nous espérons que vous participerez activement à nombreux programmes pour la renaissance de la Guilde des Archers.";
+			mes "Ah, des objets sont arrivés du Département de Production. Voici, prenez-les ! Tout cela est à vous !";
+			callfunc "Job_Change",Job_Archer;
+			getitem 1742,1;	// N_Composite_Bow
+			getitem 12004,1;	// Arrow_Container
+			getitem 12009,1;	// Silver_Arrow_Container
+			getitem 12008,1;	// Fire_Arrow_Container
+			next;
+			mes "[Archery Master]";
+			mes "Avec un arc et des flèches, vous êtes maintenant un vrai Archer.";
+			mes "Si vous ouvrez le conteneur de flèches, il y a des flèches dedans et alors vous pouvez les équiper.";
+			mes "Eh bien, j'espère entendre de meilleures nouvelles de votre part. Il est temps de dire au revoir.";
+			mes "Au revoir.";
+			close;
+		}
+	case 2:
+		mes "[Archery Master]";
+		mes "Un Archer possède des compétences utilisant un arc et divers talents.";
+		mes "La plus grande capacité d'un Archer est d'attaquer les ennemis à distance.";
+		next;
+		mes "[Archery Master]";
+		mes "Bien qu'un Archer ait une PV inférieure, il ou elle peut tirer sur les ennemis à longue portée,";
+		mes "donc un Archer est plus sûr lors d'une véritable bataille.";
+		next;
+		mes "[Archery Master]";
+		mes "Bien qu'un Archer dans Ragnarok ait des PV plus faibles, il ou elle possède une précision et un taux d'attaque élevés afin que l'archer puisse tuer les monstres avant qu'ils ne s'approchent d'un Archer.";
+		next;
+		mes "[Archery Master]";
+		mes "^8C2121Un Archer peut changer de métier pour devenir un Hunter.^000000";
+		mes "^8C2121Outre le Hunter, si vous êtes un homme, vous pouvez changer de métier pour devenir un Bard, et si vous êtes une femme, vous pouvez changer de métier pour devenir une Dancer.^000000";
+		close;
+	case 3:
+		mes "[Archery Master]";
+		mes "Si vous avez des questions, n'hésitez pas à venir me demander.";
+		close;
+	}
+}

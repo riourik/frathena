@@ -1,0 +1,246 @@
+//===== rAthena Script =======================================
+//= Rare Diamond Merchant
+//===== By: ==================================================
+//= Z3R0
+//===== Current Version: =====================================
+//= 1.5
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Exchanges 17 Carat Diamond
+//===== Additional Comments: =================================
+//= 1.0 First / Optimized Version
+//= 1.1 Adjusted for Missing ; on Line #271 (#15425)
+//= 1.2 Removed Comments per Request (#15426)
+//= 1.3 Changed Emotion # to Const Definition (#15427)
+//= 1.4 Removed Double Space on Line #148 (#15428)
+//= 1.5 Added This Version History (#15429)
+//============================================================
+
+// Main NPC :: diamond
+//============================================================
+-	script	RareDiamondMerchant	58,{
+
+	set .@npc$, "[Rare Diamond Merchant]";
+
+	mes .@npc$;
+	mes "Dames et Messieurs ! ! !";
+	mes "Vous avez entendu des rumeurs, mais vous ne l'avez jamais vu de vos propres yeux";
+	mes "le diamant le plus rare du monde !";
+	mes "Le ^FF82FF'17 Carat Diamond'^000000 est actuellement en vente à un prix très abordable !!";
+	mes "Si les diamants précieux vous intéressent, écoutez bien !";
+	next;
+	
+	mes .@npc$;
+	mes "Vous pouvez offrir le diamant comme cadeau à votre amoureuse.";
+	mes "Le destinataire du ^FF82FF'17 Carat Diamond'^000000 en fera un trésor";
+	mes "et vous aimera profondément dans son cœur.";
+	emotion ET_BLABLA;
+	next;
+	
+	mes .@npc$;
+	mes "Quoi ? Vous n'avez pas d'amoureux ?";
+	mes "Vous pouvez tout de même le garder pour vous-même.";
+	mes "L'aura envoûtante du ^FF82FF'17 Carat Diamond'^000000 est susceptible";
+	mes "d'apporter l'amour dans votre vie.";
+	next;
+	
+	mes .@npc$;
+	mes "Connu sous le nom de diamant captivant des diamants...";
+	mes "C'est le ^FF82FF'17 Carat Diamond'^000000 !";
+	next;
+
+	set .@menu$, "^FF82FF'17 Carat Diamond'^000000?";
+	if (countitem(6024))
+		set .@menu$, .@menu$ + ":Exchange my 17 Carat Diamond for zeny...";
+
+	switch(select(.@menu$)) {
+	case 1:
+		mes .@npc$;
+		mes "Oui!";
+		mes "Hehe, le ^FF82FF'17 Carat Diamond'^000000 que vous voyez ici même";
+		mes "est l'un des diamants de 17 carats de la plus haute qualité.";
+		mes "Le comparer à n'importe quelle pierre incolore de la taille d'un pois que vous auriez";
+		mes "pu creusée au Morocc est incomparable !";
+		emotion ET_HUK;
+		next;
+		
+		mes .@npc$;
+		mes "Certains affirment qu'il s'agit du même diamant";
+		mes "que Kachua a vu à Comodo !";
+		next;
+		
+		if (select("End Conversation:How much is it?") == 1) {
+			mes .@npc$;
+			mes "C'est plutôt pas cher !";
+			mes "Si vous êtes intéressé(e), n'hésitez pas à venir me voir à tout moment !";
+			close;
+		}
+		
+		mes .@npc$;
+		mes "Bien sûr ! L'essentiel, c'est le prix !";
+		mes "Comme je l'ai déjà dit, le ^FF82FF'Diamant de 17 Carats'^000000 a été";
+		mes "évalué comme un diamant de 17 carats.";
+		mes "Il n'en existe pas beaucoup dans le monde.";
+		next;
+		
+		mes .@npc$;
+		mes "Le prix est tout simplement de 500 millions de zeny !";
+		mes "Il y a également une taxe de service de 1 000 000 de zeny.";
+		mes "Compte tenu de la qualité du diamant,";
+		mes "c'est un petit prix à payer.";
+		next;
+		
+		if (select("^828282It's too expensive.^000000:I'll buy it.") == 1) {
+			mes .@npc$;
+			mes "Dire qu'un diamant tel que le";
+			mes "^FF82FF'Diamant de 17 Carats'^000000 est trop cher,";
+			mes "me laisse sans voix.";
+			close;
+		}
+		
+		mes .@npc$;
+		mes "OOOH ! Je savais dès le moment où je vous ai vu que vous étiez le véritable";
+		mes "propriétaire de ce magnifique diamant.";
+		mes "Je suis ravi d'avoir raison !";
+		mes "Je pense que ce diamant vous conviendra parfaitement.";
+		mes "Tout ce dont j'ai besoin, c'est que vous signiez ce contrat.";
+		next;
+		
+		while(1) {
+			if (select("^B9062FI will sign the contract.^000000:^828282Nevermind, I changed my mind.^000000") == 2) {
+				mes .@npc$;
+				mes "Je vois... C'est dommage...";
+				close;
+			}
+			
+			mes .@npc$;
+			mes "Quel est votre nom ?";
+			next;
+			
+			mes "[" + strcharinfo(0) + "]";
+			mes "My name is " + strcharinfo(0) + ".";
+			next;
+
+			mes .@npc$;
+			mes "D'accord, veuillez signer ici.";
+			next;
+			
+			input .@charname$;
+			if (.@charname$ == strcharinfo(0)) {
+				mes .@npc$;
+				mes "D'accord, très bien.";
+				mes "Il ne reste plus qu'à régler le paiement.";
+				next;
+				
+				if (Zeny >= 501000000) {
+					mes .@npc$;
+					mes ". . . . . .";
+					next;
+					
+					mes .@npc$;
+					mes "Calcul du prix et de la commission de service...";
+					mes "501 000 000 zeny.";
+					mes "Le montant a été confirmé.";
+					emotion ET_BLABLA;
+					set Zeny, Zeny - 501000000;
+					getitem 6024, 1;
+					next;
+
+					mes .@npc$;
+					mes "Vous pouvez échanger votre diamant contre des zeny à tout moment.";
+					mes "Cependant, une commission de service de 1 000 000z sera appliquée.";
+					mes "Merci pour votre achat.";
+					emotion ET_THANKS;
+					close;
+				}
+				else {
+					mes .@npc$;
+					mes "Hm ?";
+					mes "Je suis désolé, mais vous n'avez pas de fonds suffisants.";
+					mes "Y compris la commission de service, un total de 501 000 000z est requis.";
+					mes "Veuillez vérifier votre solde en zeny et réessayer.";
+					emotion ET_SCRATCH;
+					close;
+				}
+			}
+			else {
+				mes .@npc$;
+				mes "Est-ce vraiment votre signature ?";
+				mes "[NPC] Voulez-vous signer à nouveau pour confirmer ?";
+				next;
+			}
+		}
+	case 2:
+		mes .@npc$;
+		mes "AAH. Vous souhaitez échanger votre ^FF82FF'17 Carat Diamond'^000000 contre des zeny ?";
+		emotion ET_SURPRISE;
+		next;
+		if (select("Yes:No") == 2) {
+			mes .@npc$;
+			mes "Alors, que désirez-vous donc... ?";
+			mes ". . . . . ....";
+			emotion ET_THINK;
+			close;
+		}
+
+		mes .@npc$;
+		mes "Je vois. Après avoir reçu votre signature,";
+		mes "Vous devez offrir votre ^FF82FF'17 Carat Diamond'^000000.";
+		mes "N'oubliez pas non plus qu'il y a une commission de service de 1 000 000z !";
+		next;
+		
+		mes .@npc$;
+		mes "Quel est votre nom ?";
+		next;
+		
+		mes "[" + strcharinfo(0) + "]";
+		mes "My name is " + strcharinfo(0) + ".";
+		next;
+		
+		mes .@npc$;
+		mes "D'accord, veuillez signer ici.";
+		next;
+		
+		while (1) {
+			if (select("Sign:Don't Sign") == 2) {
+				mes .@npc$;
+				mes "L'échange ne peut être complété sans votre signature.";
+				close;
+			}
+			
+			input .@charname$;
+			if (.@charname$ == strcharinfo(0)) {
+				mes .@npc$;
+				mes "Votre signature a été reçue.";
+				mes "[NPC] Je vais maintenant prendre votre ^FF82FF'17 Carat Diamond'^000000..";
+				mes "Vous recevrez ^0000FF499,000,000z^000000 par la suite.";
+				next;
+				
+				mes .@npc$;
+				mes "Merci pour votre achat.";
+				mes "[NPC] Chaque fois que vous aurez besoin d'un ^FF82FF'17 Carat Diamond'^000000,";
+				mes "revenez n'importe quand avec 500 millions de zeny.";
+				emotion ET_THANKS;
+				delitem 6024, 1;
+				set Zeny, Zeny + 499000000;
+				close;
+			}
+			else {
+				mes .@npc$;
+				mes "Est-ce vraiment votre signature ?";
+				mes "[NPC] Voulez-vous signer à nouveau pour confirmer ?";
+				next;
+			}
+		}
+	}
+}
+
+prontera,165,89,6	duplicate(RareDiamondMerchant)	Rare Diamond Merchant#1	58
+geffen,106,63,6	duplicate(RareDiamondMerchant)	Rare Diamond Merchant#2	58
+morocc,146,100,6	duplicate(RareDiamondMerchant)	Rare Diamond Merchant#3	58
+alberta,129,60,6	duplicate(RareDiamondMerchant)	Rare Diamond Merchant#4	58
+lighthalzen,163,65,6	duplicate(RareDiamondMerchant)	Rare Diamond Merchant#5	58
+rachel,106,142,6	duplicate(RareDiamondMerchant)	Rare Diamond Merchant#6	58
+payon,180,130,6	duplicate(RareDiamondMerchant)	Rare Diamond Merchant#7	58

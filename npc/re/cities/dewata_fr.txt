@@ -1,0 +1,1175 @@
+//===== rAthena Script ======================================= 
+//= Dewata Town
+//===== By: ================================================== 
+//= Gennosuke Kouga, Muad_Dib
+//===== Current Version: ===================================== 
+//= 1.4
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Dewata Town Script
+//===== Additional Comments: ================================= 
+//= 1.0 First version.
+//= 1.1 Standardized. [Euphy]
+//= 1.2 Fixed Zeny check. [Joseph]
+//= 1.3 Updated to match the official script. [Lemongrass/Euphy]
+//= 1.4 Added VIP features. [Euphy]
+//============================================================
+
+// Dewata Transportation :: dewata_trans
+//============================================================
+alberta,212,202,4	script	Dewata Sailor#alberta	536,{
+	mes "[Marin de Dewata]";
+	mes "Voulez-vous visiter l'île ^8B4513Dewata^000000 ?";
+	mes "Avec ses vagues étincelantes et ses paysages charmants, c'est un excellent endroit pour se détendre.";
+	if (VIP_SCRIPT) {
+		set .@cost, vip_status(VIP_STATUS_ACTIVE)?1000:10000;
+		mes "Le frais de transport est de 10 000 Zeny et de 1 000 pour les VIP.";
+	} else {
+		set .@cost,10000;
+		mes "Le frais de transport est de 10 000 Zeny.";
+	}
+	next;
+	switch(select("Yes!:No.")) {
+	case 1:
+		if (Zeny >= .@cost) {
+			mes "[Marin de Dewata]";
+			mes "^8B4513Dewata^000000 est un pays insulaire magnifique et paisible.";
+			mes "Bon voyage~";
+			close2;
+			set Zeny, Zeny - .@cost;
+			warp "dewata",232,53;
+			end;
+		} else {
+			mes "[Marin de Dewata]";
+			mes "Tu n'as pas les moyens, gamin.";
+			mes "Reviens quand ton porte-monnaie sera plus gros.";
+			close;
+		}
+	case 2:
+		mes "[Marin de Dewata]";
+		mes "Fais-moi savoir";
+		mes "quand tu seras prêt à voyager~";
+		close;
+	}
+}
+
+dewata,229,49,6	script	Alberta Sailor#dewata	536,{
+	mes "[Marin d'Alberta]";
+	mes "Voulez-vous retourner en Alberta ?";
+	next;
+	switch(select("Yes.:No.")) {
+	case 1:
+		mes "[Marin d'Alberta]";
+		mes "J'espère que vous avez beaucoup amusé sur votre";
+		mes "voyage vers l'île ^8B4513Dewata^000000.";
+		mes "Reviens nous voir !";
+		close2;
+		warp "alberta",192,215;
+		end;
+	case 2:
+		mes "[Marin d'Alberta]";
+		mes "Amusez-vous encore un peu avant de partir.";
+		mes "^8B4513Dewata^000000 Island offre encore plus de choses à découvrir.";
+		close;
+	}
+}
+
+// Generic Dewata NPCs :: dewata_npc
+//============================================================ 
+dewata,221,237,5	script	Young Man#dew-1	536,{
+	mes "[Amateur de fruits]";
+	mes "Qu'est-ce qui ne va pas avec votre faaaaaace ? Vous devez vraiment être désinformé !";
+	next;
+	mes "[Amateur de fruits]";
+	mes "Laissez-moi vous faire une petite leçon.";
+	next;
+	mes "[Amateur de fruits]";
+	mes "Je suis peut-être un jeune, mais personne ne connaît mieux que moi le ^777700Palm fruit^000000. D'accord ! Que voulez-vous savoir ?";
+	next;
+	switch(select("About the shell...:About the pulp...:About the palm kernel...:No thanks.")) {
+	case 1:
+		mes "[Amateur de fruits]";
+		mes "Vous voulez donc en savoir plus sur la pulpe du Palm fruit ? Laissez-moi vous expliquer.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Normalement, le coque du Palm fruit est utilisée pour fabriquer de l'huile. L'huile de palmier est un ingrédient utile pour de nombreux plats.";
+		next;
+		mes "[Amateur de fruits]";
+		if (dew_drink > 0)
+			mes "Hmm... Avez-vous déjà rencontré Memo ? Alors il devrait vous être facile de comprendre.";
+		else
+			mes "Si vous voulez savoir comment utiliser l'huile de palmier, allez trouver Memo du côté nord de l'île ^8B4513Dewata^000000. Chaque jour, il prépare des boissons traditionnelles avec cette huile.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "En tout cas, on appelle l'huile qui provient du Palm fruit l'huile de palmier ou l'huile de coco, bien connue pour sa qualité.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Les restes de la production d'huile sont séchés et utilisés comme combustible pour la cuisson ou le chauffage.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Il brûle bien et sent bon, on ne peut pas faire mieux.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Ok !! Tout cela concerne la pulpe, il faut trop de temps pour expliquer tous les effets utiles des coques de fruits de palmier.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Ce n'est pas comme si c'était la limite de mes connaissances. Ne vous méprenez pas !";
+		close;
+	case 2:
+		mes "[Amateur de fruits]";
+		mes "Vous voulez donc savoir à propos de l'intérieur du palmier ? Laissez-moi m'expliquer.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Le fruit de l'arbre à palmier possède deux couches de pulpe. L'extérieur est très rugueux, et l'intérieur est lisse...";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Hmm... Oui ! La pulpe du fruit de l'arbre à palmier est un peu plus dure qu'une coque de noix, cela doit être dû à l'eau qu'elle contient à l'intérieur.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "À l'intérieur de la coque, il y a environ 300cc d'eau qui est utile pour étancher la soif des gens puisque l'île de Dewata fait très chaud.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Et ce n'est pas comme si on le jetait une fois que nous avons bu l'eau à l'intérieur !!";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Nous pouvons aussi en faire un cantine de qualité ! Comme je l'ai dit, il a une coque extérieure assez épaisse et peut servir de gourde.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "C'est également excellent pour fabriquer du charbon. Le charbon fait à partir de fruits de palmier est bien connu pour son feu durable et de qualité,";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Les gens adorent cuisiner des fruits de mer et du poulet avec le charbon de fruit de palmier..";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Il a l'avantage supplémentaire d'être imprégné d'un agréable parfum de palmier";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Ok !! C'est tout pour les informations sur la pulpe, il faudrait trop de temps pour expliquer tous ces effets utiles.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Ce n'est pas comme si je savais tout. Ne vous méprenez pas !";
+		close;
+	case 3:
+		mes "[Amateur de fruits]";
+		mes "Alors, vous voulez savoir à propos du noyau tendre à l'intérieur ? Laissez-moi vous expliquer.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Le noyau situé à l'intérieur de la pulpe dure est utilisé comme digestif naturel.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Il n'y a pas grand-chose à dire sur le noyau à l'intérieur...";
+		next;
+		mes "[Amateur de fruits]";
+		mes "mais nous veillons bien à utiliser chaque partie du fruit de palmier.";
+		next;
+		mes "[Amateur de fruits]";
+		mes "Ne seriez-vous pas d'accord ?";
+		close;
+	case 4:
+		mes "[Amateur de fruits]";
+		mes "Arrgg ! Vous n'avez aucun intérêt pour le monde !";
+		close;
+	}
+}
+
+dewata,114,243,6	script	Lazy Young Man#dew	536,1,1,{
+	if (checkweight(1201,1) == 0 || MaxWeight - Weight < 500) {
+		mes "[Lazy Young Man]";
+		mes "Pourquoi portez-vous autant ? N'est-ce pas lourd ?";
+		close;
+	}
+	if (countitem(11534)) {
+		mes "[Lazy Young Man]";
+		mes "Wewt~!! Est-ce que c'est du jus de palmier ?";
+		mes "Tu peux me le donner ? Je viens tout juste de";
+		mes "me réveiller, et ma gorge est desséchée !";
+		next;
+		switch(select("Give:Do not give")) {
+		case 1:
+			mes "[Lazy Young Man]";
+			mes "Vraiment ? Pour moi ?? Je te donnerai ça en échange... Merci... Hehe~";
+			delitem 11534,1; //Coco_Juice
+			getgroupitem(IG_GiftBox);
+			close;
+		case 2:
+			mes "[Lazy Young Man]";
+			mes "D'accord alors~ Ok...";
+			close;
+		}
+	}
+	mes "[Lazy Young Man]";
+	mes "Ah~ J'ai soif~ Quelqu'un a du jus de palmier pour moi ?";
+	mes "~";
+	close;
+OnTouch:
+	if (countitem(11534) == 0) {
+		mes "[Lazy Young Man]";
+		mes "Arrgg~ J'ai soif~~ tellement soif~~";
+		mes "Donne-moi du jus de palmier... Palm Juice~~";
+		emotion ET_FRET;
+		next;
+		emotion ET_FRET;
+		next;
+		emotion ET_FRET;
+		next;
+		emotion ET_FRET;
+		close;
+	}
+	end;
+}
+
+dewata,159,81,4	script	Tourist#dew-1	881,{
+	mes "[Nasolo]";
+	mes "Wow~ Une mer pure, une plage chaude...";
+	mes "Parfait pour une sortie avec une copine...";
+	next;
+	mes "[Nasolo]";
+	mes "Si seulement j'en avais une...";
+	emotion ET_CRY;
+	next;
+	mes "[Nasolo]";
+	mes "Je me demande quand ma princesse va venir...";
+	emotion ET_OHNO;
+	close;
+}
+
+dewata,146,109,5	script	Restauranteur#dew	886,{
+	if (checkweight(11532,1) == 0 || checkweight(11533,1) == 0 || MaxWeight - Weight < 500) {
+		mes "[Restauranteur]";
+		mes "Vous êtes venu pour goûter mon plat ? Il est toujours bon de manger à jeun.";
+		close;
+	}
+	mes "[Restauranteur]";
+	mes "Bienvenue sur l'île de Dewata.";
+	mes "J'espère que vous vous conduirez comme un noble";
+	mes "voyageur, contrairement à certains de ces";
+	mes "adolescents...";
+	next;
+	switch(select("About Dewata dishes:Today's menu?:I'm okay.")) {
+	case 1:
+		mes "[Restauranteur]";
+		mes "Besoin d'informations sur nos plats ? Eh bien... Je n'ai pas grand-chose à dire, mais n'hésitez pas à écouter si vous le souhaitez.";
+		next;
+		mes "[Restauranteur]";
+		mes "Il y a tant de choses à couvrir, commençons par là.";
+		next;
+		mes "[Restauranteur]";
+		mes "D'abord, les plats de Dewata ont des noms spéciaux basés sur chaque recette de cuisine,";
+		next;
+		mes "[Restauranteur]";
+		mes "Si le nom du plat contient 'Goreng', alors il s'agit soit d'un aliment sauté, soit frit.";
+		next;
+		mes "[Restauranteur]";
+		mes "S'il s'agit d'un type de 'Bakar', alors c'est un aliment grillé.";
+		next;
+		mes "[Restauranteur]";
+		mes "Et si c'est du 'Satay', alors vous mangez un plat brochettes.";
+		next;
+		mes "[Restauranteur]";
+		mes "Ensuite, nous avons des plats nommés d'après les ingrédients de base,";
+		next;
+		mes "[Restauranteur]";
+		mes "À l'île Dewata, nous appelons le riz Nasi, les nouilles Mie, le pain Roti, le poulet Ayam, le poisson Ikan et le maïs Jagung.";
+		next;
+		mes "[Restauranteur]";
+		mes "Donc, si l'on fait frire du riz, on appelle cela 'Nasi Goreng', et les nouilles frites s'appellent 'Mie Goreng'.";
+		next;
+		mes "[Restauranteur]";
+		mes "Bon... C'est assez pour apprécier nos plats à Dewata !! Si vous avez faim, nous avons notre menu spécial pour seulement ^0000FF5000^000000 de Zénis.";
+		close;
+	case 2:
+		mes "[Restauranteur]";
+		mes "Nous avons deux articles : 'Nasi Goreng' et 'Satay'. Lequel voulez-vous ?";
+		next;
+		switch(select("Nasi Goreng:Satay")) {
+		case 1:
+			mes "[Restauranteur]";
+			mes "Voici le Nasi Goreng frit avec ma sauce spéciale plus des œufs brouillés sur le dessus. Cela ne coûte que ^0000FF5000^000000 de Zénis.";
+			set .@food,11532;
+			break;
+		case 2:
+			mes "[Restauranteur]";
+			mes "Voici le Satay, un morceau de viande en brochette grillé au-dessus du charbon de fruit Palmier. Cela ne coûte que ^0000FF5000^000000 de Zénis.";
+			set .@food,11533;
+			break;
+		}
+		next;
+		switch(select("Taste:Walk away")) {
+		case 1:
+			if (Zeny < 5000) {
+				mes "[Restauranteur]";
+				mes "Où sont les sous, gamin ? Hélas ! Pas de repas gratuits ici ! D'accord ?";
+				close;
+			}
+			mes "[Restauranteur]";
+			mes "Here's your "+getitemname(.@food)+", you won't regret it!";
+			set Zeny, Zeny - 5000;
+			getitem .@food,1;
+			close;
+		case 2:
+			mes "[Restauranteur]";
+			mes "C'est dommage que vous ne puissiez pas goûter ce délicieux plat...";
+			close;
+		}
+	case 3:
+		mes "[Restauranteur]";
+		mes "Tu es sérieux ? Ce n'est même pas drôle.";
+		close;
+	}
+}
+
+dewata,147,107,6	script	Gourmet#dew	85,{
+	mes "[Gourmet]";
+	mes "Oh... c'est comme une fête dans ma";
+	mes "bouche... et tout le monde est invité !";
+	emotion ET_CRY;
+	next;
+	mes "[Gourmet]";
+	mes "Maître~ Encore un s'il vous plaît~";
+	emotion ET_BEST;
+	emotion ET_OK, getnpcid(0, "Restauranteur#dew");
+	next;
+	mes "[Gourmet]";
+	mes "Vous devez essayer ça ! La nourriture ici est succulente~";
+	close;
+}
+
+dewata,154,107,4	script	Sightseer#dew	86,{
+	mes "[Touriste]";
+	mes "Ouah...";
+	mes "Combien a-t-il déjà mangé ?";
+	emotion ET_SCRATCH;
+	next;
+	mes "[Touriste]";
+	mes "Il doit être un gros mangeur, pas un gourmet...";
+	next;
+	mes "[Touriste]";
+	mes "Êtes-vous allé à Prontera ? Je pense l'avoir vu quelque part..";
+	close;
+}
+
+dewata,95,203,6	script	Travel Guide#dew	536,{
+	mes "[Guide]";
+	mes "Ce temple derrière moi s'appelle Borobudur.";
+	mes "Le temple de Borobudur a été construit au IXe siècle";
+	mes "pour vénérer le Grand Bouddha, une figure religieuse ancienne.";
+	emotion ET_PROFUSELY_SWEAT;
+	next;
+	mes "[Guide]";
+	mes "Ce temple est composé de 6 plateformes carrées et de 3 plateformes rondes, ainsi que de 2672 panneaux de bas-reliefs sculptés à la main et de 504 statues de divers Bouddhas.";
+	emotion ET_PROFUSELY_SWEAT;
+	next;
+	mes "[Guide]";
+	mes "Le stupa central, ou sanctuaire, se trouve au centre de la haute plateforme, qui est entourée de 72 autres statues.";
+	emotion ET_PROFUSELY_SWEAT;
+	next;
+	mes "[Guide]";
+	mes "Même à l'époque moderne, le temple de Borobudur est un lieu de pèlerinage pour de nombreux moines vénérant le Bouddha. C'est aussi une importante attraction touristique, comme vous pouvez l'imaginer.";
+	emotion ET_PROFUSELY_SWEAT;
+	next;
+	mes "[Guide]";
+	mes "C'est tout ce que j'ai sur le temple de Borobudur, y a-t-il des questions ?";
+	mes "Si non, nous pouvons passer au prochain endroit.";
+	close;
+}
+
+dewata,97,207,4	script	Tourist#dew1	803,{
+	mes "[Touriste]";
+	mes "Oh, dag-nabbit... Je suis allé et";
+	mes "[Tour Guide] J'ai choisi le mauvais guide...";
+	next;
+	mes "[Touriste]";
+	mes "Ce type est un vrai dormeur...";
+	mes "Pourquoi en faire plus long...";
+	emotion ET_CONFUSE;
+	next;
+	mes "[Touriste]";
+	mes "Je dois changer d'agence de voyage...";
+	emotion ET_OHNO;
+	close;
+}
+
+dewata,100,206,4	script	Tourist#dew2	59,{
+	mes "[Touriste]";
+	mes "Hé, allons-y ! Dépêche-toi,";
+	mes "pendant que le guide explique~";
+	next;
+	mes "[Touriste]";
+	mes "Allez... Ça n'a pas l'air de";
+	mes "vouloir s'arrêter de parler de sitôt.";
+	close;
+}
+
+dewata,101,206,4	script	Tourist#dew3	90,{
+	mes "[Touriste]";
+	mes "On ne va pas se perdre sans le guide ?";
+	next;
+	mes "[Touriste]";
+	mes "Nous nous sommes déjà perdus la dernière fois...";
+	close;
+}
+
+dewata,99,203,4	script	Tourist#dew4	755,{
+	mes "[Touriste]";
+	mes "Oh~ C'est très intéressant. Un";
+	mes "temple qui vénère Bouddha...";
+	emotion ET_OK;
+	next;
+	mes "[Touriste]";
+	mes "Mais je ne comprends pas vraiment tout le";
+	mes "symbolisme ici.";
+	next;
+	mes "[Touriste]";
+	mes "Si beau... Je me demande qui a construit";
+	mes "cet endroit ?";
+	close;
+}
+
+dewata,67,186,8	script	Monk#dew1	834,{
+	mes "La puissance sans justice ne";
+	mes "Je suis un moine, content de passer mes jours dans l'étude religieuse.";
+	next;
+	mes "La puissance sans justice ne";
+	mes "Je viens tout juste de retourner d'un pèlerinage au temple de Borobudur avec mes frères moines...";
+	next;
+	mes "La puissance sans justice ne";
+	mes "Le temple de Borobudur attire beaucoup de pèlerins, car il est l'un des rares temples restants pour vénérer le Grand Bouddha.";
+	close;
+}
+
+dewata,65,188,8	script	Monk#dew2	834,{
+	mes "La puissance sans justice ne";
+	mes "Le temple de Borobudur est l'un des rares temples restants pour vénérer le Grand Bouddha.";
+	next;
+	mes "La puissance sans justice ne";
+	mes "Je ne comprends pas pourquoi il n'y a que peu de temples restants qui suivent notre voie...";
+	close;
+}
+
+dewata,63,190,8	script	Monk#dew3	834,{
+	mes "La puissance sans justice ne";
+	mes "Êtes-vous un Touriste ? Vous pouvez faire une offrande et formuler un vœu auprès d'un sanctuaire.";
+	next;
+	mes "La puissance sans justice ne";
+	mes "Notre grand Bouddha peut exaucer votre vœu.";
+	close;
+}
+
+dewata,62,192,8	script	Monk#dew4	834,{
+	mes "La puissance sans justice ne";
+	mes "Notre grand Bouddha est le roi des âmes et le chef de tous les bons dieux.";
+	next;
+	mes "La puissance sans justice ne";
+	mes "Les tribus Dewata croient en Bouddha, chose étrange car elles toutes le décrivent comme différentes créatures.";
+	next;
+	mes "La puissance sans justice ne";
+	mes "Je ne suis pas vraiment sûr de la raison. Peut-être parce qu'il y a beaucoup de tribus différentes à Dewata avec des caractéristiques variées.";
+	close;
+}
+
+dewata,89,191,6	script	Small Shrine#dew1	844,{
+	mes "Il y a un petit sanctuaire ici. Beaucoup de gens y formulent des vœux.";
+	next;
+	switch(select("Make a donation.:Make a wish.:Walk away.")) {
+	case 1:
+		mes "La boîte de dons indique :";
+		mes "^FF00001,000 ~ 100,000 Zeny^000000";
+		mes "Combien souhaitez-vous donner ?";
+		next;
+		input .@input,0,100000;
+		if (.@input < 1000) {
+			mes "- Annulé. -";
+			close;
+		} else if (.@input <= 50000)
+			set .@good_luck, rand(1,10000);
+		else
+			set .@good_luck, rand(1,5000);
+		if (.@input > Zeny) {
+			mes "- Pas assez de Zeny. -";
+			close;
+		}
+		mes "Quel est votre vœu ?";
+		next;
+		input(.@wish$);
+
+		setarray .@wishes$[0],
+			"Power","Strength", //1
+			"Faster","Speed","Quickness","Agility", //2
+			"Skillful Hands","Dex", //4
+			"Healthy","Fitness","Vital", //8
+			"Wisdom","Brain","Study","Int","1st place", //16
+			"Luck","Wealth","Items","Get Item","Goods","Lotto", //32
+			"Full Level","Level","LV", //64
+			"Lover","Girl friend","Boy friend"; //128
+		setarray .@index[0],
+			1,1,2,2,2,2,4,4,8,8,8,16,16,16,16,16,32,32,32,32,32,32,64,64,64,128,128,128;
+			
+		if (.@good_luck == 7 || .@good_luck == 77 || .@good_luck == 777 || .@good_luck == 7777)
+			set .@bonus,1;
+		for(set .@i,0; .@i<getarraysize(.@wishes$); set .@i,.@i+1) {
+			if (compare(.@wish$,.@wishes$[.@i])) {
+				set .@stat, .@stat | .@index[.@i];
+				break;
+			}
+		}
+
+		mes "You make a wish for ^0000FF" + .@wish$ + "^000000 to the small shrine.";
+		next;
+		callsub L_Wish;
+		set Zeny, Zeny - .@input;
+		if ((.@stat & 1) && .@bonus)
+			consumeitem 12043; //Str_Dish03
+		else if ((.@stat & 2) && .@bonus)
+			consumeitem 12058; //Agi_Dish03
+		else if ((.@stat & 4) && .@bonus)
+			consumeitem 12063; //Dex_Dish03
+		else if ((.@stat & 8) && .@bonus)
+			consumeitem 12053; //Vit_Dish03
+		else if ((.@stat & 16) && .@bonus)
+			consumeitem 12048; //Int_Dish03
+		else if ((.@stat & 32) && .@bonus)
+			consumeitem 12068; //Luk_Dish03
+		else if (.@stat & 64) {
+			specialeffect2 EF_ANGEL;
+			mes "- Une entité céleste vous accorde une bénédiction. -";
+			next;
+		} else if (.@stat & 128) {
+			mes "- Le sanctuaire vous enveloppe d'une aura aimante. -";
+			if ((Sex == SEX_FEMALE && compare(.@wish$,.@wishes$[26])) || (Sex == SEX_MALE && compare(.@wish$,.@wishes$[27])))
+				specialeffect2 EF_LIGHTSPHERE;
+			next;
+		}
+		mes "Il semble que ce vœu puisse se réaliser.";
+		close;
+	case 2:
+		mes "Quel est votre vœu ?";
+		next;
+		input .@wish$;
+		mes "You have made your wish for ^0000FF" + .@wish$ + "^000000 to the small shrine.";
+		next;
+		callsub L_Wish;
+		mes "Il semble que ce vœu puisse se réaliser.";
+		close;
+	case 3:
+		close;
+	}
+
+L_Wish:
+	mes "Une énergie mystérieuse émane du sanctuaire.";
+	specialeffect EF_FLASHER,AREA,"Small Shrine#dew1";
+	specialeffect EF_FLASHER,AREA,"Small Shrine#dew2";
+	specialeffect EF_FLASHER,AREA,"Small Shrine#dew3";
+	specialeffect EF_FLASHER,AREA,"Small Shrine#dew4";
+	next;
+	mes "Vous avez reçu la bénédiction du sanctuaire.";
+	specialeffect2 EF_BLESSING;
+	next;
+	return;
+}
+dewata,89,212,6	duplicate(Small Shrine#dew1)	Small Shrine#dew2	844
+dewata,68,212,6	duplicate(Small Shrine#dew1)	Small Shrine#dew3	844
+dewata,68,191,6	duplicate(Small Shrine#dew1)	Small Shrine#dew4	844
+
+dewata,75,122,6	script	Monk#dewt1	834,{
+	mes "La puissance sans justice ne";
+	mes "Vous êtes un étranger ici. Qu'est-ce qui vous amène dans ce lieu tranquille ?";
+	next;
+	switch(select("I'm sightseeing.:No reason.")) {
+	case 1:
+		mes "La puissance sans justice ne";
+		mes "Ah, vous êtes un touriste. C'est la '^0000FFPagoda^000000' dédiée au grand Bouddha. Veuillez respecter les moines en prière ici.";
+		close;
+	case 2:
+		mes "La puissance sans justice ne";
+		mes "Bonjour à vous...";
+		close;
+	}
+}
+
+dewata,69,101,6	script	Monk#dewt2	834,{
+	mes "La puissance sans justice ne";
+	mes "Nous avons une pagode pour l'adoration des Bouddhas. Chaque temple en possède une de ces tours, bien que peu de gens viennent ici outre d'autres moines.";
+	next;
+	switch(select("I see...:Explain about Buddhas:Ah, okay.")) {
+	case 1:
+		mes "La puissance sans justice ne";
+		mes "Vous devez sentir la compassion de notre Bouddha !";
+		close;
+	case 2:
+		mes "La puissance sans justice ne";
+		mes "Le Bouddha est notre Dieu issu du mythe Dewata ; il est le roi des âmes et aussi le chef des bons Dieux.";
+		next;
+		mes "La puissance sans justice ne";
+		mes "Le Bouddha est le gardien des âmes, souvent décrit dans la danse traditionnelle comme luttant contre la magicienne Rangda.";
+		next;
+		mes "La puissance sans justice ne";
+		mes "Dans Dewata, nous croyons qu'il existe de nombreuses divinités protégeant chaque île et lieu tribal,";
+		next;
+		mes "La puissance sans justice ne";
+		mes "nous avons donc différentes manifestations du Bouddha, généralement décrites comme un ours, un tigre, un dragon, un serpent ou un lion.";
+		next;
+		mes "La puissance sans justice ne";
+		mes "Le Grand Lion est l'un des Bouddhas célèbres adorés à Dewata.";
+		next;
+		mes "La puissance sans justice ne";
+		mes "J'espère que cette explication vous a plu. Dites-moi si vous souhaitez en savoir plus.";
+		close;
+	case 3:
+		mes "La puissance sans justice ne";
+		mes "Bonjour à vous...";
+		close;
+	}
+}
+
+dewata,71,79,6	script	Monk#dewt3	834,{
+	mes "La puissance sans justice ne";
+	mes "Cette tour est construite sur le bord d'un falaise côtière. Vous pouvez prier avec une brise océanique fraîche dans vos cheveux.";
+	next;
+	mes "La puissance sans justice ne";
+	mes "Venez, vous devriez sentir la compassion de notre Bouddha dans cette agréable météo.";
+	close;
+}
+
+dewata,211,272,4	script	Lodge Owner#dew	534,2,3,{
+OnTouch:
+	mes "[Propriétaire de l'auberge]";
+	mes "Ces jours-ci, nous avons beaucoup de couples en lune de miel qui viennent visiter ici.";
+	next;
+	mes "[Propriétaire de l'auberge]";
+	mes "Ce doit être la belle vue, n'est-ce pas ?";
+	next;
+	mes "[Propriétaire de l'auberge]";
+	mes "Je suis heureux avec mon commerce. J'espère que nous aurons encore beaucoup plus de visiteurs comme ceux-là.";
+	next;
+	mes "[Propriétaire de l'auberge]";
+	mes "Ah ! Vous devriez amener votre bien-aimé à Dewata pour vos noces.";
+	mes "Je vous donnerai un bon prix-";
+	close;
+}
+
+dewata,245,244,4	script	Lodge Employee#dew	536,2,3,{
+OnTouch:
+	mes "[Employé de l'auberge]";
+	mes "Argg~ Ça me met vraiment sur les nerfs !";
+	emotion ET_FRET;
+	next;
+	mes "[Employé de l'auberge]";
+	mes "Pourquoi de plus en plus de couples viennent ici ?";
+	next;
+	mes "[Employé de l'auberge]";
+	mes "Et pourquoi se comportent-ils avec tant d'attentions ? Qu'est-ce qui leur prend ?";
+	next;
+	mes "[Employé de l'auberge]";
+	mes "Allez, montrez du respect aux gens qui travaillent ici...";
+	close;
+}
+
+dewata,233,263,8	script	Sweet Married Couple#1	828,2,3,{
+OnTouch:
+	mes "[Mari Doux]";
+	mes "Tu es la chose la plus belle au monde mon bébé~";
+	emotion ET_CHUP;
+	next;
+	mes "[Femme Épouse Douce]";
+	mes "Vraiment ? Je suis si belle ? Je t'aime, chéri~";
+	emotion ET_CHUPCHUP, getnpcid(0, "Sweet Married Couple#2");
+	next;
+	mes "[Couple Marié Doux]";
+	mes "Hahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahaha";
+	mes "Hohohohohohohohohohohohohohohohohohohohohohohohohohohohohohohohohohoho";
+	emotion ET_SMILE;
+	emotion ET_SMILE, getnpcid(0, "Sweet Married Couple#2");
+	next;
+	mes "Bon, je commence à en avoir assez. Allons-y.";
+	close;
+}
+
+dewata,234,263,8	script	Sweet Married Couple#2	727,2,3,{
+OnTouch:
+	mes "[Femme Épouse Douce]";
+	mes "Bébé~ Tu sais quel est ce type de fleur~ ?";
+	emotion ET_QUESTION;
+	next;
+	mes "[Mari Doux]";
+	mes "Hm ? Je ne sais pas. Mais c'est vraiment joli.";
+	next;
+	mes "[Femme Épouse Douce]";
+	mes "Bébé~ Qui est plus jolie, moi ou la fleur ?";
+	emotion ET_QUESTION;
+	next;
+	mes "[Mari Doux]";
+	mes "Peu importe à quel point la fleur est jolie, tu es toujours plus belle~";
+	emotion ET_CHUP, getnpcid(0, "Sweet Married Couple#1");
+	next;
+	mes "[Femme Épouse Douce]";
+	mes "Vraiment ? Je suis si jolie ? Je t'aime, mon chéri~";
+	emotion ET_CHUPCHUP;
+	next;
+	mes "[Couple Marié Doux]";
+	mes "Hahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahaha";
+	mes "Hohohohohohohohohohohohohohohohohohohohohohohohohohohohohohohohohohoho";
+	emotion ET_SMILE, getnpcid(0, "Sweet Married Couple#1");
+	emotion ET_SMILE;
+	next;
+	mes "Allez, ça m'ennuie. Continuons.";
+	close;
+}
+
+dewata,279,213,4	script	Tourist#dew-2	887,2,3,{
+OnTouch:
+	mes "[Touriste allongé]";
+	mes "Wow~ C'est vraiment confortable~";
+	next;
+	mes "[Touriste allongé]";
+	mes "Je passe un super moment en me détendant simplement.";
+	next;
+	mes "[Touriste allongé]";
+	mes "Tu devrais aussi t'allonger ici.";
+	mes "Une fois que tu l'auras fait, tu n'auras plus envie de te lever.";
+	next;
+	mes "[Touriste allongé]";
+	mes "C'est pour ça que je n'ai pas bougé depuis une semaine entière ! Hahahaha~";
+	emotion ET_SMILE;
+	close;
+}
+
+dewata,269,208,4	script	Little Kid in Town#dew	538,2,3,{
+OnTouch:
+	mes "[Enfant]";
+	mes "Hey "+((Sex == SEX_MALE)?"bro":"sis")+", look at that man!";
+	next;
+	mes "[Enfant]";
+	mes "Il est là, allongé, à ne rien faire depuis une semaine...";
+	next;
+	mes "[Enfant]";
+	mes "Qui EST cet homme ?";
+	emotion ET_QUESTION;
+	next;
+	mes "[Enfant]";
+	mes "Je ne veux pas devenir paresseux comme lui quand je serai grand.";
+	close;
+}
+
+dewata,227,129,4	script	Sarr#dew	538,2,3,{
+OnTouch:
+	mes "[Sarr]";
+	mes "Ils se cachent, donc je dois chercher.";
+	mes "Je les trouverai sûrement !-";
+	next;
+	mes "[Sarr]";
+	mes "Un~";
+	next;
+	mes "[Sarr]";
+	mes "Deux~ Trois~";
+	next;
+	mes "[Sarr]";
+	mes "Quatre~ Cinq~ Six~";
+	next;
+	mes "[Sarr]";
+	mes "... ... ... ...";
+	next;
+	mes "[Sarr]";
+	mes "Quatre-vingt-dix-neuf~ Cent !!! Maintenant je viens~";
+	close;
+}
+
+dewata,239,140,4	script	Siyak#dew	539,2,3,{
+OnTouch:
+	mes "[Siyak]";
+	mes "Hey, allez, dégage un peu~ Il va me trouver~~";
+	next;
+	mes "[Sarr]";
+	mes "J'ai trouvé Siyak!! Sortez, sortez!!";
+	emotion ET_KIK, getnpcid(0, "Sarr#dew");
+	emotion ET_HUK;
+	emotion ET_KIK, getnpcid(0, "Sipo#dew");
+	emotion ET_HUK, playerattached();
+	next;
+	mes "[Siyak]";
+	mes "Arrgg!! C'est toute votre faute~!!";
+	emotion ET_FRET;
+	close;
+}
+
+dewata,193,145,4	script	Sipo#dew	538,2,3,{
+OnTouch:
+	mes "[Sipo]";
+	mes "Sarr ne va pas me trouver ici, non?";
+	next;
+	mes "[Sarr]";
+	mes "J'ai trouvé Siyak!! Sortez sortez!!";
+	emotion ET_KIK, getnpcid(0, "Sarr#dew");
+	emotion ET_HUK, getnpcid(0, "Siyak#dew");
+	emotion ET_KIK;
+	emotion ET_HUK, playerattached();
+	next;
+	mes "[Sipo]";
+	mes "Hehe~ Maintenant c'est à Siyak de jouer! Je vais juste continuer à me cacher ici.";
+	close;
+}
+
+dewata,228,177,4	script	Majya#dew	538,2,3,{
+OnTouch:
+	mes "[Majya]";
+	mes "Je jouais aux caches-cache avec mes amis...";
+	next;
+	mes "[Majya]";
+	mes "Je suis restée debout ici, et ils ne m'ont pas trouvée depuis 3 heures...";
+	emotion ET_SCRATCH;
+	next;
+	mes "[Majya]";
+	mes "Que dois-je faire? Sortir? Je ne veux pas être à la fin du jeu...";
+	close;
+}
+
+dewata,278,100,4	script	Missing Child#dew	703,2,3,{
+OnTouch:
+	mes "[Ukki]";
+	mes "WaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaa~";
+	emotion ET_CRY;
+	emotion ET_PROFUSELY_SWEAT;
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "Hé, gosse...";
+	next;
+	mes "[Ukki]";
+	mes "WaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaaWaa~";
+	emotion ET_CRY;
+	next;
+	mes "[Ukki]";
+	mes "Maman~ Papa~ Où êtes-vousuu~ Waa~";
+	emotion ET_CRY;
+	emotion ET_PROFUSELY_SWEAT;
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "... ... ...";
+	emotion ET_THINK, playerattached();
+	close;
+}
+
+dewata,249,87,4	script	Mum#dew	101,2,3,{
+OnTouch:
+	mes "[Mum]";
+	mes "Ukki~ Ukki~ Où est-elle allée ?";
+	emotion ET_KEK;
+	next;
+	mes "[Mum]";
+	mes "Je ne peux pas détourner les yeux d'elle pour une seconde...";
+	next;
+	mes "[Mum]";
+	mes "Ukki~";
+	emotion ET_KEK;
+	close;
+}
+
+dewata,251,85,6	script	Poppa#dew	97,2,3,{
+OnTouch:
+	mes "[Poppa]";
+	mes "Chérie, Ukki s'est perdue encore une fois ?";
+	emotion ET_QUESTION;
+	next;
+	mes "[Poppa]";
+	mes "Arrgg... Je ne peux pas bouger avec elle... Combien de fois déjà ?";
+	emotion ET_PROFUSELY_SWEAT;
+	next;
+	mes "[Daddy]";
+	mes "Elle s'est perdue à Luoyang, Amatsu, Moscovia, Brasilis, Kunlun,";
+	mes "et à Ayothaya...";
+	emotion ET_PROFUSELY_SWEAT;
+	next;
+	mes "[Daddy]";
+	mes "Quoi!! Ça fait déjà 7 fois en comptant celle-ci à Dewata... 7 fois!!!!!!";
+	emotion ET_OTL;
+	close;
+}
+
+dewata,278,281,4	script	Happily Married Grandpa	534,{
+	mes "[Grand-père Marié Heureusement]";
+	mes "Aujourd'hui, je devrais demander à ma dame de";
+	mes "me cuisiner du ^006400riz frit^000000.";
+	next;
+	mes "[Grand-père Marié Heureusement]";
+	mes "Le riz frit de ma femme ^006400est^000000";
+	mes "toujours très spécial !";
+	next;
+	mes "[Grand-père Marié Heureusement]";
+	mes "Ça me fait encore plus l'aimer.";
+	mes "Tu ne peux pas imaginer la saveur merveilleuse !";
+	emotion ET_THROB;
+	close;
+}
+
+dewata,280,277,4	script	Happily Married Grandma	535,{
+	mes "[Grand-mère heureuse]";
+	mes "Dans ma jeunesse,";
+	mes "il y avait beaucoup de cavaliers";
+	mes "qui voulaient me courir après.";
+	emotion ET_PROFUSELY_SWEAT;
+	next;
+	mes "[Grand-mère heureuse]";
+	mes "Pourtant, j'ai rencontré juste le bon mec,";
+	mes "et je me suis mariée.";
+	mes "Je lui ai demandé ce qu'il aimait le plus";
+	mes "à mon égard, il a dit que c'était";
+	mes "mon riz frit maison ^006400^000000";
+	next;
+	mes "[Grand-mère heureuse]";
+	mes "Et depuis ce jour-là, il ne me demande plus qu'à";
+	mes "faire du riz frit ^006400^000000";
+	mes "Over 40 years of marriage";
+	mes "et il ne s'en lasse toujours pas.";
+	next;
+	mes "[Grand-mère heureuse]";
+	mes "Je pense toujours que c'était une chance";
+	mes "de vieillir avec un homme";
+	mes "qui aime ce que je cuisine.";
+	emotion ET_THROB;
+	close;
+}
+
+dewata,165,103,6	script	Adventurer Semangat#dew	534,{
+	mes "[Aventurier Semangat]";
+	mes "J'ai aussi voyagé dans le monde entier";
+	mes "Quand j'étais jeune comme toi.";
+	mes "^FF0000Singe, Poulpe^000000";
+	mes "^FF0000Aigle et Serpent^000000,";
+	mes "tous étaient de bons amis que j'ai rencontrés";
+	mes "pendant mes voyages.";
+	next;
+	mes "[Aventurier Semangat]";
+	mes "J'ai toujours la passion pour l'aventure et les voyages.";
+	mes "Mais, je ne peux pas simplement partir";
+	mes "et laisser derrière moi ma chère épouse et";
+	mes "mes petits-enfants...";
+	next;
+	mes "[Aventurier Semangat]";
+	mes "Vous aurez aussi quelque chose";
+	mes "ou quelqu'un qui est tout aussi précieux";
+	mes "un jour dans ton cœur.";
+	close;
+}
+
+dewata,139,114,6	script	Semangat's Wife#dew	535,{
+	mes "[Épouse de Semangat]";
+	mes "Où est passé cet vieux bonhomme";
+	mes "encore une fois ?";
+	mes "As-tu vu mon mari par ici ?";
+	next;
+	switch(select("I think I saw him there..:No I haven't..")) {
+	case 1:
+		mes "[Épouse de Semangat]";
+		mes "Il s'est enfui quand";
+		mes "je le cherchais.";
+		mes "Doit être quelque part, racontant des histoires";
+		mes "aux voyageurs, comme toujours.";
+		next;
+		mes "[Épouse de Semangat]";
+		mes "Je m'excuse,";
+		mes "au nom de mon mari.";
+		mes "S'il te plaît, ne crois pas à ses histoires stupides";
+		mes "disant qu'il a rencontré des ^FF0000Singes et Serpents^000000, ou";
+		mes "qu'il a combattu aux côtés d'un ^FF0000Poulpe^000000.";
+		next;
+		mes "[Épouse de Semangat]";
+		mes "Il vit ici depuis toute sa vie.";
+		mes "for entire life.";
+		mes "Pourtant, il trouve toujours des voyageurs,";
+		mes "et qui écoutent ses histoires inventées.";
+		close;
+	case 2:
+		mes "[Épouse de Semangat]";
+		mes "Oh. Veuillez me le faire savoir";
+		mes "si vous le voyez un jour.";
+		close;
+	}
+}
+
+dewata,181,88,6	script	Young Man#dew-2	536,{
+	mes "[Jeune homme]";
+	mes "N'est-ce pas ^8B4513Dewata^000000 Beach";
+	mes "vraiment magnifique ?";
+	mes "Les enfants jouent toujours";
+	mes "sur cette plage. Cela me rappelle";
+	mes "mon adolescence.";
+	next;
+	mes "[Jeune homme]";
+	mes "Le soir, on peut voir";
+	mes "des feux d'artifice depuis la plage.";
+	mes "Avec la brise de mer, les vagues qui s'écrasent,";
+	mes "et les feux d'artifice illuminant le ciel,";
+	mes "la nuit est un moment de beauté ici !";
+	close;
+}
+
+dewata,179,204,4	script	Young Lady#dew	537,{
+	mes "[Jeune Dame]";
+	mes "Quand vous êtes hors de la ville,";
+	mes "et que vous rencontrez ^FF0000Tiger, Monkey ou pig^000000,";
+	mes "assurez-vous de les éviter.";
+	next;
+	select("What do you mean?");
+	mes "[Jeune Dame]";
+	mes "Je ne l'ai pas encore vu,";
+	mes "mais la légende dit qu'il y a un";
+	mes "monstre cruel nommé ^FF0000Leak^000000";
+	mes "qui peut se transformer en animal";
+	mes "et hypnotiser les gens pour qu'ils tuent.";
+	next;
+	mes "[Jeune Dame]";
+	mes "Vous connaissez les dangers de ce monde.";
+	mes "Il ne fait jamais de mal d'être prudent";
+	mes "même s'il s'agit seulement d'une légende urbaine.";
+	//emotion ET_SCRATCH; //TODO
+	close;
+}
+
+dewata,280,236,4	script	Settler#dew	726,{
+	mes "[Colons]";
+	mes "Je ne suis pas vraiment originaire de ^8B4513Dewata^000000.";
+	mes "Mais pendant mes voyages,";
+	mes "j'ai découvert cet endroit...";
+	mes "et j'ai pris ma décision";
+	mes "de vivre dans cette belle ville.";
+	next;
+	mes "[Colons]";
+	mes "J'ai été heureux de vivre ici";
+	mes "et de découvrir et d'expérimenter";
+	mes "tous ces beaux paysages.";
+	mes "C'est le rêve réalisé.";
+	next;
+	mes "[Colons]";
+	mes "Auriez-vous jamais pensé à";
+	mes "Tu t'installes ici aussi ?";
+	close;
+}
+
+dewata,204,230,6	script	Dieting Lady#dew	537,{
+	if (countitem(11533) == 0) {
+		mes "[Madame Régime]";
+		mes "Ah~ J'ai faim !!";
+		mes "Je devrais faire un régime maintenant.";
+		mes "Pourquoi suis-je toujours affamée ?";
+		next;
+		mes "[Madame Régime]";
+		mes "Ne me parle pas trop !!";
+		mes "J'aimerais bien goûter ce ^006400Satay^000000 grillé.";
+		mes "tant~!!!!!";
+		close;
+	}
+	mes "[Madame Régime]";
+	mes "Est-ce que c'est appétissant";
+	mes "^006400Satay^000000 pour moi ?";
+	next;
+	switch(select("Yes, want a taste?:No, it's for me!")) {
+	case 1:
+		delitem 11533,1; //Satay
+		mes "[Madame Régime]";
+		mes "Merci beaucoup !";
+		mes "J'avais si faim~!!";
+		mes "Cette odeur de ce ^006400Satay^000000";
+		mes "est si bonne~!";
+		next;
+		getitem 11533,1; //Satay
+		mes "[Madame Régime]";
+		mes "Ah... je dois revenir à la raison,";
+		mes "trop de bonnes choses est mauvais...";
+		mes "Je devrais m'en tenir à mon régime.";
+		mes "Désolé, je vais te le rendre.";
+		emotion ET_CRY;
+		close;
+	case 2:
+		mes "[Madame Régime]";
+		mes "Arrgg.. Tu es si avare !";
+		mes "Puisque tu ne veux pas partager.";
+		mes "De toute façon, je ne devrais pas tricher sur mon régime";
+		mes "même pour quelque chose qui a l'air et sent si bon...";
+		emotion ET_HNG;
+		close;
+	}
+}
+
+dewata,117,156,6	script	Dreaming Kid#dew	538,{
+	mes "[Enfant Rêveur]";
+	mes "Ma grand-mère dit que";
+	mes "il y avait une fois un oiseau nommé ^FF0000Garuda^000000";
+	mes "qui volait au-dessus de cette ville.";
+	mes "Ensuite, nous avons eu d'excellentes récoltes";
+	mes "et avons pu vivre heureux.";
+	next;
+	mes "[Enfant Rêveur]";
+	mes "Je veux voir cet oiseau";
+	mes "voler au-dessus de notre ville à nouveau !";
+	mes "Alors ma mère, mon père,";
+	mes "ma grand-mère et mon grand-père";
+	mes "pourront être heureux comme aux bons vieux temps.";
+	mes "Qu'en penses-tu ?";
+	close;
+}
+
+dewata,144,216,4	script	Energetic Kid#dew	538,{
+	mes "[Enfant énergique]";
+	mes "Mes parents me racontaient autrefois...";
+	next;
+	mes "- ^006400Mon fils,^000000 -";
+	mes "- ^006400Tu devrais étudier dur.^000000 -";
+	mes "- ^006400Sois heureux.^000000 -";
+	mes "- ^006400Vivre une vie^000000 -";
+	mes "- ^006400lente et sûre.^000000 -";
+	mes "- ^006400La montagne d'outre^000000 -";
+	mes "- ^006400te sera toujours là.^000000 -";
+	next;
+	mes "[Enfant énergique]";
+	mes "N'est-ce pas une grande philosophie ?";
+	mes "Je veux vivre ainsi";
+	mes "et devenir une grande personne,";
+	mes "et aider tout le monde dans notre ville";
+	mes "à vivre heureux pour toujours !";
+	close;
+}
+
+dewata,127,248,6	script	Wishing Kid#dew	539,{
+	mes "[Enfant souhaitant devenir adulte]";
+	mes "Ma famille fabrique depuis des générations";
+	mes "du vin Dewata traditionnel.";
+	mes "Je veux le boire moi-même,";
+	mes "mais mon père dit que je suis trop jeune.";
+	mes "Il a dit que je pourrai le boire";
+	mes "seulement après avoir dormi pendant plus de ^FF0000100 jours^000000.";
+	next;
+	mes "[Enfant souhaitant devenir adulte]";
+	mes "Tous les grands-amoureux aiment boire";
+	mes "le vin de mon père.";
+	mes "Je veux en goûter tant que j'en peux plus.";
+	mes "Mais, que dois-je faire... ?";
+	mes "J'ai oublié depuis combien de ^FF0000nuit^000000";
+	mes "j'ai déjà dormi... bouh hou !";
+	emotion ET_CRY;
+	close;
+}
+
+dew_fild01,101,259,6	script	Jaty Tribe Gatekeeper	541,{
+	mes "[Gardien de la Porte du Clan Jaty]";
+	mes "Bienvenue dans la ville de ^FF0000Jaty^000000.";
+	mes "Notre clan vénère la force et le courage.";
+	mes "Nous vous souhaitons un séjour sûr et reposant ici.";
+	close;
+}
+
+dew_fild01,106,306,4	script	R. Jaty Tribe Warrior	541,{
+	mes "[Guerrier Jaty Réservé]";
+	mes "Je veux être le meilleur";
+	mes "comme personne ne l'a jamais été.";
+	next;
+	mes "[Guerrier Jaty Réservé]";
+	mes "J'apprends les compétences de la chasse";
+	mes "ces derniers temps. Et je deviens";
+	mes "de mieux en mieux";
+	mes "chaque jour !";
+	next;
+	mes "[Guerrier Jaty Réservé]";
+	mes "Je ne m'arrêterai pas tant que";
+	mes "je ne deviendrai un vrai guerrier !";
+	close;
+}

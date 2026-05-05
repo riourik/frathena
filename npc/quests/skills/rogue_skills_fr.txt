@@ -1,0 +1,1371 @@
+//===== rAthena Script ======================================= 
+//= Rogue Skills Quests
+//===== By: ================================================== 
+//= Lupus, Reddozen
+//===== Current Version: ===================================== 
+//= 1.8
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Quests for skills: CLose Confine
+//===== Additional Comments: ================================= 
+//= 1.4 Rescripted to Aegis 10.3 stadards. [L0ne_W0lf]
+//= 1.5 Fixed bad NPC header data to comply with rev. 11603. [L0ne_W0lf]
+//= 1.6 Bug fixes as pointed out by Brainstorm in bugreport:351 [L0ne_W0lf]
+//= 1.6a Fixed(?) antoher problem (NPCs not disabling) hopefully. [L0ne_W0lf]
+//= 1.6b Corrected a Typo error with "rouge". (bugreport:909) [Samuray22]
+//= 1.7 Replaced effect numerics with constants. [L0ne_W0lf]
+//= 1.8 Some cleaning. [Euphy]
+//============================================================
+
+in_rogue,359,177,0	script	#killershow01	-1,{
+OnInit:
+	disablenpc "#killershow01";
+	end;
+
+OnEnable:
+	enablenpc "#killershow01";
+	initnpctimer;
+	end;
+
+OnDisable:
+	stopnpctimer;
+	disablenpc "#killershow01";
+	end;
+
+OnTimer1000:
+	enablenpc "Killer#Rogueguild";
+	end;
+
+OnTimer120000:
+	disablenpc "Killer#Rogueguild";
+	end;
+
+OnTimer150000:
+	disablenpc "Killer#Rogueguild";
+	disablenpc "#killershow01";
+	end;
+}
+
+in_rogue,357,174,2	script	Killer#Rogueguild	705,1,1,{
+OnInit:
+	disablenpc "Killer#Rogueguild";
+	end;
+
+OnTouch_:
+	if (ROG_SK == 10) {
+		specialeffect2 EF_CHANGECOLD;
+		specialeffect EF_CHANGEWIND;
+		specialeffect2 EF_LIGHTSPHERE;
+		set ROG_SK,11;
+		mes "S-still...";
+		mes "Qu-quoi as-tu fait";
+		mes "à moi ?!";
+		mes "Je ne peux pas... bouger !";
+		next;
+		mes "Trouve-moi un Stalker";
+		mes "Oh ? Je n'aurais pas pensé";
+		mes "que tu puisses lancer";
+		mes "Close Confine si tôt !";
+		mes "Incroyable, tout simplement incroyable !";
+		mes "Maintenant, c'est une bonne occasion";
+		mes "pour toi de maîtriser la compétence...";
+		next;
+		mes "Trouve-moi un Stalker";
+		mes "Maintenant, concentre-toi.";
+		mes "Je veux que tu t'entraînes à";
+		mes "prévoir l'intention de mouvement";
+		mes "de ton adversaire sur ce Killer.";
+		mes "Tu devrais pouvoir voir dans quelle direction il compte se déplacer grâce à son aura.";
+		next;
+		mes "Trouve-moi un Stalker";
+		mes "S'il compte se déplacer vers la gauche,";
+		mes "son aura sera blanche. S'il";
+		mes "se déplace vers la droite, il sera";
+		mes "jaune. S'il a l'intention de reculer,";
+		mes "il sera rouge pâle.";
+		next;
+		setarray .@Effects[1],EF_CHANGECOLD,EF_CHANGEWIND,EF_CHANGEEARTH;
+		for(set .@lim_1,0; .@lim_1<10; set .@lim_1,.@lim_1+1) {
+			set .@move_1,rand(1,3);
+			specialeffect .@Effects[.@move_1];
+			if (select("Block him to the Left:Block him to the Right:Block his Retreat") == .@move_1) {
+				mes "^3355FFLe tueur reste";
+				mes "immobile et semble";
+				mes "incroyablement confus ! Juste";
+				mes "maintenant, vous utilisez la compétence";
+				mes "Confinement à la perfection !^000000";
+				specialeffect EF_POTION1;
+				specialeffect2 EF_POTION7;
+			}
+			else {
+				mes "^3355FFAttendez--!";
+				mes "Pour une raison quelconque,";
+				mes "vous sentez que ce n'est pas";
+				mes "la direction dans laquelle le tueur";
+				mes "se déplace en ce moment.";
+				mes "Vous corrigez naturellement votre erreur.^000000";
+			}
+			next;
+		}
+		mes "^3355FFVous avez réussi à";
+		mes "récupérer le livre de compétences inestimable";
+		mes "écrit par la légendaire Chae Takbae.^000000";
+		mes "[Tueur]";
+		close2;
+		disablenpc "Killer#Rogueguild";
+		donpcevent "#killershow01::OnDisable";
+		end;
+	}
+	else if (ROG_SK == 11) {
+		mes "S-still...";
+		mes "Grmmrrr...";
+		mes "S-still...";
+		mes "C-ça ne peut pas... Bougez !";
+		close2;
+		disablenpc "Killer#Rogueguild";
+		donpcevent "#killershow01::OnDisable";
+		end;
+	}
+	end;
+}
+
+in_rogue,355,179,0	script	Haijara Greg#rogueguild	46,{
+	if (BaseJob == Job_Rogue) {
+		if (ROG_SK == 12 && Upper == 1) {
+			mes "Trouve-moi un Stalker";
+			mes "Hm ? Ah, amnésie due à";
+			mes "la transcendance,";
+			mes "hein ? Alors je vous enseignerai encore la";
+			mes "Compétence Confinement Étroit.";
+			specialeffect2 EF_LIGHTSPHERE;
+			skill "RG_CLOSECONFINE",1,SKILL_PERM;
+			set ROG_SK,13;
+			close;
+		}
+		else if (ROG_SK == 13 && Upper == 1) {
+			mes "Trouve-moi un Stalker";
+			mes "Un Stalker, hein ?";
+			mes "Assure-toi que tu";
+			mes "utilisez vos capacités pour";
+			mes "maudire les ennemis qui méritent";
+			mes "d'être traqués. Bonne chance,";
+			mes "aventurier.";
+			close;
+		}
+		else {
+			if (ROG_SK < 1) {
+				mes "Trouve-moi un Stalker";
+				mes "H-Comment as-tu trouvé cet";
+				mes "endroit ? Je pensais que cette salle de panique";
+				mes "était censée être impénétrable, même pour des Voleurs !";
+				mes "[Haijara Greg]";
+				next;
+				mes "Trouve-moi un Stalker";
+				mes "Ce ne sera qu'une question de";
+				mes "temps avant qu'ils ne me trouvent...";
+				mes "[Haijara Greg]";
+				close;
+			}
+			else if (ROG_SK == 1) {
+				mes "Trouve-moi un Stalker";
+				mes "Qu-qui êtes-vous,";
+				mes "et comment avez-vous pu";
+				mes "entrer ici ? Identifiez-vous !";
+				next;
+				if (select("I don't mean you any harm!:Give us what we want!") == 1) {
+					mes "Trouve-moi un Stalker";
+					mes "Non... ?";
+					mes "Alors... Alors";
+					mes "pourquoi êtes-vous venu ?";
+					mes "Ce n'est pas un hasard si";
+					mes "vous m'avez trouvé.";
+					next;
+					if (select("I came to help you.:Oh, actually, I wasn't looking for you.") == 1) {
+						mes "Trouve-moi un Stalker";
+						mes "Hm... Bon, je suppose que";
+						if (Upper == 1)
+							mes "je peux faire confiance à un autre Stalker";
+						else
+							mes "je peux faire confiance à un autre Rogue";
+						mes "pour mon préjudice. L'honneur";
+						mes "entre voleurs et tout ça.";
+						mes "D'accord. Avez-vous déjà entendu";
+						mes "la légende de Chae Takbae ?";
+						next;
+						if (select("No:Yes") == 1) {
+							mes "Trouve-moi un Stalker";
+							mes "Il y a 100 ans, Chae Takbae";
+							mes "fut la toute première personne à";
+							mes "transcender ses limites. Il était";
+							mes "aussi la personne même qui a choisi";
+							mes "une voie différente, plutôt que l'ordre de métier qu'il avait auparavant.";
+							next;
+							mes "Trouve-moi un Stalker";
+							mes "Il était à l'origine un Moine,";
+							mes "mais après avoir transcendé, il";
+							mes "est devenu par hasard un Stalker.";
+							mes "En conservant ses connaissances de la";
+							mes "compétence Racine du Moine, il l'a adaptée aux besoins des Voleurs.";
+							next;
+							mes "Trouve-moi un Stalker";
+							mes "Chae Takbae a enregistré les";
+							mes "fondements de cette nouvelle";
+							mes "compétence pour Voleur dans un livre que";
+							mes "j'ai eu la chance d'obtenir. Mais dès que je l'ai eu,";
+							mes "les chantages ont commencé...";
+							mes "[Haijara Greg]";
+							next;
+							mes "Trouve-moi un Stalker";
+							mes "qui utiliseront n'importe quoi";
+							mes "parties that will use any";
+							mes "signifie emporter le livre";
+							mes "chez moi. Je comprends, car";
+							mes "mes fils et moi avons appris de";
+							mes "nouvelles compétences des écrits de Takbae.";
+							next;
+							mes "Trouve-moi un Stalker";
+							mes "Cependant, je manque";
+							mes "de temps et ces hommes";
+							mes "me trouveront inévitablement.";
+							mes "Voulez-vous m'aider à me";
+							mes "sauver ainsi que mes fils ?";
+							next;
+							if (select("Sure!:Sorry, but I'm busy.") == 1) {
+								mes "Trouve-moi un Stalker";
+								mes "[Klitzer]";
+								mes "Écoutez, je ne peux pas risquer d'être";
+								mes "trouvée, alors pourriez-vous prendre";
+								mes "cette lettre et la donner à mon plus jeune";
+								mes "fils, ^FF0000Louis Greg^000000 ? Dépêchez-vous,";
+								mes "il ne reste pas beaucoup de temps !";
+								set ROG_SK,2;
+								close;
+							}
+							mes "Trouve-moi un Stalker";
+							mes "^FF0000Je... Je vois.";
+							mes "Mais veuillez comprendre que,";
+							mes "si ce n'est vous, qui puis-je faire confiance pour m'aider ?";
+							mes "[Haijara Greg]";
+							close;
+						}
+						mes "Trouve-moi un Stalker";
+						mes "Alors vous sauriez la";
+						mes "valeur du livre de compétence qu'il a";
+						mes "écrit que je possède maintenant.";
+						mes "Cependant, je suis harcelée par des hommes";
+						mes "qui feront tout pour l'obtenir.";
+						mes "Pourriez-vous m'aider ?";
+						next;
+						if (select("Sure!:Sorry, but I'm busy.") == 1) {
+							mes "Trouve-moi un Stalker";
+							mes "[Klitzer]";
+							mes "Écoutez, je ne peux pas risquer d'être";
+							mes "trouvée, alors pourriez-vous prendre";
+							mes "cette lettre et la donner à mon plus jeune";
+							mes "fils, ^FF0000Louis Greg^000000 ? Dépêchez-vous,";
+							mes "il ne reste pas beaucoup de temps !";
+							set ROG_SK,2;
+							close;
+						}
+						mes "Trouve-moi un Stalker";
+						mes "^FF0000Je... Je vois.";
+						mes "Mais veuillez comprendre que,";
+						mes "si ce n'est vous, qui puis-je faire confiance pour m'aider ?";
+						mes "[Haijara Greg]";
+						close;
+					}
+					mes "Trouve-moi un Stalker";
+					mes "Hum...?";
+					mes "je suppose que je devrais mieux vous donner";
+					mes "I suppose I better give you";
+					mes "le bénéfice du doute.";
+					mes "Bon, j'espère que vous";
+					mes "trouverez le chemin pour sortir d'ici.";
+					close;
+				}
+				mes "Trouve-moi un Stalker";
+				mes "Je vois. Alors soit.";
+				mes "Je vais vous montrer la technique";
+				mes "que vous convoitez tant...";
+				mes "^FF0000Close Confine^000000!";
+				specialeffect EF_CHANGECOLD;
+				specialeffect2 EF_CHANGEWIND;
+				next;
+				mes "Trouve-moi un Stalker";
+				mes "Hmpf. Maintenant, vous êtes";
+				mes "à la merci de moi,";
+				mes "me permettant de faire ceci : ^FF0000Back Stab^000000 !";
+				specialeffect2 EF_COMBOATTACK5;
+				percentheal -95,0;
+				next;
+				mes "Trouve-moi un Stalker";
+				mes "Sortez d'ici maintenant.";
+				mes "Ne montrez plus jamais votre visage";
+				mes "avide devant moi.";
+				mes "Et soyez simplement heureux que";
+				mes "je ne vous aie pas tué !";
+				set ROG_SK,1;
+				close;
+			}
+			else if (ROG_SK == 2) {
+				mes "Trouve-moi un Stalker";
+				mes "Nous commençons à manquer de";
+				mes "temps... Veuillez apporter ceci";
+				mes "lettre à mon fils cadet,";
+				mes "^FF0000Louis^000000, dès que vous le pouvez !";
+				mes "Vous pouvez le trouver dans la Guilde des Voleurs";
+				mes "près de ^FF0000Hollgrehenn Junior^000000.";
+				close;
+			}
+			else if (ROG_SK == 3) {
+				mes "Trouve-moi un Stalker";
+				mes "Louis vous a envoyé chercher";
+				mes "^FF0000Thor^000000 ? Il est dans la Guilde des Voleurs";
+				mes "près de ^FF0000Hermanthorn Jr.^000000,";
+				mes "n'est-ce pas ? Je suis désolé que vous";
+				mes "ayez à rendre visite à mes fils un par";
+				mes "un... Je sais que c'est impraticable.";
+				close;
+			}
+			else if (ROG_SK == 4) {
+				mes "Trouve-moi un Stalker";
+				mes "Ah, cherchez ^FF0000Jay^000000, hein ?";
+				mes "Il est près de ^FF0000Antonio Jr.^000000 ici";
+				mes "dans la Guilde des Voleurs. Ou du moins,";
+				mes "il y est généralement.";
+				close;
+			}
+			else if (ROG_SK == 5) {
+				mes "Trouve-moi un Stalker";
+				mes "pour l'espérer, mais avez-vous appris quelque chose sur";
+				mes "Et vous avez apporté";
+				mes "une lettre de Jay.";
+				mes "Bien, bien, laisse-moi";
+				mes "lire ce qu'il a à dire...";
+				set ROG_SK,6;
+				next;
+				mes "Trouve-moi un Stalker";
+				mes "Ah, de bonnes nouvelles ! Il a";
+				mes "contacté la Guilde des Voleurs";
+				mes "pour demander une protection supplémentaire";
+				mes "et pour alerter leurs gardes. Je peux enfin";
+				mes "me détendre un peu maintenant. Personne ne s'attaque aux Voleurs.";
+				next;
+				mes "Trouve-moi un Stalker";
+				mes "Merci beaucoup pour";
+				mes "votre aide. Je serais caché à jamais si ce n'était";
+				mes "pour vous. En retour, laisse-moi";
+				mes "t'offrir la chance d'apprendre";
+				mes "la technique secrète de Chae Takbae.";
+				mes "[Haijara Greg]";
+				next;
+				mes "Trouve-moi un Stalker";
+				mes "et dis-lui que j'ai";
+				mes "autorisé l'apprentissage de";
+				mes "la technique que je t'ai enseignée.";
+				mes "the skill I have taught";
+				mes "tous mes fils. Il";
+				mes "obéira, j'en suis sûr.";
+				close;
+			}
+			else if (ROG_SK == 6) {
+				mes "Trouve-moi un Stalker";
+				mes "Veuillez demander à Thor de vous enseigner";
+				mes "l'art secret de Chae Takbae.";
+				mes "Rogue. Comprenez que je ne peux pas";
+				mes "vous enseigner cette compétence avec l'équipement ici dans";
+				mes "cette salle de panique négligée.";
+				mes "[Haijara Greg]";
+				close;
+			}
+			else if (ROG_SK == 7) {
+				mes "Trouve-moi un Stalker";
+				mes "de votre entraînement pour apprendre cette compétence ?";
+				mes "Veuillez parler à Thor et achevez votre formation.";
+				mes "[Haijara Greg]";
+				mes "Vous avez terminé l'entraînement ? Ah, c'est tout à fait";
+				mes "exceptionnel. Cependant, vous devriez d'abord parler à Thor...";
+				close;
+			}
+			else if (ROG_SK == 8) {
+				mes "Trouve-moi un Stalker";
+				mes "You've completed the";
+				mes "training? Ah, that's quite";
+				mes "exceptional. However, you";
+				mes "should speak to Thor first...";
+				close;
+			}
+			else if (ROG_SK == 9) {
+				mes "Trouve-moi un Stalker";
+				mes "Oh, you've come back!";
+				mes "I hear that you've completed";
+				mes "the training and are ready";
+				mes "to hear about the applications";
+				mes "for the Close Confine skill.";
+				next;
+				mes "Trouve-moi un Stalker";
+				mes "Wah! What th--?!";
+				mes "Stop! P-please, stop";
+				mes "that man! We can't let";
+				mes "him steal that book!";
+				specialeffect EF_COMBOATTACK5;
+				donpcevent "Killer#Rogueguild::OnEnable";
+				set ROG_SK,10;
+				close;
+			}
+			else if (ROG_SK == 10) {
+				mes "Trouve-moi un Stalker";
+				mes "That man just stole the";
+				mes "Close Confine skill book!";
+				mes "Please! Don't let him get";
+				mes "away! That book is priceless!";
+				donpcevent "#killershow01::OnEnable";
+				close;
+			}
+			else if (ROG_SK == 11) {
+				donpcevent "Killer#Rogueguild::OnDisable";
+				donpcevent "#killershow01::OnDisable";
+				mes "^3355FFYou returned the";
+				mes "skill book written by";
+				mes "Chae Takbae to Haijara.^000000";
+				next;
+				mes "Trouve-moi un Stalker";
+				mes "Merci beaucoup pour votre";
+				mes "aide. Maintenant, si vous souhaitez";
+				mes "des informations détaillées sur";
+				mes "Close Confine, je peux vous en dire";
+				mes "plus à propos de la compétence si vous le voulez.";
+				mes "[Haijara Greg]";
+				next;
+				if (select("Yes, please.:No, thanks.") == 1) {
+					mes "Trouve-moi un Stalker";
+					mes "Close Confine immobilise un ennemi qui se trouve très près";
+					mes "de vous. Cependant, il existe quelques nuances concernant son utilisation sur les joueurs ou les monstres.";
+					mes "[Haijara Greg]";
+					mes "Maintenant, Close Confine est similaire à la compétence du Moine,";
+					mes "Root, mais elle n'inhibe que le mouvement de l'ennemi, pas ses capacités d'attaque.";
+					mes "[Haijara Greg]";
+					next;
+					mes "Trouve-moi un Stalker";
+					mes "Now, Close Confine is";
+					mes "similar to the Monk's skill,";
+					mes "Root, but it only inhibits the";
+					mes "enemy's movement, not";
+					mes "its attack capabilities.";
+					next;
+					mes "Trouve-moi un Stalker";
+					mes "À l'exception de";
+					mes "Back Stab, que nous pouvons";
+					mes "utiliser uniquement une fois pendant la durée de Close Confine,";
+					mes "nous pouvons utiliser n'importe quelle compétence pendant le statut";
+					mes "Close Confine.";
+					mes "[Haijara Greg]";
+					next;
+					mes "Trouve-moi un Stalker";
+					mes "Close Confine peuvent s'échapper en utilisant Fly Wing, Butterfly Wings,";
+					mes "ou les compétences de Téléportation ou d'Invisibilité. Cependant, seule l'";
+					mes "Invisibilité est active pendant la Guerre des Guildes.";
+					mes "[Haijara Greg]";
+					mes "Par conséquent, Close Confine peut être une compétence très utile";
+					mes "pendant les sièges de Guerre des Guildes, à condition que la cible n'utilise pas";
+					next;
+					mes "Trouve-moi un Stalker";
+					mes "[Haijara Greg]";
+					mes "can be a very useful skill";
+					mes "during Guild War sieges, given";
+					mes "that the target doesn't use the";
+					mes "the Hiding skill to get away.";
+					next;
+					mes "Trouve-moi un Stalker";
+					mes "À l'exception des Boss";
+					mes "monstres, Close Confine";
+					mes "immobilisera les monstres pendant";
+					mes "10 secondes, offrant aux Rogues";
+					mes "de nouvelles possibilités lors de la";
+					mes "chasse en groupe.";
+					next;
+					mes "Trouve-moi un Stalker";
+					mes "Voilà tout ce que je peux vous dire";
+					mes "sur Close Confine.";
+					mes "J'espère que vous pourrez apprendre";
+					mes "davantage de cette compétence par la";
+					mes "pratique, et devenir une légende aussi grande que Chae Takbae.";
+					set ROG_SK,12;
+					skill "RG_CLOSECONFINE",1,SKILL_PERM;
+					specialeffect2 EF_LIGHTSPHERE;
+					close;
+				}
+				mes "Trouve-moi un Stalker";
+				mes "Très bien alors... apprenez davantage sur Close";
+				mes "J'espère que vous pourrez";
+				mes "Confine grâce à un travail acharné. Bonne chance,";
+				mes "et merci encore pour votre aide.";
+				mes "[Haijara Greg]";
+				mes "Merci de m'avoir aidé";
+				set ROG_SK,12;
+				skill "RG_CLOSECONFINE",1,SKILL_PERM;
+				specialeffect2 EF_LIGHTSPHERE;
+				close;
+			}
+			mes "Trouve-moi un Stalker";
+			mes "Thank you for helping";
+			mes "me protéger ce livre de";
+			mes "compétence inestimable. J'espère que la";
+			mes "prochaine fois que nous nous rencontrerons, nous serons";
+			mes "alliés sur le champ de bataille...";
+			close;
+		}
+	}
+	else {
+		mes "Trouve-moi un Stalker";
+		mes "H-Comment as-tu trouvé cet";
+		mes "endroit ? Je pensais que cette salle de panique";
+		mes "était censée être impénétrable, même pour des Voleurs !";
+		mes "[Haijara Greg]";
+		next;
+		mes "Trouve-moi un Stalker";
+		mes "Ce ne sera qu'une question de";
+		mes "temps avant qu'ils ne me trouvent...";
+		mes "[Haijara Greg]";
+		next;
+		mes "Trouve-moi un Stalker";
+		mes "S'il te plaît...";
+		mes "ou un Voleur en qui je peux";
+		mes "faire confiance et envoie-le pour";
+		mes "m'aider ! Je n'ai plus beaucoup de temps...";
+		mes "[Louis Greg]";
+		mes "much time left...";
+		close;
+	}
+}
+
+in_rogue,152,29,0	script	Louis Greg#rogueguild	84,{
+	if (BaseJob == Job_Rogue || Class == Job_Thief_High) {
+		if (ROG_SK < 1) {
+			mes "[Louis Greg]";
+			mes "Mon père vient de...";
+			mes "Il a simplement disparu !";
+			mes "Il m'apprenait et à";
+			mes "mes frères une nouvelle compétence,";
+			mes "mais récemment il a commencé à agir";
+			mes "de manière paranoïaque pour une raison...";
+			next;
+			mes "[Louis Greg]";
+			mes "Peut-être s'est-il caché ?";
+			mes "Je sais qu'il y a une pièce secrète de";
+			mes "panique dans la Guilde des Voleurs, mais";
+			mes "même moi je ne sais pas où la trouver.";
+			mes "J'espère que tout va bien...";
+			set ROG_SK,1;
+			close;
+		}
+		else if (ROG_SK == 1) {
+			mes "[Louis Greg]";
+			mes "Mon père a prévenu que";
+			mes "des gens pourraient venir nous chercher";
+			mes "s'ils ont appris la nouvelle compétence";
+			mes "que nous étions en train d'apprendre.";
+			mes "Peut-être s'est-il caché dans la pièce de";
+			mes "panique de la Guilde des Voleurs...";
+			close;
+		}
+		else if (ROG_SK == 2) {
+			mes "[Louis Greg]";
+			mes "Qu'est-ce que c'est... ?";
+			mes "Une lettre de mon";
+			mes "père ? Oh, il doit";
+			mes "aller bien ! Vite, laisse-moi";
+			mes "la lire tout de suite !";
+			set ROG_SK,3;
+			next;
+			mes "[Louis Greg]";
+			mes "Oh non, il peut être en sécurité pour";
+			mes "le moment, mais mon père est traqué";
+			mes "par des gens dangereux ? Mon";
+			mes "frère Thor voudra sûrement savoir";
+			mes "à ce sujet. Laisse-moi lui écrire";
+			mes "une lettre très vite...";
+			next;
+			mes "[Louis Greg]";
+			mes "Je sais que je ne suis pas en position";
+			mes "de demander des faveurs,";
+			mes "mais je suppose que mon père doit";
+			mes "te faire confiance. S'il te plaît, pourrais-tu";
+			mes "prendre ma lettre et la remettre à";
+			mes "mon grand frère, Thor ?";
+			next;
+			mes "[Louis Greg]";
+			mes "Tu peux trouver Thor";
+			mes "à côté de Hermanthorn Jr.";
+			mes "à l'intérieur du Guild des Voleurs.";
+			mes "Je vous serais vraiment reconnaissant si";
+			mes "vous pouviez aider ma famille.";
+			close;
+		}
+		else if (ROG_SK == 3) {
+			mes "[Louis Greg]";
+			mes "Mon frère aîné, ^FF0000Thor^000000,";
+			mes "doit savoir à ce sujet tout de";
+			mes "suite ! Veuillez lui apporter cette";
+			mes "lettre pour moi. Il doit être";
+			mes "près de ^FF0000Hermanthorn Jr.^000000 ici";
+			mes "à l'intérieur du Guild des Voleurs.";
+			close;
+		}
+		else if (ROG_SK == 4) {
+			mes "[Louis Greg]";
+			mes "Vous cherchez mon";
+			mes "frère, Jay ? Il est généralement";
+			mes "dans les parages ici au";
+			mes "Guild des Voleurs avec Antonio Jr.";
+			close;
+		}
+		else if (ROG_SK == 5) {
+			mes "[Louis Greg]";
+			mes "Si vous avez besoin de parler";
+			mes "à mon père, il est probablement";
+			mes "toujours dans la cachette du panique";
+			mes "Salle intérieure de la Guilde des Voleurs.";
+			mes "Je ne sais toujours pas où ce";
+			mes "lieu pourrait se trouver...";
+			close;
+		}
+		else if (ROG_SK == 6) {
+			mes "[Louis Greg]";
+			mes "Vous voulez apprendre le";
+			mes "secret du Voleur ? Oh,";
+			mes "vous devriez probablement parler";
+			mes "à ^FF0000Thor^000000 à ce sujet. Je...";
+			mes "Je suis vraiment mauvais pour expliquer";
+			mes "les choses aux gens. Très mauvais.";
+			close;
+		}
+		else if (ROG_SK == 7) {
+			mes "[Louis Greg]";
+			mes "Hm ? Vous êtes en plein apprentissage";
+			mes "du secret du Voleur, n'est-ce pas ?";
+			mes "Ooh, alors vous ne devriez pas être ici";
+			mes "encore. Veuillez retourner et";
+			mes "parler à ^FF0000Thor^000000 une nouvelle fois, d'accord ?";
+			mes "[Louis Greg]";
+			close;
+		}
+		else if (ROG_SK == 8) {
+			mes "[Louis Greg]";
+			mes "Vous avez fini avec";
+			mes "You're done with";
+			mes "l'entraînement ? Ah,";
+			mes "alors tu dois";
+			mes "parler à Thor encore !";
+			close;
+		}
+		else if (ROG_SK == 9) {
+			mes "[Louis Greg]";
+			mes "Tu voulais apprendre";
+			mes "davantage sur le Close Confine ?";
+			mes "Ouf, alors tu ferais mieux de parler";
+			mes "à mon père. Je viens d'apprendre";
+			mes "cette technique moi-même, tu sais.";
+			close;
+		}
+		else if (ROG_SK == 11) {
+			mes "[Louis Greg]";
+			mes "Je viens d'entendre mes";
+			mes "frères dire que Chae Takbae";
+			mes "a développé le Close Confine";
+			mes "comme un moyen de battre brutalement ses";
+			mes "ennemis, les empêchant de";
+			mes "s'enfuir. Est-ce vrai ?";
+			close;
+		}
+		mes "[Louis Greg]";
+		mes "Wow, tu es vraiment";
+		mes "formidable ! J'aimerais être";
+		mes "aussi puissant que toi.";
+		mes "Je déteste être un enfant !";
+		close;
+	}
+	mes "[Louis Greg]";
+	mes "Pourquoi suis-je devenu un Rogue ?";
+	mes "Je suppose que j'aime simplement être";
+	mes "fouinard. Et puis, être moral et respectueux de la loi est";
+	mes "juste trop difficile, tu sais ?
+";
+	mes "[Thor Greg]";
+	close;
+}
+
+in_rogue,268,125,2	script	Thor Greg#rogueguild	86,{
+	if (BaseJob == Job_Rogue || Class == Job_Thief_High) {
+		if (ROG_SK < 1) {
+			mes "[Thor Greg]";
+			mes "J'espère que ces hommes bizarres";
+			mes "ne l'ont pas attrapé. Avec";
+			mes "un peu de chance, il se cache dans";
+			mes "la pièce de sûreté, mais quand même...";
+			mes "[Thor Greg]";
+			set ROG_SK,1;
+			close;
+		}
+		else if (ROG_SK == 1) {
+			mes "[Thor Greg]";
+			mes "se cacher dans la pièce de";
+			mes "sûreté. Je n'ai jamais su";
+			mes "où elle se trouve, mais Markie dit";
+			mes "que l'entrée est ingénieusement";
+			mes "cachée à sa gauche. Hmmm...";
+			mes "hidden to her left. Hmmm...";
+			close;
+		}
+		else if (ROG_SK == 2) {
+			mes "[Thor Greg]";
+			mes "Cherchez-vous";
+			mes "mon petit frère, ^FF0000Louis^000000 ?";
+			mes "Oh, il est toujours traînant";
+			mes "autour de ce ^FF0000Hollgrehenn Jr.^000000";
+			mes "ici dans la Guilde des Voleurs.";
+			mes "Que voulais-tu qu'il fasse pour toi ?";
+			close;
+		}
+		else if (ROG_SK == 3) {
+			mes "[Thor Greg]";
+			mes "Qu'est-ce que c'est que ça que tu";
+			mes "m'apportes ? Une lettre";
+			mes "de Louis ? Voyons... ";
+			set ROG_SK,4;
+			next;
+			mes "[Thor Greg]";
+			mes "Oh mon Dieu, papa est dans";
+			mes "un vrai pétril ! Je devrais";
+			mes "dire à mon grand frère, Jay,";
+			mes "tout de suite ! Vite, trouve ^FF0000Jay^000000";
+			mes "à côté de ^FF0000Antonio Jr.^000000";
+			mes "the guild! P-please hurry!";
+			close;
+		}
+		else if (ROG_SK == 4) {
+			mes "[Thor Greg]";
+			mes "You can find Jay hanging";
+			mes "out with Antonio Jr. here";
+			mes "à l'intérieur de la Guilde des Voleurs.";
+			mes "Merci de lui apporter cette lettre";
+			mes "Je l'ai écrite dès que possible !";
+			close;
+		}
+		else if (ROG_SK == 5) {
+			mes "[Thor Greg]";
+			mes "J'espère que mon père n'est pas";
+			mes "sorti du coffre-fort de la Guilde des Voleurs. C'est peut-être le seul endroit où il est en sécurité...";
+			mes "Guild's panic room. That";
+			mes "may be the only place";
+			mes "where he's safe...";
+			close;
+		}
+		else if (ROG_SK == 6) {
+			mes "[Thor Greg]";
+			mes "Qu'est-ce que c'est ? Mon père";
+			mes "souhaitait que je t'apprenne";
+			mes "la compétence secrète des Voleurs ?";
+			mes "D'accord, je vais te former comme mon père l'a fait. Veux-tu une explication d'abord ?";
+			mes "same way father did. Would";
+			mes "you like an explanation first?";
+			next;
+			mes "[Thor Greg]";
+			mes "Si tu ne veux pas d'";
+			mes "explication, je vais simplement";
+			mes "t'envoyer à l'entraînement";
+			mes "immédiatement sur le sol de sorte que";
+			mes "vous puissiez apprendre ^FF0000Close Confine^000000.";
+			next;
+			if (select("Listen to Explanation:Go to Training Ground") == 1) {
+				mes "[Thor Greg]";
+				mes "D'accord, la toute première étape";
+				mes "d'apprendre ^FF0000Close Confine^000000";
+				mes "est de maîtriser le blocage du";
+				mes "mouvement de votre ennemi. Je vais";
+				mes "vous envoyer vers un terrain d'entraînement";
+				mes "spécial pour que vous puissiez pratiquer.";
+				next;
+				mes "[Thor Greg]";
+				mes "Là, vous rencontrerez notre";
+				mes "partenaire d'entraînement. Approchez-vous";
+				mes "d'elle de près et assurez-vous de";
+				mes "prévoir et bloquer ses mouvements";
+				mes "vers la gauche, la droite ou en arrière. Préparez-vous, je vous envoie maintenant...";
+				close2;
+				warp "in_rogue",89,114;
+				end;
+			}
+			warp "in_rogue",89,114;
+			end;
+		}
+		else if (ROG_SK == 7) {
+			mes "[Thor Greg]";
+			mes "Bon, je vais briser ici";
+			mes "la quatrième muraille et supposer";
+			mes "que vous avez été déconnecté du";
+			mes "jeu. Souhaitez-vous revenir";
+			mes "vers le terrain d'entraînement dans l'ordre";
+			mes "pour apprendre ^FF0000Close Confine^000000 ?";
+			next;
+			if (select("Yes, please.:No, thanks.") == 1) {
+				mes "[Thor Greg]";
+				mes "D'accord, la toute première étape";
+				mes "d'apprendre ^FF0000Close Confine^000000";
+				mes "est de maîtriser le blocage du";
+				mes "mouvement de votre ennemi. Je vais";
+				mes "vous envoyer vers un terrain d'entraînement";
+				mes "spécial pour que vous puissiez pratiquer.";
+				next;
+				mes "[Thor Greg]";
+				mes "Là, vous rencontrerez notre";
+				mes "partenaire d'entraînement. Approchez-vous";
+				mes "d'elle de près et assurez-vous de";
+				mes "prévoir et bloquer ses mouvements";
+				mes "vers la gauche, la droite ou en arrière. Préparez-vous, je vous envoie maintenant...";
+				set ROG_SK,6;
+				close2;
+				warp "in_rogue",89,114;
+				end;
+			}
+			mes "[Thor Greg]";
+			mes "Très bien, très bien.";
+			mes "Quand vous vous sentirez prêt";
+			mes "à reprendre l'entraînement,";
+			mes "faites-moi savoir.";
+			close;
+
+		}
+		else if (ROG_SK == 8) {
+			mes "[Thor Greg]";
+			mes "Ah, j'entends dire que Kienna";
+			mes "que vous avez terminé votre";
+			mes "formation. Félicitations !";
+			mes "Maintenant, veuillez parler à mon";
+			mes "père afin qu'il puisse expliquer la compétence Close Confine en détail.";
+			set ROG_SK,9;
+			close;
+		}
+		else if (ROG_SK == 9) {
+			mes "[Thor Greg]";
+			mes "Veuillez parler à mon père";
+			mes "afin qu'il puisse vous expliquer les";
+			mes "nuances de la compétence Close Confine.";
+			mes "Il devrait toujours se trouver dans la pièce panique du Guild Rogue.";
+			close;
+		}
+		else if (ROG_SK == 11) {
+			mes "[Thor Greg]";
+			mes "Vous savez, Chae Takbae";
+			mes "dirait : « Je suis Chae";
+			mes "Takbae. Et vous êtes... ? »";
+			mes "aux adversaires, et juste";
+			mes "avant qu'ils ne puissent répondre,";
+			mes "il les battait à mort.";
+			next;
+			mes "[Thor Greg]";
+			mes "Il est vraiment un";
+			mes "héroe légendaire";
+			mes "parmi les Rogues... !";
+			close;
+		}
+		mes "[Thor Greg]";
+		mes "Hum...?";
+		mes "Il semble que";
+		mes "tu es beaucoup plus fort";
+		mes "que même moi. Il n'y a";
+		mes "probablement pas trop de";
+		mes "personnes qui oseraient t'attaquer...";
+		close;
+	}
+	mes "[Thor Greg]";
+	mes "Hm, ganker ça, ganker";
+	mes "ça. *Sigh* C'est mon plus grand";
+	mes "remords : je dépense des zeny";
+	mes "presque aussi vite que je peux";
+	mes "les voler. C'est irresponsable...";
+	close;
+}
+
+in_rogue,181,114,3	script	Jay Greg#rogueguild	85,{
+	if (BaseJob == Job_Rogue || Class == Job_Thief_High) {
+		if (ROG_SK < 1) {
+			mes "[Jay Greg]";
+			mes "Mon père doit être caché";
+			mes "dans la chambre de panique de la Guilde des Voleurs.";
+			mes "Gilde des Voleurs. Étrangement,";
+			mes "mes frères et moi ne pouvons";
+			mes "jamais le trouver et déterminer";
+			set ROG_SK,1;
+			next;
+			mes "[Jay Greg]";
+			mes "Récemment, il a été poursuivi";
+			mes "par ces hommes étranges qui";
+			mes "menaçait notre famille.";
+			mes "Eh bien, il vient juste de nous";
+			mes "apprendre une nouvelle compétence,";
+			mes "pour qu'il puisse se protéger...";
+			close;
+		}
+		else if (ROG_SK == 1) {
+			mes "[Jay Greg]";
+			mes "Je suppose que mon père";
+			mes "s'est caché dans la salle de";
+			mes "panique de la Guilde des Voleurs.";
+			mes "Nous ne pourrons jamais la trouver,";
+			mes "mais on dit que l'entrée est dissimulée";
+			mes "près de Markie quelque part.";
+			close;
+		}
+		else if (ROG_SK == 2) {
+			mes "[Jay Greg]";
+			mes "Vous cherchez";
+			mes "Louis, mon petit frère ?";
+			mes "Il se trouve ici dans la Guilde des";
+			mes "Voleurs, donc ce ne devrait pas être";
+			mes "trop difficile de le trouver. Il est";
+			mes "probablement juste près de Hollgrehen Jr.";
+			close;
+		}
+		else if (ROG_SK == 3) {
+			mes "[Jay Greg]";
+			mes "Thor ? Il devrait être";
+			mes "autour de la Guilde des Voleurs";
+			mes "partout. As-tu essayé";
+			mes "de regarder autour chez Hermathorn Jr. ?";
+			close;
+		}
+		else if (ROG_SK == 4) {
+			mes "[Jay Greg]";
+			mes "Une lettre pour moi... ?";
+			mes "Ah, c'est de Thor, donc";
+			mes "je pense que je vais mieux lire";
+			mes "ça tout de suite. Hmmm...";
+			set ROG_SK,5;
+			next;
+			mes "[Jay Greg]";
+			mes "Je vois... Je dois rendre compte";
+			mes "de cela à la Guilde des Voleurs";
+			mes "tout de suite, et envoyer une réponse";
+			mes "à mon père. Hmm. Laisse-moi";
+			mes "lui écrire une lettre tout de suite.";
+			mes "S'il te plaît, laisse-moi un instant...";
+			next;
+			mes "[Jay Greg]";
+			mes "Voilà, c'est fait. S'il te plaît,";
+			mes "donne ceci à mon père avec";
+			mes "toute la hâte dont tu es capable.";
+			mes "Je sais que c'est beaucoup demander, mais";
+			mes "Je ne peux pas trouver le chemin vers la";
+			mes "chambre de panique cachée moi-même...";
+			close;
+		}
+		else if (ROG_SK == 5) {
+			mes "[Jay Greg]";
+			mes "Veuillez transmettre ma réponse";
+			mes "à mon père dès que";
+			mes "vous pourrez. Il est toujours caché";
+			mes "dans la chambre de panique de la Guilde des Voleurs.";
+			mes "C'est-à-dire, si nos ennemis";
+			mes "ne l'ont pas encore trouvé.";
+			close;
+		}
+		else if (ROG_SK == 6) {
+			mes "[Jay Greg]";
+			mes "la compétence Close Confine ?";
+			mes "Je pense que Thor est le seul";
+			mes "Je pense que Thor est le seul";
+			mes "un accès à la";
+			mes "zone d'entraînement, alors";
+			mes "parle-lui en premier.";
+			close;
+		}
+		else if (ROG_SK == 7) {
+			mes "[Jay Greg]";
+			mes "la compétence Close Confine ?";
+			mes "Je pense que Thor est le seul";
+			mes "Je pense que Thor est le seul";
+			mes "un accès à la";
+			mes "zone d'entraînement, alors";
+			mes "parle-lui en premier.";
+			close;
+		}
+		else if (ROG_SK == 8) {
+			mes "[Jay Greg]";
+			mes "Ah, tu as terminé l'";
+			mes "formation pour Close Confine,";
+			mes "n'est-ce pas ? Super, va donc";
+			mes "dire à mon frère, Thor.";
+			close;
+		}
+		else if (ROG_SK == 9) {
+			mes "[Jay Greg]";
+			mes "Hm. Tu devrais probablement";
+			mes "parler à mon père pour apprendre";
+			mes "davantage des nuances concernant";
+			mes "la compétence Close Confine.";
+			mes "As-tu vu où il se trouve dans";
+			mes "la salle de panique du Guild Rogue ?";
+			close;
+		}
+		else if (ROG_SK == 12) {
+			mes "[Jay Greg]";
+			mes "Chae Takbae avait l'air d'être un";
+			mes "gâble têtu et brutal. Mais il doit";
+			mes "avoir été assez intelligent pour";
+			mes "have been pretty smart to";
+			mes "invente ses propres compétences.";
+			close;
+		}
+		mes "[Jay Greg]";
+		mes "J'ai l'impression";
+		mes "que tu vas devenir";
+		mes "un des meilleurs Voleurs";
+		mes "du coin, si tu ne l'es déjà pas.";
+		close;
+	}
+	mes "[Jay Greg]";
+	mes "Depuis que j'ai appris";
+	mes "Intimdate, je suis devenu";
+	mes "vraiment puissant, peut-être même";
+	mes "masochiste. Je veux dire, si ils";
+	mes "t'attaquent avec une compétence, tu peux";
+	mes "leur répondre avec la même !";
+	close;
+}
+
+prt_are01,150,150,0	script	#1strecog	-1,10,10,{
+OnTouch_:
+	donpcevent "#1st5min::OnEnable";
+	donpcevent "#1stmove::OnEnable";
+	disablenpc "#1strecog";
+	end;
+}
+
+prt_are01,135,135,0	script	#1st5min	-1,{
+OnInit:
+	disablenpc "#1st5min";
+	end;
+
+OnEnable:
+	enablenpc "#1st5min";
+	initnpctimer;
+	end;
+
+OnDisable:
+	stopnpctimer;
+	disablenpc "#1st5min";
+	end;
+
+OnTimer1000:
+	mapannounce "prt_are01","Bienvenue dans le Terrain d'Entraînement à Proximité. Vous serez automatiquement téléporté dehors dans 5 minutes.",bc_map,"0x00ff00";
+	end;
+
+OnTimer290000:
+	mapannounce "prt_are01","Vous serez téléporté dehors dans 20 secondes.",bc_map,"0x00ff00";
+	end;
+
+OnTimer310000:
+	mapannounce "prt_are01","Vous serez téléporté dehors dans 5 secondes.",bc_map,"0x00ff00";
+	end;
+
+OnTimer315000:
+	mapannounce "prt_are01","Vous êtes actuellement en cours de téléportation vers l'extérieur.",bc_map,"0x00ff00";
+	disablenpc "Kienna#1st";
+	disablenpc "Kienna#2nd";
+	disablenpc "Kienna#3rd";
+	disablenpc "Kienna#4th";
+	disablenpc "Kienna#5th";
+	disablenpc "Kienna#6th";
+	disablenpc "Kienna#7th";
+	disablenpc "Kienna#8th";
+	donpcevent "#1stmove::OnDisable";
+	enablenpc "#1strecog";
+	donpcevent "Waiting Room#rogue10::OnEnable";
+	stopnpctimer;
+	mapwarp "prt_are01","in_rogue",264,124;
+	end;
+}
+
+prt_are01,135,135,0	script	#1stmove	-1,{
+OnInit:
+	disablenpc "#1stmove";
+	end;
+
+OnEnable:
+	enablenpc "#1stmove";
+	initnpctimer;
+	end;
+
+OnTimer3000:
+	mapannounce "prt_are01","Kienna apparaîtra dans 1 seconde. Veuillez vous approcher d'elle aussi près que possible.",bc_map,"0x00ff00";
+	end;
+
+OnTimer5000:
+	switch(rand(1,8)) {
+	case 1:
+		enablenpc "Kienna#1st";
+		break;
+	case  2:
+		enablenpc "Kienna#2nd";
+		break;
+	case  3:
+		enablenpc "Kienna#3rd";
+		break;
+	case  4:
+		enablenpc "Kienna#4th";
+		break;
+	case  5:
+		enablenpc "Kienna#5th";
+		break;
+	case  6:
+		enablenpc "Kienna#6th";
+		break;
+	case  7:
+		enablenpc "Kienna#7th";
+		break;
+	case 8:
+		enablenpc "Kienna#8th";
+	}
+	end;
+
+OnTimer8000:
+	disablenpc "Kienna#1st";
+	disablenpc "Kienna#2nd";
+	disablenpc "Kienna#3rd";
+	disablenpc "Kienna#4th";
+	disablenpc "Kienna#5th";
+	disablenpc "Kienna#6th";
+	disablenpc "Kienna#7th";
+	disablenpc "Kienna#8th";
+	end;
+
+OnTimer9000:
+	stopnpctimer;
+	donpcevent "#1stmove::OnEnable";
+	mapwarp "prt_are01","prt_are01",150,150;
+	end;
+
+OnDisable:
+	stopnpctimer;
+	disablenpc "#1stmove";
+	end;
+}
+
+prt_are01,149,162,0	script	Kienna#1st	700,1,1,{
+	end;
+OnTouch_:
+	callfunc "F_Kienna",strnpcinfo(2);
+	end;
+}
+prt_are01,136,150,0	duplicate(Kienna#1st)	Kienna#2nd	700,1,1
+prt_are01,150,138,0	duplicate(Kienna#1st)	Kienna#3rd	700,1,1
+prt_are01,163,147,0	duplicate(Kienna#1st)	Kienna#4th	700,1,1
+prt_are01,134,140,0	duplicate(Kienna#1st)	Kienna#5th	700,1,1
+prt_are01,161,140,0	duplicate(Kienna#1st)	Kienna#6th	700,1,1
+prt_are01,161,160,0	duplicate(Kienna#1st)	Kienna#7th	700,1,1
+prt_are01,138,159,0	duplicate(Kienna#1st)	Kienna#8th	700,1,1
+
+function	script	F_Kienna	{
+	if (ROG_SK == 6) {
+		donpcevent "#1stmove::OnDisable";
+		mes "[Kienna]";
+		mes "D'accord, dans ce";
+		mes "d'exercice, vous aurez besoin";
+		mes "de prédire dans quelle direction je vais";
+		mes "me déplacer et me bloquer";
+		mes "pour empêcher mon mouvement, en somme,";
+		mes "m'immobiliser. Préparez-vous~";
+		set ROG_SK,7;
+		next;
+		for(set .@lim_1,0; .@lim_1<10; set .@lim_1,.@lim_1+1) {
+			set .@move_1,rand(1,3);
+			if (select("Block her to the Left:Block her to the Right:Block her retreat") == .@move_1) {
+				mes "[Kienna]";
+				mes "Hein...?";
+				mes "Vous m'avez bloquée !";
+				mes "Travail très bien fait~";
+				specialeffect EF_POTION1;
+				specialeffect2 EF_POTION7;
+				set .@suc_1,.@suc_1 + 1;
+			}
+			else {
+				mes "[Kienna]";
+				mes "Désolée, mais je ne me déplaçais pas";
+				mes "dans cette direction.";
+				mes "Votre tentative de blocage a échoué...";
+			}
+			next;
+		}
+		mes "[Kienna]";
+		mes "Bon, c'est fini ici. Vous avez obtenu un";
+		mes "grade d'entraînement de ''^0000FFS^000000.'' ";
+		switch(.@suc_1) { 
+		case 10:
+			mes "C'est une note parfaite !";
+			mes "grade d'entraînement de ''^0000FFA^000000.'' ";
+			break;
+		case 9:
+			mes "Vous êtes vraiment très bon dans ça !";
+			mes "grade d'entraînement de ''^0000FFB +^000000.'' ";
+			break;
+		case 8:
+			mes "training grade of ''^0000FFB +^000000.''";
+			mes "C'est très louable !";
+			break;
+		case 7:
+			mes "grade d'entraînement de ''^0000FFB^000000.''";
+			mes "Très bien fait~";
+			break;
+		case 6:
+			mes "grade d'entraînement de ''^0000FFC +^000000.''";
+			mes "Pas mal, mais tu";
+			mes "as tout juste réussi !";
+			break;
+		case 5:
+			mes "grade d'entraînement de ''^FF0000C^000000.''";
+			break;
+		case 4:
+			mes "grade d'entraînement de ''^FF0000D+^000000.''";
+			break;
+		case 3:
+			mes "grade d'entraînement de ''^FF0000D^000000.''";
+			break;
+		case 2:
+			mes "grade d'entraînement de ''^FF0000F^000000.''";
+			break;
+		case 1:
+			mes "grade d'entraînement de ''^FF0000F -^000000.''";
+			break;
+		case 0:
+			mes "grade d'entraînement de...";
+			mes "En fait, je ne suis pas capable";
+			mes "de le calculer. Qu'est-ce";
+			mes "qui s'est passé ?!";
+		}
+		next;
+		if (.@suc_1 > 5) {
+			mes "[Kienna]";
+			mes "Je suis heureuse de dire que";
+			mes "tu as terminé ton";
+			mes "entraînement ! Laisse-moi te";
+			mes "renvoyer à Thor Greg";
+			mes "maintenant, afin que vous puissiez terminer";
+			mes "l'apprentissage de ^FF0000Close Confine^000000.";
+			set ROG_SK,8;
+			disablenpc "Kienna#"+getarg(0);
+			donpcevent "#1st5min::OnDisable";
+			enablenpc "#1strecog";
+			close2;
+			donpcevent "Waiting Room#rogue10::OnEnable";
+			warp "in_rogue",264,124;
+			end;
+		}
+		else {
+			mes "[Kienna]";
+			mes "Hm. Avec ce niveau,";
+			mes "je ne pense pas que vous soyez";
+			mes "tout à fait prêt(e) à terminer";
+			mes "l'apprentissage de Close Confine.";
+			mes "Souhaitez-vous refaire l'exercice d'entraînement ?";
+			mes "[Kienna]";
+			next;
+			if (select("Yes!:No, thanks.") == 1) {
+				disablenpc "Kienna#"+getarg(0);
+				donpcevent "#1stmove::OnEnable";
+				set ROG_SK,6;
+				warp "prt_are01",150,150;
+				end;
+			}
+			disablenpc "Kienna#"+getarg(0);
+			donpcevent "#1st5min::OnDisable";
+			enablenpc "#1strecog";
+			set ROG_SK,6;
+			donpcevent "Waiting Room#rogue10::OnEnable";
+			warp "in_rogue",264,124;
+			end;
+		}
+	}
+	else if (ROG_SK == 7) {
+		mes "[Kienna]";
+		mes "votre entraînement au milieu";
+		mes "de l'exercice. Je suis désolé(e),";
+		mes "mais vous devrez recommencer";
+		mes "tout au début de cet entraînement.";
+		mes "[Kienna]";
+		mes "Vous avez déjà complété";
+		set ROG_SK,6;
+		close2;
+		disablenpc "Kienna#"+getarg(0);
+		donpcevent "#1stmove::OnEnable";
+		warp "prt_are01",150,150;
+		end;
+	}
+	else if (ROG_SK == 8) {
+		mes "[Kienna]";
+		mes "Close Confine.";
+		mes "the training exercise for";
+		mes "la compétence Close Confine.";
+		mes "Vous n'avez plus besoin";
+		mes "de mon aide.";
+		close2;
+		donpcevent "Waiting Room#rogue10::OnEnable";
+		warp "in_rogue",264,124;
+		end;
+	}
+	else {
+		mes "[Kienna]";
+		mes "Je suis désolé, mais je n'ai";
+		mes "pensez que vous appartenez ici.";
+		mes "Laissez-moi vous envoyer à la";
+		mes "Guilde des Voleurs si vous êtes perdu...";
+		close2;
+		donpcevent "Waiting Room#rogue10::OnEnable";
+		warp "in_rogue",264,124;
+		end;
+	}
+
+OnInit:
+	disablenpc "Kienna#1st";
+	disablenpc "Kienna#2nd";
+	disablenpc "Kienna#3rd";
+	disablenpc "Kienna#4th";
+	disablenpc "Kienna#5th";
+	disablenpc "Kienna#6th";
+	disablenpc "Kienna#7th";
+	disablenpc "Kienna#8th";
+	end;
+}
+
+in_rogue,88,119,3	script	Waiting Room#rogue10	828,{
+OnEnable:
+	enablenpc "Waiting Room#rogue10";
+	enablewaitingroomevent "Waiting Room#rogue10";
+	end;
+
+OnInit:
+	waitingroom "Training Ground",10,"Waiting Room#rogue10::OnStartArena",1;
+	enablewaitingroomevent "Waiting Room#rogue10";
+	end;
+
+OnStartArena:
+	warpwaitingpc "prt_are01",150,150;
+	disablewaitingroomevent "Waiting Room#rogue10";
+	end;
+}
+
+//============================================================ 
+// Old changelog
+//============================================================ 
+//= 1.0 for fully working skills only [Lupus]
+//= 1.1 Added more new skill quests for more classes [Lupus]
+//= Somehow eA engine doesn't let you keep learn't skill V_V'
+//= 1.2 Added to correct locations, correct NPC's, fixed
+//= some of the items required and made them into real
+//= quests. [Reddozen] 
+//= 1.3 Fixed bugs and minor typos. Optimized [Lupus]
+//= 1.3a fixed an item ID typo, thx 2Spiritual Kid
+//= 1.3b Splitted into different files [DracoRPG]
+//============================================================

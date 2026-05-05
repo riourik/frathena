@@ -1,0 +1,146 @@
+//===== rAthena Script ======================================= 
+//= Falcon & Wolf Flute Trader
+//===== By: ================================================== 
+//= Masao, Muad_Dib, Ziu
+//===== Current Version: ===================================== 
+//= 1.2a
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Sells Falcon Flute and Wolf Flute.
+//===== Additional Comments: ================================= 
+//= 1.0 First Version. [Masao]
+//= 1.1 Added Baby Hunter and Baby Ranger check. bugreport:5728 [Masao]
+//= 1.2 Added Wolf Flute trader, optimized. [Euphy]
+//= 1.2a Fixed some conditions. [Euphy]
+//============================================================ 
+
+// Falcon Flute :: falcon_flute
+//============================================================
+-	script	Falcon Flute Trader::fflute	-1,{
+	mes "[Marchand de Flûte d'Aigle]";
+	if (BaseJob == Job_Hunter) {
+		mes "Voulez-vous louer un Falcon ?";
+		mes "Avec une Flûte magique, vous pouvez faire appel à votre Faucon de n'importe où !";
+		next;
+		mes "[Marchand de Flûte d'Aigle]";
+		mes "C'est merveilleux, n'est-ce pas ? Ha ha ha !";
+		next;
+		mes "[Marchand de Flûte d'Aigle]";
+		mes "Pourquoi je vends ces Flûtes de Faucon ?";
+		mes "C'est parce que je n'ai aucune idée de comment elles fonctionnent.";
+		mes "Haha !";
+		next;
+		mes "[Marchand de Flûte d'Aigle]";
+		mes "Bien sûr, vous aurez besoin de la compétence ^ff0000Maîtrise du Faucon^000000.";
+		mes "Je n'ai pas la compétence, donc je ne sais pas comment manipuler les Faucons.";
+		mes "Pour l'instant, je pourrais peut-être jamais avoir un Faucon.";
+		next;
+		mes "[Marchand de Flûte d'Aigle]";
+		mes "Mais je ne peux pas vous en donner un gratuitement !";
+		mes "Je dois gagner de l'argent car j'ai aussi besoin de manger !";
+		next;
+		mes "[Marchand de Flûte d'Aigle]";
+		mes "Si vous avez besoin d'une Flûte de Faucon, je les vendrai pour 12 500 zeny. Ou est-ce trop cher ?";
+		next;
+		if (eaclass()&EAJL_THIRD) {
+			mes "[Marchand de Flûte d'Aigle]";
+			mes "Pour les Rangers, en revanche, j'ai un prix spécial de 10 000 zeny !";
+			set .@price,10000;
+			next;
+		} else
+			set .@price,12500;
+		if(select("Don't buy one:Buy a Falcon Flute") == 1) {
+			mes "[Marchand de Flûte d'Aigle]";
+			mes "C'est trop dommage. Si vous en avez besoin, revenez !";
+			close;
+		}
+		if (Zeny >= .@price) {
+			if (countitem(12848) >= 1) {
+				mes "[Marchand de Flûte d'Aigle]";
+				mes "Comme je peux le voir, vous possédez déjà une Falcon Flute !";
+				mes "Ne vous inquiétez pas, mon jeune ami, une fois que vous aurez acheté la Falcon Flute, vous n'aurez plus besoin d'en faire l'acquisition à nouveau.";
+				mes "Puisque la Falcon Flute ne disparaît pas après utilisation, n'est-ce pas génial ?";
+				close;
+			}
+			mes "[Marchand de Flûte d'Aigle]";
+			mes "Voici, prenez cette flûte.";
+			mes "Avec elle, vous pourrez siffler pour faire venir votre Faucon d'où que vous soyez.";
+		  	set Zeny, Zeny - .@price;
+			getitem 12848,1; //Falcon_Flute
+			next;
+			mes "[Marchand de Flûte d'Aigle]";
+			mes "Juste un rappel.";
+			mes "Vous avez besoin de la compétence ^ff0000Maîtrise du Faucon^000000 pour l'utiliser !";
+			close;
+		}
+		mes "[Marchand de Flûte d'Aigle]";
+		mes "Désolé mais vous n'avez pas assez d'argent pour acheter une Falcon Flute, veuillez revenir lorsque vous aurez plus d'argent !";
+		close;
+	}
+	if (BaseJob == Job_Archer) {
+		mes "Bonjour, jeune !";
+		mes "Actuellement, je ne peux pas t'aider,";
+		mes "mais pourquoi ne pas revenir vers moi lorsque tu seras devenu un grand Chasseur et que tu auras appris à manier correctement les Aigles ?";
+		close;
+	}
+	mes "N'est-ce pas une belle journée aujourd'hui ?";
+	close;
+}
+hu_in01,386,306,3	duplicate(fflute)	Falcon Flute Trader#fft	51
+pay_arche,91,134,3	duplicate(fflute)	Falcon Flute Trader#fft2	51
+
+// Wolf Flute :: job_ranger
+//============================================================
+tur_dun01,89,170,5	script	Expert Flute Crafter	59,{
+	if (Class == Job_Ranger || Class == Job_Ranger_T || Class == Job_Baby_Ranger) {
+		if (countitem(6124)) {
+			mes "[Artisan de Flûte Expert]";
+			mes "La flûte Loup dont tu disposes est fabriquée par moi-même, en bois.";
+			mes "Tu peux revenir ici et me trouver si tu perds ta flûte Loup !";
+			next;
+			mes "[Artisan de Flûte Expert]";
+			mes "Seule je peux fabriquer la flûte.";
+			mes "Il ne s'agit que d'une petite affaire pour moi de fabriquer une autre flûte !!";
+			close;
+		}
+		mes "[Artisan de Flûte Expert]";
+		mes "Avez-vous besoin de quelque chose ?";
+		mes "Une nouvelle Flûte du Loup ?";
+		next;
+		switch(select("Please give me a new Wolf Flute.:No.")) {
+		case 1:
+			if (countitem(7150) && Zeny >= 100000) {
+				mes "[Artisan de Flûte Expert]";
+				mes "Avez-vous apporté tous les matériaux ?";
+				mes "Wow ! Vos matériaux ne sont pas mauvais !";
+				mes "C'est suffisant.";
+				next;
+				mes "[Artisan de Flûte Expert]";
+				mes "Voici la nouvelle Flûte du Loup.";
+				mes "J'espère que vous êtes prêt à l'utiliser.";
+				delitem 7150,1; //Bamboo_Cut
+				set Zeny, Zeny-100000;
+				getitem 6124,1; //Wolf's_Flute
+				close;
+			}
+			mes "[Artisan de Flûte Expert]";
+			mes "Si vous souhaitez fabriquer une nouvelle Flûte du Loup, j'ai besoin que vous m'apportiez ^4d4dff1 Bambou Coupé et 100 000 zeny.^000000";
+			next;
+			mes "[Artisan de Flûte Expert]";
+			mes "^4d4ffBambou Coupé peut être obtenu à Kapha ou Karakasa.^000000";
+			close;
+		case 2:
+			mes "[Artisan de Flûte Expert]";
+			mes "Si vous ne faites pas apparaître un loup, alors vous n'avez pas besoin de la Flûte du Loup.";
+			mes "Vous pouvez revenir ici et me trouver si vous changez d'avis.";
+			mes "Est-ce bien ça ?";
+			close;
+		}
+	}
+	mes "[Artisan de Flûte Expert]";
+	mes "Euh ? Vous n'êtes pas un Chasseur ?";
+	mes "Alors cette flûte est totalement inutile pour vous !";
+	close;
+}

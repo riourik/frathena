@@ -1,0 +1,4588 @@
+//===== rAthena Script =======================================
+//= Flame Basin Quests
+//===== Description: =========================================
+//= [Official Conversion]
+//= Quests NPCs from Flame Basin
+//===== Changelogs: ==========================================
+//= 1.0 First version. Thanks to Dia from https://www.divine-pride.net/ ! [Capuche]
+//= 1.1 Added Dimensional Travel Quest. [Capuche]
+//= 1.2 Added Flaming Basin and Doom Prayers quests. [Capuche]
+//============================================================
+
+moro_vol,94,110,5	script	Guardian Nidhogg#143nyd01	4_F_NYDHOG,{
+	mes "[Nidhogg]";
+	if (ep4_3_mockill == 0) {
+		mes "Bientôt, nous ferons face à une guerre décisive.";
+		mes "Je ferai de mon mieux pour accomplir ma mission en tant que Gardien.";
+		cutin "ep14_nyd04.bmp",2;
+		next;
+		mes "[Nidhogg]";
+		mes "Je prépare un cadeau pour vous afin de réparer mes transgressions passées envers vous.";
+		close3;
+	}
+	if ($ep143_3_expbuff == 1) {
+		mes "J'espère que vous apprécierez mon cadeau. La bénédiction d'Yggdrasil ne dure pas éternellement,";
+		mes "mais elle durera au moins assez longtemps pour vous aider vous et votre groupe dans le combat.";
+		cutin "ep14_nyd04.bmp",2;
+		close3;
+	}
+	if (ep4_3_mockill == 1 && countitem(6715) > 0) {
+		mes "Oh, c'est un éclat de son âme.";
+		mes "Il est destiné à errer sans fin dans le monde qu'il a créé dans son esprit.";
+		mes "La vengeance est rendue, mais les résultats ne sont pas aussi satisfaisants que je l'espérais.";
+		cutin "ep14_nyd01.bmp",2;
+		next;
+		mes "[Nidhogg]";
+		mes "Puis-je avoir cet Éclat d'Âme ?";
+		mes "En échange, je vous donnerai à vous et à votre groupe";
+		mes "le plus grand cadeau que je puisse offrir.";
+		cutin "ep14_nyd03.bmp",2;
+		next;
+		if (select( "Give the Soul Shard.", "Decline." ) == 2) {
+			mes "[Nidhogg]";
+			mes "Faites attention à l'influence négative du Dieu Démon sur vous.";
+			cutin "ep14_nyd04.bmp",2;
+			close3;
+		}
+		if ($ep143_3_expbuff == 1) {
+			mes "[Nidhogg]";
+			mes "Oh, vous avez déjà reçu la bénédiction d'Yggdrasil.";
+			mes "Je prendrai cela pour plus tard.";
+			cutin "ep14_nyd01.bmp",2;
+			close3;
+		}
+		cutin "ep14_nyd04.bmp",2;
+		mes "[Nidhogg]";
+		mes "Merci.";
+		mes "Que Yggdrasil te bénisse.";
+		delitem 6715,1;// P_Of_Evil_Soul
+		$ep143_3_expbuff = 1;
+		$ep143_3_exptime = 0;
+		ep4_3_mockill = 2;
+		announce "Nidhogg: May Yggdrasil bless the Demon God slayers " + strcharinfo(0) + " and others.", bc_all, "0xFF0000";
+		donpcevent "Loki#1432loki01::OnEventOn";
+		next;
+		mes "^4d4dffBravo pour avoir éliminé le Dieu Démon Morocc. Le taux d'EXP du serveur a augmenté de 10% pendant environ une heure.^000000";
+		close3;
+	}
+	mes "Je ne comprends pas cela ;";
+	mes "j'avais vraiment envie de l'éliminer de ce monde,";
+	mes "et pourtant, j'ai l'impression d'être vide à l'intérieur.";
+	cutin "ep14_nyd02.bmp",2;
+	next;
+	mes "[Nidhogg]";
+	mes "Cela doit être";
+	mes "la façon dont les gens se sentent lorsqu'ils perdent leur emploi du jour au lendemain.";
+	cutin "ep14_nyd01.bmp",2;
+	next;
+	mes "[Nidhogg]";
+	mes "Au moins, j'ai économisé assez d'argent";
+	mes "pour me passer de travail pendant un certain temps.";
+	cutin "ep14_nyd04.bmp",2;
+	close3;
+
+OnEventOn:
+	if ($ep143_3_expbuff == 1) {
+		initnpctimer;
+		setbattleflag( "quest_exp_rate", getbattleflag("quest_exp_rate") + 10 );
+		setbattleflag( "base_exp_rate", getbattleflag("base_exp_rate") + 10 );
+		setbattleflag( "job_exp_rate", getbattleflag("job_exp_rate") + 10 );
+	}
+	end;
+OnTimer60000:
+	if ($ep143_3_exptime < 60) {
+		$ep143_3_exptime++;
+		initnpctimer;
+	}
+	else
+		donpcevent "Guardian Nidhogg#143nyd01::OnStop";
+	end;
+OnStop:
+	stopnpctimer;
+	if ($ep143_3_expbuff == 1) {
+		$ep143_3_expbuff = 0;
+		$ep143_3_exptime = 0;
+		setbattleflag( "quest_exp_rate", getbattleflag("quest_exp_rate") - 10 );
+		setbattleflag( "base_exp_rate", getbattleflag("base_exp_rate") - 10 );
+		setbattleflag( "job_exp_rate", getbattleflag("job_exp_rate") - 10 );
+	}
+	end;
+OnInit:
+	if ($ep143_3_expbuff == 1)
+		initnpctimer;
+	end;
+OnInterIfInitOnce:
+	if ($ep143_3_expbuff == 1)
+		donpcevent "Guardian Nidhogg#143nyd01::OnEventOn";
+	end;
+}
+
+moro_vol,97,110,3	script	Loki#1432loki01	4_M_ROKI2,{
+	cutin "ep14_roki01.bmp",2;
+	mes "[Loki]";
+	mes "Les choses n'ont même pas commencé ;";
+	mes "elles ne le seront que lorsque ses vraies couleurs seront révélées.";
+	close3;
+
+OnEventOn:
+	initnpctimer;
+	end;
+OnTimer5000:
+	announce "Pour avoir vaincu Morocc, vous avez été récompensé par une prime de 10 % supplémentaire d'EXP serveur pendant 1 heure.", bc_all, "0xFF0000";
+	end;
+OnTimer11500:
+	announce " ", bc_all, "0xFF0000";
+	end;
+OnTimer12000:
+	donpcevent "Guardian Nidhogg#143nyd01::OnEventOn";
+	stopnpctimer;
+	end;
+}
+
+moro_vol,98,107,3	script	Magic Scholar#143avt01	4_M_FAIRYAVANT,{
+	if (checkweight(1304,3) == 0) {
+		mes "Vous portez trop d'objets pour poursuivre la quête.";
+		mes "Veuillez faire de la place dans votre inventaire.";
+		close;
+	}
+	cutin "avant01.bmp",1;
+	if (ep14_2_mylord < 33) {
+		mes "[Savant de la Magie]";
+		mes "Arrêtez de me déranger.";
+		mes "Si vous êtes ici pour donner votre corps à mes expériences, alors vous pouvez rester.";
+		mes "Ou décampez !";
+		close3;
+	}
+	if (ep14_2_mylord == 33) {
+		mes "[Avant]";
+		mes "Qu'est-ce qui vous amène, recrue ?";
+		mes "Êtes-vous venu rire de ma misère, comme tout le monde ?";
+		next;
+		select( "Why are you here?", "Are you sorry for what you've done?" );
+		mes "[Avant]";
+		mes "*Hoquet*";
+		mes "C'est une question d'honneur.";
+		mes "Je reconnais que mes actions ont mis mes compagnons dans la danger.";
+		next;
+		cutin "avant02.bmp",1;
+		mes "[Avant]";
+		mes "Je veux dire que je fais cela pour compenser ce que j'ai fait,";
+		mes "comme tout le monde veut croire. *Sourire narquois*";
+		next;
+		mes "[Avant]";
+		mes "Mais si je suis honnête avec moi-même,";
+		mes "je le fais pour me venger de Shnaim et Morocc de m'avoir utilisé comme un outil.";
+		next;
+		mes "[Avant]";
+		mes "Je prévois d'être le dernier debout après que tout s'effondre.";
+		ep14_2_mylord = 34;
+		close3;
+	}
+	if (BaseLevel < 140) {
+		mes "[Avant]";
+		mes "Je n'ai aucun usage pour les faibles.";
+		mes "Reviens quand tu seras plus fort.";
+		close3;
+	}
+	switch( checkquest(7584,PLAYTIME) ) {
+	case -1:
+		if (isbegin_quest(7583) == 1) {// Collecting Mana
+			if (countitem(6708) > 2) {
+				mes "[Avant]";
+				mes "Pas mal, recrue.";
+				mes "Laisse-moi prendre les Mana Crystallines.";
+				mes "Bien joué.";
+				delitem 6708, countitem(6708);// Mana_crystal
+				erasequest 7583;// Collecting Mana
+				setquest 7584;// Unending Battle
+				getexp 350000,350000;
+				close3;
+			}
+			mes "[Avant]";
+			mes "Vert-pré, si tu vaincs ces puissants Démons, tu trouveras des mana crystallines.";
+			mes "Je veux que tu me les amènes,";
+			mes "au moins trois à la fois. Compris ?";
+			close3;
+		}
+		if (checkquest(7581,HUNTING) == 0 || checkquest(7581,HUNTING) == 1) {
+			mes "[Avant]";
+			mes "Hé, recrue.";
+			mes "Tu vois ces lourdauds massifs ?";
+			mes "Si tu chasses ces Distordus,";
+			next;
+			mes "[Avant]";
+			mes "Flammants et Glaciaux Rénés, tu trouveras des mana crystallines.";
+			mes "Une partie du mana volé à l'orbe, les crystallines sont ce qui";
+			mes "rend ces petits Démons si puissants.";
+			next;
+			mes "[Avant]";
+			mes "je veux que tu m'apprennes";
+			mes "Élimine-les et amène-moi des Mana Crystallines.";
+			mes "Ne tente pas de me les cacher : elles ne te servent à rien.";
+			next;
+			mes "[Avant]";
+			mes "Trois Rénés, donc trois Mana Crystallines.";
+			mes "Amène-les au moins pour Kardui d'Eclage.";
+			setquest 7583;// Collecting Mana
+			close3;
+		}
+		mes "[Avant]";
+		mes "Hm, je ne savais pas qu'une si petite quantité de mana pouvait produire";
+		mes "une telle puissance.";
+		mes "Démon sales.";
+		close3;
+	case 0:
+	case 1:
+		mes "[Avant]";
+		mes "J'espère que vous reviendrez pour la prochaine soumission.";
+		close3;
+	case 2:
+		mes "[Avant]";
+		mes "Bientôt, l'Alliance Humaine enverra une équipe de soumission des démons. Passez voir avant de partir.";
+		mes "Vous voulez collecter la mana, n'est-ce pas ?";
+		erasequest 7584;
+		close3;
+	}
+	end;
+
+OnInit:
+	questinfo( QTYPE_QUEST2, QMARK_NONE, "BaseLevel >= 140 && ep14_2_mylord > 33 && !isbegin_quest(7583) && !isbegin_quest(7584) && isbegin_quest(7581) == 1" );
+	end;
+}
+
+moro_vol,95,108,7	script	Hishieh#143hisie01	4_M_FARIY_HISIE,{
+	cutin "hisie01.bmp",0;
+	mes "[Hishieh]";
+	if (ep14_2_mylord < 15) {
+		mes "Êtes-vous de l'Alliance Humaine ?";
+		mes "Je ne me souviens pas vous avoir demandé votre aide pour le moment.";
+		next;
+		mes "[Hishieh]";
+		mes "Si quelque chose devait arriver, j'enverrai un message à votre commandant en chef, Hibba Agip.";
+		close3;
+	}
+	if (ep14_2_mylord < 33) {
+		mes "Pouvons-nous vraiment découvrir la vérité sur le Dieu Démon ici ?";
+		mes "C'est rempli de créatures que je n'ai jamais vues.";
+		next;
+		mes "[Hishieh]";
+		mes "Effrayant...";
+		close3;
+	}
+	if (ep14_2_mylord == 33) {
+		mes "Le responsable de tous les mauvais événements se cache vraiment ici, hein ?";
+		mes "Quelle excitation !";
+		next;
+		mes "[Hishieh]";
+		mes "Oh, pourquoi suis-je ici ?";
+		mes "Je suis venu au nom de Kar.";
+		mes "Il ne peut pas quitter Eclage alors qu'il doit l'approvisionner en mana que l'orb ne peut pas faire.";
+		next;
+		mes "[Hishieh]";
+		mes "Nos priorités sont Yggdrasil et son Gardien.";
+		mes "De plus, nous ne pouvons pas nous permettre de perdre le nouveau maire.";
+		next;
+		cutin "hisie04.bmp",0;
+		mes "[Hishieh]";
+		mes "J'ai réussi à convaincre les Anciens de me laisser commander l'armée,";
+		mes "mais je suis toujours un commandant de nom seulement.";
+		next;
+		select("What happened to Avant?");
+		cutin "hisie02.bmp",0;
+		mes "[Hishieh]";
+		mes "Hum...";
+		mes "Nous utilisons ses connaissances.";
+		mes "Nous aurions pu le tuer, mais cela aurait été trop facile.";
+		next;
+		mes "[Hishieh]";
+		mes "C'est une sorte de vengeance, je suppose, hein.";
+		mes "Après tout, sa seule transgression est qu'il aime trop la science.";
+		next;
+		mes "[Hishieh]";
+		mes "Même les Anciens ont reconnu son talent et décidé de lui sauver la vie.";
+		mes "Surtout...";
+		next;
+		mes "[Hishieh]";
+		mes "(Baisse la voix)";
+		mes "Personne ne sait que le mana du globe a été volé.";
+		mes "Aux yeux des autres, Avant n'est responsable que de moi et de Kar.";
+		next;
+		mes "[Hishieh]";
+		mes "Avant est là-bas. Vous pouvez lui poser des questions si vous le souhaitez.";
+		mes "Hah hah.";
+		close3;
+	}
+	switch( checkquest(7600,PLAYTIME) ) {
+	case -1:
+		switch( checkquest(7595,HUNTING) ) {
+		case -1:
+			if (isbegin_quest(7593) == 1) {
+				mes "Le Temple du Dieu Démon, hein ? Bon, si tu trouves de la mana errante provenant de l'orb là-dedans, pourrais-tu t'en occuper ?";
+				mes "Je ne sais pas sous quelle forme la mana se présente en ce moment, mais tu ne te tromperas pas.";
+				next;
+				mes "[Hishieh]";
+				mes "Si tu trouves de la mana errante provenant de l'orb, alors frappe-la et disperse-la.";
+				mes "Elle trouvera son chemin vers Yggdrasil et l'orb.";
+				mes "Tu peux le faire pour nous ?";
+				next;
+				if (select( "Gladly.", "Sorry." ) == 2) {
+					cutin "hisie02.bmp",0;
+					mes "[Hishieh]";
+					mes "Pas de soucis.";
+					mes "Je vais demander à quelqu'un d'autre.";
+					mes "C'est bon.";
+					close3;
+				}
+				mes "[Hishieh]";
+				mes "Je te dois tant,";
+				mes "Je ne sais pas comment te rembourser.";
+				mes "Merci.";
+				next;
+				mes "[Hishieh]";
+				mes "Veuillez libérer 3 Manas Brillants, 3 Manas de Vie et 3 Manas Terrestres.";
+				mes "Je vais compter sur toi.";
+				mes "Reviens en sécurité, tu entends ?";
+				setquest 7595;// Wandering Orb Magic
+				close3;
+			}
+			mes "Avant connaît mieux que quiconque la mana de l'orb.";
+			mes "Même Kar et moi avons du mal à supporter Avant, mais il a vraiment besoin de ton aide.";
+			next;
+			mes "[Hishieh]";
+			mes "Ce n'est pas seulement une question de récupérer la mana de l'orb, mais cela concerne aussi le Dieu Démon.";
+			mes "La plupart de mes proches ignorent encore que la mana centrale de l'orb a été volée.";
+			next;
+			cutin "hisie02.bmp",0;
+			mes "[Hishieh]";
+			mes "Et je veux garder les choses ainsi.";
+			mes "Veuillez nous aider.";
+			mes "Kar et moi avons vraiment besoin de vous.";
+			close3;
+		case 0:
+		case 1:
+			mes "Tout ce que vous avez à faire, c'est d'attaquer et de disperser les globes de mana mobiles dans le Temple du Dieu Démon.";
+			mes "Alors la mana sera restituée à Yggdrasil.";
+			next;
+			mes "[Hishieh]";
+			mes "Si vous trouvez une mana solidifiée et immobile, absorbez-la simplement";
+			mes "en y touchant.";
+			next;
+			mes "[Hishieh]";
+			mes "Ce n'est plus utile pour nous, mais c'est pour vous";
+			mes "pour combattre les Démons.";
+			close3;
+		case 2:
+			cutin "hisie04.bmp",0;
+			mes "Retournez à ^8E6B23Altiregen^000000 à Einbroch, le type que vous avez rencontré en premier quand vous avez postulé pour la place d'armurier.";
+			mes "J'ai senti la mana revenir.";
+			mes "Vous avez fait un excellent travail. Kar sera ravi !";
+			next;
+			cutin "hisie01.bmp",0;
+			mes "[Hishieh]";
+			mes "Ce n'est pas grand-chose, mais je veux que vous l'ayez.";
+			mes "J'espère que vous l'aimerez.";
+			mes "Une quantité substantielle de mana a fuité hors du globe.";
+			next;
+			mes "[Hishieh]";
+			mes "Si vous comptez réentrer dans le Temple du Dieu Démon, veuillez chercher d'autres globes de mana.";
+			mes "Vous devriez aller vous reposer pour l'instant.";
+			erasequest 7595;// Wandering Orb Magic
+			setquest 7600;// Promising Tomorrow
+			getitem 22567,1;// Squad_Prize
+			getexp 1000000,500000;
+			close3;
+		}
+	case 0:
+	case 1:
+		mes "Tous les globes errants de mana provenant de l'orb n'ont pas été récupérés,";
+		mes "bien que nous fassions des progrès.";
+		mes "Je serais reconnaissant si vous pouviez revenir demain et nous aider à nouveau.";
+		close3;
+	case 2:
+		erasequest 7600;// Promising Tomorrow
+		mes "Si vous comptez réentrer dans le Temple du Dieu Démon, j'aimerais vous demander un service.";
+		mes "Oui, c'est la même chose que je vous ai demandé avant :";
+		mes "rendre le mana.";
+		next;
+		mes "[Hishieh]";
+		mes "Revenez me parler si vous voulez nous aider.";
+		close3;
+	}
+	end;
+
+OnInit:
+	questinfo( QTYPE_QUEST2, QMARK_NONE, "BaseLevel >= 160 && ep14_2_mylord > 33 && !isbegin_quest(7595) && !isbegin_quest(7600) && isbegin_quest(7593) == 1" );
+	end;
+}
+
+moro_vol,108,88,5	script	Commander Hibba Agip#14301	4_M_REDSWORD,{
+	cutin "ep13_captin_edq.bmp",2;
+	mes "[Hibba Agip]";
+	if (ep14_3_mors01 == 0 || BaseLevel < 160) {
+		mes "Cet endroit est bizarre au-delà de toute compréhension.";
+		mes "Morocc se trouve quelque part ici.";
+		next;
+		mes "[Hibba Agip]";
+		mes "Cela ressemble définitivement assez à l'abîme pour que quelqu'un comme lui traîne autour.";
+		mes "Ceux-ci doivent avoir été entraînés depuis le Désert de Morroc, puis contaminés par son énergie maléfique.";
+		next;
+		mes "[Hibba Agip]";
+		mes "Soupir...";
+		mes "Nous avons un long et sinueux chemin devant nous.";
+		mes "...";
+		next;
+		mes "[Hibba Agip]";
+		mes "Hélas.";
+		mes "Je vous appellerai quand j'aurai besoin de vous.";
+		mes "En attendant, concentrez-vous sur le fait de rester en vie.";
+		close3;
+	}
+	if (ep4_3_mockill == 0) {
+		if (isbegin_quest(7597) == 1) {
+			mes "Ah, notre héros est de retour !";
+			mes "Mwah hah hah, nous avons enfin atteint la fin de notre expédition !";
+			mes "Retournez à ^8E6B23Altiregen^000000 à Einbroch, le type que vous avez rencontré en premier quand vous avez postulé pour la place d'armurier.";
+			mes "Je vous remercie au nom de toute l'humanité.";
+			next;
+			mes "[Adjutant Abidal]";
+			mes "Vous êtes incroyable !";
+			mes "Vous avez sauvé le monde !";
+			mes "Après cela, je vais rentrer chez moi...";
+			next;
+			mes "[Hiva Agip]";
+			mes "Abidal, assez !";
+			mes "Vous essayez de brandir un drapeau rouge ?";
+			next;
+			mes "[Hiva Agip]";
+			mes "Ce n'est pas grand-chose, mais je veux que vous l'ayez.";
+			mes "Merci pour votre service.";
+			mes "Hah hah.";
+			mes "Enfin, je peux dormir !";
+			next;
+			mes "[Hiva Agip]";
+			mes "Attendez, j'entrevois quelque chose d'ominieux autour de vous...";
+			mes "Oh dieux, qu'est-ce que c'est donc ?";
+			mes "Vous essayez de faire dévorer votre âme par le Dieu Démon ?";
+			next;
+			mes "[Hiva Agip]";
+			mes "Donnez-le-moi et je le cristalliserai pour vous.";
+			mes "Et je veux que vous rencontriez cette dame Gardienne au camp de Laphine.";
+			mes "Elle pourrait savoir à ce sujet.";
+			ep4_3_mockill = 1;
+			erasequest 7597;// Fall of the False God
+			setquest 7598;// Caged God
+			getitem 22567,1;// Squad_Prize
+			getitem 6715,1;// P_Of_Evil_Soul
+			getexp 1000000,500000;
+			close3;
+		}
+		if (isbegin_quest(7593) == 1) {
+			mes "Le Temple du Dieu Démon est découvert dans la grotte située sur la colline centrale.";
+			mes "Un arbre bloque l'entrée du temple.";
+			next;
+			mes "[Hibba Agip]";
+			mes "Cette dame violette, appelée Gardienne, a dit qu'elle y irait bientôt.";
+			mes "Vous devriez la trouver.";
+			close3;
+		}
+		mes "Ravi de vous rencontrer.";
+		mes "J'ai entendu dire qu'un chemin avait été dégagé dans cette grotte sombre.";
+		mes "Parfois, je pense que ce bassin maudit est vivant.";
+		next;
+		mes "[Hibba Agip]";
+		mes "Vous êtes intelligent et capable. Je n'ai pas besoin d'expliquer pourquoi je vous dis cela, non ?";
+		mes "Ne vous inquiétez pas. J'ai envoyé une avant-garde.";
+		next;
+		mes "[Hibba Agip]";
+		mes "Soyez joyeux, camarade !";
+		mes "Il ne restera plus longtemps avant que notre périlleux voyage ne soit terminé !";
+		mes "Et ce sera vous qui le terminerez.";
+		next;
+		mes "[Hibba Agip]";
+		mes "Nous avons décidé d'appeler le nouvellement découvert lieu le Temple du Dieu Démon.";
+		mes "En fait, c'est le premier éclaireur qui l'a nommé, et le nom a pris.";
+		next;
+		mes "[Hibba Agip]";
+		mes "J'aimerais vous confier une mission de soumission dans le Temple du Dieu Démon.";
+		mes "Ce n'est pas un ordre, mais une demande ;";
+		mes "vous décidez d'accepter la mission à vos propres risques.";
+		next;
+		if (select( "I'll do it.", "No." ) == 2) {
+			mes "[Hibba Agip]";
+			mes "Je comprends";
+			mes "Vous ne voulez pas risquer votre vie pour la paix du monde.";
+			mes "Profitez de la vie jusqu'à la fin du monde.";
+			close3;
+		}
+		mes "[Hibba Agip]";
+		mes "Je savais que j'avais choisi la bonne personne pour le travail.";
+		mes "Loki a dit que le Dieu Démon n'avait pas encore complètement récupéré des";
+		mes "dommages subis lors de la rupture de son sceau.";
+		next;
+		mes "[Hibba Agip]";
+		mes "Il est toujours en train de lécher ses blessures,";
+		mes "ce qui nous offre une occasion parfaite de l'attaquer.";
+		mes "^FF0000Bon courage.";
+		setquest 7593;// Demon God Subjugation
+		close3;
+	}
+	if (isbegin_quest(7597) == 1) {
+		mes "*Sifflement* Bon travail !";
+		mes "Comment va le Temple du Dieu Démon ?";
+		mes "Toujours pareil ?";
+		next;
+		mes "[Hiva Agip]";
+		mes "Prenez votre récompense.";
+		mes "Au revoir et à une prochaine fois.";
+		erasequest 7597;// Fall of the False God
+		setquest 7598;// Caged God
+		getitem 22567,1;// Squad_Prize
+		getexp 1000000,500000;
+		close3;
+	}
+	switch( checkquest(7598,PLAYTIME) ) {
+	case -1:
+		mes "De toute ma vie, je ne comprends pas ce qui se passe.";
+		mes "Depuis que cette bête a proclamé qu'il remplacerait Dieu, cet endroit est tombé dans les griffes des chiens.";
+		next;
+		mes "[Hiva Agip]";
+		mes "J'ai peur qu'une fois transposé, les dimensions ne soient jamais les mêmes.";
+		mes "Pourriez-vous retourner au Temple du Dieu Démon une fois de plus ?";
+		next;
+		if (select( "Sure.", "No." ) == 2) {
+			mes "[Hiva Agip]";
+			mes "Vous ne pouvez pas donner une telle fleur précieuse à n'importe qui.";
+			mes "Vous avez déjà fait assez.";
+			mes "Je vais envoyer quelqu'un d'autre.";
+			close3;
+		}
+		mes "[Hiva Agip]";
+		mes "Le Temple du Dieu Démon est coincé dans une boucle temporelle perpétuelle,";
+		mes "tout comme toutes les autres Fissures Dimensionnelles.";
+		next;
+		mes "[Hiva Agip]";
+		mes "Il a essayé désespérément de s'échapper de ce monde, mais en vain.";
+		mes "Ce monde est désormais rempli uniquement de souvenirs infernaux qui se répètent sans fin.";
+		next;
+		mes "[Hiva Agip]";
+		mes "Bonne chance lors de l'exploration du temple. Si vous voyez Morocc à nouveau, n'hésitez pas à tuer le Dieu Démon une nouvelle fois.";
+		mes "Il ne mérite pas notre compassion.";
+		mes "Bon voyage.";
+		if (isbegin_quest(7593) == 0)
+			setquest 7593;// Demon God Subjugation
+		close3;
+	case 0:
+	case 1:
+		mes "Maintenant que nous avons pris soin du corps principal, nous pouvons procéder avec prudence.";
+		mes "Pourquoi ne pas aller vous reposer pour l'instant ?";
+		mes "Laissez le reste à nous.";
+		close3;
+	case 2:
+		erasequest 7598;// Caged God
+		mes "Je n'aurais pas cru que vous aviez mené un combat intense hier si je ne savais déjà de quoi il s'agit.";
+		mes "Êtes-vous prêts pour un autre combat ?";
+		next;
+		mes "[Hiva Agip]";
+		mes "Laisse-moi savoir quand tu es prêt.";
+		mes "Morocc est parti, mais son temple subsiste.";
+		mes "Cela pourrait avoir quelque chose à voir avec la Fissure Dimensionnelle.";
+		next;
+		mes "[Hiva Agip]";
+		mes "Oh, ne vous inquiétez pas. Je ne pense pas vous envoyer là-bas.";
+		mes "Hah hah hah!";
+		close3;
+	}
+	end;
+
+OnInit:
+	questinfo( QTYPE_QUEST2, QMARK_NONE, "BaseLevel >= 160 && ep4_3_mockill > 0 && !isbegin_quest(7593) && !isbegin_quest(7597) && !isbegin_quest(7598)" );
+	questinfo( QTYPE_QUEST2, QMARK_NONE, "!isbegin_quest(7598) && !isbegin_quest(7593) && isbegin_quest(7597) == 1" );
+	end;
+}
+
+moro_vol,110,90,3	script	Adjutant Abidal#14302	4_M_SAGE_C,{
+	switch( checkquest(7599,PLAYTIME) ) {
+	case -1:
+		switch( checkquest(7594,HUNTING) ) {
+		case -1:
+			if (isbegin_quest(7593) == 1) {
+				mes "[Abidal]";
+				mes "Êtes-vous sur la quête pour soumettre le Temple du Dieu Démon ?";
+				mes "Alors, faites-moi un petit service.";
+				mes "Nos éclaireurs ont signalé la présence d'une Arachnéane de Givre et d'un Loup de Feu qui ont goûté au Givre de l'Origine.";
+				next;
+				mes "[Abidal]";
+				mes "Ils sont tout aussi maléfiques que leur maître Morocc.";
+				mes "Veuillez exterminer l'Arachnéane de Givre et le Loup de Feu.";
+				next;
+				if (select( "Accept.", "Decline." ) == 2) {
+					mes "[Abidal]";
+					mes "Avez-vous peur de ne pas pouvoir les affronter ?";
+					mes "Vous ne pouvez pas donner une telle fleur précieuse à n'importe qui.";
+					mes "Ce sont des ennemis formidables.";
+					close;
+				}
+				mes "[Abidal]";
+				mes "Merci.";
+				mes "L'Arachnéane de Feu s'appelle Brinaranea ; le Loup de Feu, Muspellskoll.";
+				mes "Veuillez exterminer ces créatures du Dieu Démoniaque.";
+				mes "^FF0000Bon courage.";
+				setquest 7594;// Frost Spider and Fire Wolf
+				close;
+			}
+			mes "[Abidal]";
+			mes "Êtes-vous venu nous aider à soumettre le Dieu Démoniaque ?";
+			mes "Faites attention ; l'environnement de cet endroit change sans aucun avertissement.";
+			close;
+		case 0:
+		case 1:
+			mes "[Abidal]";
+			mes "Selon mes renseignements, le Dieu Démoniaque possède plusieurs lieutenants.";
+			mes "Je voudrais que vous éliminiez la plus grande menace parmi eux.";
+			next;
+			mes "[Abidal]";
+			mes "Ce ne sera pas facile, mais j'ai confiance en vous.";
+			mes "L'avenir de Midgard repose sur vos épaules.";
+			close;
+		case 2:
+			mes "[Abidal]";
+			mes "Vous l'avez fait!";
+			mes "Je savais que vous le feriez !";
+			mes "Félicitations!";
+			next;
+			mes "[Abidal]";
+			mes "Mais je crains que ce ne soit pas fini pour autant.";
+			mes "J'ai cette impression persistante d'inquiétude.";
+			mes "Désolé. Peut-être que je pense irrationnellement.";
+			next;
+			mes "[Abidal]";
+			mes "Je vous ai préparé un petit souvenir en remerciement.";
+			mes "Désolé, c'est le meilleur que je puisse faire.";
+			mes "Merci pour votre travail acharné.";
+			erasequest 7594;// Frost Spider and Fire Wolf
+			setquest 7599;// Unending Hunt
+			getitem 22567,1;// Squad_Prize
+			close;
+		}
+	case 0:
+	case 1:
+		mes "[Abidal]";
+		mes "Vous avez fait très bien. Vous devriez aller vous reposer.";
+		close;
+	case 2:
+		erasequest 7599;// Unending Hunt
+		mes "[Abidal]";
+		mes "Êtes-vous bien reposé(e) ?";
+		mes "Vous avez l'air de l'être.";
+		mes "C'est excellent car nous sommes inquiets pour le Temple du Dieu Démon. Nous n'arrivons pas à le fermer.";
+		next;
+		mes "[Abidal]";
+		mes "Je pourrais vous demander à nouveau d'éliminer les Araignées de Glace et les Loups de Feu.";
+		mes "Pourquoi le Temple du Dieu Démon ne disparaîtrait-il pas ?";
+		close;
+	}
+	end;
+
+OnInit:
+	questinfo( QTYPE_QUEST2, QMARK_NONE, "BaseLevel >= 160 && !isbegin_quest(7594) && !isbegin_quest(7599) && isbegin_quest(7593) == 1" );
+	end;
+}
+
+moro_vol,111,87,1	script	 Instructor Igrid#14303	4_M_CRU,{
+	if (BaseLevel < 140) {
+		mes "[Instructor Igrid]";
+		mes "Vous.";
+		mes "(Battant des mains) Vous n'allez pas y arriver.";
+		mes "Vous êtes trop faible pour combattre ces Démons.";
+		mes "Reviens et entraîne-toi un peu plus.";
+		close;
+	}
+	switch( checkquest(7582,PLAYTIME) ) {
+	case -1:
+		switch( checkquest(7581,HUNTING) ) {
+		case -1:
+			mes "[Instructor Igrid]";
+			mes "Eh bien, bonjour à toi aussi.";
+			mes "J'ai besoin de votre aide.";
+			mes "Certains de ces Démons qui déferlent du Bassin Enflammé sont vraiment une épine dans le pied.";
+			next;
+			mes "[Instructor Igrid]";
+			mes "Des Reincarnations Marocaines ont également envahi ce lieu, et certaines d'entre elles sont nettement plus fortes.";
+			mes "Je veux que tu les élimines.";
+			next;
+			if (select( "Why me?", "Sure." ) == 1) {
+				mes "[Instructor Igrid]";
+				mes "Euh, c'est inattendu.";
+				mes "J'ai cru comprendre que tu étais venu protéger la paix et la prospérité de Midgard. N'est-ce pas ?";
+				next;
+				mes "[Instructor Igrid]";
+				mes "Peut-être t'ai-je accordé trop de crédit.";
+				mes "D'accord, je vais demander à quelqu'un d'autre.";
+				mes "Je suis vraiment déçu par toi.";
+				close;
+			}
+			mes "[Instructor Igrid]";
+			mes "Tu ne me déçois pas.";
+			mes "Écoute, au centre du bassin se trouve une colline élevée.";
+			mes "Dans les quatre directions à partir du centre, rôde un Démon puissant.";
+			next;
+			mes "[Instructor Igrid]";
+			mes "Ils ressemblent exactement aux Reincarnations qui ont attaqué la ville de Maroc,";
+			mes "mais plus grands et plus forts.";
+			next;
+			mes "[Instructor Igrid]";
+			mes "Pour assurer le bon déroulement de la mission de soumission,";
+			mes "veuillez ^4d4dfféliminer la Reincarnation Marocaine Déformée, la Reincarnation Marocaine Enflammée et la Reincarnation Marocaine Gelée.^000000";
+			mes "Je vais compter sur toi.";
+			setquest 7581;// Eliminating Risks
+			close;
+		case 0:
+		case 1:
+			mes "[Instructor Igrid]";
+			mes "Veuillez ^4d4dfféliminer la Reincarnation Marocaine Déformée, la Reincarnation Marocaine Enflammée et la Reincarnation Marocaine Gelée.^000000";
+			mes "Tu peux les trouver postés dans les quatre directions à partir du centre du bassin.";
+			close;
+		case 2:
+			mes "[Instructor Igrid]";
+			mes "Vous avez vraiment éliminé ces démons puissants.";
+			mes "Cela devrait suffire pour briser l'esprit des autres.";
+			mes "Bien joué.";
+			next;
+			mes "[Instructor Igrid]";
+			mes "J'espère que vous reviendrez m'aider à nouveau.";
+			mes "Allons ensemble chez nous, d'accord ?";
+			erasequest 7581;// Eliminating Risks
+			setquest 7582;// Daily Cleaning
+			getexp 1000000,800000;
+			close;
+		}
+	case 0:
+	case 1:
+		mes "[Instructor Igrid]";
+		mes "Vous.";
+		mes "Vous parlez de ces grandes réincarnations ?";
+		mes "J'ai assigné quelques autres aventuriers pour s'en occuper.";
+		next;
+		mes "[Instructor Igrid]";
+		mes "Vous devriez vous reposer aujourd'hui. Revenez chasser demain.";
+		close;
+	case 2:
+		mes "[Instructor Igrid]";
+		mes "Il est presque temps d'une chasse aux démons.";
+		mes "N'êtes-vous pas excité(e) ? Parce que moi, si ! Hah hah !";
+		erasequest 7582;// Daily Cleaning
+		close;
+	}
+	end;
+
+OnInit:
+	questinfo( QTYPE_QUEST2, QMARK_NONE, "BaseLevel >= 140 && !isbegin_quest(7581) && !isbegin_quest(7582)" );
+	end;
+}
+
+moro_vol,136,84,3	script	Jeruth Hesranta#ep143	4_MAN_JERUTOO,{
+	if (checkweight(1304,3) == 0) {
+		mes "Vous portez trop d'objets pour poursuivre la quête.";
+		mes "Veuillez faire de la place dans votre inventaire.";
+		close;
+	}
+	cutin "ep13_heslanta.bmp",2;
+	mes "[Jeruth Hesranta]";
+	if (ep13_3_secret < 22) {
+		mes "Je suis Hesranta, commandant de l'armée de Sappha.";
+		mes "C'est un honneur pour moi de combattre à vos côtés, Humains.";
+		close3;
+	}
+	if (ep13_3_secret < 24) {// custom translation
+		mes "Je ne m'attendais pas à vous voir ici !";
+		mes "... bien que beaucoup de choses soient arrivées, j'attends toujours que vous accomplissiez la première chose que je vous ai demandée !";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Veuillez revenir m'aider !";
+		close3;
+	}
+	if (ep13_3_secret == 24) {
+		mes "Avez-vous parlé à";
+		mes "Vous me reconnaissez ?";
+		mes "Nous avons eu une discussion importante ensemble à Diel.";
+		next;
+		select("Why are you here?");
+		mes "[Jeruth Hesranta]";
+		mes "J'ai persuadé les Anciens de me laisser amener une armée ici.";
+		mes "Comme vous le soupçonniez, Ahat n'est pas un Sappha.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Seul je suis au courant de cette connaissance en ce moment.";
+		mes "Tout le monde a presque oublié qu'il ait jamais existé.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Ma suspicion tenace à son égard m'a protégé de l'hypnose d'Ahat.";
+		mes "Il a utilisé ce talent impensable pour disparaître.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Après sa disparition, j'ai persuadé les Anciens que nous devons rejoindre la soumission du Dieu Démon.";
+		mes "D'autres Sapphas étaient contre moi, pour la sécurité de notre espèce,";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "mais c'est dans notre nature d'aider nos amis à tout prix.";
+		mes "J'ai donc amené nos plus braves Gartens sur le champ de bataille.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Pour faire court,";
+		mes "vous n'avez plus besoin de travailler pour Ahat.";
+		mes "Si vous avez besoin du Certificat de Contribution, faites-moi une faveur plus tard et je vous en donnerai un.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Tu connais Chesher, non ?";
+		mes "En ce qui le concerne,";
+		mes "je ne peux faire confiance à personne d'autre.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Je veux collecter des informations sur lui avant de poursuivre mon plan.";
+		mes "Restez en sécurité jusqu'à ce que je vous parle à nouveau.";
+		ep13_3_secret = 25;
+		ep13_3_ahtdayq = 0;
+		if (isbegin_quest(7200) > 0)
+			erasequest 7200;// Cheshire's call
+		if (isbegin_quest(7201) > 0)
+			erasequest 7201;// Removing traces
+		getitem 6304,1;// Sapa_Feat_Cert
+		delitem 6305, countitem(6305);	// Frozen_Skin_Piece
+		delitem 6306, countitem(6306);	// Solid_Bloodstain
+		delitem 6307, countitem(6307);	// Suspicious_Magic_Stone
+		close3;
+	}
+	if (ep13_3_secret == 25) {
+		if (BaseLevel < 140) {// custom translation
+			mes "Tu te souviens que nous avons parlé de Chesher ?";
+			mes "C'est un sujet sensible, donc je ne peux pas parler de lui aux autres Sapphas.";
+			next;
+			mes "[Jeruth Hesranta]";
+			mes "Mais... cela semble ne pas vous plaire,";
+			mes "retournez et entraînez-vous un peu plus.";
+			close3;
+		}
+		mes "Tu te souviens que nous avons parlé de Chesher ?";
+		mes "C'est un sujet sensible, donc je ne peux pas parler de lui aux autres Sapphas.";
+		mes "Et j'étais en train de penser...";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Peut-être que vous pourriez m'aider à confirmer mes soupçons.";
+		next;
+		select("What suspicion?");
+		mes "[Jeruth Hesranta]";
+		mes "Il y a certaines choses qui ne semblent pas appartenir à cette Flaming Basin.";
+		mes "Ce sont des boîtes de quelque sorte.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Animés par l'énergie maléfique du Dieu Démoniaque, ces boîtes dévastent le bassin.";
+		mes "Maintenant, je suis inquiet...";
+		next;
+		select("You're concerned?");
+		mes "[Jeruth Hesranta]";
+		mes "Ce sont des répliques exactes des Boîtes de Bradium à Dicastes.";
+		mes "Pourriez-vous les exterminer et m'aider à déterminer leur identité ?";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Elles pourraient bien être les Boîtes de Bradium que Chesher a volées à Dicastes.";
+		mes "Dans ce cas, je pourrai utiliser ces boîtes pour ravitailler mon armée.";
+		next;
+		select("And retrieve the stolen Bradiums as well.");
+		mes "[Jeruth Hesranta]";
+		mes "C'est exact. Mon armée ne reçoit guère de soutien, puisque cette expédition n'a été qu'une idée à moi seule.";
+		mes "C'est simplement un vœu pieux ; nous ne le saurons que lorsque nous aurons les boîtes.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Pour l'instant, veuillez chasser une boîte et me faire savoir ce que vous en avez trouvé.";
+		mes "Je vous attendrai.";
+		setquest 7578;// Rampaging Box
+		ep13_3_secret = 26;
+		close3;
+	}
+	if (ep13_3_secret == 26) {
+		if (checkquest(7578,HUNTING) != 2) {
+			cutin "ep13_heslanta.bmp",2;
+			mes "[Jeruth Hesranta]";
+			mes "Chassez simplement un ^4d4dffRampaging Box^000000 et apportez-moi ce que vous y trouverez.";
+			if (isbegin_quest(7578) == 0)
+				setquest 7578;
+			close3;
+		}
+		if (countitem(6392) < 1) {// Bradium_Box
+			mes "Je vois que vous avez soumis un Rampaging Box,";
+			mes "mais mon véritable objectif était de vérifier son contenu.";
+			mes "^4d4dffVeuillez exterminer une boîte et m'apporter l'objet que vous y aurez trouvé.^000000";
+			close3;
+		}
+		mes "J'avais raison.";
+		mes "C'est étonnant qu'un objet animé puisse se déplacer tout seul.";
+		mes "Il doit être enchanté, n'est-ce pas ?";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Ceci confirme mes soupçons :";
+		mes "ces boîtes dans le Bassin Enflammé sont des Boîtes de Bradium provenant d'El Dicastes.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Je ne veux pas vous imposer ma demande, mais j'espère que vous continuerez à chasser ces boîtes.";
+		mes "Vous êtes le seul en qui je peux avoir confiance pour cela, du moins pour l'instant.";
+		mes "Les Gartens sont braves, mais ils voudront comprendre pourquoi des Boîtes de Bradium se trouvent ici.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Alors je devrai leur tout dire,";
+		mes "en commençant par Ahat, et le fait que la plupart des Sapphas ont oublié son existence rendra les choses vraiment compliquées.";
+		next;
+		select("When do I start?");
+		mes "[Jeruth Hesranta]";
+		mes "Et maintenant ?";
+		mes "^4d4dffChassez ces Boîtes Furieuses et ramenez-moi 10 Boîtes de Bradium.^000000";
+		delitem 6392,1;// Bradium_Box
+		completequest 7578;// Rampaging Box
+		setquest 7579;// Collecting Bradiums
+		ep13_3_secret = 27;
+		getexp 300000,300000;
+		close3;
+	}
+	switch( checkquest(7580,PLAYTIME) ) {
+	case -1:
+		switch( checkquest(7579,HUNTING) ) {
+		case 0:
+			cutin "ep13_heslanta.bmp",2;
+			mes "[Jeruth Hesranta]";
+			mes "^FF0000Bienvenue de retour.";
+			mes "Êtes-vous prêt pour la journée ?";
+			break;
+		case 1:
+			cutin "ep13_heslanta.bmp",2;
+			mes "[Jeruth Hesranta]";
+			mes "Les Boîtes Furieuses elles-mêmes ne sont pas menaçantes, mais elles sont entourées de monstres dangereux. Faites attention.";
+			next;
+			mes "[Jeruth Hesranta]";
+			mes "Bonne chasse !";
+			close3;
+		case 2:
+			if (countitem(6392) < 10) {
+				mes "C'est incroyable comment ces boîtes remplies d'ore se déplacent toutes seules.";
+				mes "Peut-être est-ce ainsi que le Dieu Démon recrute ses soldats.";
+				close3;
+			}
+			cutin "ep13_heslanta.bmp",2;
+			mes "[Jeruth Hesranta]";
+			mes "Bien joué.";
+			mes "Je ne peux pas assez vous remercier.";
+			mes "Laissez-moi prendre toutes les Boîtes de Bradium.";
+			next;
+			mes "[Jeruth Hesranta]";
+			mes "Je sens les yeux des autres sur nous. Hah hah.";
+			mes "Au revoir et à une prochaine fois.";
+			delitem 6392, countitem(6392);// Bradium_Box
+			erasequest 7579;// Collecting Bradiums
+			setquest 7580;// Collecting Every Day
+			getexp 800000,800000;
+			getitem 6304,1;// Sapa_Feat_Cert
+			close3;
+		}
+		break;
+	case 0:
+	case 1:
+		mes "Hah hah, nous ne sommes pas pressés pour le moment.";
+		mes "Je me demande si Chesher sait que nous volons ses Boîtes de Bradium.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Que vais-je nourrir ce pauvre chat plus tard ?";
+		mes "Oh, continuez bien dans votre collecte de Boîtes de Bradium.";
+		break;
+	case 2:
+		cutin "ep13_heslanta.bmp",2;
+		mes "[Jeruth Hesranta]";
+		mes "Il est temps de collecter les Boîtes de Bradium.";
+		erasequest 7580;// Collecting Every Day
+		break;
+	}
+	next;
+	if (select( "I'll get on with it.", "I'll come back later." ) == 2) {
+		mes "[Jeruth Hesranta]";
+		mes "Pas de problème.";
+		mes "Revenez quand vous le pourrez.";
+		next;
+		mes "[Jeruth Hesranta]";
+		mes "Je suis désolée que";
+		mes "Je ne peux pas m'empêcher de vous demander des faveurs.";
+		close3;
+	}
+	mes "[Jeruth Hesranta]";
+	mes "C'est l'esprit !";
+	mes "Chassez aux Boîtes Furieuses et collectez les Bradiums.";
+	setquest 7579;// Collecting Bradiums
+	close3;
+
+OnInit:
+/* officially disabled
+	questinfo QTYPE_QUEST2, QMARK_NONE, "BaseLevel >= 140 && BaseLevel <= 160";
+	// 3650 = [ep13_3_secret]
+	SetQuestItem 1 3650 24
+*/
+	questinfo( QTYPE_QUEST2, QMARK_NONE, "BaseLevel >= 140 && BaseLevel <= 160 && ep13_3_secret > 26 && !isbegin_quest(7579) && !isbegin_quest(7580)" );
+	end;
+}
+
+// Others
+function	script	kick_mob	{
+	sleep2 1000;
+	npctalk getarg(0);
+	specialeffect EF_METEORSTORM;
+	sleep2 getarg(1);
+	unitwarp 0,"moro_vol",165,165;
+	return;
+}
+
+moro_vol,88,107,5	script	Magic Scholar Dophe#143vol01	4_F_FAIRYKID5,{
+ 	mes "[Dophe]";
+ 	mes "Un Humain, je vois.";
+ 	mes "En vous regardant, je ne peux m'empêcher de méditer sur notre situation.";
+ 	mes "Vous et moi sommes en train d'avoir une conversation.";
+ 	next;
+ 	mes "[Dophe]";
+ 	mes "Cette soi-disant Fissure Dimensionnelle, où le Dieu Démon a pris ses quartiers, relève de la juridiction de Bifrost.";
+ 	next;
+	mes "[Dophe]";
+	mes "Lui et nous sommes comme deux faces d'une même pièce, ou bien au-dessus et en dessous de la ligne de flottaison.";
+	next;
+	mes "[Dophe]";
+	mes "Il et nous ne marchons pas exactement sur les mêmes rails l'un par rapport à l'autre, mais peut-être dans un univers parallèle au nôtre.";
+	next;
+	mes "[Dophe]";
+	mes "...";
+	next;
+	mes "[Dophe]";
+	mes "Mon point est :";
+	mes "il pourrait être sous nos yeux et nous sommes incapables de le voir.";
+	mes "Si son repaire se trouve quelque part dans le territoire de Bifrost,";
+	next;
+	mes "[Dophe]";
+	mes "la seule issue possible pour nous est";
+	mes "l'annihilation.";
+	close;
+}
+
+moro_vol,87,104,5	script	Magic Scholar Konpana#143vol02	4_M_FAIRYKID5,{
+	mes "[Konpana]";
+	mes "Cet endroit n'est rien de ce que j'avais imaginé.";
+	mes "Pas de champ verdoyant ou de forêt, vraiment ?";
+	close;
+}
+
+moro_vol,88,102,6	script	Magic Scholar Makia#143vol03	4_M_FAIRYKID3,{
+	mes "[Makia]";
+	mes "Cet endroit est infesté de créatures étranges.";
+	mes "Tout brûle dans les flammes, pourtant l'air n'est pas étouffant.";
+	mes "Incroyable.";
+	close;
+}
+
+moro_vol,104,109,0	script	Combat Laphine#sol01	4_M_FAIRYSOLDIER,{ end; }
+moro_vol,106,109,0	duplicate(Combat Laphine#sol01)	Combat Laphine#sol02	4_M_FAIRYSOLDIER
+moro_vol,108,109,0	duplicate(Combat Laphine#sol01)	Combat Laphine#sol03	4_M_FAIRYSOLDIER
+moro_vol,104,107,0	duplicate(Combat Laphine#sol01)	Combat Laphine#sol04	4_M_FAIRYSOLDIER
+moro_vol,106,107,0	duplicate(Combat Laphine#sol01)	Combat Laphine#sol05	4_M_FAIRYSOLDIER
+moro_vol,108,107,0	duplicate(Combat Laphine#sol01)	Combat Laphine#sol06	4_M_FAIRYSOLDIER
+moro_vol,104,105,0	duplicate(Combat Laphine#sol01)	Combat Laphine#sol07	4_M_FAIRYSOLDIER
+moro_vol,106,105,0	duplicate(Combat Laphine#sol01)	Combat Laphine#sol08	4_M_FAIRYSOLDIER
+moro_vol,108,105,0	duplicate(Combat Laphine#sol01)	Combat Laphine#sol09	4_M_FAIRYSOLDIER
+
+moro_vol,106,111,3	script	Battle Commander#sol10	4_M_FAIRYSOLDIER,3,3,{
+	mes "[Commander Laphine]";
+	mes "Nous sommes en train de nous regrouper pour la bataille à venir.";
+	mes "S'il vous plaît, ne nous dérangez pas.";
+	close;
+
+OnTouch:
+	if (getvariableofnpc(.is_enabled,"#soltalk01") == 0)
+		donpcevent "#soltalk01::OnEventOn";
+	end;
+}
+
+moro_vol,2,2,0	script	#soltalk01	CLEAR_NPC,{
+	end;
+OnEventOn:
+	.is_enabled = 1;
+	enablenpc "#soltalk01";
+	sleep 3000;
+	npctalk "Commander: Soldiers, finally it's time to put your training to use!", "Battle Commander#sol10";
+	sleep 3000;
+	npctalk "Commander: WE ARE!", "Battle Commander#sol10";
+	sleep 2000;
+	npctalk "WE ARE!", "Combat Laphine#sol01";
+	npctalk "WE ARE!", "Combat Laphine#sol02";
+	npctalk "WE ARE!", "Combat Laphine#sol03";
+	sleep 1500;
+	npctalk "THE PROUD!", "Combat Laphine#sol04";
+	npctalk "THE PROUD!", "Combat Laphine#sol05";
+	npctalk "THE PROUD!", "Combat Laphine#sol06";
+	sleep 1500;
+	npctalk "LAPHNES!", "Combat Laphine#sol07";
+	npctalk "LAPHNES!", "Combat Laphine#sol08";
+	npctalk "LAPHNES!", "Combat Laphine#sol09";
+	sleep 3000;
+	npctalk "Commander: We fight evil!", "Battle Commander#sol10";
+	sleep 2000;
+	npctalk "Fight evil!", "Combat Laphine#sol01";
+	npctalk "Fight evil!", "Combat Laphine#sol02";
+	npctalk "Fight evil!", "Combat Laphine#sol03";
+	npctalk "Fight evil!", "Combat Laphine#sol04";
+	npctalk "Fight evil!", "Combat Laphine#sol05";
+	npctalk "Fight evil!", "Combat Laphine#sol06";
+	npctalk "Fight evil!", "Combat Laphine#sol07";
+	npctalk "Fight evil!", "Combat Laphine#sol08";
+	npctalk "Fight evil!", "Combat Laphine#sol09";
+	sleep 17000;
+	disablenpc "#soltalk01";
+	.is_enabled = 0;
+	end;
+
+OnInit:
+	disablenpc "#soltalk01";
+	end;
+}
+
+moro_vol,101,102,0	script	Laphine Magician#wsol01	4_F_FAIRY2,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "...Gèle-les tous ! Gèle !";
+	else if (.@ttemp == 2)
+		npctalk "(Il expire par sa bouche)";
+	else if (.@ttemp == 3)
+		npctalk "...";
+	else if (.@ttemp == 4)
+		npctalk "...";
+	else
+		npctalk "Le Gardien veille. Je ne peux me permettre aucune erreur.";
+	end;
+}
+
+moro_vol,103,102,0	script	Laphine Magician#wsol02	4_F_MORAFINE1,{
+	if (rand(1,5) == 5)
+		npctalk "Chut.";
+	else
+		npctalk "...";
+	end;
+}
+
+moro_vol,105,102,0	script	Laphine Magician#wsol03	4_M_FAIRYKID5,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "Ces Humains derrière nous m'ennuient.";
+	else if (.@ttemp == 2)
+		npctalk "Je n'aurais pas dû offrir ma candidature pour venir ici. J'ai envie de mon yai...";
+	else if (.@ttemp == 3)
+		npctalk "...";
+	else if (.@ttemp == 4)
+		npctalk "Combien de temps devons-nous attendre ?";
+	else
+		npctalk "Hélas.";
+	end;
+}
+
+moro_vol,107,102,0	script	Laphine Magician#wsol04	4_F_FAIRYKID5,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "J'ai peur.";
+	else if (.@ttemp == 2)
+		npctalk "Les Sapphas ne sont pas des ennemis... Les Sapphas ne sont pas des ennemis... Argh, mais j'aimerais les réduire en bouillie !";
+	else if (.@ttemp == 3)
+		npctalk "...";
+	else if (.@ttemp == 4)
+		npctalk "...";
+	else
+		npctalk "Je tente de me rappeler de tirer dès que je vois l'ennemi.";
+	end;
+}
+
+moro_vol,109,102,0	script	Laphine Magician#wsol05	4_M_FAIRYKID5,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "Je tente de me rappeler de tirer dès que je vois l'ennemi.";
+	else if (.@ttemp == 2)
+		npctalk "J'aime la tension, ça me maintient sur mes gardes. Heh heh.";
+	else if (.@ttemp == 3)
+		npctalk "...";
+	else if (.@ttemp == 4)
+		npctalk "...";
+	else
+		npctalk "J'ai peur.";
+	end;
+}
+
+moro_vol,93,128,1	script	Combat Laphine#line01	4_M_FAIRYSOLDIER2,2,3,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "Ouais, ouais~";
+	else if (.@ttemp == 2)
+		npctalk "Attention !";
+	else if (.@ttemp == 3)
+		npctalk "*Bâillement*";
+	else if (.@ttemp == 4)
+		npctalk "S'il vous plaît soyez prudent.";
+	else
+		npctalk "Reculez, c'est dangereux !";
+	end;
+
+OnTouch:	// prevent the player from triggering the text
+	end;
+OnTouchNPC:
+	.@hidden_name$ = strnpcinfo(2);
+	if (.@hidden_name$ == "line01")      kick_mob( "Enemy in sight!",2000 );
+	else if (.@hidden_name$ == "line03") kick_mob( "G-get away!",2000 );
+	else if (.@hidden_name$ == "line05") kick_mob( "Don't you dare!",2000 );
+	else if (.@hidden_name$ == "line07") kick_mob( "Enemy in sight!",2000 );
+	end;
+}
+
+moro_vol,96,130,1	duplicate(Combat Laphine#line01)	Combat Laphine#line02	4_M_FAIRYSOLDIER2
+moro_vol,99,131,1	duplicate(Combat Laphine#line01)	Combat Laphine#line03	4_M_FAIRYSOLDIER2,2,3
+moro_vol,102,132,7	duplicate(Combat Laphine#line01)	Combat Laphine#line04	4_M_FAIRYSOLDIER
+moro_vol,105,132,7	duplicate(Combat Laphine#line01)	Combat Laphine#line05	4_F_FAIRYSOLDIER,2,3
+moro_vol,108,131,7	duplicate(Combat Laphine#line01)	Combat Laphine#line06	4_M_FAIRYSOLDIER2
+moro_vol,111,129,7	duplicate(Combat Laphine#line01)	Combat Laphine#line07	4_M_FAIRYSOLDIER,2,3
+
+moro_vol,85,117,1	script	Combat Laphine#line11	4_F_FAIRYSOLDIER,2,2,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "Ouais, ouais~";
+	else if (.@ttemp == 2)
+		npctalk "Attention !";
+	else if (.@ttemp == 3)
+		npctalk "Vous êtes dans une zone de guerre. Ne baissez pas votre garde.";
+	else if (.@ttemp == 4)
+		npctalk "S'il vous plaît soyez prudent.";
+	else
+		npctalk "Je m'inquiète pour les gars en première ligne.";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	.@hidden_name$ = strnpcinfo(2);
+	if (.@hidden_name$ == "line11")      kick_mob( "You've come this far, huh?",2000 );
+	else if (.@hidden_name$ == "line13") kick_mob( "Enemy in sight!",2000 );
+	else if (.@hidden_name$ == "line15") kick_mob( "I'll wipe the floor with you!",2000 );
+	else if (.@hidden_name$ == "line17") kick_mob( "Yaap-!",2000 );
+	else if (.@hidden_name$ == "line19") kick_mob( "Enemy in sight!",2000 );
+	end;
+}
+
+moro_vol,89,118,1	duplicate(Combat Laphine#line11)	Combat Laphine#line12	4_M_FAIRYSOLDIER
+moro_vol,92,119,7	duplicate(Combat Laphine#line11)	Combat Laphine#line13	4_M_FAIRYSOLDIER,2,2
+moro_vol,96,119,7	duplicate(Combat Laphine#line11)	Combat Laphine#line14	4_M_FAIRYSOLDIER2
+moro_vol,100,117,7	duplicate(Combat Laphine#line11)	Combat Laphine#line15	4_M_FAIRYSOLDIER,2,2
+moro_vol,107,118,7	duplicate(Combat Laphine#line11)	Combat Laphine#line17	4_F_FAIRYSOLDIER,2,2
+moro_vol,114,114,7	duplicate(Combat Laphine#line11)	Combat Laphine#line19	4_M_FAIRYSOLDIER2,2,2
+
+moro_vol,103,118,1	script	Combat Laphine#line16	4_F_FAIRYSOLDIER,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "Les Sapphas ne doivent pas nous flanquer à gauche et à droite.";
+	else if (.@ttemp == 2)
+		npctalk "Attention !";
+	else if (.@ttemp == 3)
+		npctalk "Vous êtes dans une zone de guerre. Ne baissez pas votre garde.";
+	else if (.@ttemp == 4)
+		npctalk "S'il vous plaît soyez prudent.";
+	else
+		npctalk "Je m'inquiète pour les gars en première ligne.";
+	end;
+}
+
+moro_vol,110,117,7	duplicate(Combat Laphine#line16)	Combat Laphine#line18	4_M_FAIRYSOLDIER2
+
+moro_vol,104,86,3	script	Ryoson#14304	4_M_ALCHE_A,{
+	mes "[Ryoson]";
+	mes "Bien sûr que j'ai peur, vous n'avez même pas besoin de me le demander.";
+	mes "Je ne comprends pas pourquoi l'Officier Administratif m'a confié la charge des chevaliers.";
+	next;
+	mes "[Ryoson]";
+	mes "Ce ne sont pas des chevaliers en formation, ni même des apprentis chevaliers. Ce sont des Chevaliers de Rune !";
+	mes "Ah, je suis trop inexpérimenté et impuissant pour faire quoi que ce soit avec eux.";
+	next;
+	mes "[Ryoson]";
+	mes "Au moins, ma sécurité est garantie tant que les trois chevaliers sont avec moi.";
+	mes "J'espère.";
+	close;
+}
+
+moro_vol,101,87,5	script	Rune-Midgarts Knight#mid01	4_M_KNIGHT_BLACK,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "...";
+	else if (.@ttemp == 2)
+		npctalk "Trop silencieux.";
+	else if (.@ttemp == 3)
+		npctalk "J'ai vraiment besoin de me défouler.";
+	else if (.@ttemp == 4)
+		npctalk "Grmpf...";
+	else
+		npctalk "...";
+	end;
+}
+
+moro_vol,101,85,5	script	Rune-Midgarts Knight#mid02	4_M_KNIGHT_GOLD,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "Je suis ici pour protéger le personnel important.";
+	else if (.@ttemp == 2)
+		npctalk "Ryoson, ne paniquez pas... la peur se propage comme l'herbe qui pousse.";
+	else if (.@ttemp == 3)
+		npctalk "J'espère vraiment accomplir ma mission.";
+	else if (.@ttemp == 4)
+		npctalk "Hélas.";
+	else
+		npctalk "Pour le moment, tout va bien.";
+	end;
+}
+
+moro_vol,103,83,1	script	Rune-Midgarts Knight#mid03	4_M_KNIGHT_SILVER,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "Ryoson, personne ne va vous mordre. Ne soyez pas si effrayé.";
+	else if (.@ttemp == 2)
+		npctalk "Combattre le Dieu Démon est comme si le rêve humide de chaque chevalier était devenu réalité.";
+	else if (.@ttemp == 3)
+		npctalk "Hmm...";
+	else if (.@ttemp == 4)
+		npctalk "La tension sur le champ de bataille me passionne toujours.";
+	else
+		npctalk "...";
+	end;
+}
+
+moro_vol,110,83,3	script	Hugh#14305	4_M_LGTGUARD,{
+	mes "[Hugh]";
+	mes "Nous sommes enfin arrivés.";
+	mes "Au début, je ne pouvais pas croire toutes ces rumeurs concernant la cachette et la forteresse du Dieu Démon.";
+	next;
+	mes "[Hugh]";
+	mes "Dans les circonstances actuelles, je n'ai aucun espoir de retourner sur le continent principal dans un avenir proche.";
+	next;
+	mes "[Hugh]";
+	mes "Par la puce, j'en ai marre de ces gars-là.";
+	mes "Je ferait mieux de trouver rapidement le Dieu Démon.";
+	next;
+	mes "[Hugh]";
+	mes "Ai-je pensé à perdre ?";
+	mes "Oui, mais j'essaie d'y réfléchir le moins possible.";
+	mes "Je ne gagnerai jamais si je me laisse croire que je vais perdre.";
+	next;
+	mes "[Hugh]";
+	mes "Nous, les Schwarzwaldians, sommes nés pour gagner.";
+	close;
+}
+
+moro_vol,108,81,7	script	Schwarzwald Elite#sch01	4_M_EIN_SOLDIER,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "Pour la gloire de Schwarzwald !";
+	else if (.@ttemp == 2)
+		npctalk "J'avais pensé qu'Einbroch avait une mauvaise odeur, et cet endroit ne fait pas mieux.";
+	else if (.@ttemp == 3)
+		npctalk "...";
+	else if (.@ttemp == 4)
+		npctalk "Nous allons gagner !";
+	else
+		npctalk "...";
+	end;
+}
+
+moro_vol,111,80,1	script	Schwarzwald Elite#sch02	4_M_EIN_SOLDIER,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "Pour la gloire de Schwarzwald !";
+	else if (.@ttemp == 2)
+		npctalk "Pour Midgard !";
+	else if (.@ttemp == 3)
+		npctalk "...";
+	else if (.@ttemp == 4)
+		npctalk "Nous allons gagner !";
+	else
+		npctalk "...";
+	end;
+}
+
+moro_vol,113,81,3	script	Schwarzwald Elite#sch03	4_M_EIN_SOLDIER,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "Hélas.";
+	else if (.@ttemp == 2)
+		npctalk "Quelle option préférez-vous : combattre le Dieu Démon ou garder la guet à Einbroch ?";
+	else if (.@ttemp == 3)
+		npctalk "Mes yeux sont soudainement embués... Je ferai mieux de me remonter le moral... *Inspiration*";
+	else if (.@ttemp == 4)
+		npctalk "Nous allons gagner, quand même.";
+	else
+		npctalk "J'aurais dû m'entraîner plus dur.";
+	end;
+}
+
+
+moro_vol,118,86,5	script	Henjinne#14306	4_M_RACHMAN1,{
+	mes "[Henjinne]";
+	mes "Cet endroit est beaucoup plus excitant que je ne l'avais imaginé !";
+	mes "Où se trouve d'ailleurs le Dieu Démon ?";
+	next;
+	mes "[Henjinne]";
+	mes "On ne voit ni trace ni signe de lui.";
+	mes "Mwah hah hah !";
+	close;
+}
+
+moro_vol,116,84,7	script	Arunafeltz Crusader#aru01	4_M_TRAINEE,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "^FF0000Tout est Sa volonté.";
+	else if (.@ttemp == 2)
+		npctalk "^FF0000Être obligé de coexister avec des hérétiques...";
+	else if (.@ttemp == 3)
+		npctalk "^FF0000Je n'ai jamais vu autant de groupes d'hérétiques différents se rassembler en un seul endroit.";
+	else if (.@ttemp == 4)
+		npctalk "Que la Déesse vous bénisse.";
+	else
+		npctalk "...";
+	end;
+}
+
+moro_vol,118,83,7	script	Arunafeltz Crusader#aru02	4_F_MASK,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "^FF0000Tout est Sa volonté.";
+	else if (.@ttemp == 2)
+		npctalk "^FF0000Être obligé de coexister avec des hérétiques...";
+	else if (.@ttemp == 3)
+		npctalk "^FF0000Je n'ai jamais vu autant de groupes d'hérétiques différents se rassembler en un seul endroit.";
+	else if (.@ttemp == 4)
+		npctalk "Que la Déesse vous bénisse.";
+	else
+		npctalk "...";
+	end;
+}
+
+moro_vol,121,84,1	script	Arunafeltz Crusader#aru03	4_F_TRAINEE,{
+	.@ttemp = rand(1,5);
+	if (.@ttemp == 1)
+		npctalk "^FF0000La Déesse veille sur nous.";
+	else if (.@ttemp == 2)
+		npctalk "Que la Déesse vous bénisse.";
+	else if (.@ttemp == 3)
+		npctalk "^FF0000Tout est Sa volonté.";
+	else if (.@ttemp == 4)
+		npctalk "^FF0000Être obligé de coexister avec des hérétiques...";
+	else
+		npctalk "...";
+	end;
+}
+
+moro_vol,119,106,3	script	Instructor Jakken#h_sol01	4_M_YOUNGKNIGHT,3,3,{
+	mes "[Instructor Jakken]";
+	mes "Quand je me suis porté volontaire pour l'expédition Ash-Bakum, je savais que ce jour viendrait.";
+	next;
+	mes "[Instructor Jakken]";
+	mes "Je suis prête.";
+	mes "^FF0000Je vais combattre jusqu'à la mort pour la paix du continent de Midgard.";
+	next;
+	mes "[Instructor Jakken]";
+	mes "^FF0000Mais je suis nerveux quand même.";
+	mes "^FF0000J'ai vraiment besoin d'améliorer mon contrôle émotionnel. Je ne veux pas effrayer les autres.";
+	close;
+
+OnTouch:
+	if (getvariableofnpc(.is_enabled,"#soltalk02") == 0)
+		donpcevent "#soltalk02::OnEventOn";
+	end;
+}
+
+moro_vol,2,3,0	script	#soltalk02	CLEAR_NPC,{
+	end;
+OnEventOn:
+	.is_enabled = 1;
+	enablenpc "#soltalk02";
+	sleep 3000;
+	npctalk "Jakken: Soldiers, we're from different countries, but we've gathered here for one goal!", "Instructor Jakken#h_sol01";
+	sleep 3000;
+	npctalk "Jakken: Let's show the enemy the power of our union!", "Instructor Jakken#h_sol01";
+	sleep 2000;
+	npctalk "Jakken: Commence your march to glory!", "Instructor Jakken#h_sol01";
+	sleep 1500;
+	npctalk "At dawn~", "Midgard Alliance Soldier#h_sol02";
+	npctalk "I had a dream~", "Midgard Alliance Soldier#h_sol03";
+	npctalk "Of my home~", "Midgard Alliance Soldier#h_sol04";
+	sleep 3000;
+	npctalk "I put on my jacket~", "Midgard Alliance Soldier#h_sol05";
+	npctalk "Put on my helm~", "Midgard Alliance Soldier#h_sol06";
+	npctalk "Getting ready for a new day~", "Midgard Alliance Soldier#h_sol07";
+	sleep 3000;
+	npctalk "I'm ready~", "Midgard Alliance Soldier#h_sol08";
+	npctalk "I wear my sword~", "Midgard Alliance Soldier#h_sol09";
+	npctalk "Step out under the morning sun~", "Midgard Alliance Soldier#h_sol10";
+	sleep 3000;
+	npctalk "I look up~", "Midgard Alliance Soldier#h_sol11";
+	npctalk "I look up~", "Midgard Alliance Soldier#h_sol12";
+	npctalk "Look forward~", "Midgard Alliance Soldier#h_sol13";
+	sleep 3000;
+	npctalk "Water's pure~", "Midgard Alliance Soldier#h_sol02";
+	npctalk "Mountains are green~", "Midgard Alliance Soldier#h_sol03";
+	npctalk "For my home~", "Midgard Alliance Soldier#h_sol04";
+	sleep 3000;
+	npctalk "I won't stop~", "Midgard Alliance Soldier#h_sol05";
+	npctalk "Until I defeat", "Midgard Alliance Soldier#h_sol06";
+	npctalk "The Demon God!", "Midgard Alliance Soldier#h_sol07";
+	sleep 3000;
+	npctalk "I won't stop~", "Midgard Alliance Soldier#h_sol08";
+	npctalk "Until I defeat", "Midgard Alliance Soldier#h_sol09";
+	npctalk "The Demon God!", "Midgard Alliance Soldier#h_sol10";
+	sleep 3000;
+	npctalk "Waaaah-!", "Midgard Alliance Soldier#h_sol11";
+	npctalk "Haaaaah-!", "Midgard Alliance Soldier#h_sol12";
+	npctalk "Haaaaah-!", "Midgard Alliance Soldier#h_sol13";
+	sleep 18000;
+	disablenpc "#soltalk02";
+	.is_enabled = 0;
+	end;
+
+OnInit:
+	disablenpc "#soltalk02";
+	end;
+}
+
+moro_vol,117,104,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol02	4_M_MOC_SOLDIER
+moro_vol,117,102,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol05	4_M_MOC_SOLDIER
+moro_vol,117,100,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol08	4_M_MOC_SOLDIER
+moro_vol,117,98,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol11	4_M_MOC_SOLDIER
+moro_vol,119,104,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol03	4_M_EIN_SOLDIER
+moro_vol,119,102,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol06	4_M_EIN_SOLDIER
+moro_vol,119,100,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol09	4_M_LGTGUARD
+moro_vol,119,98,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol12	4_M_LGTGUARD
+moro_vol,121,104,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol04	4_M_RASWORD
+moro_vol,121,102,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol07	4_M_RASWORD
+moro_vol,121,100,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol10	4_DST_SOLDIER
+moro_vol,121,98,1	duplicate(Combat Laphine#sol01)	Midgard Alliance Soldier#h_sol13	4_DST_SOLDIER
+
+moro_vol,105,97,3	script	Expedition Assassin#ass01	4_M_ACROSS,{
+	mes "[Assassin d'Expedition]";
+	mes "Une nouvelle mission sera annoncée bientôt.";
+	mes "Notre objectif est de localiser le Dieu Démon.";
+	next;
+	mes "[Assassin d'Expedition]";
+	mes "Laissez-moi vérifier les renseignements que nos prédécesseurs nous ont laissés.";
+	next;
+	mes "[Assassin d'Expedition]";
+	mes "...";
+	mes "Il est impoli d'épier autrui, même si ce sont vos collègues.";
+	close;
+}
+
+moro_vol,103,96,5	script	Expedition Assassin#ass02	4_F_ACROSS,{
+	mes "[Assassin d'Expedition]";
+	mes "Cette zone... Euh,";
+	mes "Je vérifierai cela plus tard.";
+	next;
+	mes "[Assassin d'Expedition]";
+	mes "Hélas.";
+	mes "Ne voyez-vous pas que nous tenons une réunion ? Veuillez vous éloigner.";
+	close;
+}
+
+moro_vol,105,95,1	script	Expedition Assassin#ass03	4_TOWER_15,{
+	mes "[Assassin d'Expedition]";
+	mes "...";
+	mes "Eh bien, je suis au bas de la chaîne alimentaire.";
+	mes "Je regarde simplement ce que font mes supérieurs.";
+	mes "C'est tout.";
+	close;
+}
+
+moro_vol,114,128,1	script	Continental Guard#line01	4_M_MOCASS1,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Il est dangereux au-delà de cet endroit. Veuillez vous replier.";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "S'il vous plaît soyez prudent.";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Don't you dare!",1000 );
+	end;
+}
+
+moro_vol,119,130,1	duplicate(Continental Guard#line01)	Continental Guard#line02	4_M_MOCASS2
+moro_vol,122,130,7	duplicate(Continental Guard#line01)	Continental Guard#line03	4_M_MOCASS1,2,2
+moro_vol,125,129,7	duplicate(Continental Guard#line01)	Continental Guard#line04	4_M_MOCASS1
+moro_vol,127,127,7	duplicate(Continental Guard#line01)	Continental Guard#line05	4_M_MOCASS2
+
+moro_vol,135,123,1	script	Midgard Alliance Soldier#line21	4_M_MONK,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Ces Continentaux sont des combattants maudits.";
+	else if (.@ttemp == 2)
+		npctalk "Ces imbéciles d'Arunafeltz, pourquoi ne viennent-ils pas en avant ?";
+	else
+		npctalk "Je peux vous abattre tous !";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Don't you dare!",1000 );
+	end;
+}
+
+moro_vol,139,124,1	script	Midgard Alliance Soldier#line22	4_F_CRU,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "...";
+	else if (.@ttemp == 2)
+		npctalk "S'il vous plaît soyez prudent.";
+	else
+		npctalk "Ils ne cessent de venir.";
+	end;
+}
+
+moro_vol,143,124,1	script	Midgard Alliance Soldier#line23	4_M_JOB_WIZARD,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Les Gardiens facilitent les choses, mais...";
+	else if (.@ttemp == 2)
+		npctalk "Reculez.";
+	else
+		npctalk "Soupir...";
+	end;
+}
+
+moro_vol,147,124,7	script	Midgard Alliance Soldier#line24	4_M_MOC_SOLDIER,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "...";
+	else if (.@ttemp == 2)
+		npctalk "S'il vous plaît soyez prudent.";
+	else
+		npctalk "Veuillez reculer.";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Enemy in sight!",1000 );
+	end;
+}
+
+moro_vol,150,121,7	script	Midgard Alliance Soldier#line25	4_M_MOC_SOLDIER,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Où est le prochain renfort ?";
+	else if (.@ttemp == 2)
+		npctalk "Pourquoi sommes-nous les seuls sur la ligne de front ?";
+	else
+		npctalk "N'approchez pas !";
+	end;
+}
+
+moro_vol,151,119,7	script	Midgard Alliance Soldier#line26	4_M_EIN_SOLDIER,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Arrêtez d'agir en héros et reculez !";
+	else if (.@ttemp == 2)
+		npctalk "Je suis toujours de garde où que j'aille.";
+	else
+		npctalk "Je peux tenir la nuit. Je dois le faire.";
+	end;
+}
+
+moro_vol,153,116,7	script	Midgard Alliance Soldier#line27	4_M_EIN_SOLDIER,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "...";
+	else if (.@ttemp == 2)
+		npctalk "Ils ne cessent de venir.";
+	else
+		npctalk "S'il vous plaît soyez prudent.";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Begone!",1000 );
+	end;
+}
+
+moro_vol,118,115,1	script	Midgard Alliance Soldier#line31	4_M_JOB_WIZARD,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Je pense avoir choisi l'équipe mauvaise...";
+	else if (.@ttemp == 2)
+		npctalk "J'en ai marre d'entendre crier des hérétiques.";
+	else
+		npctalk "Aïe, comment suis-je tombé dans ce pétrin ?";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "SCRAM!",1000 );
+	end;
+}
+
+moro_vol,121,115,1	script	Midgard Alliance Soldier#line32	4_M_EIN_SOLDIER,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "...Bras. (Note: Context suggests 'Loud' might be a typo for 'Blessed', 'Lost', or referring to sound volume like 'Bruyant'. However, strictly translating 'Loud' as an adjective/noun fragment in this context often implies the noise level is high or it's a specific status effect name. Given the previous line about yelling, 'C'est fort.' or simply keeping the state description is best. Let's assume it describes the environment or a status: 'Bras' doesn't fit 'Loud'. If it means 'It's loud': 'Ça fait du bruit.' But often in RO logs, single words like this are status effects or typos for 'Lost'. Without context, literal translation of 'Loud' as an adjective describing the situation is safest: 'Fort.')";
+	else if (.@ttemp == 2)
+		npctalk "La ligne de front est la plus dangereuse.";
+	else
+		npctalk "Soupir...";
+	end;
+}
+
+moro_vol,124,116,1	script	Midgard Alliance Soldier#line33	4_M_EIN_SOLDIER,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "[Garten] Tout est clair.";
+	else if (.@ttemp == 2)
+		npctalk "Je protégerai cette ligne de défense.";
+	else
+		npctalk "Attention !";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Begone!",1000 );
+	end;
+}
+
+moro_vol,128,116,1	script	Midgard Alliance Soldier#line34	4_M_EIN_SOLDIER,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Je ne dormais pas !";
+	else if (.@ttemp == 2)
+		npctalk "...Ouais, ouais... Tout est clair, mon capitaine !";
+	else
+		npctalk "Ouais, ouais, bien sûr.";
+	end;
+}
+
+moro_vol,131,115,7	script	Midgard Alliance Soldier#line35	4_M_RASWORD,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Je ne peux pas croire que je lutte aux côtés d'hérétiques.";
+	else if (.@ttemp == 2)
+		npctalk "...";
+	else
+		npctalk "Que la Déesse vous bénisse.";
+	end;
+}
+
+moro_vol,133,113,7	script	Midgard Alliance Soldier#line36	4_DST_SOLDIER,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "*Yawn* Où est le prochain renfort ?";
+	else if (.@ttemp == 2)
+		npctalk "Hey, arrêtez de traîner. Vous allez vous faire tuer.";
+	else
+		npctalk "...C'est épuisant.";
+	end;
+}
+
+moro_vol,136,111,7	script	Midgard Alliance Soldier#line37	4_M_RASWORD,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Veuillez reculer.";
+	else if (.@ttemp == 2)
+		npctalk "Notre ligne de défense tient bon.";
+	else
+		npctalk "S'il vous plaît soyez prudent.";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Enemy in sight!",1000 );
+	end;
+}
+
+moro_vol,138,108,7	script	Midgard Alliance Soldier#line38	4_DST_SOLDIER,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Que la Déesse vous bénisse.";
+	else if (.@ttemp == 2)
+		npctalk "Gardez les yeux en avant ! Tout est clair !";
+	else
+		npctalk "Tout est clair !";
+	end;
+}
+
+moro_vol,134,83,5	script	Jeruth Vehanus#ep143	4_MAN_JERUTOO,{
+	mes "[Vehanus]";
+	mes "Vous êtes venu ici aussi.";
+	mes "Je vois que vous pouvez communiquer avec moi sans l'anneau.";
+	next;
+	mes "[Vehanus]";
+	mes "Maintenant, je me demande jusqu'où s'étend la grâce de Bifrost.";
+	mes "Peut-être devrais-je profiter de cette occasion pour mieux connaître les Laphines.";
+	next;
+	mes "[Vehanus]";
+	mes "J'admets le courage d'Hesranta.";
+	mes "Il est venu sur le champ de bataille, prêt à s'allier avec notre ennemi Laphines.";
+	next;
+	mes "[Vehanus]";
+	mes "J'espère vraiment que nous n'aurons pas à combattre Laphines ici.";
+	close;
+}
+
+moro_vol,138,84,3	script	Adjutant Tiera#ep143	4_MAN_NITT,{
+	mes "[Tiera]";
+	mes "Les Jeruths et les Nits de Dicastes Diel ont peut-être accepté la demande d'Hesranta,";
+	next;
+	mes "[Tiera]";
+	mes "mais je suis entièrement d'accord avec lui sur ce point.";
+	mes "Nos ennemis deviennent nos amis face à un ennemi commun : le Dieu Démon.";
+	next;
+	mes "[Tiera]";
+	mes "Nous pouvons être des lâches et laisser les autres se battre pour nous, bien sûr,";
+	mes "mais que se passe-t-il s'ils perdent ? Nous tomberons avec eux, et ce sera notre faute.";
+	next;
+	mes "[Tiera]";
+	mes "Il en va de même pour vous, Humains.";
+	mes "Nous combattons cette guerre pour gagner.";
+	close;
+}
+
+moro_vol,134,87,1	script	Advance Captain Avaranc#ep143	4_MAN_GALTUN,{
+	mes "[Avaranche]";
+	mes "Mon unité est composée des meilleurs Gartens parmi les meilleurs.";
+	mes "Humain guerrier,";
+	mes "J'ai attendu ce jour pour combattre à vos côtés.";
+	next;
+	mes "[Avaranche]";
+	mes "Je jure sur ma vie que je ne cesserai de lutter tant que le Dieu Démon ne sera pas vaincu !";
+	close;
+}
+
+moro_vol,131,86,1	script	Dicastes Garten#gal01	4_MAN_GALTUN1,{
+	mes "[Dicastes Garten]";
+	mes "Quand pouvons-nous combattre ?";
+	mes "Quand ?";
+	next;
+	mes "[Dicastes Garten]";
+	mes "Je ne peux pas croire que je dois combattre aux côtés de ces maudites Laphines.";
+	mes "Je me souviens encore de ce qu'elles nous ont fait lors de la dernière bataille.";
+	close;
+}
+
+moro_vol,138,87,7	script	Dicastes Garten#gal02	4_MAN_GALTUN1,{
+	mes "[Dicastes Garten]";
+	mes "Ma mission est de protéger Jeruth Hesranta.";
+	mes "Tu ferait mieux de reculer,";
+	mes "ou je te considérerai comme mon ennemi.";
+	close;
+}
+
+moro_vol,140,97,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal11	4_MAN_GALTUN1
+moro_vol,143,97,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal12	4_MAN_GALTUN1
+moro_vol,146,97,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal13	4_MAN_GALTUN1
+moro_vol,140,94,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal14	4_MAN_GALTUN
+moro_vol,143,94,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal15	4_MAN_GALTUN
+moro_vol,146,94,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal16	4_MAN_GALTUN
+
+moro_vol,150,86,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal21	4_MAN_GALTUN1
+moro_vol,153,86,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal22	4_MAN_GALTUN1
+moro_vol,156,86,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal23	4_MAN_GALTUN1
+moro_vol,150,83,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal24	4_MAN_GALTUN
+moro_vol,153,83,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal25	4_MAN_GALTUN
+moro_vol,156,83,1	duplicate(Combat Laphine#sol01)	Dicastes Elite#gal26	4_MAN_GALTUN
+
+moro_vol,139,104,1	script	Manuk Defender#line01	4_MAN_GALTUN1,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Hm !";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "^FF0000Arrière, petit humain !^0";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Enemy in sight!",1000 );
+	end;
+}
+
+moro_vol,143,106,1	duplicate(Manuk Defender#line01)	Manuk Defender#line02	4_MAN_GALTUN1,2,2
+
+moro_vol,147,108,1	script	Manuk Defender#line03	4_MAN_GALTUN1,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Entends-tu des insectes bourdonner ?";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "...";
+	end;
+}
+
+moro_vol,152,109,1	script	Manuk Defender#line04	4_MAN_GALTUN1,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Hm !";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "^FF0000Arrière, petit humain !^0";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Not a chance!",1000 );
+	end;
+}
+
+moro_vol,156,110,1	script	Manuk Defender#line05	4_MAN_GALTUN1,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Ne nous compare pas à ces crétins ailés !";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "Pourquoi doit-ce être les Laphines ?";
+	end;
+}
+
+moro_vol,160,110,7	script	Manuk Defender#line06	4_MAN_GALTUN1,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Hm !";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "^FF0000Arrière, petit humain !^0";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "*Snort*",1000 );
+	end;
+}
+
+moro_vol,164,109,7	script	Manuk Defender#line07	4_MAN_GALTUN1,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Hm !";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "[Garten] Nous sommes supérieurs aux Laphines.";
+	end;
+}
+
+moro_vol,167,107,7	script	Manuk Defender#line08	4_MAN_GALTUN1,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Hm !";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "^FF0000Arrière, petit humain !^0";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Are you an enemy?",1000 );
+	end;
+}
+
+moro_vol,169,104,7	script	Manuk Defender#line09	4_MAN_GALTUN1,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Hm !";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Trop bruyant.";
+	else
+		npctalk "^FF0000Arrière, petit humain !^0";
+	end;
+}
+
+moro_vol,171,100,5	script	Manuk Defender#line10	4_MAN_GALTUN1,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Hm !";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "^FF0000Arrière, petit humain !^0";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Don't underestimate us!",1000 );
+	end;
+}
+
+moro_vol,172,95,5	script	Manuk Defender#line11	4_MAN_GALTUN1,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Hm !";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "[Garten] Les Gartens ne reculent jamais !";
+	end;
+}
+
+moro_vol,173,89,5	script	Manuk Defender#line12	4_MAN_GALTUN1,2,2,{
+	.@ttemp = rand(1,3);
+	if (.@ttemp == 1)
+		npctalk "Hm !";
+	else if (.@ttemp == 2)
+		npctalk "[Garten] Tout est clair.";
+	else
+		npctalk "^FF0000Arrière, petit humain !^0";
+	end;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	kick_mob( "Not a chance!",1000 );
+	end;
+}
+
+
+// Dimensional Travel Quest
+morocc,138,238,4	script	Piled Rags#ep14bs	4_M_DIEMAN,{
+	if (BaseLevel < 140) {
+		mes "- Il y a une pile de vieux chiffons. -";
+		close;
+	}
+	if (checkweight(1119,3) == 0) {
+		mes "- Vous transportez trop d'objets pour poursuivre la quête. -";
+		close;
+	}
+	if (ep14_3_newerabs == 0) {
+		mes "- Il y a une pile de vieux chiffons. -";
+		next;
+		if (select( "Leave it.", "Remove it." ) == 1) {
+			mes "- Vous avez laissé le tas de chiffons sales tel quel. -";
+			close;
+		}
+		mes "[???]";
+		mes "Pouah...";
+		next;
+		mes "- Un gémissement est entendu sous le tas de chiffons. -";
+		next;
+		if (select( "Run.", "Shake the rags." ) == 1) {
+			mes "- Effrayé, vous fûtes pris de course. -";
+			close;
+		}
+		mes "[" + strcharinfo(0) + "]";
+		mes "Eh,";
+		mes "[Garten] Réveillez-vous !";
+		next;
+		mes "[???]";
+		mes "Pouah...";
+		next;
+		mes "[" + strcharinfo(0) + "]";
+		mes "Êtes-vous en bonne santé ?";
+		next;
+		mes "[???]";
+		mes "Pouah...";
+		mes "J'ai... besoin de nourriture...";
+		mes "Je pourrais même manger ^0000FFNourriture pour monstre^000000. S'il vous plaît...";
+		next;
+		mes "- Il perdit à nouveau connaissance, épuisé simplement par la parole.";
+		mes "Vous devriez lui donner ^0000FFNourriture pour monstre^000000. -";
+		setquest 11349;// Dimensional Travel
+		ep14_3_newerabs = 1;
+		close;
+	}
+	if (ep14_3_newerabs < 5) {
+		if (ep14_3_newerabs == 1) {
+			if (countitem(528) < 1) {
+				mes "- Il perdit à nouveau connaissance, épuisé simplement par la parole.";
+				mes "Vous devriez lui donner ^0000FFNourriture pour monstre^000000. -";
+				close;
+			}
+			mes "[???]";
+			mes "Pouah...";
+			next;
+			if (select( "Leave it.", "Give Monster's Feed." ) == 1) {
+				mes "[???]";
+				mes "Ouf... A-aide...";
+				close;
+			}
+			mes "[???]";
+			mes "Pouah...";
+			mes "Ew !";
+			cutin "ep143_tadir.bmp",2;
+			delitem 528,1;// Monster's Feed
+			completequest 11349;// Dimensional Travel
+			setquest 11350;// Dimensional Travel
+			ep14_3_newerabs = 2;
+			next;
+			mes "[???]";
+			mes "*Croc Croc*";
+			mes "*Vomi*";
+			next;
+			mes "[???]";
+			mes "^FF0000Phew...^000000";
+			next;
+		}
+		if (ep14_3_newerabs == 2) {
+			mes "[" + strcharinfo(0) + "]";
+			mes "Êtes-vous en bonne santé ?";
+			next;
+			mes "[???]";
+			mes "*Étouffement* Oh, oui, merci à vous.";
+			mes "*Râle*";
+			cutin "ep143_tadir.bmp",2;
+			next;
+			mes "[???]";
+			mes "Je pensais que j'allais mourir. Je suis chanceux d'être vivant.";
+			next;
+			mes "[???]";
+			mes "J'ai eu rien que de la mauvaise chance récemment.";
+			next;
+			mes "[???]";
+			mes "J'ai été aspiré dans un endroit étrange, séparé du reste de mon groupe. L'endroit où je suis arrivé était terrible. Il n'y avait aucun signe d'habitation humaine.";
+			next;
+			mes "[???]";
+			mes "C'est un miracle que je sois ici.";
+			next;
+			mes "[???]";
+			mes "J'ai eu de la chance.";
+			mes "Toujours en vie.";
+			mes "Hah hah hah!";
+			next;
+			mes "[???]";
+			mes "Oh!";
+			mes "Où sont mes manières ? J'ai oublié de vous remercier correctement.";
+			next;
+			mes "[???]";
+			mes "Merci";
+			mes "pour m'avoir nourri, bien que la nourriture ait goûté horrible.";
+			next;
+			mes "[???]";
+			mes "Je suis soulagé d'être encore en vie. Le monde est toujours un bel endroit.";
+			mes "Je suis ému.";
+			next;
+			mes "[Tamarin]";
+			mes "Mon nom est ^0000FFTamarin^000000.";
+			mes "Je suis aventurier, et non, ce n'est pas mon tenue préférée.";
+			next;
+			select("Introduce yourself.");
+			mes "[Tamarin]";
+			mes "" + strcharinfo(0) + ", huh? That's a good name.";
+			next;
+		}
+		if (ep14_3_newerabs <= 3) {
+			mes "[Tamarin]";
+			mes "Ah,";
+			mes "Il vaut mieux que je fasse quelque chose avant que les gens ne commencent à demander si je suis sans-abri.";
+			cutin "ep143_tadir.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Connaissez-vous un endroit où je peux me laver ?";
+			next;
+			if (select( "Tell him the place.", "Say you don't know." ) == 2) {
+				mes "[Tamarin]";
+				mes "L'eau est rare dans le désert, hein ?";
+				ep14_3_newerabs = 3;
+				close3;
+			}
+		}
+		if (ep14_3_newerabs <= 4) {
+			mes "[Tamarin]";
+			mes "Ah,";
+			mes "votre oasis près du sphinx nord-ouest^000000 ?";
+			cutin "ep143_tadir.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "J'ai été à Morocc, mais c'est la première fois que je suis dans le village.";
+			mes "Je me souviens avoir entendu dire que cet endroit renferme une eau spéciale.";
+			next;
+			mes "[Tamarin]";
+			mes "Je suis excité de pouvoir me laver avec cette eau spéciale !";
+			mes "Je vais à l'oasis maintenant. Pourriez-vous m'attendre ?";
+			next;
+			mes "[Tamarin]";
+			mes "Il faudra un certain temps avant que je ne ressente la force, mais au moins je peux marcher seul.";
+			mes "Hah hah hah!";
+			next;
+			if (select( "Watch him.", "Accompany him." ) == 1) {
+				mes "[Tamarin]";
+				mes "(Se raidit et inspire profondément.)";
+				mes "Attendez, attendez.";
+				mes "Je peux me lever tout seul.";
+				next;
+				mes "[Tamarin]";
+				mes "Attends, attends !";
+				ep14_3_newerabs = 4;
+				close3;
+			}
+			mes "[Tamarin]";
+			mes "Quelle gentillesse de votre part !";
+			mes "Le monde est encore un endroit acceptable pour vivre.";
+			next;
+			mes "[Tamarin]";
+			mes "Alors, allons à l' ^0000FFoasis près du sphinx nord-ouest^000000 .";
+			changequest 11350,11351;
+			ep14_3_newerabs = 5;
+			close3;
+		}
+	}
+	if (ep14_3_newerabs == 5) {
+		mes "[Tamarin]";
+		mes "Quelle gentillesse de votre part !";
+		mes "Le monde est encore un endroit acceptable pour vivre.";
+		cutin "ep143_tadir.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Alors, allons à l' ^0000FFoasis près du sphinx nord-ouest^000000 .";
+		close3;
+	}
+	mes "- Il y a une pile de vieux chiffons. -";
+	close;
+
+OnInit:
+	questinfo( QTYPE_QUEST, QMARK_YELLOW, "BaseLevel >= 140 && !isbegin_quest(11349)" );
+	end;
+}
+
+moc_ruins,106,140,4	script	Tamarin#ep14bs_ru	4_M_TAMARIN,{
+	if (ep14_3_newerabs == 5 || ep14_3_newerabs == 6) {
+		if (ep14_3_newerabs == 5) {
+			mes "[Tamarin]";
+			mes "Pah !";
+			mes "C'est super agréable !";
+			cutin "ep143_tasmi.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "L'eau me semble trop chaude pour mon goût, mais un pauvre ne peut pas être choeur.";
+			cutin "ep143_tasta.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Vous m'avez sauvé de la faim et vous m'avez emmené dans ce grand endroit. Je dois avoir été une grande personne dans ma vie passée";
+			mes "pour mériter une telle gentillesse.";
+			cutin "ep143_tahuk.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Je veux vous rembourser, compagnon aventurier.";
+			mes "J'ai perdu tous mes biens lorsque je suis tombé dans ce trou étrange et que j'ai été séparé de mon groupe,";
+			cutin "ep143_tasta.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "mais au moins je peux vous raconter une ^0000FFhistoire intéressante^000000 .";
+			cutin "ep143_tasmi.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Il s'agit du lieu étrange où je suis allé.";
+			cutin "ep143_tahuk.bmp",2;
+			next;
+			if (select( "Not interested.", "I'm listening." ) == 1) {
+				mes "[Tamarin]";
+				mes "D'accord, alors.";
+				mes "Je pensais que vous étiez sérieux concernant l'aventure.";
+				cutin "ep143_tahuk.bmp",2;
+				next;
+				mes "[Tamarin]";
+				mes "Alors";
+				mes "voulez-vous récupérer votre Nourriture pour Monstre ?";
+				cutin "ep143_tasta.bmp",2;
+				next;
+				mes "[Tamarin]";
+				mes "*Râle*";
+				cutin "ep143_taang.bmp",2;
+				close3;
+			}
+			mes "[Tamarin]";
+			mes "Je savais que tu serais intéressé !";
+			mes "Rien ne suscite autant l'intérêt des aventuriers que l'histoire d'un lieu étrange, n'est-ce pas ?";
+			cutin "ep143_tasmi.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Euh...";
+			mes "L'histoire commence avec mon voyage vers le ^0000FFMonde Autre^000000, la dernière destination à la mode pour les aventuriers.";
+			cutin "ep143_tahuk.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "L'aventurier Tamarin et son parti se sont rendus dans la terre de l'inconnu, le Monde Autre.";
+			cutin "ep143_tasmi.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Leur voyage fut périlleux, mais ils avancèrent bravement.";
+			cutin "ep143_taang.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Oh,";
+			mes "Pourquoi parle-je à la troisième personne ?";
+			cutin "ep143_tahuk.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Mon inspiration initiale était Bard, puis je suis devenu Chasseur car mes amis pensaient que cela me convenait mieux.";
+			cutin "ep143_tasmi.bmp",2;
+			next;
+			select("Ask him to be more straightforward.");
+			mes "[Tamarin]";
+			mes "Oui.";
+			cutin "ep143_tahuk.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Il y a quelque temps, mes amis et moi avons décidé d'explorer le Monde Autre ensemble.";
+			cutin "ep143_tasta.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Comme ce serait notre première visite au Monde Autre, nous voulions aller vers un endroit plus populaire, mais l'un d'eux n'y était pas pour autant – il était si excité qu'il commença à agir de manière incontrôlée.";
+			cutin "ep143_taang.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Quand je revins à mes sens, j'étais seul dans un lieu étrange.";
+			cutin "ep143_tahuk.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Le ^0000FFpays brûlait d'un feu perpétuel^000000 qui n'était pas trop chaud au toucher, et des ^0000FFplantes et insectes étranges^000000 rampaient partout.";
+			next;
+			mes "[Tamarin]";
+			mes "Au début, je criai à l'aide et me déplaçai en espérant trouver d'autres personnes, mais sans succès.";
+			next;
+			mes "[Tamarin]";
+			mes "Après quelques jours sans rien manger, je commençai à tout ce que je voyais par terre, et j'eus la pire diarrhée de ma vie.";
+			cutin "ep143_taang.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Je ne savais pas combien de jours s'étaient écoulés avant de voir un groupe d'entités que je pris pour des hommes d'un coup d'œil.";
+			cutin "ep143_tahuk.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Mais ^0000FFils avaient l'air trop étranges pour passer pour humains^000000.";
+			mes "Je ne pouvais pas leur parler, donc je sautai simplement dans la Fissure par laquelle ils étaient arrivés.";
+			next;
+			mes "[Tamarin]";
+			mes "Mes genoux fléchirent et je roulai sur le côté. Quand je regardai autour de moi, j'étais de retour à la ^0000FFFissure Dimensionnelle^000000 où mes amis et moi sommes arrivés pour la première fois.";
+			next;
+			mes "[Tamarin]";
+			mes "Je suis sorti par le ^0000FFTéléporteur Dimensionnel de Morocc^000000 et j'ai utilisé toute mon énergie pour atteindre Morocc.";
+			next;
+			mes "[Tamarin]";
+			mes "Soupir...";
+			mes "Je me demande si mes amis sont en sécurité.";
+			cutin "ep143_tasta.bmp",2;
+			next;
+		}
+		mes "[Tamarin]";
+		mes "Je devrais les chercher,";
+		mes "mais d'abord, je veux retourner à cet endroit étrange une fois que j'aurai retrouvé toute ma force. Peu de gens ont la chance de voir un tel lieu spécial, vous savez.";
+		cutin "ep143_tasmi.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Heureusement pour moi, avec les travaux de restauration du ^0000FFMorocc^000000 en cours, je ne devrais pas avoir de problème à gagner de l'argent grâce à quelques petits boulots.";
+		next;
+		if (select( "Tell him have safe travel.", "Tell him you want to tag along." ) == 1) {
+			mes "[Tamarin]";
+			mes "Je le ferai.";
+			mes "Merci de m'avoir sauvé la vie.";
+			cutin "ep143_tahuk.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "C'est là que réside la beauté de l'aventure :";
+			mes "rencontrer de nouveaux amis !";
+			cutin "ep143_tasmi.bmp",2;
+			next;
+			mes "[Tamarin]";
+			mes "Je vais rester au Morocc un moment, gagner quelques pièces et me préparer pour une autre aventure. J'espère pouvoir vous revoir avant de partir.";
+			ep14_3_newerabs = 6;
+			close3;
+		}
+		mes "[Tamarin]";
+		mes "!!";
+		cutin "ep143_tahuk.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Vous parlez sérieusement ?";
+		next;
+		mes "[Tamarin]";
+		mes "Par les dieux, je suis un malchanceux chanceux !";
+		mes "*Haaa*";
+		cutin "ep143_taang.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Alors rendez-vous au ^0000FFDimensional Crack^000000. J'ai besoin de me réapprovisionner d'abord.";
+		cutin "ep143_tasta.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Ça va prendre un moment pour que j'empaquete tout, donc occupez-vous de vos autres affaires en attendant.";
+		erasequest 11351;// Dimensional Travel
+		setquest 11352;// Dimensional Travel
+		ep14_3_newerabs = 7;
+		close3;
+	}
+	if (ep14_3_newerabs == 7) {
+		mes "[Tamarin]";
+		mes "Alors rendez-vous au ^0000FFDimensional Crack^000000. J'ai besoin de me réapprovisionner d'abord.";
+		cutin "ep143_tasta.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Ça va prendre un moment pour que j'empaquete tout, donc occupez-vous de vos autres affaires en attendant.";
+		close3;
+	}
+	mes "[Tamarin]";
+	mes "Pah !";
+	mes "C'est super agréable !";
+	cutin "ep143_tasmi.bmp",2;
+	close3;
+}
+
+dali,112,69,4	script	Tamarin#ep14bs_cha	4_M_TAMARIN,{
+	if (ep14_3_newerabs == 7) {
+		mes "[Tamarin]";
+		mes "" + strcharinfo(0) + ", over here!";
+		mes "Vous êtes en avance.";
+		cutin "ep143_tasta.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "(Jette un coup d'œil autour de nous furtivement)";
+		mes "J'espère que personne ne nous regarde.";
+		cutin "ep143_tahuk.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "J'ai caché l'entrée de cet endroit : je ne voulais que personne n'y arrive avant moi.";
+		cutin "ep143_tasmi.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "À cette époque, j'étais trop distrait pour me souvenir où se trouvait l'entrée, mais je pense qu'elle est définitivement ^0000FFquelque part au deuxième étage^000000.";
+		cutin "ep143_tasta.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Rencontre-moi devant le ^0000FFHidden Crack^000000. Assure-toi que personne ne te suive là-bas.";
+		mes "J'ai ^0000FFrecouvert l'entrée de terre^000000. J'espère qu'on ne l'a pas creusée.";
+		erasequest 11352;// Dimensional Travel
+		setquest 11353;// Dimensional Travel
+		ep14_3_newerabs = 8;
+		close3;
+	}
+	if (ep14_3_newerabs == 8) {
+		mes "[Tamarin]";
+		mes "J'ai caché l'entrée de cet endroit : je ne voulais que personne n'y arrive avant moi.";
+		cutin "ep143_tasmi.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "À cette époque, j'étais trop distrait pour me souvenir où se trouvait l'entrée, mais je pense qu'elle est définitivement ^0000FFquelque part au deuxième étage^000000.";
+		cutin "ep143_tasta.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Rencontre-moi devant le ^0000FFHidden Crack^000000. Assure-toi que personne ne te suive là-bas.";
+		mes "J'ai ^0000FFrecouvert l'entrée de terre^000000. J'espère qu'on ne l'a pas creusée.";
+		close3;
+	}
+	mes "[Tamarin]";
+	mes "Hum, mon repère doit être resté où je l'ai laissé.";
+	cutin "ep143_tahuk.bmp",2;
+	close3;
+}
+
+dali02,90,62,0	script	Sand Mound#ep14bs	4_SOIL,{
+	if (ep14_3_newerabs < 8) {
+		mes "- Une butte de sable se dresse maladroitement, paraissant à sa place.";
+		close;
+	}
+	if (ep14_3_newerabs == 8) {
+		mes "- Une butte de sable se dresse maladroitement, paraissant à sa place.";
+		next;
+		mes "[Tamarin]";
+		mes "Ouf!";
+		mes "Je suis ravi que tu m'aies trouvé.";
+		cutin "ep143_tasmi.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Laisse-moi enlever la terre...";
+		mes "Fais attention à l'entrée. Elle est assez étroite.";
+		cutin "ep143_tasta.bmp",2;
+		next;
+		if (select( "Enter.", "Quit." ) == 2) {
+			mes "[Tamarin]";
+			mes "Tu ne vas pas entrer ?";
+			cutin "ep143_tahuk.bmp",2;
+			close3;
+		}
+		mes "- Le passage est à peine assez large pour contenir une personne. -";
+		completequest 11353;// Dimensional Travel
+		ep14_3_newerabs = 9;
+		close2;
+		warp "moro_vol",136,135;
+		end;
+	}
+	mes "- Une butte de sable se dresse maladroitement, paraissant à sa place.";
+	next;
+	if (select( "Enter.", "Quit." ) == 2) {
+		mes "Vous avez décidé de ne pas entrer.";
+		close;
+	}
+	mes "- Le passage est à peine assez large pour contenir une personne. -";
+	close2;
+	warp "moro_vol",136,135;
+	end;
+}
+
+moro_vol,137,136,0	script	Sand Mound#ep14bs_	4_SOIL,{
+	if (ep14_3_newerabs < 9) {
+		mes "- Une butte de sable se dresse maladroitement, paraissant à sa place.";
+		close;
+	}
+	mes "- Une butte de sable se dresse maladroitement, paraissant à sa place.";
+	next;
+	if (select( "Return to the Dimensional Crack.", "Quit." ) == 2) {
+		mes "Vous avez décidé de ne pas entrer.";
+		close;
+	}
+	mes "- Le passage est à peine assez large pour contenir une personne. -";
+	close2;
+	warp "dali02",91,63;
+	end;
+}
+
+moro_vol,132,140,4	script	Tamarin#ep14bs_ju	4_M_TAMARIN,{
+	if (ep14_3_newerabs == 9) {
+		mes "[Tamarin]";
+		mes "Waouh !";
+		mes "Je n'aurais pas pensé voir autant de monde.";
+		cutin "ep143_tahuk.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Je suis déçu de ne pas être le premier à découvrir cet endroit, et je suis heureux de ne pas être seul dans ce lieu désolant.";
+		cutin "ep143_taang.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Je vois plus de ces entités qui ressemblent vaguement à des hommes.";
+		mes "Cet endroit pourrait être bien plus que ce que j'ai pensé !";
+		cutin "ep143_tasmi.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Regardez !";
+		mes "Des arbres qui marchent !";
+		mes "Grrr-!";
+		cutin "ep143_tahuk.bmp",2;
+		next;
+		mes "[Barget Tiblack]";
+		mes "HEY !";
+		mes "Qu'est-ce que vous croyez faire ici ?";
+		cutin "",255;
+		setquest 11354;// Specimen Collection
+		ep14_3_newerabs = 15;
+		close;
+	}
+	if (ep14_3_newerabs == 15) {
+		mes "[Tamarin]";
+		mes "Regardez !";
+		mes "Des arbres qui marchent !";
+		mes "Grrr-!";
+		cutin "ep143_tahuk.bmp",2;
+		next;
+		mes "[Barget Tiblack]";
+		mes "HEY !";
+		mes "Qu'est-ce que vous croyez faire ici ?";
+		cutin "",255;
+		close;
+	}
+	if (ep14_3_newerabs == 16) {
+		mes "[Tamarin]";
+		mes "Ils pourraient nous chasser s'ils savent que nous avons infiltré les lieux.";
+		mes "Faisons ce qu'ils demandent maintenant, d'accord ?";
+		cutin "ep143_taang.bmp",2;
+		close3;
+	}
+	if (ep14_3_newerabs == 17 || ep14_3_newerabs == 18) {
+		mes "[Tamarin]";
+		mes "Récupérer des spécimens de plantes ne semble pas trop difficile. Nous pouvons les partager entre nous.";
+		cutin "ep143_tasta.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "^0000FFQuand tu auras collecté 25 tiges de Sonia, rencontre-moi près du gros rocher au centre de cet endroit^000000.";
+		if (ep14_3_newerabs == 17) {
+			erasequest 11356;// Specimen Collection
+			setquest 11357;// Specimen Collection
+			ep14_3_newerabs = 18;
+		}
+		close3;
+	}
+	if (ep14_3_newerabs == 19) {
+		if (countitem(6690) < 25) {// YummyStem
+			mes "[Tamarin]";
+			mes "Ouf ! (Se tenant le côté)";
+			mes "Tu n'as pas assez de tiges.";
+			mes "En ramasse d'autres et amène-les à Barget.";
+			cutin "ep143_tahuk.bmp",2;
+			close3;
+		}
+		mes "[Tamarin]";
+		mes "Allons rendre compte à Barget en premier.";
+		cutin "ep143_tahuk.bmp",2;
+		close3;
+	}
+	if (ep14_3_newerabs == 21 || ep14_3_newerabs == 22) {
+		mes "[Tamarin]";
+		mes "Allez,";
+		mes "hâtez-vous de rejoindre l'^0000FFInstructeur Rugen^000000 !";
+		cutin "ep143_tahuk.bmp",2;
+		close3;
+	}
+	if (ep14_3_newerabs == 23) {
+		mes "[Tamarin]";
+		mes "Merci aux dieux, qui aurait cru que cette chose dont je me suis nourri par faim m'aurait sauvé la vie ?";
+		mes "Rendons compte à Barget.";
+		cutin "ep143_tahuk.bmp",2;
+		close3;
+	}
+	if (ep14_3_newerabs == 24) {
+		mes "[Tamarin]";
+		mes "Arrgh !";
+		mes "" + strcharinfo(0) + " Get in the cave before everyone else explores it!";
+		cutin "ep143_tahuk.bmp",2;
+		close3;
+	}
+	mes "[Tamarin]";
+	mes "Pouah...";
+	mes "Je suis le premier arrivé sur cet endroit !";
+	cutin "ep143_taang.bmp",2;
+	close3;
+}
+
+moro_vol,142,131,5	script	Barget Tiblack#ep14bs	4_M_ALCHE_D,{
+	if (checkweight(1119,3) == 0) {
+		mes "- Vous transportez trop d'objets pour poursuivre la quête. -";
+		close;
+	}
+	if (ep14_3_newerabs < 15) {
+		mes "[Barget Tiblack]";
+		mes "Ouf, je suis épuisé.";
+		mes "Je comprends l'urgence, mais cela ne signifie pas que j'aime être dirigé par autrui.";
+		close;
+	}
+	if (ep14_3_newerabs == 15) {
+		mes "[Barget Tiblack]";
+		mes "Tu as gâché mes précieux spécimens !";
+		mes "J'ai demandé aux gens de ton espèce de s'éloigner de ma zone de travail. Tes supérieurs ne t'ont pas dit cela ?";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Je n'ai même pas terminé la recherche au camp, et on m'a déjà emmené pour un nouveau projet qui me pèse.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Je demande un assistant !";
+		mes "Assez avec ce problème de budget !";
+		mes "Argh!";
+		next;
+		mes "[Barget Tiblack]";
+		mes "...";
+		mes "...";
+		next;
+		mes "[Barget Tiblack]";
+		mes "D'accord.";
+		mes "Vous deux là-bas !";
+		mes "Vous devez avoir trop de temps sur les bras, trainant sans but. Soyez utiles et aidez-moi à collecter des échantillons.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Après tout, vous avez gâché mes échantillons existants.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "D'abord, je veux collecter des spécimens d'animaux.";
+		mes "Il n'est pas rare de voir des animaux mutants par ici. Récemment, l'un d'eux a été confirmé comme étant une ^0000FFespèce complètement nouvelle^000000.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "^0000FFCette nouvelle espèce d'insecte est appelée les Firebugs car ils sont entourés de flammes et vivent dans des fosses à feu comme celle-ci^000000.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Les Firebugs qui rampent hors de leurs fosses meurent peu après.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Veuillez enquêter sur ^0000FF20 fosses à feu et collecter 50 Coquilles d'Insecte Brûlant provenant des Firebugs^000000.";
+		mes "Faites attention de ne pas vous brûler au cours du processus.";
+		erasequest 11354;// Specimen Collection
+		setquest 11355;// Specimen Collection
+		ep14_3_newerabs = 16;
+		close;
+	}
+	if (ep14_3_newerabs < 19) {
+		if (ep14_3_newerabs == 16) {
+			if (countitem(6689) < 50 || checkquest(11355,HUNTING) != 2) {
+				mes "[Barget Tiblack]";
+				mes "D'abord, je veux collecter des spécimens d'animaux.";
+				mes "Il n'est pas rare de voir des animaux mutants par ici. Récemment, l'un d'eux a été confirmé comme étant une ^0000FFespèce complètement nouvelle^000000.";
+				next;
+				mes "[Barget Tiblack]";
+				mes "^0000FFCette nouvelle espèce d'insecte est appelée les Firebugs car ils sont entourés de flammes et vivent dans des fosses à feu comme celle-ci^000000.";
+				next;
+				mes "[Barget Tiblack]";
+				mes "Les Firebugs qui rampent hors de leurs fosses meurent peu après.";
+				next;
+				mes "[Barget Tiblack]";
+				mes "Veuillez enquêter sur ^0000FF20 fosses à feu et collecter 50 Coquilles d'Insecte Brûlant provenant des Firebugs^000000.";
+				mes "Faites attention de ne pas vous brûler au cours du processus.";
+				close;
+			}
+			mes "[Barget Tiblack]";
+			mes "Oh,";
+			mes "Bravo !";
+			mes "Vous avez terminé votre tâche plus rapidement que je ne l'anticipais.";
+			delitem 6689,50;// BurningSkin
+			erasequest 11355;// Specimen Collection
+			setquest 11356;// Specimen Collection
+			ep14_3_newerabs = 17;
+			next;
+			mes "[Barget Tiblack]";
+			mes "Ouch, CHAUD !";
+			mes "*Haleine courte*";
+			mes "Laissez-moi les mettre en bouteille avant qu'ils ne refroidissent et envoyez-les au laboratoire.";
+			next;
+		}
+		mes "[Barget Tiblack]";
+		mes "Maintenant, c'est l'heure des spécimens végétaux.";
+		mes "Notre plante cible s'appelle Sonia, une espèce très primitive.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "D'un coup d'œil, les Sonias ressemblent à des tubes en plastique, mais leur structure est extrêmement mince.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Elles ne sont pas difficiles à récolter. Veuillez ^0000FFramasser 50 Sonias et m'apporter 50 tiges^000000.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Les spécimens de Sonia sont les derniers de ma collection. Si vous avez la chance de ^0000FFvoir des Sonias particulières^000000, n'hésitez pas à me le faire savoir.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Essayez de ne pas trop vous éloigner de la base. C'est trop dangereux dehors.";
+		mes "Revenez en sécurité.";
+		next;
+		mes "[Tamarin]";
+		mes "Hum...";
+		mes "" + strcharinfo(0) + ", wait!";
+		cutin "ep143_tahuk.bmp",2;
+		close3;
+	}
+	if (ep14_3_newerabs == 19) {
+		if (countitem(6690) < 25) {
+			mes "[Barget Tiblack]";
+			mes "Comment allez-vous avec la collecte des Sonias ?";
+			close;
+		}
+		mes "[Barget Tiblack]";
+		mes "Ah,";
+		mes "bienvenue de retour !";
+		mes "J'ai oublié de vous dire ^0000FFde ne pas aller près du rocher au centre de cet endroit^000000.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Quand j'ai réalisé mon erreur, j'ai appelé une équipe de secours, si inquiet pour votre sécurité. Je suis soulagé que vous soyez revenu indemne.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Je m'excuse d'avoir été un total abruti.";
+		mes "J'étais stressé(e) à cause de ma lourde charge de travail.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Il me reste encore tant de choses à faire... Soupir...";
+		next;
+		select("Tell her about the central rock.");
+		mes "[Barget Tiblack]";
+		mes "Dis DONC QUOI ?!";
+		mes "Tu y es allé(e) ?";
+		mes "Et tu es revenu(e) indemne ? Comment ?";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Tout le monde qui y est allé ^0000FFest tombé dans un coma à cause du gaz toxique émis par la roche^000000.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Qu'as-tu fait ?";
+		mes "C'est une découverte formidable !";
+		next;
+		select("Relay what happened.");
+		mes "[Barget Tiblack]";
+		mes "Tu as mangé un tige de Sonia.";
+		mes "D'accord, je savais déjà que la tige était non toxique, mais je n'ai pas encore terminé mes recherches sur ses propriétés. As-tu ressenti des effets secondaires ?";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Wow!";
+		mes "C'est vraiment une découverte formidable !";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Je devrais retourner aux recherches...";
+		mes "Non, nous devons d'abord ^0000FFsoigner ces patients qui ont besoin de tiges de Sonia. Veuillez les m'amener.^000000";
+		next;
+		mes "[Barget Tiblack]";
+		mes "^0000FFL'instructeur Rugen s'en occupe^000000, vous pouvez donc les lui amener.";
+		mes "Veuillez me remettre le document. Je vais le signer pour vous.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Je devrais retourner à mes recherches sur les tiges. Je demanderai de l'aide à quelqu'un d'autre.";
+		mes "Vous avez eu de la chance cette fois. Mieux vaut ne pas en faire une habitude de manger des choses par terre.";
+		erasequest 11358;// Specimen Collection
+		setquest 11359;// Antidote
+		ep14_3_newerabs = 20;
+		close;
+	}
+	if (ep14_3_newerabs == 20) {
+		mes "[Barget Tiblack]";
+		mes "Je devrais retourner aux recherches...";
+		mes "Non, nous devons d'abord ^0000FFsoigner ces patients qui ont besoin de tiges de Sonia. Veuillez les m'amener.^000000";
+		next;
+		mes "[Barget Tiblack]";
+		mes "^0000FFL'instructeur Rugen s'en occupe^000000, vous pouvez donc les lui amener.";
+		mes "Veuillez me remettre le document. Je vais le signer pour vous.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Je devrais retourner à mes recherches sur les tiges. Je demanderai de l'aide à quelqu'un d'autre.";
+		mes "Vous avez eu de la chance cette fois. Mieux vaut ne pas en faire une habitude de manger des choses par terre.";
+		close;
+	}
+	if (ep14_3_newerabs < 23) {
+		mes "[Barget Tiblack]";
+		mes "Avez-vous vu l'instructeur Rugen ?";
+		close;
+	}
+	if (ep14_3_newerabs == 23) {
+		mes "[Barget Tiblack]";
+		mes "Hah hah hah!";
+		mes "Alors, comment s'est-il passé ?";
+		mes "Ils ont fonctionné, n'est-ce pas ?";
+		next;
+		mes "[Barget Tiblack]";
+		mes "J'ai de grandes espérances pour mes recherches.";
+		mes "Votre décision apparemment téméraire a sauvé de nombreuses vies.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Avec cela, nous serons bientôt en mesure d'enquêter sur cette ^0000FFgrotte suspecte^000000 du dedans vers le dehors !";
+		next;
+		select("What cave?");
+		mes "[Barget Tiblack]";
+		mes "Oh, la grotte qui dégage ce gaz nocif.";
+		mes "Le gaz est ^0000FFsi épais dans l'air que vous ne pouvez pas voir clairement l'entrée de la grotte^000000.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Ceux à qui nous avons donné le premier lot du vaccin sont déjà partis vers la grotte.";
+		mes "Nous n'avons pas encore eu de nouvelles d'eux. J'aimerais croire que c'est un bon signe.";
+		next;
+		mes "[Barget Tiblack]";
+		mes "Si ce n'était vous deux, j'aurais pu me tirer les cheveux dans la frustration.";
+		mes "Bon travail, vous autres !";
+		getexp 0,1500000;
+		completequest 11362;// Antidote
+		ep14_3_newerabs = 24;
+		close;
+	}
+	mes "[Barget Tiblack]";
+	mes "Ceux à qui nous avons donné le premier lot du vaccin sont déjà partis vers la grotte.";
+	mes "Nous n'avons pas encore eu de nouvelles d'eux. J'aimerais croire que c'est un bon signe.";
+	next;
+	mes "[Barget Tiblack]";
+	mes "Si ce n'était vous deux, j'aurais pu me tirer les cheveux dans la frustration.";
+	mes "Bon travail, vous autres !";
+	close;
+}
+
+moro_vol,198,179,4	script	Tamarin#ep14bs_st	4_M_TAMARIN,{
+	if (ep14_3_newerabs < 18) {
+		mes "[Tamarin]";
+		mes "Hum...";
+		mes "Nous n'avons pas le temps pour cela !";
+		cutin "ep143_taang.bmp",2;
+		close3;
+	}
+	if (ep14_3_newerabs == 18) {
+		if (countitem(6690) < 25 || checkquest(11357,HUNTING) != 2) {
+			mes "[Tamarin]";
+			mes "^0000FFQuand vous aurez collecté 25 tiges de Sonia, rendez-vous ici^000000.";
+			cutin "ep143_tasta.bmp",2;
+			close3;
+		}
+		mes "[Tamarin]";
+		mes "Je ne me souviens pas que ce rocher ait été si grand.";
+		mes "Ou qu'on voie autant de choses étranges autour.";
+		mes "J'entends aussi une odeur de ^0000FFfumée^000000.";
+		cutin "ep143_tahuk.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Encore,";
+		mes "Je ne me souviens pas non plus avoir vu ^0000FFautant d'animaux et de plantes étranges^000000.";
+		mes "Ce sont des Sones, n'est-ce pas ? Il n'y en avait pas autant avant.";
+		next;
+		mes "[Tamarin]";
+		mes "Si c'était le cas, je n'aurais pas eu à mourir de faim.";
+		mes "Les Sones étaient les plus délicieuses et les moins toxiques parmi toutes les plantes que j'ai essayées.";
+		cutin "ep143_taang.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "" + strcharinfo(0) + ", do you want to taste it?";
+		mes "J'en ai apporté quelques tiges pour garder le souvenir.";
+		cutin "ep143_tasmi.bmp",2;
+		next;
+		cutin "",255;
+		mes "- Goût de la Sonia -";
+		mes "Son épais suc réchauffant remplit votre bouche d'un parfum délicieux.";
+		next;
+		mes "[Tamarin]";
+		mes "Qu'en penses-tu ?";
+		mes "Délicieux, hein ?";
+		cutin "ep143_tahuk.bmp",2;
+		next;
+		mes "[Tamarin]";
+		mes "Il ne m'en reste que quelques-unes. Prenons nos tours pour en ramasser plus.";
+		cutin "ep143_tasmi.bmp",2;
+		erasequest 11357;// Specimen Collection
+		setquest 11358;// Specimen Collection
+		ep14_3_newerabs = 19;
+		close3;
+	}
+	if (ep14_3_newerabs == 19) {
+		mes "[Tamarin]";
+		mes "Il ne m'en reste que quelques-unes. Prenons nos tours pour en ramasser plus.";
+		cutin "ep143_tasmi.bmp",2;
+		close3;
+	}
+	if (ep14_3_newerabs < 23) {
+		mes "[Tamarin]";
+		mes "Allez,";
+		mes "hâtez-vous de rejoindre l'^0000FFInstructeur Rugen^000000 !";
+		cutin "ep143_tahuk.bmp",2;
+		close3;
+	}
+	if (ep14_3_newerabs == 23) {
+		mes "[Tamarin]";
+		mes "Merci aux dieux, qui aurait cru que cette chose dont je me suis nourri par faim m'aurait sauvé la vie ?";
+		mes "Rendons compte à Barget.";
+		cutin "ep143_tahuk.bmp",2;
+		close3;
+	}
+	mes "[Tamarin]";
+	mes "Arrgh !";
+	mes "" + strcharinfo(0) + " get in there before everyone else explores it!";
+	cutin "ep143_tahuk.bmp",2;
+	next;
+	if (select( "Enter.", "Quit." ) == 2) {
+		mes "[Tamarin]";
+		mes "Ah...";
+		cutin "ep143_taang.bmp",2;
+		close3;
+	}
+	mes "[Tamarin]";
+	mes "Le sol est sombre. Faites attention où vous mettez les pieds !";
+	close2;
+	warp "moro_cav",40,50;
+	end;
+}
+
+moro_vol,105,71,5	script	Instructor Rugen#ep14bs	4_M_YOUNGKNIGHT,{
+	if (ep14_3_newerabs < 20) {
+		mes "[Instructeur Rugen]";
+		mes "^FF0000Phew...^000000";
+		mes "Pourquoi avez-vous été si imprudent ?";
+		next;
+		mes "[Instructeur Rugen]";
+		mes "Est-ce que cela en vaut la peine ?";
+		mes "...";
+		close;
+	}
+	if (ep14_3_newerabs == 20) {
+		mes "[Instructeur Rugen]";
+		mes "^FF0000Phew...^000000";
+		mes "Pourquoi avez-vous été si imprudent ?";
+		next;
+		mes "[Instructeur Rugen]";
+		mes "Est-ce que cela en vaut la peine ?";
+		mes "...";
+		next;
+		if (select( "Talk to him.", "No, he looks too upset to talk." ) == 2) {
+			mes "[Instructeur Rugen]";
+			mes "Soupir...";
+			mes "C'est juste...";
+			close;
+		}
+		mes "[Instructeur Rugen]";
+		mes "Comment puis-je vous aider ?";
+		mes "Si vous cherchez une assistance médicale, veuillez décrire vos symptômes au comptoir d'accueil et attendre l'arrivée de l'aide.";
+		next;
+		select("Give Sonia stems.");
+		if (countitem(6690) < 25) {
+			mes "[Instructeur Rugen]";
+			mes "Ce n'est pas suffisant.";
+			mes "Pourriez-vous vérifier le nombre de tiges de Sonia que vous avez ?";
+			close;
+		}
+		mes "[Instructeur Rugen]";
+		mes "Sérieusement?";
+		mes "Dr. Tiblack vous a envoyé, donc je dois vous croire.";
+		mes "Je vais nourrir ces plantes aux patients.";
+		delitem 6690,25;// YummyStem
+		erasequest 11359;// Antidote
+		setquest 11360;// Antidote
+		ep14_3_newerabs = 21;
+		close;
+	}
+	if (ep14_3_newerabs == 21) {
+		mes "[Instructeur Rugen]";
+		mes "Sérieusement?";
+		mes "Dr. Tiblack vous a envoyé, donc je dois vous croire.";
+		mes "Je vais nourrir ces plantes aux patients.";
+		close;
+	}
+	if (ep14_3_newerabs == 22) {
+		mes "[Instructeur Rugen]";
+		mes "Oh!";
+		mes "Otto !";
+		mes "Me vois-tu?";
+		next;
+		mes "[Otto]";
+		mes "Pouah...";
+		next;
+		mes "[Instructeur Rugen]";
+		mes "Oh!";
+		mes "Ça a marché !";
+		next;
+		mes "[Instructeur Rugen]";
+		mes "Les patients montrent des améliorations remarquables, bien qu'ils doivent rester au lit pour le moment.";
+		mes "Je vais nourrir les tiges aux patients les plus critiques et attendre que Dr. Tiblack termine ses recherches.";
+		next;
+		mes "[Instructeur Rugen]";
+		mes "Je vous donnerai un rapport sur la réaction des patients à la tige. Veuillez apporter ce rapport à ^0000FFDr. Tiblack^000000.";
+		mes "Hah hah.";
+		mes "Ça a marché !";
+		erasequest 11361;// Antidote
+		setquest 11362;// Antidote
+		ep14_3_newerabs = 23;
+		close;
+	}
+	if (ep14_3_newerabs == 23) {
+		mes "[Instructeur Rugen]";
+		mes "Les patients montrent des améliorations remarquables, bien qu'ils doivent rester au lit pour le moment.";
+		mes "Je vais nourrir les tiges aux patients les plus critiques et attendre que Dr. Tiblack termine ses recherches.";
+		next;
+		mes "[Instructeur Rugen]";
+		mes "Je vous donnerai un rapport sur la réaction des patients à la tige. Veuillez apporter ce rapport à ^0000FFDr. Tiblack^000000.";
+		mes "Hah hah.";
+		mes "Ça a marché !";
+		close;
+	}
+	mes "[Instructeur Rugen]";
+	mes "Je suis ravi que la recherche ait porté ses fruits en notre faveur.";
+	mes "Mes camarades sont sur le point d'une pleine récupération.";
+	mes "Merci à vous.";
+	close;
+}
+
+moro_vol,104,70,4	script	Intoxicated Patient#ep14bs	4_M_LIEMAN,{
+	if (ep14_3_newerabs == 21) {
+		mes "[Patient empoisonné]";
+		mes "Pouah...";
+		next;
+		mes "- Vous lui faites prendre une tige de Sonia. La couleur revient instantanément à son visage. -";
+		erasequest 11360;// Antidote
+		setquest 11361;// Antidote
+		ep14_3_newerabs = 22;
+		close;
+	}
+	if (ep14_3_newerabs == 22) {
+		mes "[Patient empoisonné]";
+		mes "Pouah...";
+		next;
+		mes "- Vous lui faites prendre une tige de Sonia. La couleur revient instantanément à son visage. -";
+		mes "- Parlez à l'Instructeur Rugen. -";
+		close;
+	}
+	mes "[Patient empoisonné]";
+	mes "Pouah...";
+	close;
+}
+
+moro_vol,101,72,4	script	Patient#ep14bs1	4_M_PATIENT,{
+	mes "[Patient]";
+	mes "Pouah...";
+	close;
+}
+
+moro_vol,101,74,4	script	Patient#ep14bs2	4_F_FAIRYKID6,{
+	mes "[Patient]";
+	mes "*Gémissement*";
+	close;
+}
+
+moro_vol,103,71,6	script	Patient#ep14bs3	4_F_PATIENT,{
+	mes "[Patient]";
+	mes "*Grognement*";
+	close;
+}
+
+moro_vol,106,69,4	script	Patient#ep14bs4	4_M_PATIENT,{
+	mes "[Patient]";
+	mes "Aïe... Ouf...";
+	close;
+}
+
+// Warps
+moro_cav,64,13,0	warp	#ep14_3What caveExit	3,3,moro_vol,198,176
+
+// Merchants
+moro_vol,95,96,6	shop	Tool Merchant	4_CAT_DOWN,611:-1,501:-1,502:-1,503:-1,504:-1,645:-1,656:-1,601:-1,602:-1,1065:-1,1750:-1
+
+
+moro_vol,1,2,3	script	#f_boss_c	CLEAR_NPC,{
+	end;
+OnInit:
+	donpcevent "#f_boss_c::OnStart0";
+	donpcevent "#f_boss_c::OnStart1";
+	donpcevent "#f_boss_c::OnStart2";
+	initnpctimer;
+	end;
+OnTimer20000:
+	donpcevent "#f_boss_c::OnM_chk0";
+	donpcevent "#f_boss_c::OnM_chk1";
+	donpcevent "#f_boss_c::OnM_chk2";
+	initnpctimer;
+	end;
+OnStart0:
+	killmonster "moro_vol", "#f_boss_c::OnMobDead0";
+	areamonster "moro_vol",273,233,283,243,"Morocc Twisted Vassal",3040,1, "#f_boss_c::OnMobDead0";
+	.gid[0] = $@mobid[0];
+	end;
+OnStart1:
+	killmonster "moro_vol", "#f_boss_c::OnMobDead1";
+	areamonster "moro_vol",287,126,297,136,"Morocc Fire Vassal",3039,1, "#f_boss_c::OnMobDead1";
+	.gid[1] = $@mobid[0];
+	end;
+OnStart2:
+	killmonster "moro_vol", "#f_boss_c::OnMobDead2";
+	areamonster "moro_vol",211,240,221,250,"Morocc Cold Vassal",3041,1, "#f_boss_c::OnMobDead2";
+	.gid[2] = $@mobid[0];
+	end;
+OnFail0: callsub( S_Fail, 0, 3040, "Morocc Twisted Vassal", 278,238 );	// B_MOROCC_2
+OnFail1: callsub( S_Fail, 1, 3039, "Morocc Fire Vassal", 292,131 );	// B_MOROCC_1
+OnFail2: callsub( S_Fail, 2, 3041, "Morocc Cold Vassal", 216,245 );	// B_MOROCC_4
+S_Fail:
+	.@index = getarg(0);
+	sleep 4000;
+	if (unitexists(.gid[.@index]) == true) {
+		getunitdata .gid[.@index], .@data;
+		.@x1 = getarg(3) - 5;
+		.@y1 = getarg(4) - 5;
+		.@x2 = getarg(3) + 5;
+		.@y2 = getarg(4) + 5;
+		killmonster "moro_vol", "#f_boss_c::OnMobDead" + .@index;
+		areamonster "moro_vol",.@x1,.@y1,.@x2,.@y2,getarg(2),getarg(1),1, "#f_boss_c::OnMobDead" + .@index;
+		.gid[.@index] = $@mobid[0];
+		setunitdata .gid[.@index], UMOB_HP, .@data[UMOB_HP];
+	}
+	end;
+OnM_chk0: callsub( S_M_chk, 0, 278,238 );
+OnM_chk1: callsub( S_M_chk, 1, 292,131 );
+OnM_chk2: callsub( S_M_chk, 2, 216,245 );
+S_M_chk:
+	.@index = getarg(0);
+	if (unitexists(.gid[.@index]) == true) {
+		getunitdata .gid[.@index], .@data;
+		if ((.@data[UMOB_X] < (getarg(1) - 15)) || (.@data[UMOB_X] > (getarg(1) + 15)) || (.@data[UMOB_Y] < (getarg(2) - 15)) || (.@data[UMOB_Y] > (getarg(2) + 15))) {
+			unittalk .gid[.@index], "I have to go back to my position, this is his order.!";
+			donpcevent "#f_boss_c::OnFail" + .@index;
+		}
+	}
+	end;
+OnMobDead0: callsub( S_MobDead, 0 );
+OnMobDead1: callsub( S_MobDead, 1 );
+OnMobDead2: callsub( S_MobDead, 2 );
+S_MobDead:
+	.@index = getarg(0);
+	.gid[.@index] = 0;
+	if (mobcount("moro_vol", "#f_boss_c::OnMobDead" + .@index) < 1)
+		initnpctimer "#f_boss" + .@index;
+	end;
+}
+
+moro_vol,1,2,3	script	#f_boss0	CLEAR_NPC,{
+	end;
+OnInit:
+	disablenpc "#f_boss0";
+	end;
+OnTimer60000:
+	sscanf( strnpcinfo(2), "f_boss%d", .@num );
+	donpcevent "#f_boss_c::OnStart" + .@num;
+	stopnpctimer;
+	end;
+}
+moro_vol,1,2,3	duplicate(#f_boss0)	#f_boss1	CLEAR_NPC
+moro_vol,1,2,3	duplicate(#f_boss0)	#f_boss2	CLEAR_NPC
+
+moro_vol,86,167,7	script	Advance Base Defender#1	4_M_CRU_HEAD,3,3,{
+	mes "[Défenseur de la base avancée]";
+	.@num = atoi(strnpcinfo(2));
+	if (.@num == 1 || .@num == 11)
+		mes "Cet endroit est trop dangereux. Revenez à la base, maintenant !";
+	else if (.@num == 2 || .@num == 12)
+		mes "Je m'assurerai qu'aucun monstre ne s'introduise dans la base.";
+	else if (.@num == 3 || .@num == 13)
+		mes "Soupir... combien de temps dois-je encore faire cela ?";
+	else if (.@num == 4 || .@num == 14)
+		mes "Ne vous inquiétez pas. Je suis ici pour vous protéger.";
+	else if (.@num == 5 || .@num == 15)
+		mes "Nous sommes au milieu du champ de bataille. Je ne peux pas parler trop longtemps.";
+	else if (.@num == 6 || .@num == 16)
+		mes "Veuillez vous écarter. Vous bloquez ma vue.";
+	else if (.@num == 7 || .@num == 17)
+		mes "Si vous avez le temps pour bavarder, alors tuez un ennemi de plus à la place.";
+	else if (.@num == 8 || .@num == 18)
+		mes "Bah, j'ai froid et faim... Oh, je venais juste de parler tout seul.";
+	else if (.@num == 9 || .@num == 19)
+		mes "Faites attention : cet endroit est infesté de monstres dangereux.";
+	else if (.@num == 10 || .@num == 20)
+		mes "Pour chaque monstre que je tue, un ou plusieurs autres apparaissent pour le remplacer.";
+	close;
+
+OnTouch:
+	end;
+OnTouchNPC:
+	.@t_rnd = rand(1,4);
+	if (.@t_rnd == 1)
+		npctalk "[Défenseur de la Base Avancée] : Créature de dépravation, je vous commande de retourner dans le Néant.";
+	else if (.@t_rnd == 2)
+		npctalk "[Défenseur de la Base Avancée] : Pas un pas plus près de ma base, monstres !";
+	else if (.@t_rnd == 3)
+		npctalk "[Défenseur de la Base Avancée] : Arrêtez-vous là, monstres ! Ne vous osez approcher de notre sanctuaire !";
+	else if (.@t_rnd == 4)
+		npctalk "[Défenseur de la Base Avancée] : Partez d'ici, monstres ! Cette terre appartient à l'Armée de la Lumière Sacrée !";
+	specialeffect EF_BEGINSPELL;
+	sleep2 1000;
+	.@c_rnd = rand(1,4);
+	if (.@c_rnd == 1)
+		specialeffect EF_LORD;
+	else if (.@c_rnd == 2)
+		specialeffect EF_STORMGUST;
+	else if (.@c_rnd == 3)
+		specialeffect EF_SIGNUM;
+	else if (.@c_rnd == 4)
+		specialeffect EF_SUI_EXPLOSION;
+	sleep2 2000;
+	unitwarp 0,"moro_vol",145,148;
+	end;
+}
+moro_vol,93,166,7	duplicate(Advance Base Defender#1)	Advance Base Defender#2	4_M_CRU_KNT,3,3
+moro_vol,100,165,7	duplicate(Advance Base Defender#1)	Advance Base Defender#3	4_M_CRU_SOLD,3,3
+moro_vol,107,164,7	duplicate(Advance Base Defender#1)	Advance Base Defender#4	4_M_KY_HEAD,3,3
+moro_vol,114,162,7	duplicate(Advance Base Defender#1)	Advance Base Defender#5	4_M_KY_KIYOM,3,3
+moro_vol,121,160,7	duplicate(Advance Base Defender#1)	Advance Base Defender#6	4_M_KY_KNT,3,3
+moro_vol,128,158,7	duplicate(Advance Base Defender#1)	Advance Base Defender#7	4_M_CRU_HEAD,3,3
+moro_vol,135,155,7	duplicate(Advance Base Defender#1)	Advance Base Defender#8	4_M_CRU_KNT,3,3
+moro_vol,142,152,7	duplicate(Advance Base Defender#1)	Advance Base Defender#9	4_M_CRU_SOLD,3,3
+moro_vol,149,148,7	duplicate(Advance Base Defender#1)	Advance Base Defender#10	4_M_KY_HEAD,3,3
+moro_vol,156,144,7	duplicate(Advance Base Defender#1)	Advance Base Defender#11	4_M_KY_KIYOM,3,3
+moro_vol,162,137,6	duplicate(Advance Base Defender#1)	Advance Base Defender#12	4_M_KY_KNT,3,3
+moro_vol,168,130,6	duplicate(Advance Base Defender#1)	Advance Base Defender#13	4_M_CRU_HEAD,3,3
+moro_vol,174,123,6	duplicate(Advance Base Defender#1)	Advance Base Defender#14	4_M_CRU_KNT,3,3
+moro_vol,178,116,6	duplicate(Advance Base Defender#1)	Advance Base Defender#15	4_M_CRU_SOLD,3,3
+moro_vol,182,109,6	duplicate(Advance Base Defender#1)	Advance Base Defender#16	4_M_KY_HEAD,3,3
+moro_vol,185,102,6	duplicate(Advance Base Defender#1)	Advance Base Defender#17	4_M_KY_KIYOM,3,3
+moro_vol,187,95,6	duplicate(Advance Base Defender#1)	Advance Base Defender#18	4_M_KY_KNT,3,3
+moro_vol,189,88,6	duplicate(Advance Base Defender#1)	Advance Base Defender#19	4_M_CRU_HEAD,3,3
+moro_vol,191,81,6	duplicate(Advance Base Defender#1)	Advance Base Defender#20	4_M_CRU_KNT,3,3
+
+
+// Flaming Basin and Doom Prayers
+// gef_fild02,106,225,4	script	Base Investigator#bl	4_M_KY_HEAD,{
+moro_vol,131,103,3	script	Base Investigator#bl	4_M_KY_HEAD,{
+	if (checkweight(1301,3) == 0) {
+		mes "- Impossible de progresser dans le dialogue car vous avez trop d'objets. -";
+		close;
+	}
+	if (BaseLevel < 150) {
+		mes "[Enquêteur de la Base]";
+		mes "Vous avez l'air super faible !";
+		mes "Pourquoi êtes-vous ici ??";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Eh bien, il n'y a pas assez de monde !";
+		mes "Mais nous attendrons que vous atteigniez le niveau 150.";
+		mes "Veuillez revenir plus tard !";
+		close;
+	}
+	if (ep14_3_fall_bless == 0) {
+		mes "[Enquêteur de la Base]";
+		mes "Avez-vous aussi remarqué cela ?";
+		mes "Oui, les monstres de cette zone sont vraiment assez étranges.";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Ils semblent être des versions mutantes des monstres de Midgard";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Pire encore, leur nombre augmente rapidement.";
+		mes "Nous devons garder un œil sur eux.";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "À mon regret, tout le monde semble si occupé que je ne peux pas leur demander de l'aide, malgré la gravité de l'enquête.";
+		mes "Ce n'est pas un environnement sûr.";
+		next;
+		switch( select( "What's going on?", "Why can't you do it yourself?", "Do you want me to do it?" ) ) {
+		case 1:
+			mes "[Enquêteur de la Base]";
+			mes "Les caractéristiques environnementales de cette zone rendent l'enquête trop difficile.";
+			mes "Le paysage semble familier, mais d'une certaine manière... étrange.";
+			mes "L'endroit a l'air sur le point de s'effondrer complètement, mais... je vois des éclats de croissance vibrante.";
+			next;
+			mes "[Enquêteur de la Base]";
+			mes "Qu'est-ce que c'est que cet endroit ?";
+			close;
+		case 2:
+			mes "[Enquêteur de la Base]";
+			mes "Comme tout autre issu d'un milieu noble,";
+			mes "je ne sais que donner des ordres aux autres.";
+			emotion 4, playerattached();
+			close;
+		case 3:
+			mes "[Enquêteur de la Base]";
+			mes "Parmi tous ces monstres,";
+			mes "^0000FFCondors de Feu^000000 semblent les plus dangereux.";
+			mes "Ces oiseaux aux queues enflammées foncent tête baissée vers tout ce qu'ils voient. Vous pourrez peut-être les fuir, mais vous serez toujours brûlé.";
+			next;
+			select("Do you want me to hunt Fire Condors?");
+			mes "[Enquêteur de la Base]";
+			mes "Non, je n'ai personne pour éliminer leurs carcasses.";
+			mes "Mon but est, après tout, une enquête.";
+			mes "Apporte-moi juste";
+			mes "15 ^FF0000Plumes enflammées^000000";
+			mes "provenant de ^0000FFCondors de Feu^000000.";
+			next;
+			if (select( "I'm as busy as you!", "Got it." ) == 1) {
+				mes "[Enquêteur de la Base]";
+				mes "Vous avez agi comme si vous alliez m'aider.";
+				mes "Est-ce que vous me faisiez perdre mon temps ?";
+				close;
+			}
+			mes "[Enquêteur de la Base]";
+			mes "Apportez-moi";
+			mes "^FF000015 Plumes enflammées^000000";
+			mes "provenant de ^0000FFCondors de Feu^000000.";
+			mes "Hâtez-vous avant que d'autres personnes ne tombent victimes de ces oiseaux féroces !";
+			setquest 1264;	// Flaming Basin and Doom Prayers
+			ep14_3_fall_bless = 1;
+			close;
+		}
+	}
+	if (ep14_3_fall_bless == 1) {
+		if (countitem(6691) < 15) {
+			mes "[Enquêteur de la Base]";
+			mes "Je pensais que vous travailliez dur dès maintenant,";
+			mes "à rassembler ^FF000015 Plumes enflammées^000000";
+			mes "provenant de ^0000FFCondors de Feu^000000,";
+			mes "c'est pourquoi j'ai convoqué une réunion d'urgence de";
+			mes "mes enquêteurs.";
+			next;
+			mes "[Enquêteur de la Base]";
+			mes "Et vous êtes toujours en ville,";
+			mes "profitant d'une promenade tranquille.";
+			close;
+		}
+		mes "[Enquêteur de la Base]";
+		mes "Vous avez apporté";
+		mes "toutes les ^FF000015 Plumes Brûlantes^000000.";
+		mes "Merci. Maintenant je peux";
+		mes "poursuivre mon enquête.";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Surtout, je pourrai enfin profiter de la chaleur d'un feu !";
+		emotion 21;
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Avez-vous remarqué l'expression inquiète sur mon visage ?";
+		next;
+		if (select( "Nope. Never.", "I did, instantly." ) == 1) {
+			mes "[Enquêteur de la Base]";
+			mes "Ce n'est pas la réponse que j'attendais,";
+			mes "mais je vais continuer avec le discours";
+			mes "que j'ai préparé.";
+			mes "Soupir...";
+			next;
+			mes "[Enquêteur de la Base]";
+			mes "Un scout n'est pas revenu";
+			mes "de la Baie en Flammes.";
+			mes "Je veux que tu ailles vérifier";
+			mes "ce qui lui est arrivé.";
+			next;
+			if (select( "No can do.", "Sure." ) == 1) {
+				mes "[Enquêteur de la Base]";
+				mes "Je sais que tu vas le faire quand même !";
+				close;
+			}
+			mes "[Enquêteur de la Base]";
+			mes "Le scout est parti vers la zone regorgeant de monstres.";
+			mes "Garde bien les yeux ouverts sur lui.";
+			delitem 6691,15;// BurningFeather
+			completequest 1264;	// Flaming Basin and Doom Prayers
+			setquest 1265;	// Flaming Basin and Doom Prayers
+			ep14_3_fall_bless = 2;
+			close;
+		}
+		mes "[Enquêteur de la Base]";
+		// google translate..
+		mes "Pas mal ! Vous... ";
+		mes "Veuillez manger trois bols de gongs !";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Un scout n'est pas revenu";
+		mes "de la Baie en Flammes.";
+		mes "Je veux que tu ailles vérifier";
+		mes "ce qui lui est arrivé.";
+		next;
+		if (select( "No can do.", "Sure." ) == 1) {
+			mes "[Enquêteur de la Base]";
+			mes "Je sais que tu vas le faire quand même !";
+			close;
+		}
+		mes "[Enquêteur de la Base]";
+		mes "Le scout est parti vers la zone regorgeant de monstres.";
+		mes "Garde bien les yeux ouverts sur lui.";
+		delitem 6691,15;// BurningFeather
+		completequest 1264;	// Flaming Basin and Doom Prayers
+		setquest 1265;	// Flaming Basin and Doom Prayers
+		ep14_3_fall_bless = 2;
+		close;
+	}
+	if (ep14_3_fall_bless < 4) {
+		mes "[Enquêteur de la Base]";
+		mes "Je t'ai envoyé chercher le scout.";
+		mes "Es-tu revenu ou n'es-tu même pas parti ?";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Allez chercher l'explorateur dans cet endroit bondé de monstres !";
+		close;
+	}
+	if (ep14_3_fall_bless == 4) {
+		mes "[Enquêteur de la Base]";
+		mes "Avez-vous trouvé l'explorateur ?";
+		mes "Il se repose et réécrit son journal d'exploration ?";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Il ne me déçoit pas.";
+		mes "C'est un bon soldat !";
+		emotion 21;
+		emotion 4, playerattached();
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Maintenant que nous avons retrouvé l'explorateur disparu,";
+		mes "je veux que vous passiez à la mission suivante.";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Vous savez que le nombre de monstres mystérieux";
+		mes "dans cette Bassin Enflammé augmente en continu.";
+		next;
+		select("I know.");
+		mes "[Enquêteur de la Base]";
+		mes "Les choses pourraient rapidement sortir de contrôle";
+		mes "si elles se propagent dans le monde extérieur.";
+		mes "Si elles rencontrent d'autres monstres à Midgard ou dans l'Autre Monde,";
+		mes "elles pourraient déchaîner leur rage,";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "pourrait propager un virus mortel,";
+		mes "pourrait engendrer des mutants puissants,";
+		mes "ou pire encore.";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Pour le moment, la meilleure solution serait";
+		mes "une grande purge, et je veux que vous l'effectuez.";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Veuillez exterminer";
+		mes "20 ^0000FFHommes de Sable du Feu^000000";
+		mes "et ^0000FFFire Frilldoras^000000.";
+		next;
+		if (select( "Do it yourself!", "I'll do my best." ) == 1) {
+			mes "[Enquêteur de la Base]";
+			mes "Je déteste me répéter,";
+			mes "mais comme tout le monde issu d'un milieu noble,";
+			mes "je ne sais que donner des ordres aux autres.";
+			emotion 19, playerattached();
+			close;
+		}
+		mes "[Enquêteur de la Base]";
+		mes "Hâtez-vous, ces monstres se reproduisent même en ce moment.";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Veuillez exterminer";
+		mes "20 ^0000FFHommes de Sable du Feu^000000";
+		mes "et 20 ^0000FFFrilldoras du Feu^000000.";
+		completequest 1267;	// Flaming Basin and Doom Prayers
+		setquest 1268;	// Flaming Basin and Doom Prayers
+		setquest 1269;	// Flaming Basin and Doom Prayers
+		ep14_3_fall_bless = 5;
+		close;
+	}
+	if (ep14_3_fall_bless == 5) {
+		if (checkquest(1268,HUNTING) == 2 && checkquest(1269,HUNTING) == 2) {
+			mes "[Enquêteur de la Base]";
+			mes "Vous avez exterminé";
+			mes "20 ^0000FFHommes de Sable du Feu^000000";
+			mes "et 20 ^0000FFFrilldoras du Feu^000000 comme je l'ai ordonné.";
+			next;
+			mes "[Enquêteur de la Base]";
+			mes "Grâce à vous, nous avons trouvé un moyen efficace de lutter contre ces monstres.";
+			next;
+			mes "[Enquêteur de la Base]";
+			mes "À partir de maintenant, mes soldats s'occuperont de tout.";
+			completequest 1268;	// Flaming Basin and Doom Prayers
+			completequest 1269;	// Flaming Basin and Doom Prayers
+			setquest 1297;	// Flaming Basin and Doom Prayers
+			ep14_3_fall_bless = 6;
+			getexp 0,100000;
+			close;
+		}
+		mes "[Enquêteur de la Base]";
+		mes "Hâtez-vous, ces monstres se";
+		mes "multiplient même en ce moment.";
+		next;
+		mes "[Enquêteur de la Base]";
+		mes "Veuillez exterminer";
+		mes "20 ^0000FFHommes de Sable du Feu^000000";
+		mes "et 20 ^0000FFFrilldoras du Feu^000000.";
+		close;
+	}
+	mes "[Enquêteur de la Base]";
+	mes "Laissez-nous donc gérer cette zone, et vous avancez vers le nord.";
+	mes "Je veux que vous fassiez quelque chose concernant ce groupe étrange qui se trouve là-bas.";
+	next;
+	mes "[Enquêteur de la Base]";
+	mes "Ils sont apparus du néant.";
+	mes "font ce qu'ils peuvent pour nous harceler.";
+	emotion 28;
+	close;
+
+OnInit:
+	questinfo( QTYPE_QUEST, QMARK_YELLOW, "BaseLevel >= 150 && isbegin_quest(1264) == 0 && ep14_3_fall_bless == 0" );
+	end;
+}
+
+//gef_fild02,106,225,4	script	Scout#bl	4_M_CRU_SOLD,{
+moro_vol,234,301,3	script	Scout#bl	4_M_CRU_SOLD,{
+	if (checkweight(1301,3) == 0) {
+		mes "- Impossible de progresser dans le dialogue car vous avez trop d'objets. -";
+		close;
+	}
+	if (ep14_3_fall_bless == 0) {
+		mes "[Scout]";
+		mes "On m'a envoyé enquêter sur ces monstres.";
+		mes "C'est injuste que je sois seul";
+		mes "dans cet endroit dangereux sans renfort !";
+		close;
+	}
+	if (ep14_3_fall_bless == 1) {
+		mes "[Scout]";
+		mes "On m'a envoyé enquêter sur ces monstres.";
+		mes "C'est injuste que je sois seul";
+		mes "dans cet endroit dangereux sans renfort !";
+		next;
+		mes "[Scout]";
+		mes "Argh, je vais juste partir en congé non autorisé !";
+		close;
+	}
+	if (ep14_3_fall_bless == 2) {
+		mes "[Scout]";
+		mes "Accueillir!";
+		mes "J'ai désespérément besoin d'aide !";
+		next;
+		mes "[Scout]";
+		mes "Je suis venu ici seul pour une mission de reconnaissance.";
+		mes "Une horde de monstres m'entourait, m'empêchant de partir,";
+		mes "donc je n'ai eu d'autre choix que de rester sur place.";
+		next;
+		if (select("Stay chilling then.", "Let's go back with me.") == 1) {
+			mes "[Scout]";
+			mes "Tu as peur que je demande de l'aide,";
+			mes "Je vois.";
+			close;
+		}
+		mes "[Scout]";
+		mes "Je ne suis pas blessé, juste quelques égratignures,";
+		mes "mais les ^0000FFHommes de Sable du Feu^000000 ont";
+		mes "mon ^FF0000journal d'exploration^000000.";
+		next;
+		mes "[Scout]";
+		mes "Sans le ^FF0000journal d'exploration^000000, je ne peux pas rentrer.";
+		mes "J'aurai de la chance";
+		mes "si mes supérieurs ne me font pas passer en conseil de guerre.";
+		next;
+		mes "[Scout]";
+		mes "Ne suis-je pas pitoyable ?";
+		mes "Cela ne vous inspire-t-il pas à m'aider ?";
+		next;
+		if (select("Neh.", "It does.") == 1) {
+			mes "[Scout]";
+			mes "Bon, alors je vais devoir";
+			mes "rester ici et patienter jusqu'à l'arrivée de l'aide.";
+			close;
+		}
+		mes "[Scout]";
+		mes "D'accord, voici ce que vous pouvez faire pour m'aider :";
+		mes "Merci de rapporter des ^FF0000Journaux d'exploration^000000";
+		mes "provenant des ^0000FFHommes de sable du Feu^000000.";
+		next;
+		mes "[Scout]";
+		mes "Le journal aurait pu être séparé en pages, lacéré par ces bêtes sauvages.";
+		mes "Je m'en fiche ; j'ai toujours besoin de les montrer à mes supérieurs.";
+		mes "Veuillez m'apporter";
+		mes "20 ^FF0000Journaux d'explorateur^000000.";
+		next;
+		mes "[Scout]";
+		mes "Fais attention -- ils peuvent t'attendre et te voler les ^FF0000Journaux d'explorateur^000000 avant que tu ne le saches.";
+		completequest 1265;	// Flaming Basin and Doom Prayers
+		setquest 1266;	// Flaming Basin and Doom Prayers
+		ep14_3_fall_bless = 3;
+		close;
+	}
+	if (ep14_3_fall_bless == 3) {
+		if (countitem(6692) < 20) {
+			mes "[Scout]";
+			mes "Merci de rapporter 20 ^FF0000Journaux d'explorateur^000000";
+			mes "provenant des ^0000FFHommes de sable du Feu^000000.";
+			next;
+			mes "[Scout]";
+			mes "Fais attention -- ils peuvent t'attendre et te voler les ^FF0000Journaux d'explorateur^000000 avant que tu ne le saches.";
+			close;
+		}
+		mes "[Scout]";
+		mes "As-tu déjà trouvé";
+		mes "20 ^FF0000Journaux d'explorateur^000000 ?";
+		mes "Si je savais que tu étais si rapide, j'aurais demandé 100 pages à la place.";
+		next;
+		mes "[Scout]";
+		mes "Mes blessures me font souffrir à l'idée du châtiment";
+		mes "qui pourrait m'attendre au camp de base.";
+		next;
+		mes "[Scout]";
+		mes "Je vous suivrai dès que j'aurai terminé de réorganiser ces pages.";
+		mes "Veuillez rendre compte à l'Enquêteur";
+		mes "et faire bonne impression";
+		mes "^FF0000pour moi.^000000";
+		delitem 6692,20;// PatrolLog
+		completequest 1266;	// Flaming Basin and Doom Prayers
+		setquest 1267;	// Flaming Basin and Doom Prayers
+		ep14_3_fall_bless = 4;
+		close;
+	}
+	if (ep14_3_fall_bless == 4) {
+		mes "[Scout]";
+		mes "Je vous suivrai dès que j'aurai terminé de réorganiser ces pages.";
+		mes "Veuillez rendre compte à l'Enquêteur";
+		mes "et faire bonne impression";
+		mes "^FF0000pour moi.^000000";
+		close;
+	}
+	mes "[Scout]";
+	mes "On m'a envoyé enquêter sur ces monstres.";
+	mes "C'est injuste que je sois seul";
+	mes "dans cet endroit dangereux sans renfort !";
+	close;
+}
+
+moro_vol,227,294,0	script	#bg1	HIDDEN_WARP_NPC,2,2,{
+	end;
+OnTouch:
+	if (ep14_3_fall_bless != 3)
+		end;
+	getmapxy .@map$,.@x,.@y, BL_NPC;
+	sscanf( strnpcinfo(2), "bg%d", .@npc_num );
+	if (.@npc_num == 9) {
+		.@count = 2;
+		.@y = 302;
+	}
+	else if (.@npc_num == 1 || .@npc_num == 4 || .@npc_num == 5 || .@npc_num == 7 || .@npc_num == 8)
+		.@count = 3;
+	else
+		.@count = 2;
+	if (countitem(6692) >= .@count) {
+		mes "Vous avez été embusqué par des Sablemains de Feu !";
+		delitem 6692, .@count;// PatrolLog
+		monster "moro_vol",.@x,(.@y-2)," ",3021,1;
+		monster "moro_vol",.@x,(.@y-1)," ",3021,1;
+		monster "moro_vol",.@x,.@y," ",3021,1;
+		close;
+	}
+	end;
+}
+moro_vol,236,292,0	duplicate(#bg1)	#bg2	HIDDEN_WARP_NPC,2,2
+moro_vol,219,302,0	duplicate(#bg1)	#bg3	HIDDEN_WARP_NPC,2,2
+moro_vol,214,292,0	duplicate(#bg1)	#bg4	HIDDEN_WARP_NPC,2,2
+moro_vol,233,283,0	duplicate(#bg1)	#bg5	HIDDEN_WARP_NPC,2,2
+moro_vol,243,277,0	duplicate(#bg1)	#bg6	HIDDEN_WARP_NPC,2,2
+moro_vol,220,278,0	duplicate(#bg1)	#bg7	HIDDEN_WARP_NPC,2,2
+moro_vol,205,282,0	duplicate(#bg1)	#bg8	HIDDEN_WARP_NPC,2,2
+moro_vol,195,301,0	duplicate(#bg1)	#bg9	HIDDEN_WARP_NPC,2,2
+moro_vol,232,266,0	duplicate(#bg1)	#bg10	HIDDEN_WARP_NPC,2,2
+
+
+// moro_vol,104,141,3	script	Doom Prayers Leader#bl	4_M_BELIEVER01,{
+moro_vol,91,197,3	script	Doom Prayers Leader#bl	4_M_BELIEVER01,{
+	if (checkweight(1301,3) == 0) {
+		mes "- Impossible de progresser dans le dialogue car vous avez trop d'objets. -";
+		close;
+	}
+	if (ep14_3_fall_bless < 6) {
+		mes "[Leader des Prières du Désastre]";
+		mes "Enfin, le Jour du Jugement est arrivé !";
+		mes "La destruction est une bénédiction !";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Guide-nous vers l'intérieur !";
+		mes "Les dieux nous ont choisis !";
+		mes "Le jour où commence la destruction du monde.";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Du sang pour le sang go~~";
+		mes "Je veux dire que la destruction est bonne !";
+		mes "La destruction est une bénédiction !";
+		close;
+	}
+	if (ep14_3_fall_bless == 6) {
+		mes "[Leader des Prières du Désastre]";
+		mes "Enfin, le Jour du Jugement est arrivé !";
+		mes "La destruction est une bénédiction !";
+		next;
+		mes "[Prière du Jugement]";
+		mes "Destruction ! Est ! Une ! Bénédiction !";
+		mes "Destruction ! Est ! Une ! Bénédiction !";
+		next;
+		mes "[Prière du Jugement]";
+		mes "Destruction ! Bénédiction !";
+		mes "Nous sommes les élus !";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Guide-nous vers l'intérieur !";
+		mes "Les dieux nous ont choisis !";
+		mes "Le jour où commence la destruction du monde,";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "L'arme est bonne !";
+		mes "Le HODE est maléfique !";
+		next;
+		switch( select( "What god do you serve?", "Who are you?", "Go back!" ) ) {
+		case 1:
+			mes "[Leader des Prières du Désastre]";
+			mes "Nous servons le Dieu de la Destruction !";
+			mes "Il supervise la destruction de tout – depuis celle d'une étoile jusqu'à celle d'une galaxie entière,";
+			mes "et depuis l'altération de mon petit-déjeuner jusqu'à celle de mon dîner.";
+			close;
+		case 2:
+			mes "[Leader des Prières du Désastre]";
+			mes "Nous sommes les Prières de la Fin !";
+			mes "Nous servons le Dieu de la Destruction,";
+			mes "et nous lui prions pour qu'il nous bénisse avec la fin du monde.";
+			next;
+			mes "[Leader des Prières du Désastre]";
+			mes "Seulement après que tout le reste soit détruit,";
+			mes "nous pouvons être véritablement bénis.";
+			next;
+			mes "[Leader des Prières du Désastre]";
+			mes "Ces fissures soudaines";
+			mes "dans le sol.";
+			mes "Ces chats qui parlent.";
+			mes "Ces géants verts.";
+			next;
+			mes "[Leader des Prières du Désastre]";
+			mes "Ils prouvent que la fin est proche !";
+			mes "Oh, le Jour du Jugement Dernier est arrivé !";
+			mes "La destruction est une bénédiction !";
+			close;
+		case 3:
+			mes "[Leader des Prières du Désastre]";
+			mes "Non, nous ne le laisserons pas faire !";
+			mes "Enfin, le Jour du Jugement Dernier est arrivé !";
+			mes "Nous attendions impatiemment cette bénédiction !";
+			mes "Je veux y être avant tout le monde !";
+			next;
+			mes "[Leader des Prières du Désastre]";
+			mes "Hell no, we won't go!";
+			mes "Laissez-nous entrer !";
+			mes "Nous avons été choisis par le Dieu de la Destruction.";
+			mes "Contrairement à vous, nous sommes invincibles !";
+			next;
+			select("Can you prove it?");
+			mes "[Leader des Prières du Désastre]";
+			mes "Osez-vous me défier ?";
+			mes "D'accord, je vais vous le prouver !";
+			next;
+			mes "[Leader des Prières du Désastre]";
+			mes "Explorez cette Terre du Jugement et trouvez ^FF000040 Pierres de Bénédiction^000000.";
+			mes "Lancez-les sur nous, et vous verrez.";
+			next;
+			mes "[Leader des Prières du Désastre]";
+			mes "Au moment où elles toucheront nos corps,";
+			mes "elles se transformeront en pétales de fleurs avec un gros pop !";
+			mes "La destruction est une bénédiction !";
+			next;
+			select("Doomsland?");
+			mes "[Garde]";
+			mes "C'est ainsi que ces gens fous appellent ce Bassin Enflammé.";
+			next;
+			mes "[Garde]";
+			mes "Et ce qu'ils nomment ^FF0000Pierres de Bénédiction^000000 ne sont rien d'autre que des débris tombés des ^0000FFGolems de Feu^000000.";
+			next;
+			mes "La seule façon d'envoyer ces gens fous se faire prouver qu'ils ont tort.";
+			mes "Voulez-vous chasser les ^0000FFGolems de Feu^000000";
+			mes "et collecter 40 ^FF0000Pierres de Bénédiction^000000 ?";
+			next;
+			if (select( "No, I couldn't care less!", "I'll collect the stones." ) == 1) {
+				mes "[Leader des Prières du Désastre]";
+				mes "Je vois que vous avez peur de témoins la grâce de notre dieu, au cas où cela changerait votre esprit.";
+				mes "Arrête de me déranger et décampe !";
+				mes "La destruction est une bénédiction !";
+				close;
+			}
+			mes "[Leader des Prières du Désastre]";
+			mes "Allez, apportez les ^FF0000Pierres de Bénédiction^000000 et lancez-les sur nous !";
+			mes "Vous verrez ces pierres se transformer en pétales de fleurs tombants !";
+			mes "Ensuite, vous pleurerez et me supplierez de vous laisser nous rejoindre.";
+			completequest 1297;	// Flaming Basin and Doom Prayers
+			setquest 1270;	// Flaming Basin and Doom Prayers
+			ep14_3_fall_bless = 7;
+			close;
+		}
+	}
+	if (ep14_3_fall_bless == 7) {
+		if (countitem(6693) < 39) {	// Stone_Of_Blessing
+			mes "[Leader des Prières du Désastre]";
+			mes "Explorez cette Terre du Jugement et trouvez ^FF000040 Pierres de Bénédiction^000000.";
+			mes "Lancez-les sur nous, et vous verrez.";
+			next;
+			mes "[Leader des Prières du Désastre]";
+			mes "Au moment où elles toucheront nos corps, elles se transformeront en pétales de fleurs avec un gros pop !";
+			mes "La destruction est une bénédiction !";
+			next;
+			mes "Chassez les ^0000FFGéants de Feu^000000 et collectez 40 ^FF0000Pierres de Bénédiction^000000.";
+			close;
+		}
+		mes "[Leader des Prières du Désastre]";
+		mes "Vous avez apporté 40 ^FF0000Pierres de Bénédiction^000000.";
+		mes "D'accord, nous sommes prêts.";
+		mes "Lancez les pierres sur nous !";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Préparez-vous pour le miracle !";
+		mes "Allez, frappez-nous fort !";
+		mes "La destruction est une bénédiction !";
+		next;
+		mes "*Zouï*";
+		mes "*ZOUI*";
+		next;
+		mes "*Zouï*";
+		mes "*ZOUI*";
+		mes "*ZOUI*";
+		mes "*ZOUI*";
+		next;
+		mes "[Prière du Jugement]";
+		mes "Aïe !";
+		emotion 19;
+		emotion 19, getnpcid(0, "Doom Prayers Second-in-command#bl");
+		emotion 28, getnpcid(0, "Doom Prayer#bl1");
+		emotion 19, getnpcid(0, "Doom Prayer#bl2");
+		emotion 19, getnpcid(0, "Doom Prayer#bl3");
+		emotion 28, getnpcid(0, "Doom Prayer#bl4");
+		next;
+		mes "[Prière du Jugement]";
+		mes "Aïe !";
+		mes "Ouch ! Zou !";
+		emotion 19;
+		emotion 19, getnpcid(0, "Doom Prayers Second-in-command#bl");
+		emotion 28, getnpcid(0, "Doom Prayer#bl1");
+		emotion 19, getnpcid(0, "Doom Prayer#bl3");
+		emotion 28, getnpcid(0, "Doom Prayer#bl4");
+		emotion 19, getnpcid(0, "Doom Prayer#bl6");
+		emotion 28, getnpcid(0, "Doom Prayer#bl7");
+		emotion 19, getnpcid(0, "Doom Prayer#bl9");
+		emotion 28, getnpcid(0, "Doom Prayer#bl0");
+		emotion 19, getnpcid(0, "Doom Prayer#bl12");
+		next;
+		mes "[Prière du Jugement]";
+		mes "Kyaah-!";
+		mes "Aww ! Err !";
+		emotion 19;
+		emotion 19, getnpcid(0, "Doom Prayers Second-in-command#bl");
+		emotion 28, getnpcid(0, "Doom Prayer#bl1");
+		emotion 4, getnpcid(0, "Doom Prayer#bl2");
+		emotion 19, getnpcid(0, "Doom Prayer#bl3");
+		emotion 28, getnpcid(0, "Doom Prayer#bl4");
+		emotion 4, getnpcid(0, "Doom Prayer#bl5");
+		emotion 19, getnpcid(0, "Doom Prayer#bl6");
+		emotion 28, getnpcid(0, "Doom Prayer#bl7");
+		emotion 19, getnpcid(0, "Doom Prayer#bl8");
+		emotion 19, getnpcid(0, "Doom Prayer#bl9");
+		emotion 28, getnpcid(0, "Doom Prayer#bl0");
+		emotion 19, getnpcid(0, "Doom Prayer#bl11");
+		emotion 19, getnpcid(0, "Doom Prayer#bl12");
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Cela fait mal !";
+		mes "Ça fait très mal !";
+		mes "STOP ! Arrêtez de me frapper au visage !";
+		next;
+		if (select( "Keep throwing.", "Stop throwing.") == 2) {
+			mes "Au lieu de se transformer en pétales de fleurs, les pierres infligèrent une douleur immense à ceux qui furent touchés.";
+			mes "Vous avez décidé d'arrêter de lancer les pierres.";
+			delitem 6693,40;// Stone_Of_Blessing
+			completequest 1270;	// Flaming Basin and Doom Prayers
+			setquest 1271;	// Flaming Basin and Doom Prayers
+			ep14_3_fall_bless = 8;
+			close;
+		}
+		mes "[Prière du Jugement]";
+		mes "Aïe !";
+		mes "Ma tête !";
+		mes "Oh non ! Kyaaooh-!";
+		emotion 19;
+		emotion 19, getnpcid(0, "Doom Prayers Second-in-command#bl");
+		emotion 28, getnpcid(0, "Doom Prayer#bl1");
+		emotion 19, getnpcid(0, "Doom Prayer#bl2");
+		emotion 19, getnpcid(0, "Doom Prayer#bl3");
+		emotion 28, getnpcid(0, "Doom Prayer#bl4");
+		next;
+		mes "[Prière du Jugement]";
+		mes "Kyaah-!";
+		mes "Mon nez !";
+		mes "Kyaah-! Kyaarrr-!";
+		emotion 19;
+		emotion 19, getnpcid(0, "Doom Prayers Second-in-command#bl");
+		emotion 28, getnpcid(0, "Doom Prayer#bl1");
+		emotion 4, getnpcid(0, "Doom Prayer#bl2");
+		emotion 19, getnpcid(0, "Doom Prayer#bl3");
+		emotion 28, getnpcid(0, "Doom Prayer#bl4");
+		emotion 4, getnpcid(0, "Doom Prayer#bl5");
+		emotion 19, getnpcid(0, "Doom Prayer#bl6");
+		emotion 28, getnpcid(0, "Doom Prayer#bl7");
+		emotion 19, getnpcid(0, "Doom Prayer#bl8");
+		emotion 19, getnpcid(0, "Doom Prayer#bl9");
+		emotion 28, getnpcid(0, "Doom Prayer#bl0");
+		emotion 19, getnpcid(0, "Doom Prayer#bl11");
+		emotion 19, getnpcid(0, "Doom Prayer#bl12");
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Ça fait mal !";
+		mes "Ça fait terriblement mal !";
+		mes "Je n'étais pas prêt(e) !";
+		mes "Arrêtez ! Reprenons !";
+		close;
+	}
+	if (ep14_3_fall_bless == 8) {
+		mes "[Leader des Prières du Désastre]";
+		mes "Frères et sœurs, calmez-vous !";
+		mes "Ce hérétique nous a trompés avec de mauvaises pierres !";
+		next;
+		mes "[Prière du Jugement]";
+		mes "Je savais que c'était ça!";
+		next;
+		mes "[Prière du Jugement]";
+		mes "Boo !";
+		mes "Boo !";
+		emotion 32;
+		emotion 32, getnpcid(0, "Doom Prayers Second-in-command#bl");
+		emotion 6, getnpcid(0, "Doom Prayer#bl1");
+		emotion 6, getnpcid(0, "Doom Prayer#bl2");
+		emotion 6, getnpcid(0, "Doom Prayer#bl3");
+		emotion 6, getnpcid(0, "Doom Prayer#bl4");
+		emotion 6, getnpcid(0, "Doom Prayer#bl5");
+		emotion 6, getnpcid(0, "Doom Prayer#bl6");
+		emotion 6, getnpcid(0, "Doom Prayer#bl7");
+		emotion 6, getnpcid(0, "Doom Prayer#bl8");
+		emotion 6, getnpcid(0, "Doom Prayer#bl9");
+		emotion 6, getnpcid(0, "Doom Prayer#bl0");
+		emotion 6, getnpcid(0, "Doom Prayer#bl11");
+		emotion 6, getnpcid(0, "Doom Prayer#bl12");
+		next;
+		mes "[Prière du Jugement]";
+		mes "La destruction est une bénédiction !";
+		mes "La destruction est une bénédiction !";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Tu es un lâche !";
+		mes "Je te le commande à nouveau.";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Apporte-nous le sang des monstres qui errent dans Doomsland.";
+		mes "Je vais le boire et me hisser pour vous guider tous vers la vraie foi !";
+		next;
+		mes "[Garde]";
+		mes "Il parle des ^FF0000Sang de Monstre^000000";
+		mes "provenant des ^0000FFFire Frilldoras^000000 et des ^0000FFFire Sandmen^000000.";
+		mes "Je suppose que 30 bouteilles suffiront.";
+		next;
+		if (select( "No, I couldn't care less!", "I'll collect Monster Bloods.") == 1) {
+			mes "[Leader des Prières du Désastre]";
+			mes "Je savais que tu dirais oui !";
+			mes "Je perçois ta crainte à l'idée de témoigner de la grâce du Dieu de la Destruction.";
+			next;
+			mes "[Leader des Prières du Désastre]";
+			mes "Arrête de me déranger et décampe !";
+			mes "La destruction est une bénédiction !";
+			close;
+		}
+		mes "[Leader des Prières du Désastre]";
+		mes "Allez maintenant me rapporter du Sang de Monstre !";
+		mes "Chassez ces abominables ^0000FFFire Frilldoras^000000 et ces ^0000FFFire Sandmen^000000, et apportez-moi 30 ^FF0000Sang de Monstre^000000.";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "C'est une tâche périlleuse.";
+		mes "Je comprendrai si vous souhaitez fuir.";
+		mes "Si vous tenez vraiment à faire cela contre mon conseil, faites comme vous le voulez.";
+		mes "Mwah hah hah !";
+		completequest 1271;	// Flaming Basin and Doom Prayers
+		setquest 1272;	// Flaming Basin and Doom Prayers
+		ep14_3_fall_bless = 9;
+		close;
+	}
+	if (ep14_3_fall_bless == 9) {
+		if (countitem(6694) < 29) {
+			mes "[Leader des Prières du Désastre]";
+			mes "Allez maintenant me rapporter du Sang de Monstre !";
+			mes "Chassez ces abominables ^0000FFFire Frilldoras^000000 et ces ^0000FFFire Sandmen^000000, et apportez-moi 30 ^FF0000Sang de Monstre^000000.";
+			next;
+			mes "[Leader des Prières du Désastre]";
+			mes "C'est une tâche périlleuse.";
+			mes "Je comprendrai si vous souhaitez fuir.";
+			mes "Si vous tenez vraiment à faire cela contre mon conseil, faites comme vous le voulez.";
+			mes "Mwah hah hah !";
+			close;
+		}
+		mes "[Leader des Prières du Désastre]";
+		mes "Vous devez avoir trop de temps sur les bras, hérétique : vous avez vraiment apporté tout le ^FF0000Sang de Monstre^000000.";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Voici !";
+		mes "Je vais boire ceci et me faire léviter grâce à sa puissance !";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "*Glou glou*";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "*Gargouillou gargouillou*";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "*Glouglou glouglou*";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "*Râle*";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "*Grondement*";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "...";
+		mes "Pouah...";
+		emotion 4;
+		next;
+		mes "La couleur s'efface de son visage.";
+		mes "Tu sens une odeur qui ressemble à des selles.";
+		next;
+		mes "Ses lèvres se resserrent dans un embarras silencieux.";
+		emotion 28;
+		delitem 6694,30;// Monster_Blood
+		completequest 1272;	// Flaming Basin and Doom Prayers
+		setquest 1273;	// Flaming Basin and Doom Prayers
+		ep14_3_fall_bless = 10;
+		close;
+	}
+	if (ep14_3_fall_bless < 12) {
+		mes "Enveloppé dans un nuage d'odeur repoussante, il reste muet.";
+		next;
+		mes "Son second pointe son index vers toi avec colère.";
+		mes "Tu devrais lui parler.";
+		close;
+	}
+	if (ep14_3_fall_bless == 12) {
+		mes "[Leader des Prières du Désastre]";
+		mes "Sigh, the world hasn't ended, again.";
+		mes "^FF0000Je ne donnerais pas cher pour retourner à la maison maintenant et changer de sous-vêtements...";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "J'attendrai la prochaine catastrophe naturelle et je rassemblerai plus de fidèles pour invoquer le Dieu de la Destruction !";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Grâce à vous, cet accident a choqué tout le monde et les a ramenés à leur place.";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "Mes fidèles doutent de ma foi et ne paient plus leurs cotisations depuis des mois.";
+		mes "Je devrais vous récompenser pour votre aide.";
+		next;
+		mes "[Leader des Prières du Désastre]";
+		mes "J'espère que vous viendrez à notre prochaine réunion et réaliserez encore une fois votre miracle météorologique.";
+		completequest 1275;	// Flaming Basin and Doom Prayers
+		ep14_3_fall_bless = 13;
+		getexp 2000000,0;
+		close;
+	}
+	mes "[Leader des Prières du Désastre]";
+	mes "Grâce à vous, cet accident a choqué tout le monde et les a ramenés à leur place.";
+	next;
+	mes "[Leader des Prières du Désastre]";
+	mes "J'espère que vous viendrez à notre prochaine réunion et réaliserez encore une fois votre miracle météorologique.";
+	close;
+
+OnInit:
+	questinfo( QTYPE_QUEST, QMARK_YELLOW, "BaseLevel >= 150 && isbegin_quest(1270) == 0 && isbegin_quest(1297) == 1 && ep14_3_fall_bless == 6" );
+	end;
+}
+
+moro_vol,95,195,3	script	Doom Prayers Second-in-command#bl	4_F_BELIEVER01,{
+	if (checkweight(1301,3) == 0) {
+		mes "- Impossible de progresser dans le dialogue car vous avez trop d'objets. -";
+		close;
+	}
+	if (ep14_3_fall_bless < 10) {
+		mes "[Commandant des Prières de la Destruction]";
+		mes "Prières du Désastre !";
+		mes "Priez plus fort !";
+		mes "Destruction ! Bénédiction !";
+		next;
+		mes "[Prière du Jugement]";
+		mes "Destruction ! Bénédiction !";
+		mes "Destruction ! Bénédiction !";
+		close;
+	}
+	if (ep14_3_fall_bless == 10) {
+		mes "[Commandant des Prières de la Destruction]";
+		mes "Prières du Déchaînement, ne paniquez pas ! Restez calmes !";
+		next;
+		mes "[Commandant des Prières de la Destruction]";
+		mes "Bientôt le jugement commencera et nous serons bénis.";
+		mes "Nous n'aurons besoin de rien !";
+		next;
+		mes "[Commandant des Prières de la Destruction]";
+		mes "Prions ensemble et élevons la Porte de la Bénédiction !";
+		mes "Destruction ! Bénédiction !";
+		next;
+		mes "[Prière du Jugement]";
+		mes "Destruction ! Bénédiction !";
+		mes "Destruction ! Bénédiction !";
+		next;
+		mes "[Commandant des Prières de la Destruction]";
+		mes "Oh, je vois une lumière !";
+		mes "Si seulement je pouvais tenir dans mes mains 30 ^FF0000Dents de Golem de Feu^000000 et 30 ^FF0000Colliers de Frilldora de Feu^000000 !";
+		next;
+		mes "[Commandant des Prières de la Destruction]";
+		mes "La haute Porte de Bénédiction apparaîtra d'elle-même devant nous, grand ouverte pour nous !";
+		next;
+		mes "[Prière du Jugement]";
+		mes "Oh!";
+		next;
+		mes "[Commandant des Prières de la Destruction]";
+		mes "Prières du Déchaînement, avancez, brisez tout sur votre passage et frappez sans crainte de vos mains nues ces monstres dangereux !";
+		next;
+		mes "[Commandant des Prières de la Destruction]";
+		mes "Apporte-moi 30 ^FF0000Dents de Pierre du Golem de Feu^000000 et 30 ^FF0000Gorges de Frilldora de Feu^000000.";
+		next;
+		if (select( "No, I couldn't care less!", "I'll bring them." ) == 1) {
+			mes "[Commandant des Prières de la Destruction]";
+			mes "Écoutez bien, vous les Prières de la Damnation !";
+			mes "Ce hérétique sans cœur ne nous importe guère.";
+			mes "Quelle soulagement !";
+			next;
+			mes "[Commandant des Prières de la Destruction]";
+			mes "Maintenant, chassez ces monstres abominables à mains nues et ramenez-moi les matériaux !";
+			next;
+			mes "[Commandant des Prières de la Destruction]";
+			mes "Ne craignez rien si vous ne parvenez pas à combattre même les Porings ;";
+			mes "Je sais qu'en votre cœur, vous êtes aussi fort que Baphomet !";
+			emotion 19, playerattached();
+			close;
+		}
+		mes "[Commandant des Prières de la Destruction]";
+		mes "D'accord, Prières de la Damnation !";
+		mes "Offrons à ce hérétique une dernière chance de bénédiction !";
+		next;
+		mes "[Commandant des Prières de la Destruction]";
+		mes "Maintenant, va m'apporter 30 ^FF0000Dents de Pierre du Golem de Feu^000000 et 30 ^FF0000Gorges de Frilldora de Feu^000000.";
+		completequest 1273;	// Flaming Basin and Doom Prayers
+		setquest 1274;	// Flaming Basin and Doom Prayers
+		ep14_3_fall_bless = 11;
+		close;
+	}
+	if (ep14_3_fall_bless == 11) {
+		if (countitem(6695) < 30 || countitem(6696) < 30) {
+			mes "[Commandant des Prières de la Destruction]";
+			mes "Maintenant, va m'apporter 30 ^FF0000Dents de Pierre du Golem de Feu^000000 et 30 ^FF0000Gorges de Frilldora de Feu^000000.";
+			close;
+		}
+		mes "[Commandant des Prières de la Destruction]";
+		mes "Oh, Prières de la Damnation, soyez joyeux -- enfin nous avons tous les matériaux !";
+		mes "Destruction ! Bénédiction !";
+		next;
+		mes "[Prière du Jugement]";
+		mes "La destruction est une bénédiction !";
+		mes "La destruction est une bénédiction !";
+		next;
+		mes "[Commandant des Prières de la Destruction]";
+		mes "Prions ensemble et élevons la Porte de la Bénédiction !";
+		next;
+		mes "[Prière du Jugement]";
+		mes "La destruction est une bénédiction !";
+		mes "La destruction est une bénédiction !";
+		next;
+		mes "[Prière du Jugement]";
+		mes "...";
+		next;
+		mes "[Prière du Jugement]";
+		mes "!!!";
+		next;
+		mes "[Prière du Jugement]";
+		mes "Kyaah-!";
+		mes "Aww ! Err !";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayers Leader#bl";
+		specialeffect EF_SUI_EXPLOSION;
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl1";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl2";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl3";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl4";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl5";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl6";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl7";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl8";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl9";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl0";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl11";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl12";
+		next;
+		mes "[Prière du Jugement]";
+		mes "Kyaah-!";
+		mes "C'est vraiment la fin du monde !";
+		mes "Nous allons mourir ! Kyaah-!";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayers Leader#bl";
+		specialeffect EF_SUI_EXPLOSION;
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl1";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl2";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl3";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl4";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl5";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl6";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl7";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl8";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl9";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl0";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl11";
+		specialeffect EF_SUI_EXPLOSION, AREA, "Doom Prayer#bl12";
+		next;
+		mes "^FF0000Que le Dieu de la Destruction existe réellement ou non, ce petit groupe de fanatiques n'est pas aussi spécial qu'ils voudraient le croire.";
+		mes "Vous devriez parler à nouveau au Chef des Prières du Jugement.";
+		delitem 6695,30;// ToothOfFlameGolem
+		delitem 6696,30;// ToothOfFlameFrilldora
+		completequest 1274;	// Flaming Basin and Doom Prayers
+		setquest 1275;	// Flaming Basin and Doom Prayers
+		ep14_3_fall_bless = 12;
+		close;
+	}
+	mes "[Commandant des Prières de la Destruction]";
+	mes "Aww... J'ai peur...";
+	mes "Je pouvais déjà fuir si seulement j'étais seul.";
+	mes "C'est juste trop effrayant. Je vais pleurer un peu plus...";
+	close;
+}
+
+moro_vol,100,183,1	script	Base Sentry#bl	4_M_KY_SOLD,{
+	mes "[Sentinelle de base]";
+	mes "Cette zone est dangereuse.";
+	mes "Veuillez éviter d'explorer cela seul.";
+	close;
+}
+moro_vol,102,188,1	duplicate(Base Sentry#bl)	Base Sentry#bl1	4_M_KY_SOLD
+moro_vol,104,193,1	duplicate(Base Sentry#bl)	Base Sentry#bl2	4_M_KY_SOLD
+moro_vol,95,182,1	duplicate(Base Sentry#bl)	Base Sentry#bl3	4_M_KY_SOLD
+moro_vol,90,181,7	duplicate(Base Sentry#bl)	Base Sentry#bl4	4_M_KY_SOLD
+
+moro_vol,85,196,7	script	Doom Prayer#bl1	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "La destruction est une bénédiction !";
+		mes "La destruction est une bénédiction !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "Oh, c'est effrayant !";
+	mes "Je veux vraiment rentrer chez moi !";
+	close;
+}
+
+moro_vol,87,193,7	script	Doom Prayer#bl2	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "Destruction ! Bénédiction !";
+		mes "Nous sommes les élus !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "Quelle terreur !";
+	mes "Je vais fuir dès que j'aurai l'occasion !";
+	close;
+}
+
+moro_vol,90,191,7	script	Doom Prayer#bl3	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "La destruction est une bénédiction !";
+		mes "La destruction est une bénédiction !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "J'ai tout remis au Leader, mais à quoi bon ?!";
+	next;
+	mes "[Doom Prayer]";
+	mes "...";
+	mes "Peut-être que je n'ai pas prié assez fort.";
+	close;
+}
+
+moro_vol,93,189,7	script	Doom Prayer#bl4	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "Destruction ! Bénédiction !";
+		mes "Nous sommes les élus !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "Oh, c'est effrayant !";
+	mes "Je veux vraiment rentrer chez moi !";
+	close;
+}
+
+moro_vol,83,193,7	script	Doom Prayer#bl5	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "La destruction est une bénédiction !";
+		mes "La destruction est une bénédiction !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "*Gémissement*";
+	mes "Aïe, j'ai peur !";
+	close;
+}
+
+moro_vol,86,190,7	script	Doom Prayer#bl6	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "La destruction est une bénédiction !";
+		mes "La destruction est une bénédiction !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "Oh, c'est effrayant !";
+	mes "Je veux vraiment rentrer chez moi !";
+	close;
+}
+
+moro_vol,89,188,7	script	Doom Prayer#bl7	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "Destruction ! Bénédiction !";
+		mes "Nous sommes les élus !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "Euh, j'ai peur !";
+	mes "Je n'aurais pas dû venir !";
+	close;
+}
+
+moro_vol,93,185,7	script	Doom Prayer#bl8	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "La destruction est une bénédiction !";
+		mes "La destruction est une bénédiction !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "Oh, c'est effrayant !";
+	mes "Je veux vraiment rentrer chez moi !";
+	mes "Je déteste le Leader !";
+	close;
+}
+
+moro_vol,81,197,7	script	Doom Prayer#bl9	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "Destruction ! Bénédiction !";
+		mes "Nous sommes les élus !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "Je ne peux pas croire au leader !";
+	mes "Je ferai probablement un meilleur leader que lui !";
+	close;
+}
+
+moro_vol,84,201,5	script	Doom Prayer#bl0	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "La destruction est une bénédiction !";
+		mes "La destruction est une bénédiction !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "Oh, c'est effrayant !";
+	mes "C'est si effrayant que j'vais mouiller mes pantalons !";
+	close;
+}
+
+moro_vol,97,187,5	script	Doom Prayer#bl11	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "Destruction ! Bénédiction !";
+		mes "Nous sommes les élus !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "C'est trop terrifiant...";
+	mes "Peut-être que ma foi n'est pas assez profonde...";
+	mes "Je ferai mieux d'offrir plus d'argent !";
+	close;
+}
+
+moro_vol,82,189,7	script	Doom Prayer#bl12	4_M_BELIEVER02,{
+	if (ep14_3_fall_bless < 12) {
+		mes "[Doom Prayer]";
+		mes "Oh, Dieu de la Destruction !";
+		mes "Que ta colère tombe sur ce monde !";
+		mes "Laisse-moi être le seul bénéficiaire de ta bénédiction !";
+		close;
+	}
+	mes "[Doom Prayer]";
+	mes "C'est trop terrifiant...";
+	mes "Peut-être que ma foi n'est pas assez profonde...";
+	mes "Je ferai mieux d'offrir plus d'argent !";
+	close;
+}
+
+moro_vol,96,205,0	script	#bp1	HIDDEN_WARP_NPC,2,2,{
+	end;
+OnTouchNPC:
+	unitwarp 0,"moro_vol",145,148;
+	end;
+}
+moro_vol,106,189,0	duplicate(#bp1)	#bp2	HIDDEN_WARP_NPC,2,2
+moro_vol,78,210,0	duplicate(#bp1)	#bp3	HIDDEN_WARP_NPC,2,2
+moro_vol,78,185,0	duplicate(#bp1)	#bp6	HIDDEN_WARP_NPC,2,2
+// moro_vol,96,196,0	duplicate(#bp1)	#bp4	HIDDEN_WARP_NPC,2,2
+// moro_vol,96,182,0	duplicate(#bp1)	#bp5	HIDDEN_WARP_NPC,2,2
+// moro_vol,105,194,0	duplicate(#bp1)	#bp7	HIDDEN_WARP_NPC,2,2
+
+
+//-- GM NPCs
+moro_vol,5,1,3	script	#timemaster	CLEAR_NPC,{
+	if (callfunc("F_GM_NPC",1854,0,0,9999) < 1)
+		end;
+	mes "Current server experience status: " + $ep143_3_expbuff;
+	mes "Currently elapsed: " + $ep143_3_exptime;
+	mes "Que voulez-vous faire ?";
+	next;
+	switch( select( "Adjust the timer", "Pause timer", "Restart timer", "Initialization" ) ) {
+	case 1:
+		mes "Veuillez entrer le temps.";
+		next;
+		input .@input,0,9999;
+		mes "Time is set to " + .@input;
+		$ep143_3_exptime = .@input;
+		close;
+	case 2:
+		mes "Le minuteur est en pause.";
+		stopnpctimer "Guardian Nidhogg#143nyd01";
+		close;
+	case 3:
+		mes "Recommencez la minuterie.";
+		initnpctimer "Guardian Nidhogg#143nyd01";
+		close;
+	case 4:
+		mes "La minuterie est initialisée.";
+		donpcevent "Guardian Nidhogg#143nyd01::OnStop";
+		close;
+	}
+}
+
+// gef_fild02,98,226,4	script	Perishing Blessing Assistant#bl	4_FROG,{
+moro_vol,1,3,4	script	Perishing Blessing Assistant#bl	4_FROG,{
+	if (callfunc("F_GM_NPC",1854,0) < 1) {
+		mes "Tousser !";
+		close;
+	}
+	mes "[Assistant de Bénédiction Perissante]";
+	mes "Que veux-tu?";
+	mes "Parlez fort !";
+	next;
+	switch( select(
+		"Task initialization", "Flame feather 15", "Patrol log 20", "Before hunting",
+		"Blessing Stone 40", "Monster Blood 30", "Final Reward", "Before the door of blessing is opened" ) ) {
+	case 1:
+		mes "[Assistant de Bénédiction Perissante]";
+		mes "Fait!";
+		ep14_3_fall_bless = 0;
+		for ( .@i = 1264; .@i <= 1275; .@i++ ) {
+			if (isbegin_quest(.@i) > 0)
+				erasequest .@i;
+		}
+		if (isbegin_quest(1297) > 0)
+			erasequest 1297;
+		close;
+	case 2:
+		mes "[Assistant de Bénédiction Perissante]";
+		mes "Fait!";
+		getitem 6691,15;// BurningFeather
+		close;
+	case 3:
+		mes "[Assistant de Bénédiction Perissante]";
+		mes "Fait!";
+		getitem 6692,20;// PatrolLog
+		close;
+	case 4:
+		mes "[Assistant de Bénédiction Perissante]";
+		mes "Fait!";
+		setquest 1268;
+		setquest 1269;
+		for ( .@i = 1264; .@i <= 1267; .@i++ ) {
+			if (isbegin_quest(.@i) > 0)
+				erasequest .@i;
+		}
+		for ( .@i = 1270; .@i <= 1275; .@i++ ) {
+			if (isbegin_quest(.@i) > 0)
+				erasequest .@i;
+		}
+		if (isbegin_quest(1297) > 0)
+			erasequest 1297;
+		ep14_3_fall_bless = 4;
+		close;
+	case 5:
+		mes "[Assistant de Bénédiction Perissante]";
+		mes "Fait!";
+		getitem 6693,40;// Stone_Of_Blessing
+		close;
+	case 6:
+		mes "[Assistant de Bénédiction Perissante]";
+		mes "Fait!";
+		getitem 6694,30;// Monster_Blood
+		close;
+	case 7:
+		mes "[Assistant de Bénédiction Perissante]";
+		mes "Fait!";
+		getitem 6695,30;// ToothOfFlameGolem
+		getitem 6696,30;// ToothOfFlameFrilldora
+		close;
+	case 8:
+		mes "[Assistant de Bénédiction Perissante]";
+		mes "Fait!";
+		setquest 1274;
+		ep14_3_fall_bless = 11;
+		for ( .@i = 1264; .@i <= 1273; .@i++ ) {
+			if (isbegin_quest(.@i) > 0)
+				erasequest .@i;
+		}
+		if (isbegin_quest(1275) > 0)
+			erasequest 1275;
+		if (isbegin_quest(1297) > 0)
+			erasequest 1297;
+		getitem 6695,30;// ToothOfFlameGolem
+		getitem 6696,30;// ToothOfFlameFrilldora
+		close;
+	}
+	end;
+}

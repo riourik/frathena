@@ -1,0 +1,427 @@
+//===== rAthena Script ======================================= 
+//= Sorcerer Job Quest
+//===== By: ================================================== 
+//= Muad_Dib
+//===== Current Version: ===================================== 
+//= 1.3
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Job change Quest from Sage / Professor -> Sorcerer.
+//===== Additional Comments: ================================= 
+//= 1.0 First Version. [Masao]
+//= 1.1 Cleaning. [Euphy]
+//= 1.2 Updated script, optimized. [Euphy]
+//= 1.3 Added VIP features. [Euphy]
+//============================================================
+
+gef_tower,102,34,5	script	Merito	742,{
+	mes "[Merito]";
+	if (checkweight(1201,1) == 0 || MaxWeight - Weight < 1000) {
+		mes "Vous avez tellement de choses dans votre sac. Réessayez après l'avoir vidé.";
+		close;
+	}
+	if (Class == Job_Sorcerer || Class == Job_Sorcerer_T || Class == Job_Baby_Sorcerer) {
+		mes "Veuillez vous débrouiller bien avec les esprits~ Vous devriez faire comme ça !";
+		close;
+	}
+	if (BaseLevel < 99 || JobLevel < 50 || SkillPoint != 0) {
+		mes "Wow~ Vous êtes un jeune aventurier. Je vous envie.";
+		close;
+	}
+	if (BaseJob != Job_Sage) {
+		mes "Ahh~ Je pense que vous n'avez pas besoin de discuter avec moi.";
+		close;
+	}
+	if (job_soc == 0) {
+		mes "Bienvenue. Comment puis-je vous aider ?";
+		next;
+		select("Do you know about Sorcerers?");
+		mes "[Merito]";
+		mes "N'est-il pas plus confortable de simplement vivre en tant qu'érudit ? Les sorciers sont occupés à communiquer avec les esprits et n'ont guère le temps de lire des livres...";
+		next;
+		mes "[Merito]";
+		mes "Qu'est-ce qui vous a poussé à vouloir devenir sorcier ?";
+		next;
+		if(select("The spirit of fire led me here.:The spirit of water led me here.:The spirit of earth led me here:The spirit of meat led me here.") == 4) {
+			mes "[Merito]";
+			mes "Un tel esprit n'existe pas !";
+			close;
+		}
+		mes "[Merito]";
+		mes "Ah, je vois.";
+		mes "Vous devez être né avec la capacité naturelle de voir pour avoir déjà communiqué avec les esprits, ou vous devez être un excellent menteur.";
+		next;
+		mes "[Merito]";
+		mes "Hmm... Alors d'abord, pouvez-vous écrire votre nom sur cette liste ?";
+		next;
+		if(select("Write name.:I won't.") == 2) {
+			mes "[Merito]";
+			mes "Bon, d'accord. À bientôt quand vous aurez l'occasion.";
+			close;
+		}
+		mes "[Merito]";
+		mes "So, you are [" + strcharinfo(0) + "].";
+		next;
+		mes "[Merito]";
+		mes "Donnez-moi une seconde pour enregistrer votre nom.";
+		mes "Revenez me parler dans une seconde.";
+		set job_soc,1;
+		close;
+	} else if (job_soc == 1) {
+		mes "Très bien, alors je vais vous donner une brève explication sur le Sorcier.";
+		next;
+		mes "[Merito]";
+		mes "[" + strcharinfo(0) + "], can you handle magic skillfully?";
+		next;
+		if(select("Yes, I can.:No, I'm not really good at it.") == 2) {
+			mes "[Merito]";
+			mes "Quoi !? Vous ne savez pas utiliser la magie ?";
+			mes "Que faites-vous ici alors ? Sortez d'ici. Tout de suite !";
+			close;
+		}
+		mes "[Merito]";
+		mes "D'accord, cela devrait être évident.";
+		mes "Bien sûr, les Sorciers utilisent aussi la magie. Mais, savez-vous quelle est la principale différence entre les Sorciers et les autres métiers magiques ?";
+		next;
+		switch(select("They know how to sing.:They're all old fogies.:They can deal with the spirits.")) {
+		case 1:
+			mes "[Merito]";
+			mes "Eh bien peut-être certains mais ce n'est pas la principale différence.";
+			close;
+		case 2:
+			mes "[Merito]";
+			mes "Quoi ! Comment osez-vous !?!";
+			close;
+		case 3:
+			break;
+		}
+		mes "[Merito]";
+		mes "C'est exact. C'est la caractéristique la plus distinctive que possèdent les Sorciers.";
+		next;
+		mes "[Merito]";
+		mes "Quand les gens qui veulent devenir des Sorciers arrivent, la première chose que nous faisons est de vérifier s'ils peuvent communiquer avec les esprits ou non.";
+		next;
+		mes "[Merito]";
+		mes "Voilà donc l'introduction de base, vous n'avez donc qu'à décider si vous voulez passer le test d'éligibilité ou non.";
+		next;
+		mes "[Merito]";
+		mes "Eh bien, tout dépend de vous. Que comptez-vous faire ?";
+		next;
+		switch(select("I will take the test.:I'll do it later.")) {
+		case 1:
+			if (VIP_SCRIPT) {
+				callfunc "VIP_Third_Class";
+				set job_soc,2;
+				setquest 12096;
+				next;
+			}
+			mes "[Merito]";
+			mes "D'accord.";
+			mes "Alors je vais le remettre à Karacas qui se trouve au 4e étage. Il vous guidera dans la procédure du test.";
+			set job_soc,2;
+			setquest 12096;
+			close;
+		case 2:
+			mes "[Merito]";
+			mes "Quoi ? J'étais sûr que vous vouliez devenir un Sorcier.";
+			close;
+		}
+	} else {
+		mes "Et votre test ? Eh bien, Karacas est un peu paresseux, donc cela pourrait vous ennuyer un peu... kkk";
+		close;
+	}
+}
+
+gef_tower,113,161,5	script	Karacas	754,{
+	mes "[Karacas]";
+	if (checkweight(1201,1) == 0 || MaxWeight - Weight < 1000) {
+		mes "Oh, il semble que vous soyez trop lourd. Videz votre sac et revenez ensuite.";
+		close;
+	}
+	if (Class == Job_Sorcerer || Class == Job_Sorcerer_T || Class == Job_Baby_Sorcerer) {
+		mes "Vous avez l'air heureux. Passez une excellente aventure.";
+		close;
+	}
+	if (BaseLevel < 99 || JobLevel < 50 || SkillPoint != 0) {
+		mes "Y a-t-il quelque chose que je puisse faire pour vous ?";
+		close;
+	}
+	if (BaseJob != Job_Sage) {
+		mes "J'appartiens à l'association des Sorciers. Je ne pense pas que vous ayez affaire avec moi.";
+		close;
+	}
+	if (job_soc < 2) {
+		mes "Plus de gens visitent la Tour de Geffen ces jours-ci.";
+		close;
+	} else if (job_soc == 2) {
+		mes "...";
+		next;
+		select("Ah... excuse me~");
+		mes "[Karacas]";
+		mes "... (Z z z~)";
+		next;
+		select("Hm hm!!!~");
+		mes "[Karacas]";
+		mes "Aaaak !!";
+		mes "Oh, mon... ";
+		next;
+		mes "[Karacas]";
+		mes "Wh... d'où viens-tu ?";
+		next;
+		select("Merito told me to visit you.");
+		mes "[Karacas]";
+		mes "Je vois, donne-moi un instant.";
+		mes "La liste... est déjà arrivée.";
+		next;
+		mes "[Karacas]";
+		mes "So, you are [" + strcharinfo(0) + "]... right?";
+		next;
+		if(select("Yes, I am.:No, I'm not!") == 2) {
+			mes "[Karacas]";
+			mes "Oh, il doit y avoir une erreur dans la liste, je pense. Tu reviendras plus tard ?";
+			close;
+		}
+		mes "[Karacas]";
+		mes "Avant de passer l'épreuve du Sorcier, laisse-moi te donner les informations de base.";
+		next;
+		mes "[Karacas]";
+		mes "La façon d'obtenir un ticket d'enregistrement pour Sorcier est vraiment simple. Il te suffit de trouver chaque esprit dispersé dans le monde, puis de convertir leur puissance en la forme d'un certain matériau.";
+		next;
+		mes "[Karacas]";
+		mes "Ça semble facile, non ?";
+		next;
+		select("Ahh... sir. Is that really possible?");
+		mes "[Karacas]";
+		mes "Eh bien, il est impossible de rencontrer tous les esprits tout seul. Tu dois t'entraîner très dur pour donner une forme aux esprits et les voir clairement à travers tes yeux.";
+		next;
+		mes "[Karacas]";
+		mes "Donc, généralement, nous effectuons un certain défilé cérémoniel vers l'endroit où nous pouvons sentir les esprits.";
+		next;
+		mes "[Karacas]";
+		mes "Je vais te dire comment faire. Écoute donc attentivement.";
+		next;
+		mes "[Karacas]";
+		mes "Généralement, nous ne pouvons pas voir les esprits avec nos yeux, mais il existe un moyen de percevoir une partie des esprits grâce à un médium spécial.";
+		next;
+		mes "[Karacas]";
+		mes "Par exemple, si vous visitez l'endroit où réside l'esprit du vent en possédant une certaine quantité de Vent Vert, la réaction de l'esprit est amplifiée.";
+		next;
+		mes "[Karacas]";
+		mes "De même, si vous approchez de l'endroit où semble résider l'esprit du feu tout en ayant une certaine quantité de Sang Rouge, l'esprit manifestera une réaction adverse.";
+		next;
+		mes "[Karacas]";
+		mes "Les Sorciers utilisent ce principe fondamental ; c'est la connaissance essentielle qu'ils doivent acquérir pour atteindre les esprits.";
+		next;
+		select("So communicating with spirits...");
+		mes "[Karacas]";
+		mes "D'accord~";
+		mes "Ce métier est basé sur le pouvoir des esprits.";
+		next;
+		mes "[Karacas]";
+		mes "Hmm, mais cela pourrait être difficile pour quelqu'un comme vous qui ne se concentre que sur la lecture de livres...";
+		next;
+		mes "[Karacas]";
+		mes "D'abord, vous devez apporter les matériaux suivants nécessaires au test.";
+		next;
+		mes "[Karacas]";
+		mes "3 Vent de Verdure.";
+		mes "3 Cristal Bleu.";
+		mes "3 Sang Rouge.";
+		mes "3 Vie Verte.";
+		next;
+		mes "[Karacas]";
+		mes "Une fois que vous aurez apporté ces matériaux, je vous indiquerai la prochaine étape.";
+		set job_soc,3;
+		changequest 12096,12097;
+		close;
+	} else if (job_soc == 3) {
+		if (countitem(992) > 2 && countitem(991) > 2 && countitem(990) > 2 && countitem(993) > 2) {
+			mes "Oh, vous avez tous les matériaux.";
+			next;
+			select("What should I do next?");
+			mes "[Karacas]";
+			mes "Je vais vous en parler maintenant. D'abord, je vais vous indiquer les lieux du test. Vous feriez mieux de les noter.";
+			next;
+			mes "[Karacas]";
+			mes "1. Premier étage de la Grotte de Glace";
+			mes "2. Premier étage du Donjon du Volcan Thor";
+			mes "3. Troisième étage de l'Abîme Mortel Mjolnir";
+			mes "4. Deuxième étage du Donjon Kunlun";
+			next;
+			mes "[Karacas]";
+			mes "Nous avons installé des poteaux détecteurs dans ces quatre endroits afin que les gens ordinaires puissent communiquer avec les esprits.";
+			next;
+			mes "[Karacas]";
+			mes "Attention, ces poteaux détecteurs ne s'activent que lorsque vous possédez une quantité supérieure à un certain nombre de pierres de propriété.";
+			next;
+			mes "[Karacas]";
+			mes "Vous devez préparer au moins trois petites pierres pour chaque élément. Par exemple, il vous faut le Vent Verdoyant, et non le Vent Brut.";
+			next;
+			select("So I need the property stones...");
+			mes "[Karacas]";
+			mes "Oui, vous avez de l'esprit vif !";
+			next;
+			mes "[Karacas]";
+			mes "Une fois que vous apportez les pierres aux poteaux, déposez-les dans la machine de décomposition des propriétés qui est attachée au poteau. Le poteau détecteur sera alors activé et vous pourrez communiquer avec l'esprit.";
+			next;
+			mes "[Karacas]";
+			mes "Si vous réussissez, vous pouvez extraire une partie de l'esprit comme réactif. Si vous échouez, la pierre de propriété se brisera.";
+			next;
+			mes "[Karacas]";
+			mes "Bien sûr, si vous avez assez de chance, si vous échouez, un Vent de Verdure peut être transformé en Vent Rugueux... Eh bien, ce n'est pas une situation courante, donc laissons cela de côté pour l'instant.";
+			next;
+			select("What if I run out of stones?");
+			mes "[Karacas]";
+			mes "Ahahaha... Si vous épuisez vos pierres de propriété, il vous suffit d'en obtenir davantage.";
+			next;
+			mes "[Karacas]";
+			mes "Ainsi, ceux qui passent ce test commencent généralement avec autant de pierres de propriété qu'ils peuvent porter. La quantité que je vous ai indiquée n'est que le strict minimum.";
+			next;
+			mes "[Karacas]";
+			mes "Si vous êtes un Sorcier avancé, vous serez capable de parler aux esprits sans avoir à passer par ce processus à nouveau. Mais les débutants doivent utiliser ce type de médium pour communiquer avec eux.";
+			next;
+			select("So the reagent is...?");
+			mes "[Karacas]";
+			mes "Nous ne savons pas quel réactif sera fabriqué à partir des esprits. Cela dépend de l'état des esprits.";
+			next;
+			mes "[Karacas]";
+			mes "Lorsque vous aurez réussi à obtenir 3 types différents de réactifs, vous pourrez revenir.";
+			next;
+			mes "[Karacas]";
+			mes "Un réactif produit par un seul esprit ne dépassera pas deux variétés ; donc si vous comptez fabriquer trois types de réactifs, je vous suggère d'aller dans plusieurs endroits différents.";
+			next;
+			mes "[Karacas]";
+			mes "Avez-vous des questions ?";
+			next;
+			if(select("No.:Please explain it again.") == 2) {
+				mes "[Karacas]";
+				mes "Haha, puis-je avoir une gorgée d'eau pour un instant ? Veuillez revenir me voir plus tard.";
+				next;
+			}
+			mes "[Karacas]";
+			mes "Alors je noterai les progrès que j'ai résumés brièvement. Attendez...";
+			next;
+			mes "^000099Vous avez obtenu un parchemin sur lequel est écrit le moyen de communiquer avec les esprits. Pour plus d'informations, veuillez ouvrir votre fenêtre de quête^000000.";
+			set job_soc,4;
+			changequest 12097,12098;
+			close;
+		}
+		mes "Avant que je ne vous révèle la suite du chemin, vous devrez ramener certains matériaux requis.";
+		next;
+		mes "[Karacas]";
+		mes "3 Vent de Verdure.";
+		mes "3 Cristal Bleu.";
+		mes "3 Sang Rouge.";
+		mes "3 Vie Verte.";
+		next;
+		mes "[Karacas]";
+		mes "Lorsque vous aurez apporté ces éléments de base, je vous guiderai vers l'étape suivante.";
+		close;
+	} else if (job_soc == 4) {
+		if (countitem(6276) && countitem(6278) && countitem(6277)) {
+			mes "Wow~ votre compétence est bonne.";
+			mes "Je pensais que les esprits vous submergeraient, mais vous avez réussi à obtenir le remède efficace !";
+			next;
+			select("Is this all I need to do?");
+			mes "[Karacas]";
+			mes "Bravo. D'abord, je vais préparer le remède miraculeux ; veuillez patienter un instant.";
+			delitem 6276,1; //Clear_Reagent
+			delitem 6278,1; //Black_Reagent
+			delitem 6277,1; //Red_Reagent
+			set job_soc,5;
+			completequest 12098;
+			close;
+		}
+		mes "Ce n'est pas chose facile d'obtenir l'effet désiré en communiquant avec les esprits.";
+		next;
+		mes "[Karacas]";
+		mes "Ne vous découragez pas et continuez à essayer~";
+		close;
+	} else if (job_soc == 5) {
+		mes "Normalement, mon maître devait vérifier le changement de classe pour le métier de Sorcier, mais comme il est parti chercher l'esprit du poisson et que je ne peux plus le voir, je vais le faire moi-même.";
+		next;
+		mes "[Karacas]";
+		mes "Dear [" + strcharinfo(0) + "],";
+		mes "Vous avez parcouru les terres sauvages accidentées pour ouvrir la porte en tant que Sorcier et vous êtes parvenu à satisfaire toutes les exigences imposées par notre Académie.";
+		next;
+		mes "[Karacas]";
+		mes "Bien sûr, ce n'est que le début ; nous ne savons pas encore avec quel esprit vous allez entrer en communion ni quelles épreuves vous attendent.";
+		next;
+		mes "[Karacas]";
+		mes "But with the ability you've shown until now, you will be capable to do anything from now on. Dear [" + strcharinfo(0) + "]";
+		next;
+		mes "[Kalakas]";
+		if (BaseLevel < 99 || JobLevel < 50 || SkillPoint) {
+			mes "Avant de vous nommer à ce nouveau métier, veuillez vérifier votre propre état corporel.";
+			next;
+			mes "[Kalakas]";
+			mes "Vous devez posséder l'étiquette requise pour votre métier avant d'accepter le nouveau !";
+			close;
+		}
+		if (ismounting()) {
+			mes "Bien, avant que nous ne commencions...";
+			mes "Veuillez dééquiper votre monture~";
+			close;
+		}
+		mes "De plus, je reconnais officiellement que vous avez terminé tous les tests de transfert de métier de l'Académie des Sorciers.";
+		next;
+		mes "[Karacas]";
+		mes "Congratulations, [" + strcharinfo(0) + "]";
+		jobchange roclass(eaclass()|EAJL_THIRD);
+		getitem 5756,1; //Wind_Whisper
+		getitem 2795,1; //Green_Apple_Ring
+		next;
+		mes "[Karacas]";
+		mes "J'espère que vous gagnerez davantage en communion avec les esprits à partir d'à présent.";
+		close;
+	}
+}
+-	script	Spirit Detecting Staff#0	-1,{
+
+	if (strnpcinfo(4) == "thor_v01") setarray .@id[0],990,994,6276,6278;
+	else if (strnpcinfo(4) == "ice_dun01") setarray .@id[0],991,995,6278,6276;
+	else if (strnpcinfo(4) == "mjo_dun03") setarray .@id[0],993,997,6277,6276;
+	else if (strnpcinfo(4) == "gon_dun02") setarray .@id[0],992,996,6277,6278;
+
+	if (job_soc == 4 && countitem(.@id[0]) > 2) {
+		progressbar "ffff00",5;
+		delitem .@id[0],3; //Boody_Red,Crystal_Blue,Yellow_Live,Wind_Of_Verdure
+		set .@soc_ran, rand(1,70);
+		if (.@soc_ran < 10) {
+			if (countitem(.@id[2]) == 0) {
+				mes "Vous avez obtenu un réactif grâce à la communication avec un esprit invisible.";
+				getitem .@id[2],1; //Clear_Reagent,Black_Reagent,Red_Reagent
+				close;
+			}
+			mes "Il ne semble pas que vous ayez obtenu quelque chose de spécial des esprits.";
+			close;
+		} else if (.@soc_ran > 9 && .@soc_ran < 16) {
+			if (countitem(.@id[3]) == 0) {
+				mes "Vous avez obtenu un réactif grâce à la communication avec un esprit invisible.";
+				getitem .@id[3],1; //Clear_Reagent,Black_Reagent,Red_Reagent
+				close;
+			}
+			mes "Il ne semble pas que vous ayez obtenu quelque chose de spécial des esprits.";
+			close;
+		} else if (.@soc_ran == 56) {
+			mes "L'esprit a combiné les pierres de propriété en une énorme pierre de propriété.";
+			getitem .@id[1],1; //Flame_Heart,Mistic_Frozen,Great_Nature,Rough_Wind
+			close;
+		} else {
+			mes "Vous avez utilisé les pierres de propriété, mais il semble que vous n'ayez pas réussi à communiquer avec les esprits.";
+			close;
+		}
+	}
+	mes "Je vois le bâton de détection installé par l'Union des Sorciers pour communiquer avec les esprits.";
+	if (job_soc == 4 && countitem(.@id[0]) < 3) {
+		next;
+		mes "Si vous possédez les pierres de propriété appropriées, vous devriez pouvoir entrer en communion avec les esprits.";
+	}
+	close;
+}
+thor_v01,64,252,0	duplicate(Spirit Detecting Staff#0)	Spirit Detecting Staff#1	836
+ice_dun01,274,274,0	duplicate(Spirit Detecting Staff#0)	Spirit Detecting Staff#2	836
+mjo_dun03,200,141,0	duplicate(Spirit Detecting Staff#0)	Spirit Detecting Staff#3	836
+gon_dun02,195,190,0	duplicate(Spirit Detecting Staff#0)	Spirit Detecting Staff#4	836

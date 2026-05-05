@@ -1,0 +1,785 @@
+//===== rAthena Script =======================================
+//= Magician Class Tutorial and Job Specific Quest
+//===== By: ==================================================
+//= Fix up by Jukka
+//===== Current Version: =====================================
+//= 2.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Magician training quest.
+//===== Additional Comments: =================================
+//= 1.0 Fully working
+//= 1.1 Optimized [Lupus]
+//= 1.2 Fixed experience gains to match upcoming rate adjustments. [SinSloth]
+//= 1.3 Misc. updates. [L0ne_W0lf]
+//= 1.4 Updated to match the official script. [Euphy]
+//= 2.0 Replaced occurrence of PcName and clean-up. [Capuche]
+//============================================================
+
+// Sign
+//============================================================
+geffen,61,174,4	script	Sign#M	HIDDEN_NPC,{
+	mes "- Changement de métier Mage -";
+	close;
+}
+
+// New Mage Manager
+//============================================================
+geffen,67,180,4	script	New Mage Manager#M	8_F,{
+	mes "continuer sur cette bonne voie";
+	if(Class == Job_Novice){
+		mes "Vous n'êtes pas prêt pour";
+		mes "l'une des formations que j'ai à offrir. Vous devrez vous entraîner";
+		mes "encore un peu et devenir d'abord un Mage. D'accord, mon cher ?";
+		mes "Sachez qu'à certains moments,";
+		mes "d'autres métiers peuvent sembler";
+		close;
+	}
+	if(BaseClass != Job_Mage || (eaclass()&EAJL_BABY)){
+		mes "un peu plus avantageux dans certaines situations de combat, mais gardez toujours";
+		mes "de l'orgueil en vous. N'importe qui ne peut pas faire ce que vous faites~";
+		mes "Bien que j'offre une formation magique,";
+		mes "ce n'est pas très utile si vous avez déjà de l'expérience dans l'utilisation de la magie. Je suis désolé,";
+		mes "mais vous devrez compter sur vous-même pour perfectionner vos compétences.";
+		mes "Mon nom est Mana,";
+		close;
+	}
+	if(Class != Job_Mage && tu_magician01 < 7){
+		mes "Although I offer magic";
+		mes "training, it's not very helpful";
+		mes "if you're already experienced";
+		mes "in the use of magic. I'm sorry,";
+		mes "but you'll have to rely on your";
+		mes "own self to hone your skills.";
+		close;
+	}
+	switch(tu_magician01){
+	case 0:
+		mes "Ah, bienvenue~";
+		mes "My name is Mana,";
+		mes "un instructeur en charge";
+		mes "des nouveaux recrues dans la";
+		mes "Guilde des Mages. Cela signifie que";
+		mes "je suis responsable de vous~";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Je n'exerce cette fonction depuis";
+		mes "que peu de temps,";
+		mes "mais je suis là pour vous aider si";
+		mes "vous souhaitez en savoir plus sur";
+		mes "les bases du métier de Mage.";
+		next;
+		switch(select("Will you teach me?:Perhaps later...")) {
+		case 1:
+			mes "continuer sur cette bonne voie";
+			mes "Bien sûr !";
+			mes "Et ne vous inquiétez pas,";
+			mes "tout le monde est débutant";
+			mes "à un moment ou à un autre.";
+			mes "Vous ne faites que progresser !";
+			next;
+			break;
+		case 2:
+			mes "continuer sur cette bonne voie";
+			mes "Bon, je suppose que";
+			mes "tout s'arrangera.";
+			mes "Mais j'ai hâte de vous revoir";
+			mes "si vous décidez de revenir nous voir";
+			mes "un jour.";
+			mes "veux-tu quelques instructions~";
+			close;
+		}
+		mes "continuer sur cette bonne voie";
+		mes "D'accord, commençons par";
+		mes "une description générale";
+		mes "de notre métier, d'accord ?";
+		mes "Qu'est-ce exactement qu'un Mage ?";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Au lieu de la force physique,";
+		mes "les Mages utilisent le pouvoir des";
+		mes "éléments en combat. Ce sont";
+		mes "^ff0000Feu^000000, ^5C4033Terre^000000, ^93DB70Vent^000000, ^0000FFEau^000000.";
+		mes "Nous avons également accès à des sorts";
+		mes "à des sorts avec la propriété ^CFB53BGhôte^000000.";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Maintenant, lorsqu'un ennemi possède";
+		mes "une propriété élémentaire, il sera";
+		mes "capable de résister à cet élément, mais sera vulnérable aux autres.";
+		mes "C'est pourquoi connaître les propriétés élémentaires est si important pour nous.";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Écoute attentivement ces";
+		mes "les relations élémentaires.";
+		mes "^FF0000Le Feu^000000 est fort contre la Terre,";
+		mes "mais il est faible contre l'Eau.";
+		mes "^5C4033La Terre^000000 est forte contre le Vent,";
+		mes "mais elle est faible contre le Feu.";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "^0000FFL'Eau^000000 est forte contre";
+		mes "le Feu, mais faible contre le Vent.";
+		mes "Enfin, ^93DB70Le Vent^000000 est fort contre";
+		mes "l'Eau, mais faible contre la Terre.";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Je ne me souviens plus";
+		mes "de la dernière fois que j'ai";
+		mes "parlé autant en une";
+		mes "seule séance ! Je suis crevé, donc il est";
+		mes "temps de faire une pause. Mais nous";
+		mes "continuerons cela plus tard, d'accord ?";
+		tu_magician01 = 1;
+		if (checkre(3))
+			getexp BaseLevel*3,BaseLevel*2;
+		else
+			getexp BaseLevel*30,BaseLevel*15;
+		specialeffect2 EF_HIT5;
+		close;
+	case 1:
+		mes "Es-tu prêt(e)";
+		mes "pour continuer notre";
+		mes "discussion sur les";
+		mes "propriétés élémentaires ?";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Tu devrais savoir ça";
+		mes "chaque monstre possède une";
+		mes "propriété élémentaire et qu'il";
+		mes "existe différents niveaux pour";
+		mes "tous ces éléments. Il est";
+		mes "important de comprendre cela...";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Laissez-moi vous expliquer";
+		mes "toutes les nuances de";
+		mes "chaque élément. Demandez simplement";
+		mes "quel élément spécifique vous";
+		mes "souhaitez en savoir plus.";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "En d'autres termes, même les mêmes propriétés";
+		mes "ont des caractéristiques différentes qui doivent être prises en compte.";
+		mes "Je vais maintenant expliquer les propriétés.";
+		while((1)){
+			next;
+			switch(select("^ff0000Fire^000000", "^5C4033Earth^000000", "^93DB70Wind^000000", "^0000FFWater^000000", "^CFB53BGhost^000000", "Quit.")){
+			case 1:
+				mes "continuer sur cette bonne voie";
+				mes "Les monstres avec la propriété ^ff0000Feu^000000";
+				mes "ont tendance à avoir des";
+				mes "attaques puissantes. Puisque nous, les Mages,";
+				mes "physiquement plus faibles, même légèrement";
+				mes "les coups de ces monstres peuvent";
+				mes "être extrêmement dommageables pour nous.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Donc si nous devons combattre";
+				mes "des monstres avec la propriété ^FF0000Feu^000000";
+				mes "nous-mêmes, nous pouvons utiliser Frost Diver pour";
+				mes "les figer sur place.";
+				mes "[Mana]";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "sur des monstres de feu, nous causerons peu ou pas de";
+				mes "dommages et ce n'est pas bon.";
+				mes "[Mana]";
+				mes "Pour référence, nos compétences à propriété Feu sont Sight,";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "un peu plus sur Fire Wall.";
+				mes "property skills are Sight,";
+				mes "Fire Bolt, Fire Ball and Fire";
+				mes "Wall. Ooh, let me tell you";
+				mes "a little more about Fire Wall.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Le Mur de Feu est très distinctif";
+				mes "en ce qu'il peut être utilisé jusqu'à";
+				mes "3 fois sur un même écran. Tout";
+				mes "monstre qui s'y heurte sera";
+				mes "endommagé, puis se déplacera dans";
+				mes "le sens opposé.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Mais si un monstre Zombie";
+				mes "s'heurte à un Mur de Feu, il ne";
+				mes "subira qu'une légère blessure et le";
+				mes "Mur de Feu ne bloquera pas nécessairement";
+				mes "sa progression. Attention donc !";
+				.@eread_1 = 1;
+				break;
+			case 2:
+				mes "continuer sur cette bonne voie";
+				mes "Les monstres à propriété ^5C4033Terre^000000 ont";
+				mes "généralement une bonne précision, donc même";
+				mes "si votre Taux d'Évitement est élevé,";
+				mes "vous pourriez trouver difficile de";
+				mes "parer l'ensemble de leurs attaques.";
+				mes "evade all of their attacks.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Lorsque vous affrontez ces";
+				mes "monstres, utilisez des sorts de propriété Feu.";
+				mes "Le Mur de Feu est généralement";
+				mes "très efficace, car il va";
+				mes "immobiliser le monstre et aussi";
+				mes "infliger d'importants dégâts.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Il est également utile de savoir";
+				mes "que lorsque vous utilisez la Malédiction de Pierre sur un";
+				mes "monstre, celui-ci devient de propriété Terre tant que le sort";
+				mes "est en vigueur. Cool, hein ?";
+				mes "[Mana]";
+				mes "Donc si vous utilisez la Malédiction de Pierre,";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "après, comme le Bol de Feu et la Balle de Feu, pour en profiter";
+				mes "a good strategy would be to";
+				mes "use Fire property skills right";
+				mes "afterwards, like Fire Bolt and";
+				mes "Fire Ball, to take advantage of";
+				mes "la propriété Terre du monstre.";
+				.@eread_2 = 1;
+				break;
+			case 3:
+				mes "continuer sur cette bonne voie";
+				mes "Maintenant, ne soyez pas trop surpris";
+				mes "si vous continuez à manquer lorsque vous";
+				mes "attaquez des monstres de la propriété ^93DB70Vent^000000.";
+				mes "La plupart d'entre eux peuvent éviter les attaques physiques";
+				mes "très bien grâce à leur";
+				mes "taux d'évitement élevé.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Mais puisque nous, Mages,";
+				mes "attaquons principalement avec nos";
+				mes "sorts, nous n'avons pas besoin de";
+				mes "nous en soucier autant.";
+				mes "Néanmoins, les monstres du Vent ont tendance à";
+				mes "être assez rapides, donc faites attention.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "En ce qui concerne l'attaque des";
+				mes "monstres du Vent, il serait idéal";
+				mes "d'utiliser des compétences de la propriété Terre.";
+				mes "Mais puisque seuls les Wizards ont";
+				mes "accès aux attaques de type Terre,";
+				mes "nous devrions nous contenter des compétences de Feu.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Les compétences de type Feu pourraient";
+				mes "ne pas infliger beaucoup de dégâts,";
+				mes "mais elles auront un effet plus important que les compétences de type Vent ou Eau, qui causeraient très peu ou aucun dommage aux monstres de type Vent.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Pour que tu saches,";
+				mes "les compétences de type ^93DB70Vent^000000";
+				mes "que nous les Mages pouvons employer sont";
+				mes "Éclair et Orage.";
+				.@eread_3 = 1;
+				break;
+			case 4:
+				mes "continuer sur cette bonne voie";
+				mes "Les monstres de type ^0000FEau^000000";
+				mes "ont tendance à avoir beaucoup de points de vie,";
+				mes "donc ils peuvent encaisser plus de dégâts";
+				mes "que les autres monstres, ce qui rend";
+				mes "les batailles contre eux plus longues.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Maintenant, rappelez-vous comment j'ai dit";
+				mes "qu'il existe différents niveaux";
+				mes "pour les propriétés ? Les monstres de type Eau sont en réalité un peu plus";
+				mes "sensible aux dégâts de leur élément opposé à des niveaux supérieurs.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "En d'autres termes, les monstres";
+				mes "qui sont de niveau supérieur pour";
+				mes "la propriété Eau subissent encore plus de dégâts";
+				mes "des attaques à la propriété Vent.";
+				mes "[Mana]";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "dans le répertoire du Mage";
+				mes "incluent Cold Bolt et Frost";
+				mes "Diver. Ces compétences sont très";
+				mes "efficaces contre les monstres de Feu.";
+				mes "[Mana]";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "il a une chance de";
+				mes "geler réellement les monstres.";
+				mes "Tandis que les monstres sont gelés par";
+				mes "Frost Diver, ils sont considérés comme des monstres Eau. Intéressant, hein ?";
+				mes "Frost Diver, they're considered Water monsters. Interesting, huh?";
+				.@eread_4 = 1;
+				break;
+			case 5:
+				mes "continuer sur cette bonne voie";
+				mes "Maintenant, il n'en reste pas beaucoup";
+				mes "^CFB53BGhost^000000 des monstres de propriété";
+				mes "autour. Mais si vous en croisez";
+				mes "quelques-uns, n'hésitez pas à utiliser vos";
+				mes "sorts de propriété Ghost, qui";
+				mes "devraient être efficaces.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Les attaques de propriété Ghost";
+				mes "que nous les Mages pouvons employer sont";
+				mes "Napalm Beat et Soul Strike.";
+				mes "Ces sorts ont généralement tendance";
+				mes "à fonctionner assez bien, sauf sur les";
+				mes "monstres de propriété Holy élevés.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Maintenant, le sort Safety Wall";
+				mes "est en quelque sorte un sort de propriété";
+				mes "Ghost, mais il est difficile à classer. Le lancer de Safety Wall crée";
+				mes "une barrière qui protège contre les";
+				mes "attaques physiques à courte portée.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Cependant, cette barrière ne";
+				mes "convient qu'à une seule personne et ne";
+				mes "protège pas contre les attaques à longue portée";
+				mes "ou les attaques de forte puissance élémentaire,";
+				mes "soyez donc très prudent !";
+				.@eread_5 = 1;
+				break;
+			case 6:
+				mes "continuer sur cette bonne voie";
+				mes "Êtes-vous sûr d'avoir bien compris";
+				mes "les nuances des propriétés élémentaires ?";
+				mes "Parce que si vous êtes prêt, nous allons aborder";
+				mes "quelques nouveaux matériaux pour votre apprentissage.";
+				mes "[Mana]";
+				mes "D'accord, nous passerons au sujet suivant.";
+				next;
+				if(select("W-wait, not yet!:I'm ready to go on.") == 2) {
+					mes "continuer sur cette bonne voie";
+					mes "Je sais que le concept de propriétés peut être";
+					mes "confusant pour l'instant, mais avec le temps vous y";
+					mes "prendrez goût.";
+					tu_magician01 = 2;
+					specialeffect2 EF_HIT5;
+					.@total = .@eread_1 + .@eread_2 + .@eread_3 + .@eread_4 + .@eread_5;
+					if (.@total) getexp (.@total*150),(.@total*70);
+					close;
+				}
+				break;
+			}
+		}
+	case 2:
+		mes "I know that the concept";
+		mes "of properties might be";
+		mes "confusing now, but over";
+		mes "time you'll get the hang";
+		mes "de cela. Il est maintenant temps de parler";
+		mes "des compétences magiques en profondeur~";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Maintenant, les sorts d'attaque les plus basiques sont le Fire Bolt,";
+		mes "le Cold Bolt, le Lightning Bolt et";
+		mes "le Napalm Beat. L'apprentissage de ces";
+		mes "permet aux Mages d'apprendre leurs";
+		mes "compétences plus avancées.";
+		mes "[Mana]";
+		specialeffect2 EF_NAPALMBEAT;
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "ces compétences n'ouvre pas seulement";
+		mes "l'accès à d'autres sorts, mais";
+		mes "la puissance de ces compétences";
+		mes "d'attaque de base est également augmentée.";
+		mes "[Mana]";
+		specialeffect2 EF_LIGHTBOLT;
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "fondamentales pour la classe Mage";
+		mes "sont Sight, Stone Curse et";
+		mes "Increase SP Recovery. Elles sont";
+		mes "Increase SP Recovery. They're";
+		mes "pas vraiment des sorts d'attaque, mais sont utiles dans certaines situations.";
+		next;
+		specialeffect2 EF_SIGHT;
+		mes "continuer sur cette bonne voie";
+		mes "Sight est utilisé pour";
+		mes "révéler les ennemis qui";
+		mes "se cachent. Gardez en";
+		mes "esprit que la portée de cette compétence";
+		mes "ne va pas trop loin.";
+		next;
+		specialeffect2 EF_STONECURSE;
+		mes "continuer sur cette bonne voie";
+		mes "Stone Curse a une chance";
+		mes "de maudire une cible, l'immobilisant temporairement et lui conférant la propriété ^5C4033Terre^000000. Cependant,";
+		mes "chaque tentative de lancer Stone Curse";
+		mes "nécessite 1 Pierre Rouge.";
+		mes "[Mana]";
+		mes "Augmenter la récupération de SP est";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "[Mana]";
+		mes "Bon, j'ai l'impression d'avoir";
+		mes "you recover more SP while sitting down to rest. It doesn't directly affect battle, but having more SP is always better.";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Well, I feel like I've";
+		mes "expliqua les sorts de base";
+		mes "assez. Maintenant, avant que je parle";
+		mes "de nos compétences avancées,";
+		mes "il y a une mission que je veux";
+		mes "que vous accomplissiez pour l'entraînement.";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Si vous allez à l'ouest depuis";
+		mes "ici, vous trouverez un grand pont";
+		mes "pont où vous pouvez rencontrer";
+		mes "ces monstres appelés Pupa.";
+		mes "Les Pupa ne bougent pas et ne peuvent pas";
+		mes "attaquer pour sauver leurs vies.";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Chassez ces Pupa";
+		mes "jusqu'à ce que vous ayez recueilli";
+		mes "10 Chrysalis d'eux.";
+		mes "Ensuite, apportez-les-moi, d'accord ?";
+		tu_magician01 = 3;
+		getexp 400,200;
+		specialeffect2 EF_HIT5;
+		close;
+	case 3:
+	case 4:
+		if (tu_magician01 == 3) {
+			mes "Ah, vous êtes de retour ?";
+			mes "Voyons si vous avez rassemblé";
+			mes "toutes les 10 Chrysalis de la chasse";
+			mes "^FF0000Tous ces Pupas. Hmmmm...";
+		}
+		else {
+			mes "Donc...";
+			mes "Avez-vous récupéré";
+			mes "10 Chrysalides";
+			mes "en chassant les Pupas";
+			mes "comme je l'ai demandé ? J'espère que oui...";
+			mes "Car je vais vérifier~";
+		}
+		next;
+		mes "continuer sur cette bonne voie";
+		if (countitem(915) < 10){// Chrysalis
+			if (tu_magician01 == 3) {
+				mes "Oh, tu n'en as pas encore assez";
+				mes "d'eux. Va à l'ouest";
+				mes "d'ici et chasse des Pupas";
+				mes "pour obtenir plus de Chrysalides, d'accord ?";
+				mes "Pour le moment, je vais juste te soigner.";
+				mes "Waouh, tu en as besoin";
+				tu_magician01 = 4;
+				percentheal 100,100;
+			}
+			else {
+				mes "de plus que cela.";
+				mes "Je sais que tu peux y arriver...";
+				mes "Les Pupas sont des monstres complètement";
+				mes "défensifs !";
+				mes "...Neuf, dix.";
+			}
+		}
+		else {
+			mes "D'accord, c'est passé !";
+			mes "À cet instant, tu dois être plus";
+			mes "By now, you must be more";
+			mes "habitué à utiliser tes compétences, hein ?";
+			mes "De toute façon, fais-moi signe quand tu seras prêt pour la prochaine leçon, d'accord ?";
+			tu_magician01 = 5;
+			getexp 400,200;
+			specialeffect2 EF_HIT5;
+		}
+		close;
+	case 5:
+		mes "Maintenant, je vais te dire";
+		mes "ce que je sais sur les";
+		mes "compétences de Mage plus avancées.";
+		mes "Laquelle aimerais-tu que j'explique ?";
+		mes "[Mana]";
+		while(1){
+			next;
+			switch(select("Soul Strike:Safety Wall:Fire Ball:Frost Diver:Thunderstorm:Fire Wall:Energy Coat:Quit.")) {
+			case 1:
+				mes "continuer sur cette bonne voie";
+				mes "esprit que tu peux apprendre après avoir augmenté la compétence Napalm Beat jusqu'à un certain niveau. Elle attaque avec une puissance spirituelle antique~";
+				mes "[Mana]";
+				mes "À mesure que tu t'entraînes à l'utilisation de Soul Strike et que tu montes le niveau de cette compétence, elle gagnera en puissance et tu pourras la lancer beaucoup plus rapidement.";
+				mes "[Mana]";
+				mes "a certain level. It attacks";
+				mes "with ancient spiritual power~";
+				next;
+				specialeffect2 EF_SOULSTRIKE;
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "As you train in the use";
+				mes "of Soul Strike and increase";
+				mes "that skill's level, it will grow in strength and you'll be able";
+				mes "to cast it much more quickly.";
+				.@skill_e1 = 1;
+				break;
+			case 2:
+				mes "continuer sur cette bonne voie";
+				mes "Vous pouvez apprendre le Mur de Sécurité";
+				mes "après avoir pratiqué l'utilisation de";
+				mes "Napalm Beat et Soul Strike.";
+				mes "Le Mur de Sécurité protège contre la plupart des attaques à courte portée.";
+				mes "[Mana]";
+				next;
+				specialeffect2 EF_GLASSWALL;
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "selon le niveau de la compétence Mur de Sécurité que vous utilisez.";
+				mes "[Mana]";
+				mes "Fire Ball est une compétence à propriété ^FF0000Feu^000000";
+				mes "que vous pouvez apprendre après avoir pratiqué l'utilisation de Fire Bolt.";
+				mes "[Mana]";
+				mes "Fire Ball peut en réalité infliger des dégâts à plusieurs cibles.";
+				.@skill_e2 = 1;
+				break;
+			case 3:
+				mes "continuer sur cette bonne voie";
+				mes "Fire Ball is a ^FF0000Fire^000000";
+				mes "property skill that you";
+				mes "can learn after training";
+				mes "in the use of Fire Bolt.";
+				next;
+				specialeffect2 EF_FIREBALL;
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Fire Ball can actually";
+				mes "inflict damage on multiple";
+				mes "ennemis s'ils sont dans";
+				mes "la portée de la compétence. Faites";
+				mes "bonne utilisation du pouvoir destructeur";
+				mes "de la Fire Ball !";
+				.@skill_e3 = 1;
+				break;
+			case 4:
+				mes "continuer sur cette bonne voie";
+				mes "Frost Diver est une compétence à propriété ^0000FFEau^000000";
+				mes "qui peut être apprise après avoir augmenté";
+				mes "la compétence Cold Bolt jusqu'à";
+				mes "un certain niveau.";
+				mes "[Mana]";
+				specialeffect2 EF_FROSTDIVER;
+				next;
+				specialeffect2 EF_FROSTDIVER2;
+				mes "continuer sur cette bonne voie";
+				mes "ennemis et a une chance de les";
+				mes "geler également. Une fois gelés, le monstre sera";
+				mes "considéré comme une créature à propriété";
+				mes "Eau.";
+				mes "[Mana]";
+				mes "Maintenant, alors que vous augmentez";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Now, as you increase";
+				mes "the level of the Frost Diver";
+				mes "sa compétence, ses dégâts et sa chance";
+				mes "de figer les monstres augmentera également";
+				mes "^FFFFFFkamenriderblack^000000";
+				.@skill_e4 = 1;
+				break;
+			case 5:
+				mes "continuer sur cette bonne voie";
+				mes "Tempête électrique est une";
+				mes "^93DB70Vent^000000 propriété de compétence";
+				mes "que vous pouvez apprendre après";
+				mes "avoir augmenté la compétence Éclair à un certain niveau.";
+				mes "[Mana]";
+				next;
+				specialeffect2 EF_THUNDERSTORM;
+				mes "continuer sur cette bonne voie";
+				mes "à Balle de feu en ce qu'elle peut";
+				mes "attaquer plusieurs ennemis";
+				mes "dans une certaine portée.";
+				mes "C'est une attaque extrêmement puissante";
+				mes "ciblée sur le sol.";
+				mes "[Mana]";
+				.@skill_e5 = 1;
+				break;
+			case 6:
+				mes "continuer sur cette bonne voie";
+				mes "propriété de compétence qui peut";
+				mes "être apprise après avoir entraîné";
+				mes "be learned after training";
+				mes "dans l'utilisation de Fire Ball et";
+				mes "Sight. Contrairement aux autres compétences,";
+				mes "Fire Wall cible une zone.";
+				next;
+				specialeffect2 EF_FIREWALL;
+				mes "continuer sur cette bonne voie";
+				mes "Ainsi, vous pouvez placer";
+				mes "un mur de feu dans des emplacements";
+				mes "où vous pensez que l'ennemi";
+				mes "va se déplacer. Et c'est";
+				mes "particulièrement utile lorsque";
+				mes "les monstres s'approchent !";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Ainsi, si vous savez utiliser";
+				mes "Fire Wall de manière stratégique";
+				mes "et efficace, cela peut être une";
+				mes "compétence très puissante~";
+				.@skill_e6 = 1;
+				break;
+			case 7:
+				mes "continuer sur cette bonne voie";
+				mes "Energy Coat est, euh,";
+				mes "une compétence unique que vous";
+				mes "ne pouvez pas apprendre tout seul.";
+				mes "Vous devrez demander à Blizardis";
+				mes "à l'intérieur de la Guilde des Mages";
+				mes "pour vous apprendre à l'utiliser.";
+				next;
+				specialeffect2 EF_ENERGYCOAT;
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "Si vous décidez de";
+				mes "apprendre le Energy Coat, je suis";
+				mes "sûr que Blizardis vous dira";
+				mes "tout ce dont vous avez besoin de savoir.";
+				.@skill_e7 = 1;
+				break;
+			case 8:
+				mes "continuer sur cette bonne voie";
+				mes "Avez-vous compris tout cela ?";
+				mes "Bien, car maintenant j'ai une mission à vous confier";
+				mes "au nom de la Guilde des Mages. Quand vous serez prêt pour le";
+				mes "briefing, parlez-moi, d'accord ?";
+				mes "[Mana]";
+				mes "Oh, et veuillez prendre ceci.";
+				next;
+				mes "continuer sur cette bonne voie";
+				mes "entraînement. J'espère qu'il vous sera utile lors des combats...";
+				mes "Laissez-moi vous parler de";
+				mes "you to help you in your";
+				mes "training. I hope it comes";
+				mes "in handy when fighting...";
+				tu_magician01 = 6;
+				getitem 1604,1; //Wand
+				specialeffect2 EF_HIT5;
+				.@total = .@skill_e1 + .@skill_e2 + .@skill_e3 + .@skill_e4 + .@skill_e5;
+				if (.@total) getexp (.@total*300),(.@total*100);
+				close;
+			}
+		}
+		close;
+	case 6:
+		mes "Oh, bon, tu es de retour.";
+		mes "Let me tell you about";
+		mes "votre mission. Récemment,";
+		mes "quelque chose s'est produit à";
+		mes "Morocc et la Guilde des Voleurs";
+		mes "demande notre aide.";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Ce n'est pas obligatoire";
+		mes "pour vous de le faire, mais";
+		mes "vous serez récompensé pour";
+		mes "vos efforts et nous vous";
+		mes "apporterons un peu d'aide.";
+		mes "Alors qu'en pensez-vous ?";
+		next;
+		switch(select("I'll do it.:Sorry, but...")) {
+		case 1:
+			mes "continuer sur cette bonne voie";
+			mes "Super ! D'accord,";
+			mes "je vous enverrai directement";
+			mes "à Morocc. Une fois arrivé,";
+			mes "allez devant la Pyramide de";
+			mes "Morocc et parlez à Yierhan.";
+			mes "Merci~";
+			next;
+			mes "continuer sur cette bonne voie";
+			mes "Oh, et une fois terminé";
+			mes "ce que vous avez fait avec";
+			mes "ce que vous devez faire, revenez";
+			mes "et rapportez-lez-moi, d'accord ?";
+			tu_magician01 = 7;
+			emotion ET_SMILE;
+			warp "morocc",182,286;
+			close;
+		case 2:
+			mes "continuer sur cette bonne voie";
+			mes "Mmm...?";
+			mes "Ah, je vois. Eh bien, si";
+			mes "vous changez d'avis,";
+			mes "revenez et demandez-moi plus tard,";
+			mes "d'accord ?";
+			close;
+		}
+	case 7:
+		mes "Je ne sais pas du tout";
+		mes "quel genre de travail";
+		mes "Yierhan a prévu pour vous, mais j'espère";
+		mes "que ce ne sera pas trop difficile.";
+		mes "Yierhan vient juste de m'envoyer";
+		close;
+	case 27:
+		mes "un message disant que";
+		mes "vous avez accompli un excellent travail en";
+		mes "terminant votre mission.";
+		mes "[Mana]";
+		mes "Very nice work, "+strcharinfo(0)+"~";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "deux organisations secrètes";
+		mes "impliquées dans tout ce sale";
+		mes "business. Pourquoi voudraient-ils";
+		mes "business. Why would they";
+		mes "travailler ensemble ?";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Bon, de toute façon...";
+		mes "C'est un assez";
+		mes "gros business que";
+		mes "je suppose que les hauts responsables";
+		mes "prendront en charge, donc vous n'avez pas";
+		mes "besoin de vous en soucier pour le moment.";
+		next;
+		mes "continuer sur cette bonne voie";
+		mes "Veuillez accepter ceci comme";
+		mes "une petite récompense pour avoir aidé";
+		mes "les deux guildes. Encore une fois, merci beaucoup~";
+		mes "Il semble que quelque chose se";
+		tu_magician01 = 28;
+		getitem 2321,1; //Silk_Robe
+		Zeny = Zeny + 3000;
+		getexp 3000,1000;
+		close;
+	default:
+		if(tu_magician01 < 27){
+			mes "Donc...";
+			mes "passe dans le Royaume de Rune-Midgarts.";
+			mes "Pas étonnant que toutes les guildes soient si occupées...";
+			mes "[Mana]";
+			mes "De toute façon, veuillez";
+			next;
+			mes "continuer sur cette bonne voie";
+			mes "Anyway, please ";
+			mes "keep up the good";
+			mes "travail. Et, euh, est-ce que";
+			mes "[Yierhan] va bien ?";
+		} else {
+			mes "Vous semblez être bien";
+			mes "expérimenté maintenant et il n'y";
+			mes "a plus rien d'autre que je puisse";
+			mes "vraiment vous enseigner. Maintenant, c'est à";
+			mes "vous de trouver des moyens de maîtriser";
+			mes "les voies de la magie par vous-même.";
+		}
+		close;
+	}
+}

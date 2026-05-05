@@ -1,0 +1,366 @@
+//===== rAthena Script =======================================
+//= Eden Group Quests - Mission [56 - 70]
+//===== By: ==================================================
+//= L0ne_W0lf
+//===== Current Version: =====================================
+//= 1.7
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Repetable Quests for Players between Baselevel 56 - 70.
+//===== Additional Comments: =================================
+//= 1.0 First Version.
+//= 1.1 Some little optimization here and there. [Masao]
+//= 1.2 Added checkquest confirmation for -1. [Euphy]
+//= 1.3 Fixed Puppet Master's Agony Quest (12217 -> 3259). [Joseph]
+//= 1.4 Fixed invalid check (Magic Wand Quest). [Joseph]
+//= 1.5 Optimized, based on code by Zopokx. [Euphy]
+//= 1.6 Added support to Para_Team_Mark_ in Eden Group. [Ragno]
+//= 1.7 Added use of F_HasEdenGroupMark function. [Ragno]
+//= 1.8 Reverting Magic Wand Quest to request Trunks. [Carlosgrr]
+//============================================================
+
+moc_para01,42,38,3	script	Mission [56 - 70]	857,{
+	if (!callfunc("F_HasEdenGroupMark")) {
+		mes "Pour obtenir ces missions, je dois d'abord rejoindre le Groupe Eden. Je dois trouver la Secrétaire Lime Evenor et devenir membre.";
+		close;
+	}
+	mes "Voici la liste des diverses aventures pour les aventuriers de niveau 56~70.";
+	next;
+	mes "De nombreuses missions telles que la Chasse aux Monstres, le Transport de Marchandises ou la Recherche de Personnes.";
+	next;
+	switch(select("Mission Numbers 1~5:Mission Numbers 6~10:Mission Numbers 11~15")) {
+	case 1:
+		switch(select("What is this Bandage?:Dangerous Alligators.:That wasn't a mermaid...:My country is calling me!")) {
+			case 1: callsub L_HuntingQuest,3250,15000,5000,930,30;
+			case 2: callsub L_HuntingQuest,3251,16000,6000;
+			case 3: callsub L_HuntingQuest,3252,17000,8000;
+			case 4: callsub L_Quest,3254,18000,8000,7043,10,1056,30;
+		}
+	case 2:
+		switch(select("Hunt Wild Boar:Preparing the Summer:A Woman's Grudge:Special ingredients:Puppet Master's Agony")) {
+			case 1: callsub L_HuntingQuest,3255,16000,7000;
+			case 2: callsub L_Quest,3256,15000,5000,918,30;
+			case 3: callsub L_HuntingQuest,3257,17000,8000;
+			case 4: callsub L_Quest,3258,16000,7000,7198,40;
+			case 5: callsub L_HuntingQuest,3259,17000,7000,1060,30;
+		}
+	case 3:
+		switch(select("Tiresome Flies:Dangerous Munak:Make the World green:Magic Wand")) {
+			case 1: callsub L_HuntingQuest,3260,16000,6000;
+			case 2: callsub L_HuntingQuest,3261,16000,7000;
+			case 3: callsub L_Quest,3262,17000,7000,1032,40;
+			case 4: callsub L_Quest,3263,18000,8000,1021,30,1019,30;
+		}
+	}
+	end;
+
+L_Quest:
+	.@quest_id = getarg(0);
+	if (checkquest(.@quest_id) == -1) {
+		callsub L_Details, .@quest_id;
+		next;
+		mes "Souhaitez-vous accepter cette mission ?";
+		next;
+		if(select("Accept the mission.:Do not accept the mission.") == 1) {
+			if (BaseLevel < 55 || BaseLevel > 70) {
+				mes "Ces missions ne conviennent pas à mon niveau. Je devrais chercher d'autres missions.";
+				close;
+			}
+			setquest .@quest_id;
+			mes "J'ai accepté la mission avec succès. Je dois revenir confirmer mon travail une fois la mission terminée.";
+			next;
+			mes "Cette mission n'a pas de limite de temps.";
+		}
+		close;
+	}
+	if (getargcount() > 5) {
+		if (countitem(getarg(5)) < getarg(6))
+			set .@items,1; //incomplete
+		else
+			set .@items,2; //complete
+	}
+	if (checkquest(.@quest_id) < 2 && (countitem(getarg(3)) < getarg(4) || .@items == 1)) {
+		mes "Vous avez une mission en cours. Souhaitez-vous vérifier les détails ?";
+		next;
+		if(select("Check the details.:Cancel.") == 1)
+			callsub L_Details, .@quest_id;
+		close;
+	} else {
+		mes "J'ai bien avancé sur cette mission. Dois-je rendre compte maintenant ?";
+		next;
+		if(select("Report the mission.:Do not report it yet.") == 1) {
+			delitem getarg(3),getarg(4);
+			if (.@items)
+				delitem getarg(5),getarg(6);
+			getexp getarg(1),getarg(2);
+			erasequest .@quest_id;
+			mes "Vous avez complété la mission. Obtenez vos récompenses.";
+		}
+		close;
+	}
+	end;
+
+L_HuntingQuest:
+	.@quest_id = getarg(0);
+	if (checkquest(.@quest_id) == -1) {
+		callsub L_Details, .@quest_id;
+		next;
+		mes "Souhaitez-vous accepter cette mission ?";
+		next;
+		if(select("Accept the mission.:Do not accept the mission.") == 1) {
+			if (BaseLevel < 55 || BaseLevel > 70) {
+				mes "Ces missions ne conviennent pas à mon niveau. Je devrais chercher d'autres missions.";
+				close;
+			}
+			setquest .@quest_id;
+			mes "J'ai accepté la mission avec succès. Je dois revenir confirmer mon travail une fois la mission terminée.";
+			next;
+			mes "Cette mission n'a pas de limite de temps.";
+		}
+		close;
+	}
+	if (getargcount() > 3) {
+		if (countitem(getarg(3)) < getarg(4))
+			set .@items,1; //incomplete
+		else
+			set .@items,2; //complete
+	}
+	if (checkquest(.@quest_id,HUNTING) < 2 || .@items == 1) {
+		mes "Vous avez une mission en cours. Souhaitez-vous vérifier les détails ?";
+		next;
+		if(select("Check the details.:Cancel.") == 1)
+			callsub L_Details, .@quest_id;
+		close;
+	} else if (checkquest(.@quest_id,HUNTING) == 2) {
+		mes "J'ai bien avancé sur cette mission. Dois-je rendre compte maintenant ?";
+		next;
+		if(select("Report the mission.:Do not report it yet.") == 1) {
+			if (.@items)
+				delitem getarg(3),getarg(4);
+			getexp getarg(1),getarg(2);
+			erasequest .@quest_id;
+			mes "Vous avez complété la mission. Obtenez vos récompenses.";
+		}
+		close;
+	}
+	end;
+
+L_Details:
+	switch(getarg(0)) {
+	case 3250:
+		mes "Cette mission est assignée par la corporation Rekenber de Lighthalzen. Voici les détails.";
+		next;
+		mes "La corporation Rekenber va lancer un nouveau projet appelé 'Green Medical Center'. Pour le premier produit du projet, nous préparons des Bandages de Bien-être.";
+		next;
+		mes "Concernant ce projet, nous devons étudier la réaction des monstres lorsqu'ils sont enveloppés dans des Bandages pourris.";
+		next;
+		mes "Si vous êtes intéressé, veuillez chasser 30 Momies et ramener 30 Bandages pourris. Vous pouvez les trouver dans la Pyramide à l'ouest de Morroc.";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "- Directrice principale de la corporation Rekenber : 'Julie E Delph' -";
+		break;
+	case 3251:
+		mes "Cette mission est assignée par la coopérative Comodo. Voici les détails.";
+		next;
+		mes "Ces jours-ci, les crocodiles sont devenus fous ; ils attaquent les femmes et les ivrognes qui traînent près de la plage.";
+		next;
+		mes "C'est une situation très honteuse pour nous, le lieu de vacances le plus merveilleux de Rune-Midgard.";
+		next;
+		mes "Il serait donc très utile si vous chassiez 30 Crocodiles pour nettoyer cette situation.";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		break;
+	case 3252:
+		mes "Cette mission est assignée par un client inconnu d'Izlude.";
+		next;
+		mes "J'admire la plage d'Izlude depuis ma naissance.";
+		next;
+		mes "Quand j'étais jeune, j'ai découvert une créature mystérieuse dans le donjon d'Izlude ; je n'avais jamais rien vu de tel avant...";
+		next;
+		mes "Je l'ai immédiatement pensé être une sirène. J'étais si surpris que j'ai étudié les sirènes toute ma vie.";
+		next;
+		mes "Mais, en étudiant plus sérieusement, j'ai découvert que la créature n'était pas une sirène... oui, elle n'était du tout aussi belle que les autres sirènes...";
+		next;
+		mes "J'ai enfin établi le fait qu'il s'agissait d'un homme-poisson, et non d'une sirène !";
+		next;
+		mes "Homme-poisson... J'ai gaspillé ma vie à étudier cette bête ! Veuillez donc chasser 30 Hommes-poissons pour me faire sentir mieux.";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "-- Izlude 'La sirène du rêve perdu' --";
+		break;
+	case 3254:
+		mes "Cette mission est assignée par l'officier gouvernemental du Royaume de Rune-Midgard.";
+		next;
+		mes "Pour prévenir les inondations à Prontera, nous avons décidé de construire un immense barrage pour réguler l'approvisionnement en eau.";
+		next;
+		mes "Mais, nous manquons de main-d'œuvre et nous devons collecter du Sable fin et du Grès.";
+		next;
+		mes "Alors, nous aimerions vous demander de l'aide. Les gens, s'il vous plaît apportez-nous chacun 10 Sable Fin et 30 Grès afin que nous puissions construire le barrage.";
+		next;
+		mes "Vous pouvez obtenir ces matériaux auprès du Sand Man, je vous souhaite bonne chance !";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "-- Officier du gouvernement du Royaume de Rune-Midgarts, Dufre Kent --";
+		break;
+	case 3255:
+		mes "Cette mission est assignée par la mairie de Payon.";
+		next;
+		mes "Les animaux sauvages sont toujours une nuisance pour les agriculteurs.";
+		next;
+		mes "Ils attaquent notre ferme et gâchent toute la récolte !! Nous ne pouvons plus en supporter !";
+		next;
+		mes "Alors, nous aimerions demander l'aide aux aventuriers courageux.";
+		next;
+		mes "S'il vous plaît, chassez 30 Sauvages pour sauver nos cultures !";
+		next;
+		mes "Vous pouvez facilement trouver ces monstres autour de notre ville et de nos champs.";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "-- Membres du bureau municipal de Payon --";
+		break;
+	case 3256:
+		mes "Cette mission est assignée par le forgeron Aragham de Morocc.";
+		next;
+		mes "Bonjour~~~~, Aventuriers ! Je suis Aragham, le meilleur forgeron de Morocc !";
+		next;
+		mes "De toute façon, j'ai un fils nommé Aragam Junior, le mignon. Haha.";
+		next;
+		mes "Il participera au camp d'été cet été, mais il ne sait pas nager.";
+		next;
+		mes "Je veux lui apprendre, mais comme vous le savez, je suis forgeron, très loin de la natation ! Hehe.";
+		next;
+		mes "Mais, j'ai pensé que si je fabriquais des palmes, ce serait excellent pour sa confiance~!";
+		next;
+		mes "Pour les fabriquer, j'ai besoin de 30 Araignées Collantes venant d'une Grenouille Roda. Pouvez-vous les apporter ?";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "PS. Ne me comparez pas à Hollgrehenn ou Antonio !!!!";
+		next;
+		mes "-- Le plus chaud des forgerons, le forgeron marocain Aragham --";
+		break;
+	case 3257:
+		mes "Cette mission est assignée par un inventeur nommé Dorian d'Izlude.";
+		next;
+		mes "Avez-vous entendu l'histoire selon laquelle si les femmes gardent une rancune dans leur esprit, cela provoque des catastrophes naturelles ?";
+		next;
+		mes "Wow, donc les gars doivent faire attention à ces femmes sensibles ! Assurez-vous qu'elles n'ont aucune rancune contre vous.";
+		next;
+		mes "Les femmes peuvent apporter avec elles des phénomènes étranges !";
+		next;
+		mes "Je suis si intrigué par cette histoire que j'essaie de prouver qu'elle peut être vraie.";
+		next;
+		mes "Donc, je dois rendre les femmes énervées ! Haha, je sais ce que c'est une idée méchante, non ?";
+		next;
+		mes "Mais ceci est sérieusement juste pour des études... Donc s'il vous plaît chassez 30 Sohee qui semblent être ressuscitées de âmes victimisées.";
+		next;
+		mes "Ainsi je peux continuer à observer le cas.";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "-- L'inventeur d'élégance Dorian --";
+		break;
+	case 3258:
+		mes "Cette mission est assignée par Wallah de Payon.";
+		next;
+		mes "Bonjour, aventurier. Comment allez-vous ? Comment va votre santé ?";
+		next;
+		mes "Je suis pharmacien et j'ai du mal à obtenir des ingrédients spéciaux récemment.";
+		next;
+		mes "Car je suis une petite fille sensible, comment puis-je possiblement obtenir ces choses toute seule.";
+		next;
+		mes "Donc, s'il vous plaît aidez-moi. Apportez simplement 40 Grandes Feuilles à moi, cela suffira pour compléter mon médicament spécial !";
+		next;
+		mes "Veuillez l'apporter dès que possible, les gens ont besoin de mon médicament.";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "-- Wallah --";
+		break;
+	case 3259:
+		mes "Cette mission est assignée par le maître de marionnettes Woonute à partir de Geffen.";
+		next;
+		mes "Tu sais qu'être un maître de marionnettes est un travail difficile pour satisfaire les gens.";
+		next;
+		mes "Les gens peuvent chercher et voir tant de choses différentes par eux-mêmes ces jours-ci.";
+		next;
+		mes "Leurs attentes augmentent, je ne peux plus les satisfaire.";
+		next;
+		mes "Mais si je peux créer de nouveaux concepts de jouets, comme des jouets vivants, ce sera révolutionnaire.";
+		next;
+		mes "J'ai entendu dire qu'il existe des poupées vivantes appelées Marionettes. Peux-tu chasser 30 Marionettes pour moi ? Et apporte aussi 30 Cheveux d'Or, ceux-ci seront de superbes matériaux pour les nouveaux jouets.";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "-- Maître de marionnettes Woonute --";
+		break;
+	case 3260:
+		mes "Cette mission est assignée par un exterminateur à partir de Prontera.";
+		next;
+		mes "À mesure que le temps se réchauffe, les insectes se multiplient de plus en plus. C'est déjà hors de contrôle.";
+		next;
+		mes "Les gens de Prontera ne peuvent pas dormir à cause de tous les insectes dans leurs maisons.";
+		next;
+		mes "Alors, s'il te plaît, aide-nous à chasser 30 Mouches Chasseuses. Ensuite, le nombre de mouches diminuera lentement.";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "-- L'exterminateur de Prontera --";
+		break;
+	case 3261:
+		mes "Cette mission est assignée par Cheese Dongja à partir de Payon.";
+		next;
+		mes "As-tu entendu parler de Munak ?";
+		next;
+		mes "Le monstre laid Munak menace les gens de Payon.";
+		next;
+		mes "Alors, nous avons besoin d'aventuriers courageux comme toi !";
+		next;
+		mes "Merci de chasser 30 Munaks, alors Payon sera en paix.";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "- Fromage de Payon Dongja -";
+		break;
+	case 3262:
+		mes "Cette mission est attribuée par un marchand de gemmes, Ibraham, de Morocc.";
+		next;
+		mes "Une petite et belle fleur dans le désert aride... Quelle scène incroyable ce serait !";
+		next;
+		mes "Planter des fleurs peut rendre le monde vert et cela sera si joli partout.";
+		next;
+		mes "Je prévois de planter des fleurs robustes dans le désert de Morocc afin que le sol s'améliore.";
+		next;
+		mes "J'ai besoin de 40 Fleurs Mangeuses d'Hommes chez Flora. Je sais que la Fleur Mangeuse d'Homme est une fleur moche, mais c'est quand même une plante.";
+		next;
+		mes "J'espère que vous pouvez chasser Flora et me ramener 40 Fleurs Mangeuses d'Hommes. Vous rendez le monde vert ! Soyez fiers !";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "-- Forgeron de Payon Antonio --";
+		break;
+	case 3263:
+		mes "Cette mission est attribuée par le forgeron noir de Payon, Antonio.";
+		next;
+		mes "Bâton magique ! Avez-vous entendu parler ? C'est un bâton incroyable !";
+		next;
+		mes "Si vous prononcez les mots magiques et brandissez le bâton, vos vœux deviendront réalité.";
+		next;
+		mes "Alors, j'ai décidé de le fabriquer moi-même. Ensuite, je serai riche et puissant~! Haha!!";
+		next;
+		mes "Pour fabriquer le bâton, j'ai besoin de certains matériaux spéciaux.";
+		next;
+		mes "Veuillez m'apporter 30 Cornes Dokebi et 30 Troncs. Si vous le faites, je vous prêterai mon bâton magique une fois. Haha, bonne affaire ?";
+		next;
+		mes "Veuillez nous confirmer après avoir terminé la mission, puis nous vous donnerons les récompenses appropriées.";
+		next;
+		mes "-- Forgeron noir de Payon Antonio --";
+		break;
+	}
+	return;
+}

@@ -1,0 +1,809 @@
+//===== rAthena Script =======================================
+//= Eden Group Quests - Mission [121-130]
+//===== By: ==================================================
+//= Capuche
+//===== Current Version: =====================================
+//= 1.2
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Repeatable quests for players between BaseLevel 121 - 130.
+//===== Additional Comments: =================================
+//= 1.0 First version.
+//= 1.1 Added support to Para_Team_Mark_ in Eden Group. [Ragno]
+//= 1.2 Added use of F_HasEdenGroupMark function. [Ragno]
+//============================================================
+
+moc_para01,44,81,3	script	Melody-Jack#1	4_M_MELODY,8,8,{
+	mes "[Melody-Jack]";
+	if (!callfunc("F_HasEdenGroupMark")) {
+		mes "Qui diable êtes-vous ? Sortez d'ici !";
+		mes "Je ne parle qu'aux aventuriers de niveau ^FF0000121-130^000000.";
+	}
+	else if (para_120lv01 == 0)
+		mes "Quoi ? Ne me dérangez pas. Je suis occupé maintenant.";
+	else if (para_120lv01 == 1) {
+		mes "Vous avez une demande de cette petite fille ? Celle qui est là-bas, petite, bavarde et à moitié nue ?";
+		next;
+		select("Say yes.", "Avoid answering.");
+		mes "[Melody-Jack]";
+		mes "Non. Ça ne m'intéresse pas. Ce sera bien si vous entrez dans cette pièce non pas parce que vous êtes perdu. J'ai besoin de n'importe qui sauf ce genre d'idiot.";
+		next;
+		mes "[Melody-Jack]";
+		mes "Écoutez-moi s'il vous plaît, je vais vous faire une proposition attractive.";
+		next;
+		mes "[Melody-Jack]";
+		mes "Je suis ^ff0000Melody - Jack!^000000 Le meilleur homme avec les meilleures compétences au couteau.";
+		next;
+		mes "Melody-Jack frappe un coup de couteau dans votre direction.";
+		next;
+		mes "[Melody-Jack]";
+		mes "Je suis qualifié pour prendre des missions secrètes. Et en ce moment, vous avez de la chance.";
+		next;
+		mes "[Melody-Jack]";
+		mes "Il semble que je doive perdre une mission, un accord et une promesse, je ne peux pas les accepter maintenant.";
+		next;
+		mes "[Melody-Jack]";
+		mes "Prenez ma mission et résolvez la demande d'Aigu. Je vous compenserai.";
+		next;
+		mes "[Melody-Jack]";
+		mes "Notre deal sera gardé secret par rapport à Aigu. Si vous n'avez pas 9 vies, commençons.";
+		para_120lv01 = 2;
+	}
+	else if (para_120lv01 > 1) {
+		mes "....";
+		next;
+		if (select( "Show me the requests!", "Make small-talk." ) == 2) {
+			mes "[Melody-Jack]";
+			mes "Quoi ? Vous êtes intéressé par moi ?";
+			next;
+			switch( select( "I am interested.", "About requests", "About a deal", "What is a promise?" ) ) {
+				mes "[Melody-Jack]";
+			case 1:
+				mes "Allez-vous-en. Je ne suis pas intéressée par vous.";
+				close;
+			case 2:
+				mes "Je ne peux pas m'en empêcher à cause de ma mauvaise réputation. Ça me rend folle.";
+				next;
+				mes "[Melody-Jack]";
+				mes "J'ai la chance de conclure un double contrat avec un aventurier comme vous. Ils ne sont pas inclus dans notre contrat.";
+				close;
+			case 3:
+				mes "Pour être honnête, je ne pense qu'il y ait quelqu'un digne de confiance. La confiance ou les promesses sont toutes deux stupides.";
+				next;
+				mes "[Melody-Jack]";
+				mes "Je ne fais confiance qu'à moi-même et à mon deal. La confiance ou les promesses sont vides si elles sont brisées, mais si un deal est rompu, il y a compensation ou vengeance.";
+				close;
+			case 4:
+				mes "Qui sont tous ces enfants ?";
+				next;
+				mes "[Melody-Jack]";
+				mes "Je suis sortie pour rien, mais je dois accomplir mon devoir. Je ne dois rien à personne.";
+				close;
+			}
+		}
+		mes "[Melody-Jack]";
+		if (BaseLevel < 121)
+			mes "Oh, j'ai fait une erreur. Vous n'êtes pas le niveau d'aventurier que je cherche. Je cherche des aventuriers de niveau de base entre 121 et 130.";
+		else if (BaseLevel < 131) {
+			mes "Je ne l'aime pas, mais un accord est un accord. Veuillez revenir après avoir éliminé les monstres dans les endroits où Aigu a demandé de chercher.";
+			next;
+			switch( select( "Thanatos Tower related ", "Rachel Shrine related ", "Nameless Island related ", "Abyss Lake related " ) ) {
+				mes "[Melody-Jack]";
+			case 1:
+				mes "La tour Thanatos est le lieu le plus énervant. Ne vous inquiétez pas de votre compensation. Je tiens mes promesses.";
+				next;
+				switch( select( "Baroness of Retribution", "Lady Solace", "Mistress of Shelter", "Dame of Sentinel" ) ) {
+					mes "[Melody-Jack]";
+				case 1:
+					if (checkquest(13120,PLAYTIME) == 0)
+						mes "Je pense que j'ai terminé la performance d'aujourd'hui. Je ne peux pas me détendre au cas où des monstres apparaîtraient soudainement.";
+					else if (checkquest(13119,HUNTING) == 1) {
+						cutin "ŹǴī",3;  //retribution_card
+						mes "Je n'aime pas cette créature non pas parce qu'Aigu ne les aime pas... Comment osez-vous ? Qui punit qui ?";
+						next;
+						mes "[Melody-Jack]";
+						mes "Ce sont certaines des créatures les plus dangereuses du monde. Ces créatures ne méritent aucune justice.";
+						next;
+						cutin "",255;
+						mes "[Melody-Jack]";
+						mes "Bien sûr, vous pouvez me faire confiance. Parce que je crois aux vrais accords. Faisons disparaître ces créatures.";
+					}
+					else if (checkquest(13119,HUNTING) == 2) {
+						mes "Avez-vous les éliminées ? Ainsi cela ne dérange plus ce petit garçon pendant une journée. Bon travail.";
+						callsub S_Quest,13119,13120,1;
+					}
+					else {
+						cutin "ŹǴī",3;  //retribution_card
+						mes "Comme vous le savez, la tour Thanatos est l'endroit où Aigu s'inquiète le plus. C'est un des endroits les plus dangereux à certains égards.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Veuillez éliminer les monstres pour aider Aigu. Les amateurs risquent de faire les choses en vrac.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "Il doit y en avoir beaucoup. N'oubliez pas de garder cela secret.";
+							callsub S_Quest,13120,13119;
+						}
+					}
+					close;
+				case 2:
+					if (checkquest(13122,PLAYTIME) == 0)
+						mes "Je pense que j'ai terminé la performance d'aujourd'hui. Je ne peux pas me détendre... Au cas où des monstres apparaîtraient soudainement ?";
+					else if (checkquest(13121,HUNTING) == 1) {
+						cutin "ϴ",3;  //solace_card
+						mes "Le bâtiment ne semble pas avoir été conçu par les êtres humains et une mélodie étrange y joue toujours.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Ne tombez pas dans l'ambiance de la mélodie car cela pourrait être la dernière chanson que vous entendiez.";
+						next;
+						cutin "",255;
+						mes "[Melody-Jack]";
+						mes "Rappelez-vous, il existe dans le monde des musiques étranges aussi tranchantes qu'un couteau pour tuer les gens.";
+					}
+					else if (checkquest(13121,HUNTING) == 2) {
+						mes "Avez-vous déjà entendu la mélodie qu'ils jouent ? Vous aurez une chance si ce petit garçon recommence à jouer la performance.";
+						callsub S_Quest,13121,13122,1;
+					}
+					else {
+						cutin "ϴ",3;  //solace_card
+						mes "Mélodie magnifique. Peut-être que cela sonne beau parce que des créatures jouent.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Cependant, c'est un autre obstacle. Un accord prime sur l'intérêt personnel à tout moment. Éliminez donc Lady Solace.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "Nous ne faisons qu'accomplir notre part de l'accord. Éliminez ces créatures maintenant.";
+							callsub S_Quest,13122,13121;
+						}
+					}
+					close;
+				case 3:
+					if (checkquest(13124,PLAYTIME) == 0)
+						mes "Je pense que j'ai terminé la performance d'aujourd'hui. Je ne peux pas me détendre... Au cas où des monstres apparaîtraient soudainement ?";
+					else if (checkquest(13123,HUNTING) == 1) {
+						cutin "Ƚִī",3;  //shelter_card
+						mes "^FF0000[Anges]^^^0000Connaissez-vous un ange qui est devenu une bête ? Je ne sais pas s'il était vraiment un ange ou non, mais son apparence était celle d'un ange.";
+						next;
+						mes "[Melody-Jack]";
+						mes "^FF0000[Anges]^^^0000Ne paniquez pas à cause des belles apparences, qu'il s'agisse d'un ange ou d'une créature. Vous devez accomplir votre tâche.";
+						next;
+						mes "[Melody-Jack]";
+						mes "^FF0000[Anges]^^^0000Tout a son temps. Peut-être avez-vous demandé cela car ce moment est arrivé.";
+						cutin "",255;
+					}
+					else if (checkquest(13123,HUNTING) == 2) {
+						mes "^FF0000[Anges]^^^0000Bien. Faites-moi savoir si quelqu'un me cherche. Dans ce cas, je pourrai avoir besoin de modifier les détails du marché.";
+						callsub S_Quest,13123,13124,1;
+					}
+					else {
+						cutin "Ƚִī",3;  //shelter_card
+						mes "^FF0000[Anges]^^^0000Connaissez-vous un ange qui est devenu une bête ? Je ne sais pas s'il était vraiment un ange ou non, mais son apparence était celle d'un ange.";
+						next;
+						mes "[Melody-Jack]";
+						mes "^FF0000[Anges]^^^0000Je m'en fiche qu'il soit un vrai ange ou juste une créature. Maîtresse du Refuge, soyez claire.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "^FF0000[Anges]^^^0000Les fleurs fanées tombent sous la pluie et le vent. C'est ce que vous devez faire.";
+							emotion ET_BEST;
+							callsub S_Quest,13124,13123;
+						}
+					}
+					close;
+				case 4:
+					if (checkquest(13126,PLAYTIME) == 0)
+						mes "^FF0000[Anges]^^^0000J'ai terminé ma prestation pour aujourd'hui. Je ne peux pas me détendre au cas où des monstres apparaîtraient soudainement.";
+					else if (checkquest(13125,HUNTING) == 1) {
+						cutin "ϴī",3;  //observation_card
+						mes "^FF0000[Anges]^^^0000Vous avez peut-être senti qu'ils vous observaient dès que vous êtes entré dans la zone supérieure de la Tour Thanatos.";
+						next;
+						mes "[Melody-Jack]";
+						mes "^FF0000[Anges]^^^0000La Dame Sentinelle n'est pas facile à gérer, assurez-vous donc d'être prêt au combat.";
+						next;
+						mes "[Melody-Jack]";
+						mes "^FF0000[Anges]^^^0000C'est un beau jour pour mourir. Ce sera soit vous, soit eux, alors faites de votre mieux.";
+						cutin "",255;
+					}
+					else if (checkquest(13125,HUNTING) == 2) {
+						mes "^FF0000[Anges]^^^0000Vous avez l'air en forme. Peut-être êtes-vous meilleur que je ne le pensais ? Je n'ai pas vérifié avec mes yeux cependant.";
+						callsub S_Quest,13125,13126,1;
+					}
+					else {
+						cutin "ϴī",3;  //observation_card
+						mes "^FF0000[Anges]^^^0000Vous les rencontrerez si Aigu le demande. Les Dames Sentinelles.";
+						next;
+						mes "[Melody-Jack]";
+						mes "^FF0000[Anges]^^^0000J'espère qu'ils seront également éliminés pour qu'elle puisse demander cette aventure facilement.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "^FF0000[Anges]^^^0000Une demande pour une demande... Peu importe.";
+							callsub S_Quest,13126,13125;
+						}
+					}
+					close;
+				}
+			case 2:
+				mes "^FF0000[Anges]^^^0000L'aventure d'Aigu mène au Sanctuaire de Rachel. D'accord... Il n'est pas étrange que ^FF0000cet humain^000000 que cherche Aigu soit trouvé n'importe où.";
+				next;
+				switch( select( "Vanberk and Isilla", "Hodremlin", "Agav and Echio" ) ) {
+					mes "[Melody-Jack]";
+				case 1:
+					if (checkquest(13128,PLAYTIME) == 0)
+						mes "^FF0000[Anges]^^^0000Vous pouvez vous reposer un jour. Vous avez assez éliminé, mais le fanatisme augmente.";
+					else if (checkquest(13127,HUNTING) == 1) {
+						cutin "̽Ƕī",3;  //isilla_card
+						mes "^FF0000[Anges]^^^0000Celui qui croit avoir raison est le plus dangereux. Ce monde est plein de fous.";
+						next;
+						mes "[Melody-Jack]";
+						mes "^FF0000[Anges]^^^0000Finalement, forcez les autres à croire ce qu'ils croient. Éliminons Vanberk et Isilla.";
+						next;
+						mes "[Melody-Jack]";
+						mes "^FF0000[Anges]^^^0000Ce n'est pas de mes affaires. Mais cette fois est différente. Un petit garçon pourrait être en danger, alors hâtons-nous d'éliminer ces monstres.";
+						cutin "",255;
+					}
+					else if (checkquest(13127,HUNTING) == 2) {
+						mes "Juste un jour. Tout ira bien.";
+						callsub S_Quest,13127,13128,1;
+					}
+					else {
+						cutin "Ǻũī",3;  //vanberk_card
+						mes "[Sanctuaire] à Rachel est interdit aux gens normaux. Tu dois le savoir.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Ils pensent pouvoir trouver une piste là-bas, mais ce n'est pas un endroit sûr. Tu devrais d'abord nettoyer Vanberk et Isilla.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "Nettoie tout aussi rapidement que possible.";
+							emotion ET_SPARK;
+							callsub S_Quest,13128,13127;
+						}
+					}
+					close;
+				case 2:
+					if (checkquest(13130,PLAYTIME) == 0)
+						mes "Les monstres inconnus sont dangereux, donc élimine-les en premier. Je t'informerai si quelque chose se passe.";
+					else if (checkquest(13129,HUNTING) == 1) {
+						cutin "ȣ巽ī",3;  //hodremlin_card
+						mes "[Dents de glace] pourraient approcher. Leurs dents sont plus rapides que tes mains.";
+						next;
+						mes "[Melody-Jack]";
+						mes "[Sanctuaire] à Rachel va approcher de partout. Tu devrais faire attention à celui-là.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Pense juste au travail en cours. Cela suffira.";
+						cutin "",255;
+					}
+					else if (checkquest(13129,HUNTING) == 2) {
+						mes "Je ne suis pas si inquiet, mais es-tu en sécurité ? Pas mordu ?";
+						callsub S_Quest,13129,13130,1;
+					}
+					else {
+						cutin "ȣ巽ī",3;  //hodremlin_card
+						mes "Les fanatiques sont un problème. Un problème plus sérieux est qu'ils apparaissent soudainement.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Élimine ^FF0000Hodremlin^000000 sans aucune hésitation. Car ils sont très dangereux.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "Ils ont besoin de mains plus rapides que la tête. Je ne m'inquiète pas, mais tu devrais faire attention.";
+							callsub S_Quest,13130,13129;
+						}
+					}
+					close;
+				case 3:
+					if (checkquest(13132,PLAYTIME) == 0)
+						mes "Si tu peux parler. Il n'y a pas de demande pour le moment. Prends une pause pour la journée.";
+					else if (checkquest(13131,HUNTING) == 1) {
+						cutin "Űī",3;  //echio_card
+						mes "Rempli de folie ici. J'ai juste l'impression que c'est dégoûtant.";
+						next;
+						mes "[Melody-Jack]";
+						mes "C'est mon sentiment, mais tu pourrais aimer ça. Je suis sûr que ^FF0000Agav^000000 et ^FF0000Echio^000000 ne t'aimeront pas.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Ils vont te foncer dessus. N'hésite pas et reste concentré sur le travail.";
+						cutin "",255;
+					}
+					else if (checkquest(13131,HUNTING) == 2) {
+						mes "As-tu trouvé quelqu'un ? Je n'en serais pas inquiet. Une promesse est une promesse et un accord est un accord.";
+						callsub S_Quest,13131,13132,1;
+					}
+					else {
+						cutin "ưī",3;  //agav_card
+						mes "Il est vrai que cela devient plus dangereux à l'intérieur du [Sanctuaire] de Rachel, mais Aigu ne se souciera pas des choses dont nous ne sommes pas sûrs.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Ce n'était pas si mal. Mais quelqu'un a besoin d'aide ? Allons nettoyer ^FF0000Agav^000000 et ^FF0000Echio^000000 à l'intérieur du [Temple] de Rachel.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "Je ne peux pas partir, donc au revoir.";
+							callsub S_Quest,13132,13131;
+						}
+					}
+					close;
+				}
+			case 3:
+				mes "L'île sans nom n'est pas connue des aventuriers ordinaires. Aigu y est également intéressé.";
+				next;
+				switch( select( "Ragged Zombie Hunting", "Zombie Slaughter Hunting", "Banshee Hunting" ) ) {
+					mes "[Melody-Jack]";
+				case 1:
+					if (checkquest(13134,PLAYTIME) == 0)
+						mes "Le Zombie Écaillé a été réduit. C'est un bon moment pour exécuter la demande d'Aigu pendant une minute.";
+					else if (checkquest(13133,HUNTING) == 1) {
+						cutin "ī",3;  //ragged_zombie_card
+						mes "Il est facile de rencontrer tout sur l'île sans nom. Si ennuyeux.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Fais-le disparaître et aide Aigu ainsi que les autres aventuriers.";
+						cutin "",255;
+					}
+					else if (checkquest(13133,HUNTING) == 2) {
+						mes "As-tu pris un bain ? Ça sent mauvais ici. Mais je suis sûr que tu as eu du mal avec cette odeur.";
+						callsub S_Quest,13133,13134,1;
+					}
+					else {
+						cutin "ī",3;  //ragged_zombie_card
+						mes "Les morts reviennent la nuit. « Revient » sonne bizarre. Coupons court aux conneries.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Tu souhaites éliminer les ^FF0000Zombies Écaillés^000000. C'est facile car ils apparaissent partout.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "Prends un ^FF0000bain^000000 et tu ne sentiras plus mauvais.";
+							callsub S_Quest,13134,13133;
+						}
+					}
+					close;
+				case 2:
+					if (checkquest(13136,PLAYTIME) == 0)
+						mes "Je sais que la demande pour l'île sans nom n'est pas facile, mais je serai heureux si tu reviens nous rejoindre.";
+					else if (checkquest(13135,HUNTING) == 1) {
+						cutin "񽽷ī",3;  //zombie_slaughter_card
+						mes "Ce n'était pas non plus facile pour moi de pénétrer dans l'île sans nom. Je ne suis pas aussi patient.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Mais les aventuriers devraient relever le défi une fois. L'élimination des ^FF0000Zombies Massacres^000000 vaut la peine.";
+						cutin "",255;
+					}
+					else if (checkquest(13135,HUNTING) == 2) {
+						mes "Tu es plutôt bon ! Tu les as éliminés. Il faudra du temps pour revenir.";
+						callsub S_Quest,13135,13136,1;
+					}
+					else {
+						cutin "񽽷ī",3;  //zombie_slaughter_card
+						mes "Ils sont dangereux contrairement aux Zombies Écaillés car ils brandissent quelque chose de tranchant.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Veuillez éliminer les ^FF0000Zombies Massacres^000000. Fais attention à éviter leurs lames.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "Tu as beaucoup de choses à gérer, donc je garderai mes mots. Élimine-les.";
+							callsub S_Quest,13136,13135;
+						}
+					}
+					close;
+				case 3:
+					if (checkquest(13138,PLAYTIME) == 0)
+						mes "La Banshee a été éliminée. La demande est résolue quand même, mais ce n'est pas la fin. Cela sera requis plus ou moins tôt.";
+					else if (checkquest(13137,HUNTING) == 1) {
+						cutin "ī",3;  //banshee_card
+						mes "Tu verras qu'il y a des choses peu accueillantes pendant les aventures, parfois, indépendamment des monstres et des compagnons.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Cette demande est comme cela pour moi. Je n'aime tout simplement pas ces créatures ou la raison de donner cette demande.";
+						cutin "",255;
+					}
+					else if (checkquest(13137,HUNTING) == 2) {
+						mes "Tu dois être fatigué. Tu es allé dans cet endroit difficile au-delà de tes capacités. Ne sois pas en colère. Je te récompenserai pour cela.";
+						callsub S_Quest,13137,13138,1;
+					}
+					else {
+						cutin "ī",3;  //banshee_card
+						mes "Veuillez éliminer les ^FF0000Banshees^000000 à l'intérieur de l'île sans nom. Ne dis pas non. Tu sais que c'est aussi pour Aigu.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Les Banshees et Aigu sont ennuyeux. Je ne ferais pas cette demande, mais vous serez différent. Non ?";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "Voyez ? Quelqu'un a besoin de cette demande. Éliminez les ^FF0000Banshees^000000 sur l'île Nameless.";
+							callsub S_Quest,13138,13137;
+						}
+					}
+					close;
+				}
+			case 4:
+				mes "Le lac Abyss Lake a des demandes d'une petite fille. Très diligente.";
+				next;
+				if (select( "Ferus and Bewler are cleared.", "Gold and Blue Acidus are cleared." ) == 1) {
+					mes "[Melody-Jack]";
+					if (checkquest(13140,PLAYTIME) == 0)
+						mes "Les dragons verts et rouges me rappellent les pastèques.";
+					else if (checkquest(13139,HUNTING) == 1) {
+						cutin "䷯ī",3;  //ferus_card
+						mes "Abyss Lake... Savez-vous peut-être comment y entrer ? Vous n'êtes pas un aventurier avec ces informations ?";
+						next;
+						mes "[Melody-Jack]";
+						mes "Juste au cas où, je vous donnerai un indice : une clé et une entrée seront trouvées autour de là.";
+						cutin "",255;
+					}
+					else if (checkquest(13139,HUNTING) == 2) {
+						mes "Avez-vous éliminé tous les dragons ? Prenez une journée de repos.";
+						callsub S_Quest,13139,13140,1;
+					}
+					else {
+						cutin "׸䷯ī",3;  //ferus__card
+						mes "Abyss Lake regorge de dragons, à l'intérieur comme à l'extérieur. Les dragons ne sont pas si spéciaux, mais il y en a tellement.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Lequel est le plus dangereux entre Ferus et Bewler ? Je ne sais pas. Éliminez les deux.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "Ni verts ni rouges ne sont dérangeants. Mais peu importe, revenez après avoir tout éliminé.";
+							callsub S_Quest,13140,13139;
+						}
+					}
+				}
+				else {
+					mes "[Melody-Jack]";
+					if (checkquest(13142,PLAYTIME) == 0)
+						mes "Prenez un repos. Nous devrions aller dompter à nouveau les dragons Acidus.";
+					else if (checkquest(13141,HUNTING) == 1) {
+						cutin "ôī",3;  //acidus__card
+						mes "Abyss Lake n'est pas proche. Mais cela vaut le coup de visiter.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Ceci est techniquement un exercice d'entraînement, mais imaginez simplement que vous aidez quelqu'un. Il y aura une récompense.";
+						cutin "",255;
+					}
+					else if (checkquest(13141,HUNTING) == 2) {
+						mes "Vous êtes plus talentueux comme aventurier que je ne pensais. Si vous avez trouvé une tactique, prenez-en soin la prochaine fois. Cette étude est entre vos mains.";
+						callsub S_Quest,13141,13142,1;
+					}
+					else {
+						cutin "ô",3;  //acidus_card
+						mes "Il y a une grotte où vivent des dragons à l'intérieur d'Abyss Lake. Il y en a tellement, mais les créatures volantes sont ennuyeuses.";
+						next;
+						mes "[Melody-Jack]";
+						mes "Domptez-les aussi bien que possible. Ne vous souciez pas de leurs couleurs car tous doivent être éliminés.";
+						next;
+						cutin "",255;
+						if (select( "Take the request.", "Stop." ) == 1) {
+							mes "[Melody-Jack]";
+							mes "Éliminez les monstres Gold et Blue Acidus au dernier niveau d'Abyss Lake.";
+							callsub S_Quest,13142,13141;
+						}
+					}
+				}
+				close;
+			}
+		}
+		else {
+			mes "Avez-vous fini d'aider Aigu ou avez-vous abandonné ? De toute façon, je n'ai plus d'affaires pour vous.";
+			next;
+			callsub S_Erasequest,
+				13119,"Baroness of Retribution",
+				13121,"Lady Solace",
+				13123,"Mistress of Shelter",
+				13125,"Dame of Sentinel",
+				13127,"Vanberk and Isilla",
+				13129,"Hodremlin",
+				13131,"Agav and Echio",
+				13133,"Ragged Zombie",
+				13135,"Zombie Slaughter",
+				13137,"Banshee",
+				13139,"Ferus ",
+				13141,"Acidus";
+			mes "[Melody-Jack]";
+			mes "Je ne suis pas sûr que vous ayez trouvé ce que vous cherchiez... Je ne peux plus être impliqué. Merci.";
+		}
+	}
+	close;
+S_Quest:
+	if (isbegin_quest(getarg(0)))
+		erasequest getarg(0);
+	setquest getarg(1);
+	if (getarg(2,0))
+		getexp 900000,200000;
+	return;
+S_Erasequest:
+	.@total = getargcount();
+	for ( .@i = 0; .@i < .@total; .@i += 2 ) {
+		.@quest_id = getarg(.@i);
+		switch( checkquest(.@quest_id,HUNTING) ) {
+		case -1:
+			if (checkquest(.@quest_id+1) > -1)
+				erasequest (.@quest_id+1);
+			continue;
+		case 0:
+		case 1:
+			mes "[Melody-Jack]";
+			mes getarg(.@i+1) +" is cleared. No need to have more requests.";
+			break;
+		case 2:
+			mes "[Melody-Jack]";
+			mes getarg(.@i+1) +" is cleared. A deal is a deal. I need to get paid.";
+			getexp 900000,200000;
+			break;
+		}
+		erasequest .@quest_id;
+		next;
+	}
+	return;
+OnTouch_:
+	if (para_120lv01 == 1) {
+		emotion ET_SURPRISE;
+		mes "[Melody-Jack]";
+		mes "Salut ! ... Attendez ?";
+		close;
+	}
+	end;
+}
+
+moc_para01,17,77,5	script	Aigu#1	4_F_IU,{
+	mes "[Aigu]";
+	if (!callfunc("F_HasEdenGroupMark")) {
+		mes "Oh, pourquoi ne fais-tu pas partie du groupe Eden ?";
+		mes "Je ne parle qu'aux aventuriers de niveau ^FF0000121-130^000000.";
+	}
+	else if (para_120lv01 == 0) {
+		cutin "igu01",2;
+		mes "Salut ? Un beau jour comme aujourd'hui. Puis-je te demander un service ? J'ai entendu dire que les membres du groupe Eden sont gentils.";
+		next;
+		if (select( "I'm not the nice kind.", "Sure, I'll help." ) == 1) {
+			cutin "igu05",2;
+			mes "[Aigu]";
+			mes "yek.. Je déteste ça.";
+		}
+		else {
+			cutin "igu03",2;
+			mes "[Aigu]";
+			mes "Vraiment ? Je vais me présenter ! Je suis le chef de la bande ^ff0000Dandelion Aigu.^000000";
+			next;
+			mes "[Aigu]";
+			mes "Je viens tout juste d'un spectacle local. Il y avait quelqu'un que je voulais rencontrer mais il a disparu, alors je suis venue au groupe Eden pour faire une demande.";
+			next;
+			mes "[Aigu]";
+			mes "J'ai décidé de faire la demande moi-même car personne n'est en charge et tout le monde est occupé. Merci pour ton aide.";
+			para_120lv01 = 1;
+		}
+	}
+	else if (para_120lv01 > 0) {
+		cutin "igu01",2;
+		mes "C'est agréable de revenir à Midgard ! Très excitant comme premier jour.";
+		next;
+		if (select( "What is your request?", "Talk about something else." ) == 2) {
+			cutin "igu01",2;
+			mes "[Aigu]";
+			mes "La bande Dandelion voyage partout dans le monde et transmet une musique apaisante aux gens.";
+			next;
+			cutin "igu02",2;
+			mes "[Aigu]";
+			mes "En fait, nos chants n'ont pas de magie, mais je suis sûre qu'ils aident les gens car je chante.";
+		}
+		else if (BaseLevel < 121) {
+			cutin "igu04",2;
+			mes "[Aigu]";
+			mes "Je pense que c'est difficile pour toi d'obtenir ma demande ? Pour l'instant, je pense que cela fera perdre plus de monde. Et si tu élargissais ton horizon en voyageant ?";
+		}
+		else if (BaseLevel < 131) {
+			mes "[Aigu]";
+			mes "J'ai fait un abri pour quelqu'un que je cherche et des aventuriers se sont perdus. Je veux savoir quel aventurier s'y est rendu.";
+			next;
+			switch( select( "Thanatos Tower search", "Rachel Sanctuary search", "Nameless Island search", "Abyss Lake search" ) ) {
+				mes "[Aigu]";
+			case 1:
+				if (checkquest(13115,PLAYTIME) == 0)
+					mes "Je demanderai de rechercher à nouveau dans quelques temps car il y a encore de l'espoir puisque l'on a trouvé une trace de quelqu'un.";
+				else if (isbegin_quest(13111) == 1) {
+					cutin "igu04",2;
+					mes "Tu sais que quelqu'un y est allé mais tu ne sais pas qui c'est ? Merci. Mais laisse-moi te demander de chercher à nouveau demain, car nous ne savons pas qui il s'agit.";
+					callsub S_Quest,13111,13115,1250000,300000;
+				}
+				else if (isbegin_quest(13107) == 1)
+					mes "Tu pourras trouver un abri au sommet de la tour. Même cet abri n'a que de l'eau et un feu de camp.";
+				else {
+					mes "Les aventuriers se perdent facilement à cause des monstres dangereux et de la hauteur de la tour Thanatos. Mais ce n'est pas impossible pour certains aventuriers, alors vérifie-le pour moi.";
+					next;
+					if (select( "Begin to search.", "Cancel." ) == 1) {
+						mes "[Aigu]";
+						mes "La tour Thanatos est au nord de la République de Schwarzwald ! Elle n'est pas loin de Juno ou Hugel.";
+						callsub S_Quest,13115,13107;// Thanatos Tower Search
+					}
+				}
+				break;
+			case 2:
+				if (checkquest(13116,PLAYTIME) == 0)
+					mes "Rechercher Rachel a suffi. Je te demanderai à nouveau dans quelques temps.";
+				else if (isbegin_quest(13112) == 1) {
+					mes "Comment s'est passée ta mission ? Aucune nouvelle spéciale. Mais ce n'est pas fini, alors je te demanderai de chercher à nouveau.";
+					callsub S_Quest,13112,13116,1000000,300000;
+				}
+				else if (isbegin_quest(13108) == 1)
+					mes "Impossible d'entrer dans le sanctuaire par la voie habituelle. Ce n'est pas facile, mais nous pouvons trouver un indice chez Rachel.";
+				else {
+					cutin "igu03",2;
+					mes "Il y a un sanctuaire à l'intérieur du Sanctuaire Rachel. Il est possible de se coincer une fois à l'intérieur.";
+					next;
+					mes "[Aigu]";
+					mes "Veuillez vérifier s'il y a des traces d'aventuriers perdus dans la partie sud-est du deuxième étage, dans la zone centrale.";
+					next;
+					if (select( "Begin the search.", "Stop." ) == 1) {
+						cutin "igu05",2;
+						mes "[Aigu]";
+						mes "Je vous souhaite sécurité dans votre recherche.";
+						callsub S_Quest,13116,13108;// Rachel holy ground Search
+					}
+				}
+				break;
+			case 3:
+				if (checkquest(13117,PLAYTIME) == 0)
+					mes "La recherche sur l'Île Nomade se poursuivra à une autre occasion. Pourquoi ne pas prendre un peu de repos ?";
+				else if (isbegin_quest(13113) == 1) {
+					mes "Merci ! Il y a aussi des aventuriers errants qui nous aident ! Nous devons continuer la recherche quand même. Veuillez m'aider encore une prochaine fois.";
+					callsub S_Quest,13113,13117,900000,300000;
+				}
+				else if (isbegin_quest(13109) == 1) {
+					cutin "igu04",2;
+					mes "Peut-être... passer du temps et boire avec les morts. Mais veuillez quand même parler avec moi.";
+				}
+				else {
+					cutin "igu03",2;
+					mes "Oui, peut-être qu'ils ne peuvent pas venir car ils ont été capturés par les morts ! L'Île Nomade sera en sécurité ! Veuillez rechercher l'Île Nomade.";
+					next;
+					if (select( "Begin the search.", "Stop." ) == 1) {
+						cutin "igu01",2;
+						mes "[Aigu]";
+						mes "Je vous demanderai de rechercher le premier niveau souterrain du monastère sur l'Île Nomade. Je ne peux pas vous faire prendre ce risque sauf si vous vous offrez volontairement.";
+						callsub S_Quest,13117,13109;// Unknown island Search
+					}
+				}
+				break;
+			case 4:
+				if (checkquest(13118,PLAYTIME) == 0)
+					mes "Je vais essayer de rechercher à nouveau le Lac Abyssal dans un certain temps.";
+				else if (isbegin_quest(13114) == 1) {
+					cutin "igu05",2;
+					mes "Vous êtes revenu en sécurité, mais je suppose qu'il n'y a eu aucun bon résultat pour votre visage. Je vais chercher davantage, donc ne me décevez pas ! Merci.";
+					callsub S_Quest,13114,13118,900000,200000;
+				}
+				else if (isbegin_quest(13110) == 1) {
+					cutin "igu05",2;
+					mes "Peut-être, déçu et tombé à genoux car un monstre n'a pas été trouvé au fond du lac.";
+				}
+				else {
+					mes "Je suggère de rechercher précisément le Lac Abyssal, la grotte située au milieu du lac.";
+					next;
+					mes "[Aigu]";
+					mes "Oui ! La fin d'une bonne aventure a besoin d'un dragon ! J'ai entendu dire qu'il y a un monstre au fond d'un lac.";
+					next;
+					if (select( "Begin the search.", "Stop." ) == 1) {
+						mes "[Aigu]";
+						mes "Le Lac Abyssal est le moyen le plus rapide pour atteindre Hugel. Veuillez visiter le troisième niveau de la grotte souterraine !";
+						callsub S_Quest,13118,13110;// Abyss Lake Search
+					}
+				}
+			}
+		}
+		else {
+			cutin "igu04",2;
+			mes "[Aigu]";
+			mes "Je ne peux pas vous donner davantage de tâches de recherche en ce moment ! Vous avez besoin de défis plus difficiles adaptés à votre niveau.";
+			callsub S_Erasequest,
+				13107,"Thanatos Tower",
+				13108,"Rachel Shrine",
+				13109,"Nameless Island",
+				13110,"Abyss Lake";
+			callsub S_Erasequest2,
+				13111,"Thanatos Tower",1250000,300000,
+				13112,"Rachel Shrine",1000000,300000,
+				13113,"Nameless Island",900000,300000,
+				13114,"Abyss Lake",900000,200000;
+			for ( .@i = 13115; .@i <= 13118; .@i++ )
+				if (isbegin_quest(.@i)) erasequest .@i;
+		}
+	}
+	close2;
+	cutin "",255;
+	end;
+S_Quest:
+	if (isbegin_quest(getarg(0)))
+		erasequest getarg(0);
+	setquest getarg(1);
+	if (getarg(2,0))
+		getexp getarg(2),getarg(3);
+	return;
+S_Erasequest:
+	.@total = getargcount();
+	for ( .@i = 0; .@i < .@total; .@i += 2 ) {
+		if (isbegin_quest(getarg(.@i))) {
+			next;
+			mes "[Aigu]";
+			mes "Oh, you've been working on "+ getarg(.@i+1) +" Adventure task. Let me clear your record, so you can work on better tasks.";
+			erasequest getarg(.@i);
+		}
+	}
+	return;
+S_Erasequest2:
+	.@total = getargcount();
+	for ( .@i = 0; .@i < .@total; .@i += 4 ) {
+		if (isbegin_quest(getarg(.@i))) {
+			next;
+			mes "[Aigu]";
+			mes "Oh, you've already finished "+ getarg(.@i+1) +" Adventure. Thank you for helping me out with this task!.";
+			erasequest getarg(.@i);
+			getexp getarg(.@i+2),getarg(.@i+3);
+		}
+	}
+	return;
+}
+
+-	script	Trace of an adventurer	-1,{
+	.@quest = 13106 + atoi(strnpcinfo(2));
+	.@delay = 13110 + atoi(strnpcinfo(2));
+	if (isbegin_quest(.@quest) == 1) {
+		mes "J'ai trouvé des traces de quelqu'un qui était ici, mais je ne peux pas trouver une piste. Retournons et rendons compte à Aigu.";
+		erasequest .@quest;
+		setquest .@delay;
+	}
+	else
+		mes "Il y a des traces de quelqu'un ayant été ici.";
+	close;
+}
+thana_step,167,292,5	duplicate(Trace of an adventurer)	Trace of an adventurer#1	4_TRACE
+ra_san05,265,69,5	duplicate(Trace of an adventurer)	Trace of an adventurer#2	4_TRACE
+abbey02,155,290,5	duplicate(Trace of an adventurer)	Trace of an adventurer#3	4_TRACE
+abyss_03,102,140,5	duplicate(Trace of an adventurer)	Trace of an adventurer#4	4_TRACE
+
+tha_t06,126,128,3	script	Suspicious Monster#1	4_DEVIRUCHI,{
+	mes "[Aventurier déguisé]";
+	mes "Je travaille simplement dans cet endroit dangereux pour 5000 zeny... Êtes-vous l'aventurier qui a reçu une demande du groupe Eden ?";
+	next;
+	switch( select( "Yes","No" ) ) {
+		mes "[Aventurier déguisé]";
+	case 1:
+		if (BaseLevel < 121 || BaseLevel > 130) {
+			mes "Je pouvais voir que ce n'était pas vous d'un premier coup d'œil !";
+			close;
+		}
+		mes "Les aventuriers procédant à la demande pour Aigu sont téléportés au niveau supérieur en son nom.";
+		next;
+		if (select( "Go up.", "Do not go up." ) == 1) {
+			mes "[Aventurier déguisé]";
+			if (isbegin_quest(13107) != 1)
+				mes "Il semble que vous ne fassiez pas actuellement la demande d'aventure de la Tour Thanatos. Je suis désolé, mais je fais cela pour Aigu et non pour vous.";
+			else {
+				mes "Faites attention ! Vous ne pouvez pas descendre une fois monté. Pour Aigu !";
+				close2;
+				warp "thana_step",69,369;
+				end;
+			}
+		}
+		close;
+	case 2:
+		mes "Ou alors, faites semblant de ne pas me connaître ! Je serai en danger si vous compromettez mon identité !";
+		close;
+	}
+}

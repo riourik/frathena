@@ -1,0 +1,734 @@
+//===== rAthena Script ======================================= 
+//= Magic Book Seller
+//===== By: ================================================== 
+//= Masao, Muad_Dib (translation)
+//===== Current Version: ===================================== 
+//= 1.4
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= An NPC which sells you different kinds of Magic Books.
+//===== Additional Comments: ================================= 
+//= 1.0 First Version. [Masao]
+//= 1.1 Optimized. [Euphy]
+//= 1.1a Updated NPC name to "Master Velofos". [Euphy]
+//= 1.1b Fixed the rand part in "Mysterious Documents" to match
+//=	 Aegis & fixed a bracket issue. [Capuche]
+//= 1.2 Updates Magic Books gained from Lea. [Aleos]
+//= 1.3 Fixes checkquest calls. [Everade]
+//= 1.4 Added EAJ_WARLOCK so that jobs after Warlock such as 
+//      Arch Mage can enter. [Mazvi]
+//============================================================ 
+
+// Main Quest :: war_book
+//============================================================
+geffen_in,176,105,4	script	Master Velofos	1_M_WIZARD,{
+	if (checkweight(1201,1) == 0) {
+		mes "Vous transportez trop d'objets. Veuillez faire de la place dans votre sac en premier.";
+		close;
+	}
+	if ((MaxWeight - Weight) < 1000) {
+		mes "Vous êtes surchargé d'objets. Veuillez perdre un peu de poids en objets en premier.";
+		close;
+	}
+	if ((Upper == 2) && (Class != Job_Baby_Warlock)) {
+		mes "[Master Velofos]";
+		mes "Qu'est-ce que tu es, un bébé ?";
+		mes "Je ne suis pas là pour garder les bébés. Disparais !";
+		close;
+	}
+	if ((eaclass()&EAJ_THIRDMASK)!=EAJ_WARLOCK) {
+		mes "[Master Velofos]";
+		mes "Ha ha, cherchez-vous aussi de nouvelles connaissances ?";
+		next;
+		mes "[Master Velofos]";
+		mes "Désolé, mais mes connaissances ne vous concernent pas.";
+		close;
+	}
+	if (getskilllv(2230) < 1) {
+		mes "[Master Velofos]";
+		mes "Eh bien, vous avez rencontré toutes les qualifications sauf une : vous avez besoin du sort Release.";
+		next;
+		mes "[Master Velofos]";
+		mes "Apprenez le sort d'abord. J'ai tant de choses à vous dire.";
+		close;
+	}
+	mes "[Master Velofos]";
+	mes "Bienvenue, mon ami.";
+	mes "Félicitations pour entrer dans un tout nouveau monde de magie.";
+	next;
+	mes "[Master Velofos]";
+	mes "Nous, les praticiens de la magie, sommes toujours assoiffés de nouvelles connaissances et de pouvoir.";
+	next;
+	mes "[Master Velofos]";
+	mes "Nous supportons de grandes souffrances et douleurs pour atteindre ce que nous voulons. Lorsque nous y parvenons enfin, le sentiment d'accomplissement défie toute description. C'est pourquoi vous et moi avons choisi la voie de la magie.";
+	next;
+	mes "[Master Velofos]";
+	mes "Au fait, que vous amène-t-il chez moi aujourd'hui ?";
+	next;
+	switch (select("Nothing.:Do you know the Reading Spell Book?:What's the Freezing Spell?:Can I have a Magic Book?:Can I use the Reading Spell Book without the Freezing Spell?:About the Ultimate Magic Book")) {
+	case 1:
+		mes "[Master Velofos]";
+		mes "Hah ! Vous êtes ridicule.";
+		close;
+	case 2:
+		mes "[Master Velofos]";
+		mes "Lire un Livre de Sorts signifie littéralement 'lire un livre de sorts'. Savez-vous utiliser des livres de magie ?";
+		next;
+		switch (select("Yes, I do.:No, I don't.")) {
+		case 1:
+			mes "[Master Velofos]";
+			mes "Eh bien, alors vous n'avez pas besoin d'une leçon supplémentaire.";
+			close;
+		case 2:
+			mes "[Master Velofos]";
+			mes "Les Livres de Magie sont un type avancé de parchemin magique. Alors que les sorts sur les parchemins disparaissent après une utilisation unique, ceux contenus dans les Livres de Magie peuvent être lancés à plusieurs reprises.";
+			next;
+			mes "[Master Velofos]";
+			mes "Comparons un sort sur un parchemin à un fil. Lorsque le fil est utilisé pour ouvrir une porte ou faire autre chose, il se plie et s'écrase, perdant sa forme originale. Un sort provenant d'un Livre de Magie ressemble davantage à un alliage à mémoire de forme.";
+			next;
+			mes "[Master Velofos]";
+			mes "Huh, vous ne savez pas ce qu'est un alliage à mémoire de forme ? Eh bien, retenez simplement ceci : un fil fabriqué en alliage à mémoire de forme retrouve sa forme avec le temps.";
+			next;
+			mes "[Master Velofos]";
+			mes "Comme l'alliage, un sort sur un Livre de Magie subsiste après une utilisation, bien que la réutilisation du sort nécessite un délai pour sa restauration.";
+			next;
+			mes "[Master Velofos]";
+			mes "...Oh, je ne voulais pas parler trop longtemps. De toute façon, vous pouvez utiliser des Livres de Magie pour lancer les sorts que vous avez appris. Son concept est différent de celui des sorts normaux.";
+			next;
+			select("What's the difference?");
+			mes "[Master Velofos]";
+			mes "Pourquoi devez-vous écrire vos sorts existants dans des Livres de Magie, vous demandez ?";
+			next;
+			mes "[Master Velofos]";
+			mes "C'est une bonne question. Cela est lié à la Liaison Magique.";
+			next;
+			mes "[Master Velofos]";
+			mes "Vous avez déjà appris le Relâchement, qui vous permet de contenir l'énergie des quatre éléments différents avant le lancer effectif. La Liaison Magique est similaire au Relâchement.";
+			next;
+			mes "[Master Velofos]";
+			mes "Puisque vous avez appris le Relâchement, vous êtes capable d'utiliser la Liaison Magique également. Bon, parlons-en plus tard.";
+			next;
+			mes "[Master Velofos]";
+			mes "Vous savez comment contenir un sort existant, puis le lancer à un moment souhaité via le Relâchement.";
+			next;
+			mes "[Master Velofos]";
+			mes "Le fait de porter les globes des quatre éléments est également lié à la Liaison Magique.";
+			next;
+			mes "[Master Velofos]";
+			mes "Comme vous le savez, les quatre éléments sont le Feu, l'Eau, le Vent et la Terre. Être capable de les employer librement est le principe essentiel de la magie.";
+			next;
+			mes "[Master Velofos]";
+			mes "Nous Humains utilisons des torches pour garder le feu, des éventails pour souffler le vent, et des bols pour contenir l'eau. Nous utilisons également de l'argile pour fabriquer la poterie.";
+			next;
+			mes "[Master Velofos]";
+			mes "Ces activités peuvent différer de la magie, mais les deux sont identiques en ce qui concerne l'emploi des quatre éléments.";
+			next;
+			mes "[Master Velofos]";
+			mes "Lorsque vous utilisez des sorts magiques complexes pour invoquer une tempête, faire tomber un éclair ou brûler une zone, cela consomme beaucoup de votre énergie, tant physiquement que mentalement.";
+			next;
+			mes "[Master Velofos]";
+			mes "Si vous échouez à lier de tels sorts magiques puissants ou si vous ne parvenez pas à les contrôler, vous pouvez subir des dommages irréparables sur votre esprit et votre corps.";
+			next;
+			mes "[Master Velofos]";
+			mes "C'est pourquoi nous utilisons les Livres de Magie pour réduire ce fardeau. Ils aident à invoquer des sorts pré-enregistrés pendant que vous concentrez votre attention sur la liaison de leur puissance magique.";
+			next;
+			mes "[Master Velofos]";
+			mes "Il y a cependant un inconvénient : les Livres de Magie ne peuvent pas être utilisés pour les sorts que vous n'avez pas appris.";
+			next;
+			mes "[Master Velofos]";
+			mes "Comme je l'ai dit plus tôt, les sorts contenus dans les Livres de Magie ont tendance à revenir à leur état d'origine.";
+			next;
+			mes "[Master Velofos]";
+			mes "Cela dit, en tant que Circler, vous ne pouvez pas modifier ou créer de sorts dans les Livres de Magie.";
+			next;
+			mes "[Master Velofos]";
+			mes "Même si vous en créez un, sa puissance dépassera vos capacités.";
+			next;
+			mes "[Master Velofos]";
+			mes "Pour utiliser le Livre de Sorts de Lecture, vous devez apprendre le Sort de Gel afin de lier la magie.";
+			close;
+		}
+	case 3:
+		mes "[Master Velofos]";
+		mes "Le Sort de Gel est utilisé pour la Liaison Magique. Il vous aide à insérer un sort magique dans un cercle.";
+		next;
+		mes "[Master Velofos]";
+		mes "Les cercles magiques fonctionnent de manière organique les uns avec les autres. Lorsque vous utilisez le Sort de Gel pour lier un sort, celui-ci ne s'activera pas tant que vous n'aurez pas lancé le sort de libération.";
+		next;
+		mes "[Master Velofos]";
+		mes "Bien sûr, lier continuellement un sort consomme votre mana, mais cela en consomme moins que les sorts magiques conventionnels.";
+		next;
+		mes "[Master Velofos]";
+		mes "La Liaison Magique devient plus difficile lorsque vous utilisez des sorts magiques plus puissants.";
+		next;
+		mes "[Master Velofos]";
+		mes "Pour les sorts faibles, vous pouvez en lier deux ou trois avec votre cercle. Pour les sorts plus puissants, peut-être un ou deux seront possibles.";
+		next;
+		mes "[Master Velofos]";
+		mes "Tout dépend de votre capacité à contrôler vos sorts. Vous devrez essayer et expérimenter la Liaison Magique après l'avoir apprise pour vraiment comprendre.";
+		close;
+	case 4:
+		mes "[Master Velofos]";
+		mes "Je suis désolé, mais je n'ai que des Livres Magiques pour débutants, qui sont évidemment inadaptés à votre niveau. Voulez-vous tout de même en avoir un ?";
+		next;
+		switch (select("Sure thing.:Where can I find advanced books?")) {
+		case 1:
+			mes "[Master Velofos]";
+			mes "Veuillez aller parler à [Lea] dans l'Archive. Dites-lui que vous avez besoin d'un des Livres Magiques que j'y ai stockés.";
+			next;
+			mes "[Master Velofos]";
+			mes "Pour votre information, elle ne vous le donnera pas sans quelque chose en retour. Préparez-vous à ce qu'elle vous demande quelque chose !";
+			if (wm_book < 1) set wm_book, 1;
+			close;
+		case 2:
+			mes "[Master Velofos]";
+			mes "Je suis désolé, mais notre direction a récemment décidé de limiter la disponibilité des Livres Magiques pour les Multi-Cercleurs. C'est parce que leur nombre augmente plus rapidement que nous ne l'espérions.";
+			next;
+			mes "[Master Velofos]";
+			mes "Vous pourriez en trouver un si vous essayez fort, mais je n'en ai aucun sur moi.";
+			next;
+			mes "[Master Velofos]";
+			mes "Si notre lève lève la restriction, vous serez le premier à en être informé. Ne vous inquiétez pas.";
+			close;
+		}
+	case 5:
+		mes "[Master Velofos]";
+		mes "Rien ne se produira lorsque vous tenterez de lier un sort sans utiliser la Liaison Magique, car vous n'avez rien pour contenir le sort.";
+		next;
+		mes "[Master Velofos]";
+		mes "C'est comme l'eau qui a besoin d'un bol pour rester en place.";
+		next;
+		mes "[Master Velofos]";
+		mes "Le problème survient lorsque vous essayez de lancer magiquement un sort que vous n'avez pas appris. Cela finira sûrement par rebondir sur vous.";
+		next;
+		mes "[Master Velofos]";
+		mes "Bien sûr, les dégâts ne seront pas graves : vous tomberez dans les pommes ou serez plongé dans la confusion. Tout cela est dû au conflit entre votre Livre de Magie et la force du Liaison Magique lorsque vous tentez d'invoquer et de maintenir un sort non appris.";
+		next;
+		mes "[Master Velofos]";
+		mes "Ne le testez pas juste pour voir ce qui arrive ! Tomber dans les pommes pendant qu'on lance un sort ? Il n'y a rien de plus humiliant pour des praticiens de la magie comme nous.";
+		close;
+	case 6:
+		if ((BaseLevel > 139) && (getskilllv(2217) > 0 || getskilllv(2213) > 0)) {
+			if (mac_book < 1) {
+				mes "[Master Velofos]";
+				mes "Je suis désolé, mais pourriez-vous demander à quelqu'un d'autre ? Je suis assez occupé en ce moment.";
+				close;
+			}
+			if (mac_book == 1) {
+				mes "[Master Velofos]";
+				mes "Euh, vous cherchez le Livre de Magie Ultime ? Qui vous a envoyé ?";
+				next;
+				select("Ms. Lea.");
+				mes "[Master Velofos]";
+				mes "Je suis désolé, mais il ne reste pas beaucoup d'informations sur le Livre de Magie Ultime.";
+				next;
+				mes "[Master Velofos]";
+				mes "Quelques savants du continent de Midgard ont autrefois essayé de rassembler des Livres de Magie anciens et de reproduire ce livre, mais...";
+				next;
+				select("But what?");
+				mes "[Master Velofos]";
+				mes "Oh oui, peut-être qu'il sait quelque chose.";
+				next;
+				select("Yes, I knew this was coming!");
+				mes "[Master Velofos]";
+				mes "Mon frère est tout comme vous. Il est très intéressé par la recréation du Livre de Magie Ultime.";
+				next;
+				mes "[Master Velofos]";
+				mes "Son nom est Galfos.";
+				mes "Il s'intéresse énormément aux Livres de Magie anciens.";
+				next;
+				mes "[Master Velofos]";
+				mes "Je ne l'ai pas soutenu ni lui donné de conseils pour ses recherches, car je pensais qu'il y renoncerait assez rapidement, mais...";
+				next;
+				mes "[Master Velofos]";
+				mes "S'il a découvert quelque chose d'utile, cela pourrait peut-être vous aider.";
+				next;
+				select("Where's Galfos now?");
+				mes "[Master Velofos]";
+				mes "J'ai entendu dire qu'il se trouve près du Camp de l'Expedition au-delà du Rift Dimensionnel à la recherche d'informations sur les Anciens Livres Magiques.";
+				next;
+				mes "[Master Velofos]";
+				mes "Si vous voulez le voir, vous devriez préparer un long voyage.";
+				set mac_book,2;
+				close;
+			}
+			if (mac_book > 1) {
+				mes "[Master Velofos]";
+				mes "Galfos se trouve près du Camp de l'Expedition au-delà du Rift Dimensionnel.";
+				next;
+				mes "[Master Velofos]";
+				mes "Si vous voulez le voir, vous devriez préparer un long voyage.";
+				close;
+			}
+		}
+		mes "[Master Velofos]";
+		mes "Ha ha, désolé, mais vous devriez vous concentrer sur le renforcement de votre corps plutôt que sur la création de Livres Magiques.";
+		close;
+	}
+}
+
+geffen_in,175,112,4	script	Lea	2_F_MAGICMASTER,{
+	if (checkweight(1201,1) == 0) {
+		mes "Vous transportez trop d'objets. Veuillez faire de la place dans votre sac en premier.";
+		close;
+	}
+	if ((MaxWeight - Weight) < 1000) {
+		mes "Vous êtes surchargé d'objets. Veuillez perdre un peu de poids en objets en premier.";
+		close;
+	}
+	if (wm_book > 0 && ((eaclass()&EAJ_THIRDMASK)==EAJ_WARLOCK)) {
+		mes "[Lea]";
+		mes "Comment puis-je vous aider ?";
+		next;
+		select("Master Velofos asked me to bring his Magic Book.");
+		mes "[Lea]";
+		mes "Vous empruntez un livre ?";
+		next;
+		switch (select("Let me think.:I want the Intermediate Magic Books.:I want the Superior Magic Books.:I want the Ultimate Magic Books.")) {
+		case 1:
+			mes "[Lea]";
+			mes "Pas de problème.";
+			close;
+		case 2:
+			mes "[Lea]";
+			mes "Ah, vous voulez donc les Livres de Magie Intermédiaires. Si vous versez un dépôt de prêt^4d4dffde 100 000 z^000000, nous vous prêterons un Livre de Magie Intermédiaire.";
+			next;
+			mes "[Lea]";
+			mes "Quel type de livre de magie souhaitez-vous ?";
+			next;
+			set .@i, select("Let me think.:Magic Book (Storm Gust):Magic Book (Lord of Vermillion):Magic Book (Meteor Storm)")-1;
+			mes "[Lea]";
+			if (!.@i) {
+				mes "Pas de problème.";
+				close;
+			}
+			setarray .@Books[0],100065,100066,100067;
+			if (countitem(.@Books[.@i-1])) {
+				mes "Vous possédez déjà ce livre de magie. Vous ne pouvez pas emprunter un nouveau livre tant que vous n'avez pas rendu celui-ci.";
+				next;
+				mes "[Lea]";
+				mes "Ne savez-vous pas combien d'autres voudraient le livre que vous avez déjà ? Il est un peu égoïste de vouloir plus qu'un seul, vous comprenez.";
+				close;
+			}
+			if (Zeny > 99999) {
+				mes "Merci pour votre dépôt. La date de retour du livre est inscrite sur la carte de prêt au dos de la couverture. Veuillez essayer de ne pas perdre ou endommager le livre et évitez de devoir payer une indemnité.";
+				next;
+				mes "[Lea]";
+				mes "Les livres de magie Intermédiaire et Supérieure doivent être rendus lors du prêt du Livre de Magie Ultime. Rappelez-vous que vous les prêtez simplement, alors assurez-vous de bien prendre soin de ces livres.";
+				Zeny -= 100000;
+				getitem .@Books[.@i-1],1; //WL_MB_SG, WL_MB_LOV, WL_MB_MS
+				close;
+			}
+			mes "Le dépôt de prêt^4d4dffest de 100 000 z^000000. Le dépôt a été ajusté selon l'évolution du Livre de Magie.";
+			close;
+		case 3:
+			mes "[Lea]";
+			mes "Oh, vous voulez les Livres de Magie Supérieurs ? La politique a été modifiée pour accepter les dépôts de prêt sans condition, au lieu des conditions de prêt exigeantes existantes.";
+			mes "Le dépôt de prêt^4d4dffpour le Livre de Magie Supérieur est de 500 000 z^000000.";
+			next;
+			mes "[Lea]";
+			mes "Quel type de livre de magie souhaitez-vous ?";
+			next;
+			set .@i, select("Let me think.:Magic Book (Drain Life):Magic Book (Jack Frost):Magic Book (Earth Strain):Magic Book (Crimson Rock):Magic Book (Chain Lightning)")-1;
+			mes "[Lea]";
+			if (!.@i) {
+				mes "Pas de problème.";
+				close;
+			}
+			setarray .@Books[0],100068,100069,100070,100071,100072;
+			if (countitem(.@Books[.@i-1])) {
+				mes "Vous possédez déjà ce livre de magie. Vous ne pouvez pas emprunter un nouveau livre tant que vous n'avez pas rendu celui-ci.";
+				next;
+				mes "[Lea]";
+				mes "Ne savez-vous pas combien d'autres voudraient le livre que vous avez déjà ? Il est un peu égoïste de vouloir plus qu'un seul, vous comprenez.";
+				close;
+			}
+			if (Zeny > 499999) {
+				mes "Merci pour votre dépôt. La date de retour du livre est inscrite sur la carte de prêt au dos de la couverture. Veuillez essayer de ne pas perdre ou endommager le livre et évitez de devoir payer une indemnité.";
+				next;
+				mes "[Lea]";
+				mes "Les livres de magie Intermédiaire et Supérieure doivent être rendus lors du prêt du Livre de Magie Ultime. Rappelez-vous que vous les prêtez simplement, alors assurez-vous de bien prendre soin de ces livres.";
+				Zeny -= 500000;
+				getitem .@Books[.@i-1],1; //WL_MB_DL, WL_MB_JF, WL_MB_ES, WL_MB_CR, WL_MB_CL
+				close;
+			}
+			mes "La caution pour le ^4d4dffprêt^000000 est de 500 000 z. Le dépôt a été ajusté car le Livre de Magie a changé.";
+			close;
+		case 4:
+			if ((BaseLevel > 139) && (mac_book < 1) && ((getskilllv(2217) > 0) || (getskilllv(2213) > 0))) {
+				mes "[Lea]";
+				mes "Est-ce que... Est-ce que vous venez de dire le Livre de Magie Ultime ?";
+				next;
+				mes "[Lea]";
+				mes "Oh, mon Dieu....";
+				mes "Je ne peux pas croire qu'on veuille vraiment ce livre.";
+				next;
+				select("Please don't say that you don't have it.");
+				mes "[Lea]";
+				mes "Honnêtement, je n'ai jamais même vu le Livre de Magie Ultime.";
+				next;
+				mes "[Lea]";
+				mes "Vous devriez demander au Maître Velofos si vous voulez en savoir plus sur ce livre.";
+				next;
+				mes "[Lea]";
+				mes "Je suis désolé(e) de ne pas pouvoir vous aider davantage que cela.";
+				set mac_book,1;
+				close;
+			}
+			if ((BaseLevel > 139) && (mac_book > 0) && ((getskilllv(2217) > 0) || (getskilllv(2213) > 0))) {
+				mes "[Lea]";
+				mes "Vous devriez demander au Maître Velofos des informations sur ce livre.";
+				close;
+			}
+			mes "[Lea]";
+			mes "Eh bien... pourquoi ne pas vous entraîner un peu plus longtemps avant cela ?";
+			next;
+			mes "[Lea]";
+			mes "Pour obtenir le Livre de Magie Ultime, vous devez atteindre le niveau 140 et apprendre Tetera Bolt et Comet.";
+			next;
+			mes "[Lea]";
+			mes "Ce livre ne peut être utilisé par n'importe qui, tu sais ?";
+			close;
+		}
+	}
+	mes "[Lea]";
+	mes "Bienvenue dans l'Archiviste Magique. Vous pouvez lire et emprunter des livres d'ici sous certaines conditions.";
+	close;
+}
+
+mid_camp,255,244,4	script	Galfos	4_M_JOB_WIZARD,{
+	if (checkweight(1201,1) == 0) {
+		mes "Vous transportez trop d'objets. Veuillez faire de la place dans votre sac en premier.";
+		close;
+	}
+	if ((MaxWeight - Weight) < 1000) {
+		mes "Vous êtes surchargé d'objets. Veuillez perdre un peu de poids en objets en premier.";
+		close;
+	}
+	if ((Upper == 2) && (Class != Job_Baby_Warlock)) {
+		mes "[Galfos]";
+		mes "Qu'est-ce que tu es, un bébé ?";
+		mes "Je ne suis pas là pour garder les bébés. Disparais !";
+		close;
+	}
+	if ((eaclass()&EAJ_THIRDMASK)!=EAJ_WARLOCK) {
+		mes "[Galfos]";
+		mes "Mon bras droit a chaud tandis que mon bras gauche a froid. Je n'arrive jamais à m'habituer à ce temps bizarre !";
+		close;
+	}
+	if (getskilllv(2230) < 1) {
+		mes "[Galfos]";
+		mes "Ah, je vais me mettre dans le pétrin si je reste ici plus longtemps. Peut-être que je suis déjà dedans...";
+		close;
+	}
+	if (BaseLevel < 140 || (getskilllv(2217) < 1 && getskilllv(2213) < 1)) {
+		mes "[Galfos]";
+		mes "Désolé, mais je ne parle pas aux gens qui ne sont même pas prêts pour ça.";
+		close;
+	}
+	if (mac_book < 2) {
+		mes "[Galfos]";
+		mes "Tu as l'air fort, mais tu n'as pas l'air d'avoir affaire à moi.";
+		close;
+	}
+	if (mac_book == 2) {
+		mes "[Galfos]";
+		mes "Qu'est-ce qui vous amène ici ?";
+		next;
+		select("I heard that you've studied the Ultimate Magic Book.");
+		mes "[Galfos]";
+		mes "Ah, vous aussi vous êtes intéressé ?";
+		mes "Je ne savais pas que quelqu'un s'intéresserait réellement à ce livre. Oui, j'étudie ce livre de magie. Comment avez-vous découvert cela ?";
+		next;
+		select("You're Velof's brother, right?");
+		mes "[Galfos]";
+		mes "Oui, je suis Galfos et Velofos est mon frère.";
+		next;
+		mes "[Galfos]";
+		mes "Attendez une seconde,";
+		mes "c'est l'homme âgé qui m'a recommandé à vous ?";
+		next;
+		select("That's right.");
+		mes "[Galfos]";
+		mes "Wow!";
+		mes "C'est surprenant. Il ne prenait jamais mes recherches très au sérieux. Je suis ravi qu'il ait enfin changé d'avis.";
+		next;
+		mes "[Galfos]";
+		mes "Hein ! Votre timing ne pourrait pas être meilleur : je cherchais un objet de test.";
+		next;
+		select("A test object?");
+		mes "[Galfos]";
+		mes "Honnêtement, je n'intéresse que la création du Livre de Magie Ultime.";
+		next;
+		mes "[Galfos]";
+		mes "Je ne suis pas doué pour utiliser la magie, sans compter que je préfère les poings dans les combats. Néanmoins, je trouve les livres de magie incroyablement intrigants.";
+		next;
+		mes "[Galfos]";
+		mes "Le problème est que je ne peux pas utiliser le Livre de Magie Ultime, même si j'en créais un. C'est pourquoi je ne peux vraiment pas le tester tout seul.";
+		next;
+		mes "[Galfos]";
+		mes "^FF0000C'est pourquoi j'ai attendu un véritable praticien de la magie comme vous, capable de m'aider à tester mon Livre de Magie Ultime.";
+		next;
+		select("(What is he talking about?)");
+		mes "[Galfos]";
+		mes "Mes recherches sont presque terminées,";
+		mes "et je dois résoudre un dernier problème pour créer le Livre de Magie.";
+		next;
+		mes "[Galfos]";
+		mes "Pour fabriquer l'ancien Livre de Magie Ultime, j'ai besoin d'un artefact et de quelques sorts à y fusionner.";
+		next;
+		mes "[Galfos]";
+		mes "J'ai parfaitement restauré les sorts basés sur les anciens documents, mais je n'ai toujours aucune information concernant l'artefact nécessaire.";
+		next;
+		mes "[Galfos]";
+		mes "Ah, mais il y a une issue !";
+		next;
+		select("(Now we're getting somewhere!)");
+		mes "[Galfos]";
+		mes "^FF0000Haha...";
+		mes "Il existe une grande archive à El Dicastes, la capitale des Géants Maléfiques, où tout le savoir de ce monde est stocké.";
+		next;
+		mes "[Galfos]";
+		mes "Peut-être que c'est l'endroit idéal pour trouver des informations sur l'artefact nécessaire à ce Livre de Magie Ultime.";
+		next;
+		mes "[Galfos]";
+		mes "Vous savez quoi faire, n'est-ce pas ? Trouvez des informations sur l'artefact dans l'archive d'El Dicastes, en utilisant tout votre pouvoir.";
+		next;
+		mes "[Galfos]";
+		mes "Par la suite, créez et apportez-moi l'artefact. Nous parlerons de la création du Livre Magique par la suite.";
+		set mac_book,3;
+		close;
+	}
+	if (mac_book == 3) {
+		mes "[Galfos]";
+		mes "Vous savez quoi faire, n'est-ce pas ? Trouvez des informations sur l'artefact dans l'archive d'El Dicastes, en utilisant tout votre pouvoir.";
+		next;
+		mes "[Galfos]";
+		mes "Par la suite, créez et apportez-moi l'artefact. Nous parlerons de la création du Livre Magique par la suite.";
+		close;
+	}
+	if (mac_book == 4) {
+		mes "[Galfos]";
+		mes "Oh, avez-vous trouvé";
+		mes "quelque chose d'utile ?";
+		next;
+		set .@i, select("I've discovered everything about Comet.:I've mastered the zenith of Tetra Vortex.");
+		mes "[Galfos]";
+		if ((.@i == 1 && countitem(100073)) || (.@i == 2 && countitem(100074))) {
+			mes "Vous me faites rire ! Vous avez déjà le livre !";
+			close;
+		}
+		if ((.@i == 1 && checkquest(12218) == 2) || (.@i == 2 && checkquest(12219) == 2 && checkquest(12220) == 2 && checkquest(12221) == 2 && checkquest(12222) == 2)) {
+			mes "Oh mon Dieu, je perçois une énergie incroyable émanant de vous. C'est formidable ! Nous sommes maintenant prêts à créer le Livre Magique Ultime.";
+			next;
+			mes "[Galfos]";
+			mes "Il y a cependant un problème : je suis si ruiné que je n'ai même pas assez d'argent pour acheter les outils nécessaires à la fabrication du livre.";
+			next;
+			mes "[Galfos]";
+			mes "J'ai besoin d'au moins ^FF0000500 000 zeny^000000 pour acheter tous les outils nécessaires. Avez-vous l'argent ?";
+			next;
+			if(select("Wh-what? No!:Sure.") == 1) {
+				mes "[Galfos]";
+				mes "Ah, vous n'en avez pas ? C'est décevant, mais je ne peux rien y faire. Revenez quand vous aurez assez d'argent, d'accord ?";
+				close;
+			}
+			mes "[Galfos]";
+			if (Zeny >= 500000) {
+				mes "D'accord alors, commençons !";
+				next;
+				specialeffect2 EF_DISPELL;
+				progressbar "ffff00",4;
+				specialeffect2 EF_LORD;
+				set Zeny, Zeny - 500000;
+				getitem 100072+.@i,1; //WL_MB_CM, WL_MB_TV
+				mes "[Galfos]";
+				mes "Parfois, je perds presque le contrôle face à l'énergie magique incroyable ! Voici votre Livre Magique.";
+				next;
+				mes "[Galfos]";
+				mes "Merci d'avoir réalisé mon rêve. N'hésitez pas à revenir si vous en avez besoin d'un autre.";
+				close;
+			}
+			mes "Eh, qu'est-ce que je t'ai dit ? Je ne peux pas acheter les outils pour fabriquer le livre sans argent !";
+			close;
+		}
+		mes "Es-tu sûr d'avoir trouvé quelque chose ? Il ne semble pas que tu aies appris ce dont nous avons besoin...";
+		close;
+	}
+	mes "[Galfos]";
+	mes "As-tu besoin de quoi que ce soit d'autre ?";
+	close;
+}
+
+dic_in01,25,190,0	script	Mysterious Documents	CLEAR_NPC,{
+	if (isequipped(2782) < 1) {
+		mes "Je ferai mieux de ne pas oublier d'équiper mon anneau.";
+		close;
+	}
+	if (ep13_3_invite < 5) {
+		mes "Lorsque vous approchez des documents, un Géant Maléfique qui ressemble au gestionnaire des archives tente d'appeler le gardien Galton. Vous devriez quitter les lieux rapidement.";
+		close;
+	}
+	if (checkquest(12165,PLAYTIME) == 1) {
+		mes "Les documents vous font ressentir des nausées. Il vaut mieux revenir plus tard, lorsque votre estomac se sera calmé.";
+		close;
+	}
+	if (checkquest(12165,PLAYTIME) == 2) {
+		mes "Vous ne ressentez plus de nausées. Il devrait être sûr de procéder maintenant.";
+		erasequest 12165;
+		close;
+	}
+	if ((BaseLevel < 140) || (getskilllv(2217) < 1) && (getskilllv(2213) < 1)) {
+		mes "Les documents dans ce conteneur ne sont pas lisibles. Ce n'est pas la peine d'essayer de les lire.";
+		close;
+	}
+	specialeffect2 EF_DISPELL;
+	progressbar "ffff00",4;
+	if (mac_book < 3) {
+		mes "Vous avez découvert des registres concernant la magie, l'accélération et les ondes particulaires.";
+		close;
+	}
+	if (mac_book == 3) {
+		mes "Vous avez découvert des registres concernant la magie, l'accélération et les ondes particulaires. Ces documents doivent être ceux que recherche Galfos.";
+		set mac_book, 4;
+		close;
+	}
+	if (mac_book == 4) {
+		set .@r, rand(1,10);
+		if (.@r == 1) {
+			if (getskilllv(2213) > 0) {
+				if (checkquest(12218) == 1) {
+					mes "Vous possédez déjà ce document.";
+					close;
+				}
+				mes "^660066Pour créer l'essence de lave, vous devez raffiner 40 Cœurs Brûlants au lieu le plus chaud du 2e étage du Donjon du Volcan de Thor.^000000";
+				mes "^660066Vous devez faire cela en utilisant la plus grande puissance de cet endroit. Les Humains ont utilisé cette méthode pour étudier l'accélération des particules magiques depuis l'Antiquité.^000000";
+				next;
+				mes "Vous avez découvert le ^990099Méthode de Création de l'Essence de Lave^000000. Veuillez vérifier votre fenêtre de Quête pour plus de détails.";
+				specialeffect2 EF_STEAL;
+				close2;
+				setquest 12218;
+				end;
+			}
+			mes "Rien dans ce document ne semble utile.";
+			close;
+		}
+		if (.@r == 2) {
+			if (getskilllv(2217) > 0) {
+				if (checkquest(12219) == 1) {
+					mes "Vous possédez déjà ce document.";
+					close;
+				}
+				mes "^660066L'essence de flamme peut être raffinée sur un sol stable au 1er étage du Donjon du Volcan de Thor. 10 Charbons d'Amour sont nécessaires pour raffiner l'essence.^000000";
+				mes "^660066Selon les informations des Humains, cette essence constitue l'un des quatre éléments naturels.^000000";
+				next;
+				mes "Vous avez découvert le ^990099Méthode de Création de l'Essence de Flamme^000000. Veuillez vérifier votre fenêtre de Quête pour plus de détails.";
+				specialeffect2 EF_STEAL;
+				close2;
+				setquest 12219;
+				end;
+			}
+			mes "Rien dans ce document ne semble utile.";
+			close;
+		}
+		if (.@r == 3) {
+			if (getskilllv(2217) > 0) {
+				if (checkquest(12220) == 1) {
+					mes "Vous possédez déjà ce document.";
+					close;
+				}
+				mes "^660066J'ai réussi à raffiner l'essence du glacier au plus profond de la 3ème étage de la Grotte de Glace. Si vous souhaitez tenter le coup, préparez 10 Coeurs de Glace et rendez-vous à l'emplacement suivant.^000000";
+				next;
+				mes "Vous avez découvert la ^990099Méthode de Création de l'Essence du Glacier^000000. Veuillez consulter votre fenêtre de Quête pour plus de détails.";
+				specialeffect2 EF_STEAL;
+				close2;
+				setquest 12220;
+				end;
+			}
+			mes "Rien dans ce document ne semble utile.";
+			close;
+		}
+		if (.@r == 4) {
+			if (getskilllv(2217) > 0) {
+				if (checkquest(12221) == 1) {
+					mes "Vous possédez déjà ce document.";
+					close;
+				}
+				mes "^660066J'ai été capable de raffiner l'essence du fossile à partir des vieilles roches au 2ème étage du Donjon de la Mine. Jusqu'à présent, cet endroit est le plus stable parmi tous les terrains d'essai.^000000";
+				mes "Si vous souhaitez tenter le coup, préparez 10 Jubilé et descendez dans le donjon. Bonne chance.^000000";
+				next;
+				mes "Vous avez découvert la ^990099Méthode de Création de l'Essence du Fossile^000000. Veuillez consulter votre fenêtre de Quête pour plus de détails.";
+				specialeffect2 EF_STEAL;
+				close2;
+				setquest 12221;
+				end;
+			}
+			mes "Rien dans ce document ne semble utile.";
+			close;
+		}
+		if (.@r == 5) {
+			if (getskilllv(2217) > 0) {
+				if (checkquest(12222) == 1) {
+					mes "Vous possédez déjà ce document.";
+					close;
+				}
+				mes "^660066Pour raffiner l'essence de la tempête, je me suis rendu au Damier du Hermite à Kunlun, là où réside l'esprit du vent.^000000";
+				mes "Le processus de raffinage était facile, mais j'ai eu du mal à trouver le catalyseur : les Dents de Dragon.^000000";
+				next;
+				mes "Vous avez découvert la ^990099Méthode de Création de l'Essence de la Tempête^000000. Veuillez consulter votre fenêtre de Quête pour plus de détails.";
+				specialeffect2 EF_STEAL;
+				close2;
+				setquest 12222;
+				end;
+			}
+			mes "Rien dans ce document ne semble utile.";
+			close;
+		}
+		if (.@r == 10) {
+			mes "Vous vous sentez soudainement malade, et cette nausée ne passera pas facilement. Vous devriez essayer de trouver les documents dont vous avez besoin plus tard.";
+			setquest 12165;
+			close;
+		}
+		mes "Rien ici n'a l'air spécial.";
+		close;
+	}
+	mes "Vous n'avez plus besoin de chercher dans cet endroit.";
+	close;
+}
+
+function	script	Magic_Book_Essence	{
+	if (MaxWeight - Weight < 1000) {
+		mes "Veuillez alléger votre sac.";
+		close;
+	}
+	.@item_req = getarg(1);
+	.@req_amount = getarg(2);
+	if (checkquest(getarg(0)) == 1 && countitem(.@item_req) >= .@req_amount) {
+		specialeffect2 EF_BLIND;
+		specialeffect2 EF_BEGINSPELL;
+		progressbar "ffff00",4;
+		delitem .@item_req,.@req_amount;
+		if (rand(2)) {
+			mes "You have used "+ callfunc("F_InsertPlural",.@req_amount,getitemname(.@item_req)) +" to create ^999900"+ getarg(3) +" Essence^000000.";
+			next;
+			mes "^008800The "+getarg(3)+" Essence will last permanently, unless there's a problem.^000000";
+			completequest getarg(0);
+			specialeffect2 EF_LORD;
+			close;
+		}
+		mes "^008888You have failed to refine the essence using "+ callfunc("F_InsertPlural",.@req_amount,getitemname(.@item_req)) +".^000000";
+		close;
+	}
+	if (checkquest(getarg(0)) == 2) {
+		mes "You've already created "+getarg(3)+" Essence in this area.";
+		close;
+	}
+	mes "Quelqu'un a déjà utilisé cette zone.";
+	close;
+}
+thor_v02,163,104,0	script	Powerful Lava Energy#33	CLEAR_NPC,{ callfunc "Magic_Book_Essence",12218,7097,40,"Lava"; end; }
+thor_v01,185,91,0	script	Powerful Flame Energy#33	CLEAR_NPC,{ callfunc "Magic_Book_Essence",12219,7098,10,"Flame"; end; }
+ice_dun03,137,148,0	script	Powerful Glacier Energy	CLEAR_NPC,{ callfunc "Magic_Book_Essence",12220,7561,10,"Glacier"; end; }
+ein_dun02,181,124,0	script	Powerful Fossil Energy	CLEAR_NPC,{ callfunc "Magic_Book_Essence",12221,7312,10,"Fossil"; end; }
+gon_dun02,252,198,0	script	Powerful Storm Energy#33	CLEAR_NPC,{ callfunc "Magic_Book_Essence",12222,7266,10,"Storm"; end; }

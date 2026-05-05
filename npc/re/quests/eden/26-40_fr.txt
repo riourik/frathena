@@ -1,0 +1,676 @@
+//===== rAthena Script =======================================
+//= Eden Group Quests - Mission [26 - 40]
+//===== By: ==================================================
+//= L0ne_W0lf
+//===== Current Version: =====================================
+//= 1.4
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Repetable Quests for Players between Baselevel 26 - 40.
+//===== Additional Comments: =================================
+//= 1.0 First Version.
+//= 1.1 Some little optimization here and there. [Masao]
+//= 1.2 Optimized. [Euphy]
+//= 1.3 Added support to Para_Team_Mark_ in Eden Group. [Ragno]
+//= 1.4 Added use of F_HasEdenGroupMark function. [Ragno]
+//============================================================
+
+moc_para01,38,38,3	script	Mission [26 - 40]	857,{
+	if (!callfunc("F_HasEdenGroupMark")) {
+		mes "Vous n'êtes pas un membre qualifié. Vous ne pouvez pas utiliser le tableau d'affichage.";
+		close;
+	}
+	mes "[Tableau des missions de niveau 26 à 40]";
+	mes "- De nombreuses missions sont -";
+	mes "- affichées sur le tableau. -";
+	next;
+	if ((BaseLevel < 26) || (BaseLevel > 40)) {
+		mes "Votre niveau n'est pas qualifié. Vous ne pouvez pas utiliser le tableau d'affichage.";
+		close;
+	}
+	switch(select("Hunting Mission:Delivery Mission:Gathering Mission:Escort Mission")) {
+	case 1:
+		mes "[Tableau des missions de chasse]";
+		mes "- Les détails des missions de chasse sont -";
+		mes "- affichés sur le tableau. -";
+		next;
+		switch(select("Hunting Poison Spore:Hunting Smokie:Hunting Elder Willow(Above Lv.30):Hunting Coco(Above Lv.35):Hunting Thara Frog(Above Lv.38)")) {
+			case 1: callsub L_Quest,8266,0,"Hunting Poison Spore","Sponiac","Geffen","Hunt 10 Poison Spores";
+			case 2: callsub L_Quest,8267,0,"Hunting Smokie","Sponiac","Geffen","Hunt 10 Smokies";
+			case 3: callsub L_Quest,8268,30,"Hunting Elder Willow","Sponiac","Geffen","Hunt 10 Elder Willows";
+			case 4: callsub L_Quest,8269,35,"Hunting Coco","Sponiac","Geffen","Hunt 10 Cocos";
+			case 5: callsub L_Quest,8270,38,"Hunting Thara Frog","Sponiac","Geffen","Hunt 10 Thara Frogs";
+		}
+	case 2:
+		mes "[Tableau des missions de livraison]";
+		mes "- Les détails des missions de livraison sont -";
+		mes "- affichés sur le tableau. -";
+		next;
+		switch(select("Deliver an Insecticide:Deliver Honey:Deliver Blanket(Above Lv.35)")) {
+			case 1: callsub L_Quest,8271,0,"Deliver an Insecticide","Dieshin Man","Morocc Ruins","Get an 'Insecticide' from Dieshin Man and deliver it south east of Payon";
+			case 2: callsub L_Quest,8272,0,"Deliver Honey","Dieshin Man","Morocc Ruins","Get 'Honey' from Dieshin Man and deliver it west of St. Capitolina Abbey";
+			case 3: callsub L_Quest,8273,35,"Deliver Blanket","Dieshin Man","Morocc Ruins","Get Blankets from Dieshin Man and deliver to the field south of Lutie";
+		}
+	case 3:
+		mes "[Tableau des missions de collecte]";
+		mes "- Les détails des missions de collecte sont -";
+		mes "- affichés sur le tableau. -";
+		next;
+		switch(select("Gather Bones:Gather Animal Skins:Gather Peelings(Above Lv.30):Gather Tails(Above Lv.32):Gather Cookies(Above Lv.35):Gather Mustaches(Above Lv.35)")) {
+			case 1: callsub L_Quest,8274,0,"Gather Bones","Dashia","Payon","Gather '10 Skel-Bones' and give them to Dashia";
+			case 2: callsub L_Quest,8275,0,"Gather Animal Skins","Dashia","Payon","Gather '10 Bear's Footskins' and '5 Animal Skins' and give them to Dashia";
+			case 3: callsub L_Quest,8276,30,"Gather Peelings","Dashia","Payon","Gather '20 Worm Peelings' and '20 Garlets' and give them to Dashia";
+			case 4: callsub L_Quest,8277,32,"Gather Tails","Dashia","Payon","Gather '10 Yoyo Tails', '10 Acorns' and '10 Raccon Leafs' and give them to Dashia";
+			case 5: callsub L_Quest,8278,35,"Gather Cookies","Dashia","Payon","Gather '5 Well-baked Cookies' and '1 Piece of Cake' and give them to Dashia";
+			case 6: callsub L_Quest,8279,35,"Gather Mustaches","Dashia","Payon","Gather '5 Mole Whiskers' and '3 Mole Claws' and give them to Dashia";
+		}
+	case 4:
+		mes "[Tableau des missions d'escorte]";
+		mes "Aucune mission d'escorte n'est actuellement enregistrée sur le tableau.";
+		close;
+	}
+	end;
+L_Quest:
+	//QuestID,ReqLvl,Quest,Client,Loc,Desc
+	.@string$ = getarg(2);
+	if (BaseLevel < getarg(1,26)) {
+		mes "Your level doesn't meet the requirements. You can't take the '"+ .@string$ +"' mission.";
+		close;
+	}
+	mes "["+ .@string$ +" !!]";
+	mes "Client : "+getarg(3);
+	mes "Client Location : "+getarg(4);
+	mes "Requested Mission : "+getarg(5);
+	mes " ";
+	mes "Voulez-vous accepter cette mission ?";
+	next;
+	if(select("No, I won't accept it.:Yes, I will accept it.") == 1) {
+		mes "You have declined the "+ .@string$ +" mission.";
+		close;
+	}
+	if (checkquest(getarg(0)) > -1) mes "Vous êtes déjà en train de réaliser cette mission.";
+	else {
+		setquest getarg(0);
+		mes "You have accepted the "+ .@string$ +" mission.";
+	}
+	mes "Vous pourrez obtenir une récompense du client après avoir terminé la mission.";
+	next;
+	mes "Pour plus de détails, veuillez appuyer sur 'Alt + U' pour obtenir plus d'informations depuis la fenêtre des quêtes.";
+	close;
+}
+
+geffen,103,42,5	script	Sponiac	99,{
+	if (checkweight(1201,1) == 0 || (MaxWeight - Weight) < 3500) {
+		mes "[Sponiac]";
+		mes "Pourquoi portez-vous autant d'objets ?";
+		mes "Êtes-vous dans un cours d'entraînement ou quelque chose comme ça ?";
+		close;
+	}
+	mes "[Sponiac]";
+	mes "Lu~lu~lu~lu~";
+	mes "Lu~ Euh ?...";
+	next;
+	mes "[Sponiac]";
+	mes "Waouh, tu dois être un débutant, non ?";
+	mes "Quel visage innocent ! Ha~ hahaha.";
+	emotion ET_KIK;
+	next;
+	mes "[Sponiac]";
+	mes "Pourquoi ne chasses-tu pas dehors au lieu de te promener et perdre ton temps ?";
+	next;
+	if(select("I am about to leave now.:I've got a Hunting Mission.") == 1) {
+		mes "[Sponiac]";
+		mes "Oh, bon. Alors, amuse-toi bien.";
+		mes "Au revoir~ au revoir.";
+		close;
+	}
+	mes "[Sponiac]";
+	mes "Oh, vous venez du groupe Eden ?";
+	mes "Quelle mission avez-vous ?";
+	next;
+	switch(select("Hunting Poison Spore:Hunting Smokie:Hunting Elder Willow:Hunting Coco:Hunting Thara Frog")) {
+		case 1: callsub L_Quest,8266,"Hunting Poison Spore",1000,0,100,"You can find Poison Spores on the Geffen Dungeon 1F or northeast of Prontera. There are other spots but I'll leave it up to you to find out.";
+		case 2: callsub L_Quest,8267,"Hunting Smokie",1000,0,100,"You can find Smokies northeast and northwest of Geffen. Oh, also the field east of Ayothaya is good spot to find them.";
+		case 3: callsub L_Quest,8268,"Hunting Elder Willow",1000,100,110,"You can find Elder Willows northeast of Geffen, east of payon and southwest of Prontera.";
+		case 4: callsub L_Quest,8269,"Hunting Coco",1000,200,150,"You can find Cocos around the east of Payon, southwest of Prontera and the field east of Ayothaya.";
+		case 5: callsub L_Quest,8270,"Hunting Thara Frog",1500,300,200,"You can find Thara Frogs in the Cave east of Comodo or on Turtle Island.";
+	}
+	end;
+L_Quest:
+	//QuestID,Quest,BExp,JExp,PotionAmt,Desc
+	.@quest_id = getarg(0);
+	if (checkquest(.@quest_id) == 1) {
+		if (checkquest(.@quest_id,HUNTING) == 2) {
+			mes "[Sponiac]";
+			mes getarg(1)+"!";
+			mes "Waouh, je ne m'attendais pas à ce que tu réalises cette mission. J'allais presque abandonner. Mais tu as bien travaillé. Je t'en suis reconnaissant !";
+			next;
+			mes "[Sponiac]";
+			mes "Bon, j'ai demandé la mission et vous avez fait un excellent travail.";
+			mes "Je vous donnerai une récompense comme je l'ai promis.";
+			next;
+			mes "[Sponiac]";
+			mes "Voilà. Merci beaucoup. Que Dieu vous bénisse !";
+			getitem 569,getarg(4); //Novice_Potion
+			getexp getarg(2),getarg(3);
+			erasequest .@quest_id;
+			close;
+		}
+		mes "[Sponiac]";
+		mes "Oh, vous avez raison.";
+		next;
+		mes "[Sponiac]";
+		mes "Mais, vous n'avez pas encore fait la mission. Pourquoi êtes-vous venu me voir maintenant ? Vous n'avez pas terminé la mission !";
+		mes "Je vous donnerai une récompense si vous terminez la mission. D'accord ? C'est bon ?";
+		next;
+		mes "[Sponiac]";
+		mes getarg(5);
+		mes "Vous pouvez consulter la carte du monde en appuyant sur les touches 'ctrl + ~'.";
+		next;
+		mes "[Sponiac]";
+		mes "De toute façon, je serai ici en attendant. Veuillez revenir lorsque la quête sera terminée !";
+		close;
+	}
+	mes "[Sponiac]";
+	mes "Hé ? Tu es sûr ? Quelque chose ne va pas...";
+	next;
+	mes "[Sponiac]";
+	mes "C'est étrange.";
+	mes "Veuillez vérifier votre fenêtre de Quête en appuyant sur 'alt + u'.";
+	close;
+}
+
+moc_ruins,173,55,3	script	Dieshin Man	89,{
+	if (checkweight(1201,1) == 0 || (MaxWeight - Weight) < 3500) {
+		mes "[Homme de Dieshin]";
+		mes "Pourquoi portez-vous autant d'objets ?";
+		mes "Êtes-vous dans un cours d'entraînement ou quelque chose comme ça ?";
+		close;
+	}
+	mes "[Homme de Dieshin]";
+	mes "Hu hu~~ nous sommes des messagers~";
+	mes "Nous sommes plus rapides que n'importe quel vol~!";
+	next;
+	mes "[Homme de Dieshin]";
+	mes "Bienvenue~ bienvenue !";
+	mes "Nous sommes la société de livraison la plus rapide, Dieshin Corporation.";
+	next;
+	mes "[Homme de Dieshin]";
+	mes "Comment puis-je t'aider?";
+	next;
+	if(select("I don't need help.:I've got a Delivery Mission.") == 1) {
+		mes "[Homme de Dieshin]";
+		mes "Oh, bon. Alors, amusez-vous bien. Au revoir~!";
+		close;
+	}
+	mes "[Homme de Dieshin]";
+	mes "Oh, vous venez du groupe Eden ?";
+	mes "Quelle mission avez-vous ?";
+	next;
+	switch(select("Deliver an Insecticide.:Deliver Honey.:Deliver Blankets.")) {
+		case 1: callsub L_Quest,8271;
+		case 2: callsub L_Quest,8272;
+		case 3: callsub L_Quest,8273;
+	}
+	end;
+L_Quest:
+	if (checkquest(getarg(0)) != 1) {
+		mes "[Homme de Dieshin]";
+		mes "Hé ? Tu es sûr ? Quelque chose ne va pas...";
+		next;
+		mes "[Homme de Dieshin]";
+		mes "C'est étrange.";
+		mes "Veuillez vérifier votre fenêtre de Quête en appuyant sur 'alt + u'.";
+		close;
+	}
+	if (countitem(6218) > 0) {
+		mes "[Homme de Dieshin]";
+		mes "Attendez, mais vous avez déjà une boîte de livraison.";
+		next;
+		mes "[Homme de Dieshin]";
+		mes "Nous ne pouvons pas vous laisser livrer deux boîtes en même temps. Veuillez donc terminer votre livraison actuelle d'abord.";
+		next;
+		mes "[Homme de Dieshin]";
+		mes "Si vous avez oublié l'endroit où livrer, veuillez vérifier la fenêtre des Quêtes en appuyant sur 'alt + u'.";
+		close;
+	}
+	switch(getarg(0)) {
+	case 8271:
+		mes "[Homme de Dieshin]";
+		mes "Ah ha ! J'ai compris !";
+		mes "Le pesticide ? Cela doit être le Zoologiste au sud-est de Payon qui a commandé le Pesticide.";
+		break;
+	case 8272:
+		mes "[Homme de Dieshin]";
+		mes "Ah ha ! J'ai compris !";
+		mes "Du miel ? Cela doit être l'Entomologiste à l'ouest du Monastère Saint-Capitolina, qui se trouve au nord-est de Prontera, ayant commandé le Miel.";
+		break;
+	case 8273:
+		mes "[Homme de Dieshin]";
+		mes "Ah, oui !";
+		mes "Les couvertures ! Cela doit être le biologiste au sud du champ de Lutie qui a commandé les couvertures.";
+		next;
+		mes "[Homme de Dieshin]";
+		mes "Vous pouvez aller à Lutie en demandant à M. Claus dans la partie nord-est d'Al De Baran.";
+		break;
+	}
+	next;
+	mes "[Homme de Dieshin]";
+	mes "Le motif de coopération de Dieshin est de fournir une livraison rapide et fiable. Veuillez donc le livrer maintenant sans aucun délai.";
+	next;
+	mes "[Homme de Dieshin]";
+	mes "Si vous avez oublié l'endroit où faire la livraison, veuillez vérifier la fenêtre des Quêtes en appuyant sur 'alt + u'.";
+	getitem 6218,1; //Disin_Delivery_Box
+	close;
+}
+
+pay_fild07,83,89,7	script	Zoologist	89,{
+	if (checkweight(1201,1) == 0 || (MaxWeight - Weight) < 3500) {
+		mes "[Zoologiste]";
+		mes "Pourquoi portez-vous autant d'objets ?";
+		mes "Êtes-vous dans un cours d'entraînement ou quelque chose comme ça ?";
+		close;
+	}
+	mes "[Zoologiste]";
+	mes "Avez-vous entendu parler d'un monstre nommé Bigfoot ?";
+	mes "Il ressemble à un ours avec une fourrure rouge et a une cicatrice en forme de 'X' sur son épaule.";
+	next;
+	mes "[Zoologiste]";
+	mes "Selon les recherches récentes, les mouches et les monstres Bigfoot entretiennent une relation symbiotique.";
+	next;
+	mes "[Zoologiste]";
+	mes "Je suis actuellement en train d'étudier cela et j'essaie de prouver la théorie. Je prévois donc de tuer les mouches autour du Bigfoot pour observer sa réaction.";
+	next;
+	if(select("...I am not interested.:Here is the Insecticide.") == 1) {
+		mes "[Zoologiste]";
+		mes "Oh, j'ai besoin d'un Insecticide pour continuer l'étude.";
+		close;
+	}
+	if (checkquest(8271) != 1) {
+		mes "[Zoologiste]";
+		mes "Hein?";
+		mes "Vous n'êtes pas le facteur de Dieshin ?";
+		next;
+		mes "[Zoologiste]";
+		mes "Je attends une livraison spéciale.";
+		close;
+	}
+	if (countitem(6218) > 0) {
+		mes "[Zoologiste]";
+		mes "Oh ho ! Oui, celui-là !";
+		next;
+		mes "[Zoologiste]";
+		mes "C'est l'Insecticide que j'ai commandé ! Vous avez été envoyé par Dieshin, n'est-ce pas ?";
+		next;
+		mes "[Zoologiste]";
+		mes "J'attendais cela depuis longtemps !";
+		mes "Donne-le-moi !";
+		next;
+		mes "[Zoologiste]";
+		mes "Il est arrivé beaucoup plus vite que je ne l'espérais. Je veux le tester tout de suite !";
+		next;
+		mes "[Zoologiste]";
+		mes "Bravo, bien joué ! Merci beaucoup ! Voici un petit cadeau pour vous.";
+		delitem 6218,1; //Disin_Delivery_Box
+		erasequest 8271;
+		getitem 569,100; //Novice_Potion
+		getexp 1000,0;
+		close;
+	}
+	mes "[Zoologiste]";
+	mes "Je suis reconnaissant de votre gentillesse.";
+	mes "Mais, qu'avez-vous apporté ?";
+	next;
+	mes "[Zoologiste]";
+	mes "Hm, je pensais que Dieshin était rapide et précis, mais vous m'apportez une boîte vide. Quelle déception.";
+	next;
+	mes "[Zoologiste]";
+	mes "Veuillez apporter ma commande. Dieshin vous donnera mon produit.";
+	close;
+}
+
+prt_fild03,30,254,3	script	Entomologist	83,{
+	if (checkweight(1201,1) == 0 || (MaxWeight - Weight) < 3500) {
+		mes "[Entomologiste]";
+		mes "Pourquoi portez-vous autant d'objets ?";
+		mes "Êtes-vous dans un cours d'entraînement ou quelque chose comme ça ?";
+		close;
+	}
+	mes "[Entomologiste]";
+	mes "As-tu entendu parler du monstre Corne ?";
+	mes "Il est en forme d'insecte avec une peau noire et lisse, et possède une énorme corne sur sa tête.";
+	next;
+	mes "[Entomologiste]";
+	mes "Des recherches récentes ont montré que ce monstre peut être apprivoisé et dressé par le Miel.";
+	next;
+	mes "[Entomologiste]";
+	mes "Je suis actuellement en train d'étudier cela et de tenter de prouver la théorie. Je prévois donc de tendre un piège à miel aux endroits où il passe habituellement pour observer sa réaction.";
+	next;
+	if(select("...I am not interested.:Here is the Honey.") == 1) {
+		mes "[Entomologiste]";
+		mes "Oh, j'ai besoin de Miel pour continuer l'étude.";
+		close;
+	}
+	if (checkquest(8272) != 1) {
+		mes "[Entomologiste]";
+		mes "Hein?";
+		mes "Vous n'êtes pas le facteur de Dieshin ?";
+		next;
+		mes "[Entomologiste]";
+		mes "Je attends une livraison spéciale.";
+		close;
+	}
+	if (countitem(6218) > 0) {
+		mes "[Entomologiste]";
+		mes "Oh ho ! Oui, celui-là !";
+		next;
+		mes "[Entomologiste]";
+		mes "C'est le Miel que j'ai commandé ! Vous avez été envoyé par Dieshin, n'est-ce pas ?";
+		next;
+		mes "[Entomologiste]";
+		mes "J'attendais cela depuis longtemps !";
+		mes "Donne-le-moi !";
+		next;
+		mes "[Entomologiste]";
+		mes "Il est arrivé beaucoup plus vite que je ne l'espérais. Je veux le tester tout de suite !";
+		next;
+		mes "[Entomologiste]";
+		mes "Bravo, bien joué ! Merci beaucoup ! Voici un petit cadeau pour vous.";
+		delitem 6218,1; //Disin_Delivery_Box
+		erasequest 8272;
+		getitem 569,100; //Novice_Potion
+		getexp 1000,0;
+		close;
+	}
+	mes "[Entomologiste]";
+	mes "Je suis reconnaissant de votre gentillesse.";
+	mes "Mais, qu'avez-vous apporté ?";
+	next;
+	mes "[Entomologiste]";
+	mes "Hm, je pensais que Dieshin était rapide et précis, mais vous m'apportez une boîte vide. Quelle déception.";
+	next;
+	mes "[Entomologiste]";
+	mes "Veuillez apporter ma commande. Dieshin vous donnera mon produit.";
+	close;
+}
+
+xmas_fild01,92,57,3	script	Biologist	97,{
+	if (checkweight(1201,1) == 0 || (MaxWeight - Weight) < 3500) {
+		mes "[Biologiste]";
+		mes "Pourquoi portez-vous autant d'objets ?";
+		mes "Êtes-vous dans un cours d'entraînement ou quelque chose comme ça ?";
+		close;
+	}
+	mes "[Biologiste]";
+	mes "Avez-vous entendu parler du monstre Marin ?";
+	mes "Il ressemble au poring habituel, mais il possède des caractéristiques uniques.";
+	next;
+	mes "[Biologiste]";
+	mes "Les porings volent les objets s'ils les voient par terre. Cependant, le Marin n'a aucun intérêt pour les objets déposés. Je me demandais donc pourquoi le Marin ne prête pas attention aux objets de collecte, même si ce sont la même espèce que les porings.";
+	next;
+	mes "[Biologiste]";
+	mes "Mais, cet endroit est vraiment glacé.";
+	next;
+	if(select("...I am not interested.:Here are the blankets.") == 1) {
+		mes "[Biologiste]";
+		mes "Héhé, peu importe. Mais faites attention ! Il fait très glissant ici.";
+		close;
+	}
+	if (checkquest(8273) != 1) {
+		mes "[Biologiste]";
+		mes "Hein?";
+		mes "Vous n'êtes pas le facteur de Dieshin ?";
+		next;
+		mes "[Biologiste]";
+		mes "Je attends une livraison spéciale.";
+		close;
+	}
+	if (countitem(6218) > 0) {
+		mes "[Biologiste]";
+		mes "Oh ho ! Oui, celui-là !";
+		next;
+		mes "[Biologiste]";
+		mes "Ce sont les couvertures que j'ai commandées ! Vous avez été envoyé par Dieshin n'est-ce pas ?";
+		next;
+		mes "[Biologiste]";
+		mes "J'attendais cela depuis longtemps !";
+		mes "Donne-le-moi !";
+		next;
+		mes "[Biologiste]";
+		mes "C'est arrivé beaucoup plus vite que je ne pensais. Je veux les tester tout de suite !";
+		next;
+		mes "[Biologiste]";
+		mes "Bravo, bien joué ! Merci beaucoup ! Voici un petit cadeau pour vous.";
+		delitem 6218,1; //Disin_Delivery_Box
+		erasequest 8273;
+		getitem 569,100; //Novice_Potion
+		getexp 1000,0;
+		close;
+	}
+	mes "[Biologiste]";
+	mes "Je suis reconnaissant de votre gentillesse.";
+	mes "Mais, qu'avez-vous apporté ?";
+	next;
+	mes "[Biologiste]";
+	mes "Hm, je pensais que Dieshin était rapide et précis, mais vous m'apportez une boîte vide. Quelle déception.";
+	next;
+	mes "[Biologiste]";
+	mes "Veuillez apporter ma commande. Dieshin vous donnera mon produit.";
+	close;
+}
+
+payon,179,66,3	script	Dashia	931,{
+	if (checkweight(1201,1) == 0 || (MaxWeight - Weight) < 3500) {
+		mes "[Dashia]";
+		mes "Pourquoi portez-vous autant d'objets ?";
+		mes "Êtes-vous dans un cours d'entraînement ou quelque chose comme ça ?";
+		close;
+	}
+	mes "[Dashia]";
+	mes "Voici une mèche de cheveux ~ et une horloge cassée !";
+	next;
+	mes "[Dashia]";
+	mes "Horloge cassée..? Hu hu..";
+	next;
+	mes "[Dashia]";
+	mes "Eh ~! Mon gars ! Vous avez l'air d'un aventurier très riche.";
+	next;
+	if(select("I am a poor adventurer.:I have a gathering mission.") == 1) {
+		mes "[Dashia]";
+		mes "Vraiment ? Hmm, oh oui. Vous n'avez pas l'air sophistiqué.";
+		next;
+		mes "[Dashia]";
+		mes "Vous êtes un pauvre aventurier ~ ! Bonne chance !";
+		close;
+	}
+	mes "[Dashia]";
+	mes "Oh, vous venez du groupe Eden ?";
+	mes "Quelle mission avez-vous ?";
+	next;
+	switch(select("Gather Bones:Gather Animal Skin:Gather Peelings:Gather Tails:Gather Cookies:Gather Mustaches")) {
+	case 1:
+		callsub L_Quest,8274;
+		if (countitem(932) > 9) {
+			callsub L_Reward;
+			delitem 932,10; //Skel_Bone
+			getitem 569,100; //Novice_Potion
+			getexp 1000,100;
+			erasequest 8274;
+			close;
+		}
+		mes "[Dashia]";
+		mes "Je vois que vous avez une quête de collecte.";
+		mes "Mais, où sont les Ossements-Squelettes ?";
+		next;
+		mes "[Dashia]";
+		mes "Vous n'avez pas encore accompli la quête. Pourquoi êtes-vous revenu ici ?";
+		next;
+		mes "[Dashia]";
+		mes "Vous n'avez pas assez d'« Os de Squelette »... Vous pouvez les trouver en chassant des Squelettes.";
+		next;
+		mes "[Dashia]";
+		mes "Pour trouver des Squelettes, vous feriez mieux de vérifier le Donjon de Payon niveau 1F, situé dans le Village des Arbalétriers, au nord de Payon.";
+		break;
+	case 2:
+		callsub L_Quest,8275;
+		if ((countitem(948) > 9) && (countitem(919) > 4)) {
+			callsub L_Reward;
+			getitem 569,100; //Novice_Potion
+			delitem 948,10; //Bear's_Foot
+			delitem 919,5; //Animal's_Skin
+			getexp 1000,100;
+			erasequest 8275;
+			close;
+		}
+		mes "[Dashia]";
+		mes "Je vois que vous avez une quête de collecte.";
+		mes "Mais, où sont les Peaux d'Ours et les Peaux d'Animaux ?";
+		next;
+		mes "[Dashia]";
+		mes "Vous n'avez pas encore accompli la quête. Pourquoi êtes-vous revenu ici ?";
+		next;
+		mes "[Dashia]";
+		mes "Vous devez apporter 10 Peaux de Pieds d'Ours et « 5 Peaux d'Animaux !";
+		mes "Vous pouvez trouver les Peaux de Pieds d'Ours chez le Bigfoot et les Peaux d'Animaux chez les Animaux.";
+		next;
+		mes "[Dashia]";
+		mes "Le Bigfoot se trouve autour du nord des champs de Geffen ou du sud-est des champs de Payon.";
+		break;
+	case 3:
+		callsub L_Quest,8276;
+		if ((countitem(955) > 19) && (countitem(910) > 19)) {
+			callsub L_Reward;
+			delitem 955,20; //Worm_Peelings
+			delitem 910,20; //Garlet
+			getitem 569,100; //Novice_Potion
+			getexp 1000,100;
+			erasequest 8276;
+			close;
+		}
+		mes "[Dashia]";
+		mes "Je vois que vous avez une quête de collecte.";
+		mes "Mais, où sont les Écailles de Ver et les Garlets ?";
+		next;
+		mes "[Dashia]";
+		mes "Vous devez apporter « 20 Écailles de Ver » et « 20 Garlets » pour compléter la mission.";
+		next;
+		mes "[Dashia]";
+		mes "Vous pouvez obtenir ces objets chez « Pierre », « André », « Deniro », « Vitata », « Insecte Voleur », « Femme Insecte Voleur » et « Homme Insecte Voleur ».";
+		next;
+		mes "[Dashia]";
+		mes "'Piere', 'Andre', 'Deniro' et 'Vitata' sont dans l'Enfer de Pierre, situé près de la Forteresse Saint Darmain au sud-ouest de Morroc.";
+		next;
+		mes "[Dashia]";
+		mes "'Thief Bug', 'Female Thief Bug' et 'Male Thief Bug' se trouvent dans le Culvert de Prontera. Pour y accéder, vous devez être un volontaire de la force punitive du Culvert de Prontera.";
+		break;
+	case 4:
+		callsub L_Quest,8277;
+		if ((countitem(942) > 9) && (countitem(1026) > 9) && (countitem(945) > 9)) {
+			callsub L_Reward;
+			delitem 942,10; //Yoyo_Tail
+			delitem 1026,10; //Acorn
+			delitem 945,10; //Raccoon_Leaf
+			getitem 569,150; //Novice_Potion
+			getexp 1000,200;
+			erasequest 8277;
+			close;
+		}
+		mes "[Dashia]";
+		mes "Je vois que vous avez une quête de collecte.";
+		mes "Mais où sont les Yoyo Tails, les Acorns et les Raccoon Leafs ?";
+		next;
+		mes "[Dashia]";
+		mes "Vous n'avez pas encore accompli la quête. Pourquoi êtes-vous revenu ici ?";
+		mes "Vous devez apporter '10 Yoyo Tails', '10 Acorns' et '10 Raccoon Leafs' pour compléter la mission.";
+		next;
+		mes "[Dashia]";
+		mes "Vous pouvez obtenir les Yoyo Tails chez 'Yoyo's', les Acorns chez 'Coco's' et les Raccoon Leaf chez 'Smokies'.";
+		next;
+		mes "[Dashia]";
+		mes "Vous les trouverez facilement autour des champs, mais le champ à l'est d'Ayothaya est le meilleur endroit pour chasser les trois monstres.";
+		next;
+		mes "[Dashia]";
+		mes "Pour aller à Ayothaya, il vous vaut mieux vous rendre chez 'Aibakthing' en Alberta et payer sa taxe de voyage.";
+		break;
+	case 5:
+		callsub L_Quest,8278;
+		if ((countitem(538) > 4) && (countitem(539) > 0)) {
+			callsub L_Reward;
+			delitem 538,5; //Well_Baked_Cookie
+			delitem 539,1; //Piece_Of_Cake
+			getitem 569,150; //Novice_Potion
+			getexp 1000,200;
+			erasequest 8278;
+			close;
+		}
+		mes "[Dashia]";
+		mes "Je vois que vous avez une quête de collecte.";
+		mes "Mais où sont les Well-baked Cookies et la Piece of Cake ?";
+		next;
+		mes "[Dashia]";
+		mes "Vous n'avez pas encore accompli la quête. Pourquoi êtes-vous revenu ici ?";
+		mes "Vous devez apporter '5 Biscuits bien cuits' et '1 Gâteau' pour compléter la quête.";
+		next;
+		mes "[Dashia]";
+		mes "Vous pouvez obtenir le Biscuit bien cuit chez 'Cookies', qui porte des chemises rouges ou vertes.";
+		mes "Pour obtenir le Gâteau, vous devez chercher les 'Mystcases'.";
+		next;
+		mes "[Dashia]";
+		mes "Les deux monstres peuvent être trouvés dans l'Entrepôt de l'Usine de Jouets ou la Salle de Surveillance des Jouets. Pour y accéder, demandez à M. Claus situé dans la partie nord-est d'Al De Baran.";
+		break;
+	case 6:
+		callsub L_Quest,8279;
+		if ((countitem(1017) > 4) && (countitem(1018) > 2)) {
+			callsub L_Reward;
+			delitem 1017,5; //Moustache_Of_Mole
+			delitem 1018,3; //Nail_Of_Mole
+			getitem 569,150; //Novice_Potion
+			getexp 1000,200;
+			erasequest 8279;
+			close;
+		}
+		mes "[Dashia]";
+		mes "Je vois que vous avez une quête de collecte.";
+		mes "Mais, où sont les Moustaches de Campagnol et les Griffes de Campagnol ??";
+		next;
+		mes "[Dashia]";
+		mes "Vous n'avez pas encore accompli la quête. Pourquoi êtes-vous revenu ici ?";
+		mes "Vous devez apporter '5 Moustaches de Campagnol' et '3 Griffes de Campagnol' pour compléter la quête.";
+		next;
+		mes "[Dashia]";
+		mes "Vous pouvez obtenir ces objets chez les 'Martins'.";
+		mes "Les Martins se trouvent dans le Pit Mortel de Mjolnir, mais le deuxième étage est dangereux, alors faites attention !";
+		next;
+		mes "[Dashia]";
+		mes "Pour y accéder, demandez à un Employé Kafra à Geffen ; il pourra vous téléporter là-bas.";
+		break;
+	}
+	next;
+	mes "[Dashia]";
+	mes "De toute façon, je serai ici en attendant. Veuillez revenir lorsque la quête sera terminée !";
+	close;
+L_Quest:
+	if (checkquest(getarg(0)) != 1) {
+		mes "[Dashia]";
+		mes "Hé ? Tu es sûr ? Quelque chose ne va pas...";
+		next;
+		mes "[Dashia]";
+		mes "C'est étrange.";
+		mes "Veuillez vérifier votre fenêtre de Quête en appuyant sur 'alt + u'.";
+		close;
+	}
+	return;
+L_Reward:
+	mes "[Dashia]";
+	mes "Wow~ tu as fait un excellent travail !";
+	next;
+	mes "[Dashia]";
+	mes "Merci beaucoup. Que Dieu vous bénisse !";
+	emotion ET_SMILE;
+	next;
+	mes "[Dashia]";
+	mes "Ha~ ! Ha~ !";
+	mes "Je vais te donner une récompense comme promis.";
+	return;
+}

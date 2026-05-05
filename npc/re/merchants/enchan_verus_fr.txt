@@ -1,0 +1,1415 @@
+//===== rAthena Script =======================================
+//= Enchants and exchange NPCs.
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Exchangers and enchanters NPCs on Verus.
+//===== Additional Comments: =================================
+//= 1.0 Added NPCs coming along Charleston instance. [Capuche]
+//= 1.1 Added Excellion Wing/Suit trader and enchant NPCs. [Capuche]
+//============================================================
+
+// Charleston
+verus04,69,108,5	script	Mass Charleston#1	4_F_CHARLESTON01,{
+	if (!checkweight(1201,1) || (MaxWeight - Weight) < 1000) {
+		mes "^ff0000Vous avez trop d'objets dans votre inventaire, veuillez en retirer et revenez plus tard.^000000";
+		close;
+	}
+	cutin "dalle01.bmp",2;
+	if (countitem(6752) < 10) {
+		if (isbegin_quest(13186) == 0) {
+			mes "[Mass Charleston]";
+			mes "Je ne sais pas où vous pouvez trouver des composants Charleston,";
+			next;
+			mes "[Mass Charleston]";
+			mes "mais si vous en avez 10 ou plus, je peux les échanger contre des produits d'usine.";
+			close3;
+		}
+		mes "[Mass Charleston]";
+		mes "Une série de tâtonnements a été effectuée avant le développement de la version massifiée du Charleston.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Je ne veux pas me rabaisser, mais les versions massifiées sont ce qu'elles sont ; elles sont rentables et pratiques, mais jamais aussi bonnes que les versions haut de gamme.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Certains Charlestons, surtout au stade de développement, sont équipés de fonctionnalités plus avancées. Pour les étudier, j'ai besoin de plus de composants.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Si vous avez 10 ou plus de composants Charleston, je peux les échanger contre des produits d'usine.";
+		close3;
+	}
+	mes "[Mass Charleston]";
+	mes "Vous avez quelques belles pièces sur vous ! Souhaitez-vous les échanger contre les marchandises produites dans l'usine ?";
+	next;
+	mes "[Mass Charleston]";
+	mes "C'est une collection d'avantages du Charleston dans un produit commercialisable, mais qui ne peut pas être vendu séparément ; si vous apportez de bonnes pièces, je peux vous échanger contre elles.";
+	next;
+	.@s = select( "Quit.", "Exchange Reinforced parts", "Exchange Supplementary device" ) - 2;
+	if (.@s == -1) {
+		mes "[Mass Charleston]";
+		mes "À la prochaine !";
+		close3;
+	}
+	setarray .@job_aft$[0], "Reinforced parts", "Supplementary device";
+	mes "[Mass Charleston]";
+	mes "Which part of " + .@job_aft$[.@s] + " do you want to select?";
+	next;
+	switch(.@s) {
+	case 0:
+		setarray .@item[0],
+			20733,	// Upgrade_Part_Engine
+			22044,	// Upgrade_Part_Booster
+			2996;	// Upgrade_Part_Gun_Barrel
+		break;
+	case 1:
+		setarray .@item[0],
+			20732,	// Supplement_Part_Con
+			22043,	// Supplement_Part_Agi
+			2995;	// Supplement_Part_Dex
+		break;
+	default:
+		mes "[Mass Charleston]";
+		mes "À la prochaine !";
+		close;
+	}
+	// custom translation from here
+	.@index = select( "Quit.", getitemname(.@item[0]) + " (garment)", getitemname(.@item[1]) + " (Shoes)", getitemname(.@item[2]) + " (Accessory)" ) - 2;
+	if (.@index == -1) {
+		mes "[Mass Charleston]";
+		mes "À la prochaine !";
+		close3;
+	}
+	if (countitem(6752) < 10) {
+		mes "[Mass Charleston]";
+		mes "Si vous trouvez assez de pièces de Charleston, pouvez-vous revenir me voir ?";
+		close3;
+	}
+	delitem 6752,10;	// Charleston_Parts
+	getitem .@item[.@index],1;
+	mes "[Mass Charleston]";
+	mes "Exchanged 10 " + getitemname(6752) + " for " + .@job_aft$[.@s] + ". If you find more part, come to me again!";
+	close3;
+}
+
+verus04,71,106,5	script	Mass Charleston#2	4_F_CHARLESTON01,{
+	disable_items;
+	if (!checkweight(1201,1)) {
+		mes "Vous avez trop de types d'objets. Allégez votre inventaire en premier.";
+		close;
+	}
+	if ((MaxWeight - Weight) < 10000) {
+		mes "Les objets dans votre inventaire vous alourdissent. Allégez votre poids d'abord.";
+		close;
+	}
+	cutin "dalle01.bmp",2;
+	mes "[Mass Charleston]";
+	mes "Je peux améliorer les produits de l'usine de Charleston. Dites-moi si vous êtes intéressé(e).";
+	next;
+	switch( select( "More information.", "Add abilities to your product.", "Reset product." ) ) {
+	case 1:
+		mes "[Mass Charleston]";
+		mes "Chaque tentative d'amélioration/réinitialisation coûte 100 000 zeny et 1 composant de Charleston.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Je propose également un choix plus large d'options d'amélioration pour l'équipement de Charleston au niveau ^ff0000+9^000000 ou supérieur.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Ne vous inquiétez pas, ma technologie d'amélioration ne cause aucun dommage accidentel au niveau d'amélioration de l'objet ni aux cartes équipées.";
+		close3;
+	case 2:
+		.@type_action = 1;
+		.@string$ = "Upgrading";
+		break;
+	case 3:
+		.@type_action = 2;
+		.@string$ = "Resetting";
+		break;
+	}
+	if (Zeny < 100000 || countitem(6752) < 1) {
+		mes "[Mass Charleston]";
+		mes "" + .@string$ + " a Charleston product costs 1 Charleston Component and 100,000 zeny. Please know that all the expenses go into " + strtolower(.@string$) + " your product.";
+		close3;
+	}
+	mes "[Mass Charleston]";
+	mes "Veuillez vérifier que vous êtes équipé(e) de l'équipement que vous souhaitez améliorer.";
+	next;
+	.@s = select( "Let me go equip it.", "Footgear", "Garment", "Clothes", "Accessory" ) - 2;
+	if (.@s == -1) {
+		mes "[Mass Charleston]";
+		mes "Bien sûr, revenez après avoir terminé.";
+		close3;
+	}
+	if (Zeny < 100000 || countitem(6752) < 1) {
+		mes "[Mass Charleston]";
+		mes "Les objets nécessaires pour la mise à niveau des marchandises semblent insuffisants !";
+		close3;
+	}
+	setarray .@eq_num[0], EQI_SHOES, EQI_GARMENT, EQI_ARMOR, EQI_ACC_R;
+
+	.@part = .@eq_num[.@s];
+	.@item_id = getequipid(.@part);
+	.@refine = getequiprefinerycnt(.@part);
+	setarray .@card_saved[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3);
+	copyarray .@card[0], .@card_saved[0], 4;
+
+	switch(.@item_id) {
+	case -1:
+		mes "[Mass Charleston]";
+		mes "Comme il s'agit d'une amélioration personnalisée, assurez-vous d'équiper votre équipement.";
+		close3;
+	case 15111:	// Upgrade_Part_Plate
+		.@en_type = 3;
+		.@en_type_9 = 1;
+		.@max_slot = 1;
+		break;
+	case 20733:	// Upgrade_Part_Engine
+		.@en_type = 4;
+		.@en_type_9 = 5;
+		.@max_slot = 1;
+		break;
+	case 22044:	// Upgrade_Part_Booster
+		.@en_type = 6;
+		.@en_type_9 = 7;
+		.@max_slot = 1;
+		break;
+	case 2996:	// Upgrade_Part_Gun_Barrel
+		.@en_type = 8;
+		.@en_type_9 = 8;
+		.@max_slot = 2;
+		break;
+	case 15110:	// Supplement_Part_Str
+		.@en_type = 3;
+		.@en_type_9 = 2;
+		.@max_slot = 1;
+		break;
+	case 20732:	// Supplement_Part_Con
+		.@en_type = 4;
+		.@en_type_9 = 5;
+		.@max_slot = 1;
+		break;
+	case 22043:	// Supplement_Part_Agi
+		.@en_type = 6;
+		.@en_type_9 = 7;
+		.@max_slot = 1;
+		break;
+	case 2995:	// Supplement_Part_Dex
+		.@en_type = 8;
+		.@en_type_9 = 8;
+		.@max_slot = 2;
+		break;
+	default:
+		mes "[Mass Charleston]";
+		mes "^990099" + getequipname(.@part) + "^000000??";
+		mes "Je ne suis pas intéressé par cet Équipement.";
+		close3;
+	}
+
+	switch(.@type_action) {
+	case 1:	// Add abilities
+		if (.@refine >= 9) {
+			setarray .@menu_en_type$[1],
+				"Attack enhancement",
+				"Defense enhancement",
+				"Acceleration enhancements",
+				"Garment upgrade",
+				"Advanced Garment upgrade",
+				"Shoes upgrade",
+				"Advanced Shoes upgrade",
+				"Accessory upgrade";
+			if (.@menu_en_type$[.@en_type] == "" || .@menu_en_type$[.@en_type_9] == "") {
+				mes "[Mass Charleston]";
+				mes "Quelque chose ne va pas !";
+				close3;
+			}
+			mes "[Mass Charleston]";
+			mes "Il s'agit d'un équipement amélioré de niveau considérable. Ce type peut offrir des performances d'amélioration étendues. Choisissez parmi les séries suivantes pour renforcer votre objet souhaitable !";
+			next;
+			if (select( .@menu_en_type$[.@en_type], .@menu_en_type$[.@en_type_9] ) == 2)
+				.@en_type = .@en_type_9;
+		}
+		if (.@card[3] < 1 && .@max_slot < 4) {
+			.@slot = 4;
+			mes "[Mass Charleston]";
+			mes "Je procède à l'amélioration de la première compétence. Le niveau d'amélioration actuel et les cartes ne seront pas endommagés. Voulez-vous continuer ?";
+			next;
+			if (select( "I'll come back later.", "Continue." ) == 1) {
+				mes "[Mass Charleston]";
+				mes "Pas de problème. Revenez si vous changez d'avis.";
+				close3;
+			}
+		}
+		else if (.@card[2] < 1 && .@max_slot < 3) {
+			.@slot = 3;
+			mes "[Mass Charleston]";
+			mes "Je procède à l'amélioration de la deuxième compétence. Le niveau d'amélioration actuel et les cartes ne seront pas endommagés.";
+			next;
+			mes "[Mass Charleston]";
+			mes "Bien que la probabilité d'échec soit faible, en cas d'échec, le niveau d'amélioration actuel sera réinitialisé. Que souhaitez-vous faire ?";
+			next;
+			if (select( "I'll come back later.", "Continue." ) == 1) {
+				mes "[Mass Charleston]";
+				mes "Pas de problème. Revenez si vous changez d'avis.";
+				close3;
+			}
+		}
+		else if (.@card[1] < 1 && .@max_slot < 2) {
+			.@slot = 2;
+			mes "[Mass Charleston]";
+			mes "Je vais procéder à la mise à niveau de la 3e compétence. Cette étape de mise à niveau maximale entraîne une chance de ^990000détruire l'équipement ou de réinitialiser son niveau de mise à niveau actuel.^000000 Voulez-vous continuer ?";
+			next;
+			if (select( "I'll come back later.", "Continue." ) == 1) {
+				mes "[Mass Charleston]";
+				mes "Pas de problème. Revenez si vous changez d'avis.";
+				close3;
+			}
+		}
+		else if (.@card[0] < 1 && .@max_slot < 1)
+			.@slot = 1;
+		else {
+			cutin "dalle02.bmp",2;
+			mes "[Mass Charleston]";
+			mes "Cet équipement est déjà mis au niveau maximum. Veuillez en apporter un autre.";
+			close3;
+		}
+		switch(.@en_type) {
+		case 1:
+			if (.@slot == 4) {
+				.@en_brk1 = 1;
+				.@en_brk2 = 100;
+			}
+			else if (.@slot == 3) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 200;
+			}
+			else if (.@slot == 2) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 300;
+			}
+			else {
+				mes "[Mass Charleston]";
+				mes "Une erreur inconnue s'est produite.";
+				close3;
+			}
+			.@r = rand( .@en_brk1, .@en_brk2 );
+			if (.@r < 11) .@en_name = 4700;	// Strength1
+			else if (.@r < 21) .@en_name = 4720;	// Dexterity1
+			else if (.@r < 36) .@en_name = 4832;	// Expert_Archer1
+			else if (.@r < 51) .@en_name = 4811;	// Fighting_Spirit1
+			else if (.@r < 61) .@en_name = 4701;	// Strength2
+			else if (.@r < 71) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 86) .@en_name = 4833;	// Expert_Archer2
+			else if (.@r < 101) .@en_name = 4810;	// Fighting_Spirit2
+			else if (.@r < 111) .@en_name = 4700;	// Strength1
+			else if (.@r < 121) .@en_name = 4720;	// Dexterity1
+			else if (.@r < 132) .@en_name = 4832;	// Expert_Archer1
+			else if (.@r < 143) .@en_name = 4811;	// Fighting_Spirit1
+			else if (.@r < 151) .@en_name = 4701;	// Strength2
+			else if (.@r < 159) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 167) .@en_name = 4833;	// Expert_Archer2
+			else if (.@r < 175) .@en_name = 4810;	// Fighting_Spirit2
+			else if (.@r < 182) .@en_name = 4702;	// Strength3
+			else if (.@r < 189) .@en_name = 4722;	// Dexterity3
+			else if (.@r < 190) .@en_name = 4834;	// Expert_Archer3
+			else if (.@r < 191) .@en_name = 4809;	// Fighting_Spirit3
+			else if (.@r < 201) .@en_name = 0;
+			else if (.@r < 207) .@en_name = 4700;	// Strength1
+			else if (.@r < 213) .@en_name = 4720;	// Dexterity1
+			else if (.@r < 221) .@en_name = 4832;	// Expert_Archer1
+			else if (.@r < 229) .@en_name = 4811;	// Fighting_Spirit1
+			else if (.@r < 238) .@en_name = 4701;	// Strength2
+			else if (.@r < 247) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 260) .@en_name = 4810;	// Fighting_Spirit2
+			else if (.@r < 273) .@en_name = 4833;	// Expert_Archer2
+			else if (.@r < 280) .@en_name = 4702;	// Strength3
+			else if (.@r < 287) .@en_name = 4722;	// Dexterity3
+			else if (.@r < 289) .@en_name = 4834;	// Expert_Archer3
+			else if (.@r < 291) .@en_name = 4809;	// Fighting_Spirit3
+			else if (.@r < 296) .@en_name = 0;
+			else if (.@r < 301) .@en_name = 9;
+			else .@en_name = 0;
+			break;
+		case 2:
+			if (.@slot == 4) {
+				.@en_brk1 = 1;
+				.@en_brk2 = 100;
+			}
+			else if (.@slot == 3) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 200;
+			}
+			else if (.@slot == 2) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 310;
+			}
+			else {
+				mes "[Mass Charleston]";
+				mes "Une erreur inconnue s'est produite.";
+				close3;
+			}
+			.@r = rand( .@en_brk1, .@en_brk2 );
+			if (.@r < 11) .@en_name = 4740;	// Vitality1
+			else if (.@r < 21) .@en_name = 4791;	// Def3
+			else if (.@r < 36) .@en_name = 4933;	// Tolerance_Not1
+			else if (.@r < 51) .@en_name = 4861;	// MHP1
+			else if (.@r < 61) .@en_name = 4741;	// Vitality2
+			else if (.@r < 71) .@en_name = 4792;	// Def6
+			else if (.@r < 86) .@en_name = 4934;	// Tolerance_Not2
+			else if (.@r < 101) .@en_name = 4862;	// MHP2
+			else if (.@r < 111) .@en_name = 4740;	// Vitality1
+			else if (.@r < 121) .@en_name = 4791;	// Def3
+			else if (.@r < 132) .@en_name = 4933;	// Tolerance_Not1
+			else if (.@r < 143) .@en_name = 4861;	// MHP1
+			else if (.@r < 151) .@en_name = 4741;	// Vitality2
+			else if (.@r < 159) .@en_name = 4792;	// Def6
+			else if (.@r < 167) .@en_name = 4934;	// Tolerance_Not2
+			else if (.@r < 173) .@en_name = 4862;	// MHP2
+			else if (.@r < 179) .@en_name = 4742;	// Vitality3
+			else if (.@r < 185) .@en_name = 4793;	// Def9
+			else if (.@r < 188) .@en_name = 4935;	// Tolerance_Not3
+			else if (.@r < 191) .@en_name = 4867;	// MHP3
+			else if (.@r < 201) .@en_name = 0;
+			else if (.@r < 207) .@en_name = 4740;	// Vitality1
+			else if (.@r < 213) .@en_name = 4791;	// Def3
+			else if (.@r < 221) .@en_name = 4933;	// Tolerance_Not1
+			else if (.@r < 229) .@en_name = 4861;	// MHP1
+			else if (.@r < 238) .@en_name = 4741;	// Vitality2
+			else if (.@r < 247) .@en_name = 4792;	// Def6
+			else if (.@r < 258) .@en_name = 4934;	// Tolerance_Not2
+			else if (.@r < 269) .@en_name = 4862;	// MHP2
+			else if (.@r < 276) .@en_name = 4742;	// Vitality3
+			else if (.@r < 283) .@en_name = 4793;	// Def9
+			else if (.@r < 287) .@en_name = 4867;	// MHP3
+			else if (.@r < 291) .@en_name = 4935;	// Tolerance_Not3
+			else if (.@r < 296) .@en_name = 0;
+			else if (.@r < 301) .@en_name = 9;
+			else .@en_name = 0;
+			break;
+		case 3:
+			if (.@slot == 4) {
+				.@en_brk1 = 1;
+				.@en_brk2 = 100;
+			}
+			else if (.@slot == 3) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 200;
+			}
+			else if (.@slot == 2) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 310;
+			}
+			else {
+				mes "[Mass Charleston]";
+				mes "Une erreur inconnue s'est produite.";
+				close3;
+			}
+			.@r = rand( .@en_brk1, .@en_brk2 );
+			if (.@r < 11) .@en_name = 4860;	// Evasion3
+			else if (.@r < 21) .@en_name = 4750;	// Luck1
+			else if (.@r < 36) .@en_name = 4869;	// Attack_Delay_1
+			else if (.@r < 51) .@en_name = 4730;	// Agility1
+			else if (.@r < 61) .@en_name = 4762;	// Evasion6
+			else if (.@r < 71) .@en_name = 4751;	// Luck2
+			else if (.@r < 86) .@en_name = 4872;	// Attack_Delay_2
+			else if (.@r < 101) .@en_name = 4731;	// Agility2
+			else if (.@r < 111) .@en_name = 4860;	// Evasion3
+			else if (.@r < 121) .@en_name = 4750;	// Luck1
+			else if (.@r < 132) .@en_name = 4869;	// Attack_Delay_1
+			else if (.@r < 143) .@en_name = 4730;	// Agility1
+			else if (.@r < 151) .@en_name = 4762;	// Evasion6
+			else if (.@r < 159) .@en_name = 4751;	// Luck2
+			else if (.@r < 166) .@en_name = 4872;	// Attack_Delay_2
+			else if (.@r < 173) .@en_name = 4731;	// Agility2
+			else if (.@r < 180) .@en_name = 4763;	// Evasion12
+			else if (.@r < 187) .@en_name = 4752;	// Luck3
+			else if (.@r < 191) .@en_name = 4732;	// Agility3
+			else if (.@r < 201) .@en_name = 0;
+			else if (.@r < 207) .@en_name = 4860;	// Evasion3
+			else if (.@r < 213) .@en_name = 4750;	// Luck1
+			else if (.@r < 221) .@en_name = 4869;	// Attack_Delay_1
+			else if (.@r < 229) .@en_name = 4730;	// Agility1
+			else if (.@r < 239) .@en_name = 4762;	// Evasion6
+			else if (.@r < 249) .@en_name = 4751;	// Luck2
+			else if (.@r < 261) .@en_name = 4872;	// Attack_Delay_2
+			else if (.@r < 273) .@en_name = 4731;	// Agility2
+			else if (.@r < 280) .@en_name = 4763;	// Evasion12
+			else if (.@r < 287) .@en_name = 4752;	// Luck3
+			else if (.@r < 291) .@en_name = 4732;	// Agility3
+			else if (.@r < 296) .@en_name = 0;
+			else if (.@r < 301) .@en_name = 9;
+			else .@en_name = 0;
+			break;
+		case 4:
+			if (.@slot == 4) {
+				.@en_brk1 = 1;
+				.@en_brk2 = 100;
+			}
+			else if (.@slot == 3) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 200;
+			}
+			else if (.@slot == 2) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 310;
+			}
+			else {
+				mes "[Mass Charleston]";
+				mes "Une erreur inconnue s'est produite.";
+				close3;
+			}
+			.@r = rand( .@en_brk1, .@en_brk2 );
+			if (.@r < 8) .@en_name = 4700;	// Strength1
+			else if (.@r < 17) .@en_name = 4701;	// Strength2
+			else if (.@r < 24) .@en_name = 4720;	// Dexterity1
+			else if (.@r < 33) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 40) .@en_name = 4730;	// Agility1
+			else if (.@r < 47) .@en_name = 4731;	// Agility2
+			else if (.@r < 54) .@en_name = 4740;	// Vitality1
+			else if (.@r < 63) .@en_name = 4741;	// Vitality2
+			else if (.@r < 69) .@en_name = 4750;	// Luck1
+			else if (.@r < 77) .@en_name = 4751;	// Luck2
+			else if (.@r < 83) .@en_name = 4710;	// Inteligence1
+			else if (.@r < 91) .@en_name = 4711;	// Inteligence2
+			else if (.@r < 101) .@en_name = 4832;	// Expert_Archer1
+			else if (.@r < 111) .@en_name = 4700;	// Strength1
+			else if (.@r < 121) .@en_name = 4701;	// Strength2
+			else if (.@r < 131) .@en_name = 4720;	// Dexterity1
+			else if (.@r < 141) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 149) .@en_name = 4730;	// Agility1
+			else if (.@r < 158) .@en_name = 4731;	// Agility2
+			else if (.@r < 164) .@en_name = 4740;	// Vitality1
+			else if (.@r < 170) .@en_name = 4741;	// Vitality2
+			else if (.@r < 177) .@en_name = 4750;	// Luck1
+			else if (.@r < 184) .@en_name = 4751;	// Luck2
+			else if (.@r < 187) .@en_name = 4710;	// Inteligence1
+			else if (.@r < 190) .@en_name = 4711;	// Inteligence2
+			else if (.@r < 192) .@en_name = 4832;	// Expert_Archer1
+			else if (.@r < 201) .@en_name = 0;
+			else if (.@r < 207) .@en_name = 4700;	// Strength1
+			else if (.@r < 213) .@en_name = 4701;	// Strength2
+			else if (.@r < 220) .@en_name = 4720;	// Dexterity1
+			else if (.@r < 227) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 237) .@en_name = 4730;	// Agility1
+			else if (.@r < 247) .@en_name = 4731;	// Agility2
+			else if (.@r < 257) .@en_name = 4740;	// Vitality1
+			else if (.@r < 267) .@en_name = 4741;	// Vitality2
+			else if (.@r < 271) .@en_name = 4750;	// Luck1
+			else if (.@r < 276) .@en_name = 4751;	// Luck2
+			else if (.@r < 281) .@en_name = 4710;	// Inteligence1
+			else if (.@r < 286) .@en_name = 4711;	// Inteligence2
+			else if (.@r < 291) .@en_name = 4832;	// Expert_Archer1
+			else if (.@r < 296) .@en_name = 0;
+			else if (.@r < 301) .@en_name = 9;
+			else .@en_name = 0;
+			break;
+		case 5:
+			if (.@slot == 4) {
+				.@en_brk1 = 1;
+				.@en_brk2 = 100;
+			}
+			else if (.@slot == 3) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 200;
+			}
+			else if (.@slot == 2) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 310;
+			}
+			else {
+				mes "[Mass Charleston]";
+				mes "Une erreur inconnue s'est produite.";
+				close3;
+			}
+			.@r = rand( .@en_brk1, .@en_brk2 );
+			if (.@r < 9) .@en_name = 4701;	// Strength2
+			else if (.@r < 16) .@en_name = 4702;	// Strength3
+			else if (.@r < 25) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 32) .@en_name = 4722;	// Dexterity3
+			else if (.@r < 41) .@en_name = 4731;	// Agility2
+			else if (.@r < 46) .@en_name = 4732;	// Agility3
+			else if (.@r < 55) .@en_name = 4741;	// Vitality2
+			else if (.@r < 62) .@en_name = 4742;	// Vitality3
+			else if (.@r < 70) .@en_name = 4751;	// Luck2
+			else if (.@r < 76) .@en_name = 4752;	// Luck3
+			else if (.@r < 84) .@en_name = 4711;	// Inteligence2
+			else if (.@r < 90) .@en_name = 4712;	// Inteligence3
+			else if (.@r < 95) .@en_name = 4832;	// Expert_Archer1
+			else if (.@r < 101) .@en_name = 4833;	// Expert_Archer2
+			else if (.@r < 111) .@en_name = 4701;	// Strength2
+			else if (.@r < 121) .@en_name = 4702;	// Strength3
+			else if (.@r < 131) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 141) .@en_name = 4722;	// Dexterity3
+			else if (.@r < 149) .@en_name = 4731;	// Agility2
+			else if (.@r < 157) .@en_name = 4732;	// Agility3
+			else if (.@r < 163) .@en_name = 4741;	// Vitality2
+			else if (.@r < 169) .@en_name = 4742;	// Vitality3
+			else if (.@r < 176) .@en_name = 4751;	// Luck2
+			else if (.@r < 183) .@en_name = 4752;	// Luck3
+			else if (.@r < 185) .@en_name = 4711;	// Inteligence2
+			else if (.@r < 187) .@en_name = 4712;	// Inteligence3
+			else if (.@r < 189) .@en_name = 4833;	// Expert_Archer2
+			else if (.@r < 191) .@en_name = 4834;	// Expert_Archer3
+			else if (.@r < 201) .@en_name = 0;
+			else if (.@r < 207) .@en_name = 4701;	// Strength2
+			else if (.@r < 213) .@en_name = 4702;	// Strength3
+			else if (.@r < 220) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 227) .@en_name = 4722;	// Dexterity3
+			else if (.@r < 237) .@en_name = 4731;	// Agility2
+			else if (.@r < 247) .@en_name = 4732;	// Agility3
+			else if (.@r < 257) .@en_name = 4741;	// Vitality2
+			else if (.@r < 261) .@en_name = 4742;	// Vitality3
+			else if (.@r < 266) .@en_name = 4751;	// Luck2
+			else if (.@r < 271) .@en_name = 4752;	// Luck3
+			else if (.@r < 276) .@en_name = 4711;	// Inteligence2
+			else if (.@r < 281) .@en_name = 4712;	// Inteligence3
+			else if (.@r < 286) .@en_name = 4832;	// Expert_Archer1
+			else if (.@r < 291) .@en_name = 4833;	// Expert_Archer2
+			else if (.@r < 296) .@en_name = 0;
+			else if (.@r < 301) .@en_name = 9;
+			else .@en_name = 0;
+			break;
+		case 6:
+			if (.@slot == 4) {
+				.@en_brk1 = 1;
+				.@en_brk2 = 100;
+			}
+			else if (.@slot == 3) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 200;
+			}
+			else if (.@slot == 2) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 310;
+			}
+			else {
+				mes "[Mass Charleston]";
+				mes "Une erreur inconnue s'est produite.";
+				close3;
+			}
+			.@r = rand( .@en_brk1, .@en_brk2 );
+			if (.@r < 11) .@en_name = 4700;	// Strength1
+			else if (.@r < 21) .@en_name = 4701;	// Strength2
+			else if (.@r < 31) .@en_name = 4720;	// Dexterity1
+			else if (.@r < 41) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 51) .@en_name = 4730;	// Agility1
+			else if (.@r < 61) .@en_name = 4731;	// Agility2
+			else if (.@r < 71) .@en_name = 4740;	// Vitality1
+			else if (.@r < 81) .@en_name = 4741;	// Vitality2
+			else if (.@r < 91) .@en_name = 4869;	// Attack_Delay_1
+			else if (.@r < 101) .@en_name = 4815;	// Spell1
+			else if (.@r < 111) .@en_name = 4700;	// Strength1
+			else if (.@r < 121) .@en_name = 4701;	// Strength2
+			else if (.@r < 132) .@en_name = 4720;	// Dexterity1
+			else if (.@r < 143) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 151) .@en_name = 4730;	// Agility1
+			else if (.@r < 159) .@en_name = 4731;	// Agility2
+			else if (.@r < 169) .@en_name = 4740;	// Vitality1
+			else if (.@r < 179) .@en_name = 4741;	// Vitality2
+			else if (.@r < 185) .@en_name = 4869;	// Attack_Delay_1
+			else if (.@r < 191) .@en_name = 4815;	// Spell1
+			else if (.@r < 201) .@en_name = 0;
+			else if (.@r < 209) .@en_name = 4700;	// Strength1
+			else if (.@r < 217) .@en_name = 4701;	// Strength2
+			else if (.@r < 225) .@en_name = 4720;	// Dexterity1
+			else if (.@r < 233) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 244) .@en_name = 4730;	// Agility1
+			else if (.@r < 255) .@en_name = 4731;	// Agility2
+			else if (.@r < 265) .@en_name = 4740;	// Vitality1
+			else if (.@r < 275) .@en_name = 4741;	// Vitality2
+			else if (.@r < 283) .@en_name = 4869;	// Attack_Delay_1
+			else if (.@r < 291) .@en_name = 4815;	// Spell1
+			else if (.@r < 296) .@en_name = 0;
+			else if (.@r < 301) .@en_name = 9;
+			else .@en_name = 0;
+			break;
+		case 7:
+			if (.@slot == 4) {
+				.@en_brk1 = 1;
+				.@en_brk2 = 100;
+			}
+			else if (.@slot == 3) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 200;
+			}
+			else if (.@slot == 2) {
+				.@en_brk1 = 101;
+				.@en_brk2 = 310;
+			}
+			else {
+				mes "[Mass Charleston]";
+				mes "Une erreur inconnue s'est produite.";
+				close3;
+			}
+			.@r = rand( .@en_brk1, .@en_brk2 );
+			if (.@r < 11) .@en_name = 4702;	// Strength3
+			else if (.@r < 21) .@en_name = 4701;	// Strength2
+			else if (.@r < 31) .@en_name = 4722;	// Dexterity3
+			else if (.@r < 41) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 51) .@en_name = 4732;	// Agility3
+			else if (.@r < 61) .@en_name = 4731;	// Agility2
+			else if (.@r < 71) .@en_name = 4742;	// Vitality3
+			else if (.@r < 81) .@en_name = 4741;	// Vitality2
+			else if (.@r < 86) .@en_name = 4869;	// Attack_Delay_1
+			else if (.@r < 91) .@en_name = 4872;	// Attack_Delay_2
+			else if (.@r < 96) .@en_name = 4815;	// Spell1
+			else if (.@r < 101) .@en_name = 4814;	// Spell2
+			else if (.@r < 111) .@en_name = 4702;	// Strength3
+			else if (.@r < 121) .@en_name = 4701;	// Strength2
+			else if (.@r < 132) .@en_name = 4722;	// Dexterity3
+			else if (.@r < 143) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 151) .@en_name = 4732;	// Agility3
+			else if (.@r < 159) .@en_name = 4731;	// Agility2
+			else if (.@r < 169) .@en_name = 4742;	// Vitality3
+			else if (.@r < 179) .@en_name = 4741;	// Vitality2
+			else if (.@r < 182) .@en_name = 4869;	// Attack_Delay_1
+			else if (.@r < 185) .@en_name = 4815;	// Spell1
+			else if (.@r < 188) .@en_name = 4872;	// Attack_Delay_2
+			else if (.@r < 191) .@en_name = 4814;	// Spell2
+			else if (.@r < 201) .@en_name = 0;
+			else if (.@r < 209) .@en_name = 4702;	// Strength3
+			else if (.@r < 217) .@en_name = 4701;	// Strength2
+			else if (.@r < 225) .@en_name = 4722;	// Dexterity3
+			else if (.@r < 233) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 244) .@en_name = 4732;	// Agility3
+			else if (.@r < 255) .@en_name = 4731;	// Agility2
+			else if (.@r < 265) .@en_name = 4742;	// Vitality3
+			else if (.@r < 275) .@en_name = 4741;	// Vitality2
+			else if (.@r < 279) .@en_name = 4869;	// Attack_Delay_1
+			else if (.@r < 283) .@en_name = 4815;	// Spell1
+			else if (.@r < 287) .@en_name = 4872;	// Attack_Delay_2
+			else if (.@r < 291) .@en_name = 4814;	// Spell2
+			else if (.@r < 296) .@en_name = 0;
+			else if (.@r < 301) .@en_name = 9;
+			else .@en_name = 0;
+			break;
+		case 8:
+			if (.@slot == 4) {
+				.@en_brk1 = 1;
+				.@en_brk2 = 100;
+			}
+			else if (.@slot == 3) {
+				.@en_brk1 = 1;
+				.@en_brk2 = 111;
+			}
+			else if (.@slot == 2) {
+				.@en_brk1 = 1;
+				.@en_brk2 = 111;
+			}
+			else {
+				mes "[Mass Charleston]";
+				mes "Une erreur inconnue s'est produite.";
+				close3;
+			}
+			.@r = rand( .@en_brk1, .@en_brk2 );
+			if (.@r < 11) .@en_name = 4700;	// Strength1
+			else if (.@r < 21) .@en_name = 4701;	// Strength2
+			else if (.@r < 31) .@en_name = 4720;	// Dexterity1
+			else if (.@r < 41) .@en_name = 4721;	// Dexterity2
+			else if (.@r < 50) .@en_name = 4730;	// Agility1
+			else if (.@r < 59) .@en_name = 4731;	// Agility2
+			else if (.@r < 69) .@en_name = 4740;	// Vitality1
+			else if (.@r < 79) .@en_name = 4741;	// Vitality2
+			else if (.@r < 89) .@en_name = 4710;	// Inteligence1
+			else if (.@r < 99) .@en_name = 4711;	// Inteligence2
+			else if (.@r < 100) .@en_name = 4869;	// Attack_Delay_1
+			else if (.@r < 101) .@en_name = 4815;	// Spell1
+			else .@en_name = 0;
+			break;
+		default:
+			mes "[Mass Charleston]";
+			mes "Une erreur inconnue s'est produite.";
+			close3;
+		}
+		if (Zeny < 100000 || countitem(6752) < 1) {
+			mes "[Mass Charleston]";
+			mes "Les objets nécessaires pour la mise à niveau des marchandises semblent insuffisants !";
+			close3;
+		}
+
+		// anti-hack
+		if (callfunc("F_IsEquipIDHack", .@part, .@item_id) ||
+				callfunc("F_IsEquipCardHack", .@part, .@card_saved[0], .@card_saved[1], .@card_saved[2], .@card_saved[3]) ||
+				callfunc("F_IsEquipRefineHack", .@part, .@refine)) {
+			mes "[Mass Charleston]";
+			mes "Une erreur inconnue s'est produite.";
+			close3;
+		}
+
+		.@card[.@slot-1] = .@en_name;
+		delitem 6752,1;	// Charleston_Parts
+		Zeny -= 100000;
+		delequip .@part;
+
+		switch(.@en_name) {
+		case 0:
+			cutin "dalle02.bmp",2;
+			specialeffect2 EF_SHIELDCHARGE;
+			mes "[Mass Charleston]";
+			mes "Puisque l'équilibre des forces ne correspond pas, la capacité existante donnée a été détruite. C'est malheureux, mais veuillez réessayer une prochaine fois.";// unknown text
+			getitem2 .@item_id,1,1,.@refine,0, .@card[0], .@card[1], .@card[2], .@card[3];
+			close3;
+		case 9:
+			cutin "dalle04.bmp",2;
+			specialeffect2 EF_SUI_EXPLOSION;
+			mes "[Mass Charleston]";
+			mes "Ceci !";
+			mes "Je suis désolé, mais l'équipement a été détruit.";// unknown text
+			close3;
+		default:
+			specialeffect2 EF_REPAIRWEAPON;
+			mes "[Mass Charleston]";
+			mes "^990000Socket" + .@slot + "^000000 will be Upgrade.";
+			getitem2 .@item_id,1,1,.@refine,0, .@card[0], .@card[1], .@card[2], .@card[3];
+			close3;
+		}
+	case 2:	// Reset
+		// Note: the NPC doesn't check if the equipment is already enhanced
+		if (getiteminfo(.@card[0], ITEMINFO_SUBTYPE) == CARD_ENCHANT) .@card[0] = 0;
+		if (getiteminfo(.@card[1], ITEMINFO_SUBTYPE) == CARD_ENCHANT) .@card[1] = 0;
+		if (getiteminfo(.@card[2], ITEMINFO_SUBTYPE) == CARD_ENCHANT) .@card[2] = 0;
+		if (getiteminfo(.@card[3], ITEMINFO_SUBTYPE) == CARD_ENCHANT) .@card[3] = 0;
+		specialeffect2 EF_REPAIRWEAPON;
+		mes "[Mass Charleston]";
+		mes "Réinitialisez les capacités du produit.";
+		delitem 6752,1;	// Charleston_Parts
+		Zeny -= 100000;
+		delequip .@part;
+		getitem2 .@item_id,1,1,.@refine,0, .@card[0], .@card[1], .@card[2], .@card[3];
+		close3;
+	dfault:
+		mes "[Mass Charleston]";
+		mes "Une erreur inconnue s'est produite.";
+		close3;
+	}
+	end;
+}
+
+verus04,63,112,4	script	Mass Charleston#3	4_F_CHARLESTON01,{
+	if (!checkweight(1201,1) || (MaxWeight - Weight) < 1000) {
+		mes "^ff0000Vous avez trop d'objets dans votre inventaire, veuillez en retirer et revenez plus tard.^000000";
+		close;
+	}
+	cutin "dalle03.bmp",2;
+	mes "[Mass Charleston]";
+	mes "Eh, j'ai un client ? Activation du mode Vendeur...";
+	next;
+	cutin "dalle01.bmp",2;
+	mes "[Mass Charleston]";
+	mes "Les meilleures ventes de l'Usine de Charleston : ^FF0000Upgrade Part Plate^000000 et ^FF0000Supplement Part Str^000000 sont maintenant en vente !";
+	next;
+	mes "[Mass Charleston]";
+	mes "Pour seulement ^FF00003,999,999^000000 de zeny ! Obtenez les équipements d'action ultra-performants !";
+	next;
+	mes "[Mass Charleston]";
+	mes "Disponible également : le service ^FF0000Pilebuncker^000000 ^FF0000Upgrade^000000 !";
+	next;
+	switch( select( "Talk.", "Exchange Upgrade Parts.", "Exchange Supplementary devices.", "Upgrade Pilebuncker." ) ) {
+	case 1:
+		if (isbegin_quest(13186) == 0) {
+			mes "[Mass Charleston]";
+			mes "L'Usine de Charleston a fermé ses portes, mais sa technologie et ses produits restent avec nous.";
+			next;
+			mes "[Mass Charleston]";
+			mes "Oh, vous n'avez pas entendu les nouvelles ? Oups, ma faute. Veuillez oublier ce que j'ai dit.";
+			close3;
+		}
+		cutin "dalle03.bmp",2;
+		mes "[Mass Charleston]";
+		mes "Je suis une version massive de Charleston. Je n'ai même pas reçu de numéro de série. Qui sait combien d'exemplaires ont été fabriqués ? Cela pourrait être cent, peut-être même mille.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Le Charleston original se tient là-bas, mais...";
+		next;
+		mes "[Mass Charleston]";
+		mes "Au moment où les Charlestons 1 et 2 ont fui l'usine, ils étaient gravement endommagés. La bataille qui s'est déroulée ce jour-là était incroyable.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Je peux encore me souvenir de la façon dont les Charlestons 1 et 2 ont détruit les nombreuses créatures du Dr. Ve, comme si c'était hier.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Ils ont également détruit la version massifiée du Charleston modifiée par le Dr. Ve à ses ordres.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Bien sûr, il y en a d'autres -- comme nous ici travaillant sur les améliorations du produit -- qui ont eu la chance de s'échapper des griffes du Dr. Ve et de rencontrer le Charleston 1, qui nous a tous sauvés.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Après avoir fui avec le Charleston 3 modifié, nous sommes venus ici.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Sachez simplement que cet endroit était déjà en ruine lorsque nous sommes arrivés. Nous n'avons rien à voir avec sa destruction. Peut-être...";
+		next;
+		mes "[Mass Charleston]";
+		mes "Désolé de m'être égaré. En tout cas, voilà le problème.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Les Charlestons 1 et 2 ont été détruits jusqu'à un point d'atteinte irréversible. Ils ont essayé de se réparer mutuellement, sans succès.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Ils ont réalisé qu'ils étaient endommagés au-delà de toute réparation. Ils ont récupéré autant de pièces que possible et construit un seul corps avec un seul système d'exploitation.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Et voici le nouveau corps construit. Ils se sont blâmés pour la destruction de l'usine et voulaient la réparer. J'ai peur que leurs données soient corrompues ou qu'il manque des mémoires importantes.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Les caractéristiques des données montrent plus de traits de Charleston 2, tandis que la méthode d'accès au système d'exploitation est plus similaire à celle de Charleston 1. Charleston 1 était toujours le plus sentimental.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Je ne sais pas si le nouveau Charleston est un Charleston 1 ou 2. Je ne peux même pas dire ce qu'il manque ou ce dont il se souvient le plus.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Elle continue de se blâmer pour avoir perdu ses données, pour avoir déçu ses amis. Chaque fois que nous essayons de la consoler,";
+		next;
+		mes "[Mass Charleston]";
+		mes "elle dit qu'elle n'a ni le cœur ni l'esprit pour se souvenir ou savoir. Je me demande si elle sait";
+		next;
+		mes "[Mass Charleston]";
+		mes "que les souvenirs des Humains s'estompent et deviennent distordus ou glorifiés avec le temps.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Et que les Humains apprennent de leurs erreurs et échecs. J'ai lu cela dans ces supports de mémoire en papier appelés ^FF0000livres^000000 dans l'usine.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Il y avait une petite étude dans la ^FF0000aile sud de l'usine^000000. Plus tard, elle a été transformée en salle de développement de robots.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Peut-être que le Charleston est plus proche des Humains que du reste de nous. J'espère juste qu'elle n'a pas à être si triste.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Je me sens tellement encombré dans le système d'exploitation que j'ai déclamé. Peut-être ai-je besoin de fragmenter ma mémoire.";
+		close3;
+	case 2:
+		mes "[Mass Charleston]";
+		mes "Pièce de plaque de mise à niveau";
+		mes "Classe : Armure, indestructible.";
+		mes "-10 % de dégâts infligés par les petits et moyens monstres.";
+		mes "-10 % de dégâts infligés par les grands monstres lorsqu'il est amélioré à +7.";
+		mes "-5 % supplémentaire de dégâts infligés par les petits et moyens monstres lorsqu'il est amélioré à +9.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Poids : 300";
+		mes "Niveau requis : 100";
+		callsub S_Buy, 15111;	// Upgrade_Part_Plate
+	case 3:
+		mes "[Mass Charleston]";
+		mes "Pièce de complément Str";
+		mes "ATK+ 5 % !";
+		mes "ATK supplémentaire +1 % tous les 4 niveaux d'amélioration.";
+		mes "Utilisez-le avec des dispositifs de complément Vitalité/Vigilité/Dextérité pour de meilleurs résultats.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Poids : 200";
+		mes "Niveau requis : 100";
+		callsub S_Buy, 15110;	// Supplement_Part_Str
+	case 4:
+		mes "[Mass Charleston]";
+		mes "Le dernier chef-d'œuvre de l'usine Charleston ! Vous ne trouverez jamais ailleurs un équipement aussi fin.";
+		next;
+		mes "[Mass Charleston]";
+		mes "Pour améliorer le Pilebuncker,";
+		mes "^FF00001 Pilebuncker^000000,";
+		mes "^FF0000300 Planches de fer ébréchées^000000,";
+		mes "et ^FF000015 Moteurs cassés^000000 sont requis.";
+		next;
+		switch( select( "Pilebuncker S", "Pilebuncker P", "Pilebuncker T" ) ) {
+		case 1:
+			mes "[Mass Charleston]";
+			mes "Pilebuncker S";
+			mes "Classe : Arme à percussion";
+			mes "ATK : 400";
+			mes "Bonus de vitesse d'attaque tous les 2 niveaux de mise à niveau.";
+			next;
+			mes "[Mass Charleston]";
+			mes "Poids : 300";
+			mes "Niveau d'arme : 4";
+			mes "Niveau requis : 130";
+			mes "Uniquement pour les mécaniques. Inclus avec une embase de carte.";
+			.@item_id = 16030;	// Pilebuncker_S
+			break;
+		case 2:
+			mes "[Mass Charleston]";
+			mes "Pilebuncker P";
+			mes "Classe : Arme à percussion";
+			mes "ATK : 450";
+			mes "+5 ATK par niveau de mise à niveau.";
+			next;
+			mes "[Mass Charleston]";
+			mes "Poids : 400";
+			mes "Niveau d'arme : 4";
+			mes "Niveau requis : 130";
+			mes "Uniquement pour les mécaniques.";
+			.@item_id = 16031;	// Pilebuncker_P
+			break;
+		case 3:
+			mes "[Mass Charleston]";
+			mes "Pilebuncker T";
+			mes "Classe : Arme à percussion";
+			mes "ATK : 400";
+			mes "Coût SP -1% par niveau de mise à niveau.";
+			next;
+			mes "[Mass Charleston]";
+			mes "Poids : 350";
+			mes "Niveau d'arme : 4";
+			mes "Niveau requis : 130";
+			mes "Uniquement pour les mécaniques. Inclus avec une embase de carte.";
+			.@item_id = 16032;	// Pilebuncker_T
+			break;
+		}
+		break;
+	}
+	next;
+	mes "[Mass Charleston]";
+	mes "Do you really want to Upgrade ^FF0000" + getitemname(.@item_id) + "^000000?";
+	next;
+	if (select( "I suggest you reconsider.", "Buy." ) == 1) {
+		mes "[Mass Charleston]";
+		mes "C'est une bonne affaire, mais vous devez tout de même prendre votre décision avec soin.";
+		close;
+	}
+	if (countitem(6751) > 299 && countitem(6750) > 14 && countitem(1549) > 0) {
+		mes "[Mass Charleston]";
+		mes "Vous ne le regretterez pas ! C'est une usine de Charleston !";
+		delitem 6751,300;	// Distorted_Iron_Plate
+		delitem 6750,15;	// Wrong_Engine
+		delitem 1549,1;		// Pilebuncker
+		getitem .@item_id,1;
+		close3;
+	}
+	mes "[Mass Charleston]";
+	mes "Matériaux insuffisants pour la mise à niveau.";
+	close3;
+
+S_Buy:
+	.@item_id = getarg(0);
+	mes "^FF0000Uniquement pour les mécaniques^000000";
+	mes "^FF0000Prix : 3 999 999 zeny^000000";
+	next;
+	mes "[Mass Charleston]";
+	mes "Do you really want to buy ^FF0000" + getitemname(.@item_id) + "^000000?";
+	next;
+	if (select( "I suggest you reconsider.", "Buy." ) == 1) {
+		mes "[Mass Charleston]";
+		mes "C'est une bonne affaire, mais vous devez tout de même prendre votre décision avec soin.";
+		close3;
+	}
+	//if (Zeny >= 3999998) {// typo?
+	if (Zeny >= 3999999) {
+		mes "[Mass Charleston]";
+		mes "Vous ne le regretterez pas ! C'est une usine de Charleston !";
+		Zeny -= 3999999;
+		getitem .@item_id,1;
+		close3;
+	}
+	mes "[Mass Charleston]";
+	mes "Une bonne valeur marchande n'est pas rare, veuillez confirmer la profondeur de votre poche !";
+	close3;
+}
+
+
+// Excellion
+verus04,161,222,4	script	Grandpa picking up scrap iron	1_M_HOF,{
+	switch( isbegin_quest(12368) ) {
+	case 0:
+		mes "[Grand-père ramassant du fer ferraille]";
+		mes "Il y a deux morceaux de ferraille dont je vois l'intérêt pour les ramasser et les vendre à la benne de recyclage ; le résultat n'est pas que vous soyez disposé à traiter avec moi.";
+		next;
+		mes "[Grand-père ramassant du fer ferraille]";
+		mes "Parce que ce n'est pas du fer ? Chaque ressource de recyclage n'est pas prête à acheter, c'est nerveux !";
+		close;
+	case 1:
+		mes "[Grand-père ramassant du fer ferraille]";
+		mes "Hé ! Vous venez tout juste de parler à cette ferraille ? Ou est-ce que je perds la vue ?";
+		close;
+	case 2:
+		mes "[Grand-père ramassant du fer ferraille]";
+		mes "Oh mon Dieu ! Ça ne peut pas être vendu à la benne de recyclage !";
+		close;
+	}
+}
+
+verus04,163,219,4	script	PLUTO_09#pa0829	4_SCR_AT_ROBOTS,{
+	disable_items;
+	if (checkweight(1201,1) == 0 || (MaxWeight - Weight) < 10000) {
+		mes "^ff0000Vous avez trop d'objets dans votre inventaire, veuillez en retirer et revenez plus tard.^000000";
+		close;
+	}
+	if (isbegin_quest(12368) < 2) {
+		mes "^0000ffBien que l'écran LCD soit encore sombre, il semble ne plus fonctionner.^000000";
+		close;
+	}
+	mes "^0000ffQuand le motif de dinosaure étrange apparaît, allez à l'écran d'introduction.^000000";
+	next;
+	mes "[PLUTO_09]";
+	mes "" + strcharinfo(0) + ",";
+	mes "Bonjour. Comment puis-je vous aider ?";
+	next;
+	switch( select( "Note", "Old Fuel and Huge Metal Scrap to exchange for gear.", "Design drawings for the production of Enchantment" ) ) {
+	case 1:
+		mes "^0000ffL'écran avant du dinosaure apparaît et une description de la voix mignonne d'une fille.^000000";
+		next;
+		mes "[PLUTO_09]";
+		mes "Il y a 100 ans depuis l'origine du nouveau PLUTO_09.";
+		next;
+		mes "[PLUTO_09]";
+		mes "Apporter des Déchets de Métal Géants et du Vieux Carburant peut vous aider à créer un équipement utile pour vous. Oh~";
+		next;
+		mes "[PLUTO_09]";
+		mes "Vous voulez fabriquer un équipement enchanté ? Vous apportez le réservoir ! Je peux faire l'enchantement avec un dessin pour vous. Oh, bonne chance.";
+		next;
+		mes "[PLUTO_09]";
+		mes "C'est le Tyrannosaurus rex qui est apparu dans le conte de fées des dinosaures, très beau... (Continuer à apparaître avec l'histoire ennuyeuse du dinosaure)";
+		next;
+		mes "^0000ffDans cette introduction à l'écran, on suppose que l'état psychologique du fabricant de robots est extrêmement instable.^000000";
+		close;
+	case 2:
+		setarray .@id[0],20773,15128; // Excelion_Wing, Excelion_Suit
+		mes "[PLUTO_09]";
+		mes "La production d'équipement nécessite ^0000ff10 Déchets de Métal Géants et 5 Vieux Carburant^000000.";
+		next;
+		switch( select( "Quit.", "Making the " + getitemname(.@id[0]), "Making the " + getitemname(.@id[1]) ) ) {
+		case 1:
+			mes "^0000ffLes dinosauges regardent la photo ici après avoir resté un peu fermés.^000000";
+			close;
+		case 2:
+			.@item_id = .@id[0];
+			break;
+		case 3:
+			.@item_id = .@id[1];
+			break;
+		}
+		if (countitem(6961) < 10 || countitem(6962) < 5) {
+			mes "[PLUTO_09]";
+			mes "I have already talked about the production equipment needs ^0000ff10 " + getitemname(6961) + " and 5 " + getitemname(6962) + "^000000, you don't have enough.";
+			close;
+		}
+		specialeffect EF_SPELLBREAKER;
+		delitem 6962,5;// OldTank
+		delitem 6961,10;// LargeScrap
+		getitem .@item_id,1;
+		mes "[PLUTO_09]";
+		mes "Votre équipement est prêt. Voyons si cela vous va.";
+		close;
+	case 3:
+		while(1) {
+			if (countitem(6962) < 5)
+				.@string$ = "^aaaaaaInsufficient fuel for making design drawings.^000000";
+			else
+				.@string$ = "Production design (^ff0000 success rate 30%^000000)";
+			mes "[PLUTO_09]";
+			mes "If you give me 5 " + getitemname(6962) + ", I can do the production of design drawings look!";
+			mes "----------";
+			mes "^0000ffPetit dinosaure courant autour sur l'écran.^000000";
+			next;
+			if (select( "Quit.", .@string$ ) == 1) {
+				mes "^0000ffC'est fini après avoir montré que les dinosaures se gavent.^000000";
+				close;
+			}
+			.@fail = false;
+			.@reac_rnd = rand(1,10000);
+			if (.@reac_rnd < 26)		.@en_name = 6977;	// Reactor_A_STR_
+			else if (.@reac_rnd < 51)	.@en_name = 6978;	// Reactor_A_INT_
+			else if (.@reac_rnd < 251)	.@en_name = 6979;	// Reactor_A_DEF_
+			else if (.@reac_rnd < 326)	.@en_name = 6981;	// Reactor_A_ATK_
+			else if (.@reac_rnd < 401)	.@en_name = 6982;	// Reactor_A_MATK_
+			else if (.@reac_rnd < 601)	.@en_name = 6980;	// Reactor_A_AVOI_
+			else if (.@reac_rnd < 801)	.@en_name = 6983;	// Reactor_A_MHP_
+			else if (.@reac_rnd < 1001)	.@en_name = 6984;	// Reactor_A_MSP_
+			else if (.@reac_rnd < 1151)	.@en_name = 6986;	// Reactor_A_ASPD_
+			else if (.@reac_rnd < 1401)	.@en_name = 6975;	// Reactor_Cure_201_
+			else if (.@reac_rnd < 1551)	.@en_name = 6976;	// Reactor_Cure_202_
+			else if (.@reac_rnd < 1751)	.@en_name = 6973;	// Reactor_Cure_101_
+			else if (.@reac_rnd < 1851)	.@en_name = 6974;	// Reactor_Cure_102_
+			else if (.@reac_rnd < 1901)	.@en_name = 6985;	// Reactor_A_FROZ_
+			else if (.@reac_rnd < 2101)	.@en_name = 6970;	// Reactor_T_WATER_
+			else if (.@reac_rnd < 2301)	.@en_name = 6971;	// Reactor_T_GROUND_
+			else if (.@reac_rnd < 2501)	.@en_name = 6969;	// Reactor_T_FIRE_
+			else if (.@reac_rnd < 2701)	.@en_name = 6972;	// Reactor_T_WIND_
+			else if (.@reac_rnd < 2776)	.@en_name = 6966;	// Reactor_P_WATER_
+			else if (.@reac_rnd < 2851)	.@en_name = 6967;	// Reactor_P_GROUND_
+			else if (.@reac_rnd < 2926)	.@en_name = 6965;	// Reactor_P_FIRE_
+			else if (.@reac_rnd < 3001)	.@en_name = 6968;	// Reactor_P_WIND_
+			else {
+				.@fail = true;
+				.@reac_rnd2 = rand(1,13000);
+				if (.@reac_rnd2 < 2)
+					.@en_name = 969;	// Gold
+				else if (.@reac_rnd2 < 1002)
+					.@en_name = 999;	// Steel
+				else if (.@reac_rnd2 < 3002)
+					.@en_name = 998;	// Iron
+				else if (.@reac_rnd2 < 8002)
+					.@en_name = 1002;	// Iron_Ore
+				else
+					.@en_name = 7054;	// Brigan
+			}
+			if (countitem(6962) < 5)
+				mes "^0000ffL'image montre le dinosaure regardant silencieusement la soucoupe vide, cela peut être un message d'erreur lorsque le matériau est insuffisant !^000000";
+			else {
+				specialeffect EF_SPELLBREAKER;
+				delitem 6962,5;// OldTank
+				getitem .@en_name,1;
+				mes "[PLUTO_09]";
+				if (.@fail)
+					mes "Quel dommage, le projet a échoué.";
+				else
+					mes "Super, le projet a été réalisé.";
+			}
+			next;
+		}
+		end;
+	default:
+		mes "^0000ffUn écran montrant un hurlement que le dinosaure ne peut pas comprendre.^000000";
+		close;
+	}
+	end;
+}
+
+verus04,165,217,4	script	MARS_01#pa0829	4_SCR_MT_ROBOTS,{
+	disable_items;
+	if (checkweight(1201,1) == 0 || (MaxWeight - Weight) < 10000) {
+		mes "^ff0000Vous avez trop d'objets dans votre inventaire, veuillez en retirer et revenez plus tard.^000000";
+		close;
+	}
+	switch( isbegin_quest(12368) ) {
+	case 0:
+		mes "L'écran LCD flou pourrait être effrayé ou heureux avec des secousses intenses ; cela peut être dû à un manque de batterie et empêcher la présentation de se terminer.";
+		next;
+		if (select( "Just ignore it.", "Press every button." ) == 1) {
+			mes "Il s'agit peut-être d'un robot pré-déchiqueté, courant partout et ne nécessitant pas beaucoup d'attention.";
+			close;
+		}
+		mes "Tout s'assombrit.";
+		mes "Bonjour ! Je suis MARS_01, un robot d'exploration. Actuellement, j'ai entré en mode veille pour économiser l'énergie. Les fonctions liées sont configurées comme suit.";
+		next;
+		if (select( "Interrupt the machine", "Supply of fuel" ) == 1) {
+			mes "Le robot re-entre en mode veille après un bruit sourd.";
+			close;
+		}
+		mes "[MARS_01]";
+		mes "Nous sommes des robots super-puissants ; dès que l'ancien carburant 1 me sera fourni et que PLUTO, mon compagnon, aura plus de 90 % d'énergie.";
+		next;
+		mes "[MARS_01]";
+		mes "Si vous trouvez du vieux carburant, veuillez l'insérer dans la bouche située au bas de l'écran pour lever le mode veille.";
+		setquest 12368;	// Operate the old robot
+		close;
+	case 1:
+		if (countitem(6962) < 1) {
+			mes "[MARS_01]";
+			mes "If you find 1 " + getitemname(6962) + ", please insert the fuel into the mouth of the bottom of the screen, so you can lift the hibernation mode.";
+			close;
+		}
+		mes "Peut-être que nous avons épuisé notre énergie en cherchant du carburant. Devrions-nous y mettre du carburant ?";
+		next;
+		if (select( "Quit.", "Put in the fuel" ) == 1) {
+			mes "Le vieux robot pourrait être à bout de forces et ne répondre pas du tout.";
+			close;
+		}
+		mes "Lorsque le carburant est inséré, l'écran sonore s'ouvre.";
+		npctalk "Whoa, whoa?! It moves!!!", "Grandpa picking up scrap iron";
+		next;
+		mes "[MARS_01]";
+		mes "Démarrer le système d'inspection et confirmer les dégâts de chaque pièce.";
+		next;
+		mes "[MARS_01]";
+		mes "Compteur de puissance à 10 %, tableau de bord normal, squelette du corps à 13 %, procéder aux opérations de minage avec soin.";
+		next;
+		mes "[MARS_01]";
+		mes "Pluto_09 a commencé à injecter de l'énergie pour le robot d'assistance au minage.";
+		npctalk "Energy response confirmed. It's working.", "PLUTO_09#pa0829";
+		next;
+		mes "[MARS_01]";
+		mes "Merci de m'avoir lancé, je vais réinitialiser la personne qui m'a lancée en tant que gestionnaire.";
+		next;
+		select("Enter a name.");
+		mes "[MARS_01]";
+		mes "" + strcharinfo(0) + ",";
+		mes "Bonjour ! Le carburant est entièrement chargé.";
+		delitem 6962,1;// OldTank
+		completequest 12368;
+		close;
+	case 2:
+		break;
+	}
+	mes "[MARS_01]";
+	mes "" + strcharinfo(0) + ",";
+	mes "Bonjour ! Puis-je vous aider ?";
+	next;
+	switch( select( "Note", "Enhanced " + getitemname(20773), "Enhanced " + getitemname(15128) ) ) {	// Excelion_Wing, Excelion_Suit
+	case 1:
+		mes "^0000ffBientôt les instructions à nouveau.^000000";
+		next;
+		mes "[MARS_01]";
+		mes "En attendant le nouveau propriétaire, nous continuons de mettre à jour vers la dernière version.";
+		next;
+		mes "[MARS_01]";
+		mes "Si vous apportez l'aile de propulsion aak Seri Wong, l'équipement veste aak Seri Wong et renforcez le design, je renforcerai l'équipement conformément au design.";
+		next;
+		mes "[MARS_01]";
+		mes "Selon les plans standards d'exploitation, l'équipement ne sera pas endommagé pendant le processus, mais le nombre de mises à niveau maximales changera selon le type d'équipement.";
+		next;
+		mes "[MARS_01]";
+		mes "Bienvenue encore~";
+		close;
+	case 2:
+		.@part = EQI_GARMENT;
+		break;
+	case 3:
+		.@part = EQI_ARMOR;
+		break;
+	}
+	// <item ID required>, <item enchant ID>, <max number of this enchant on armor>, <max number of this enchant on garment>, <enchant on first slot only>
+	setarray .@list[0],
+		6965, 4970, 1,0,3,	// Reactor_P_FIRE_		Reactor_P_FIRE
+		6966, 4971, 1,0,3,	// Reactor_P_WATER_		Reactor_P_WATER
+		6967, 4972, 1,0,3,	// Reactor_P_GROUND_	Reactor_P_GROUND
+		6968, 4973, 1,0,3,	// Reactor_P_WIND_		Reactor_P_WIND
+		6969, 4974, 0,3,0,	// Reactor_T_FIRE_		Reactor_T_FIRE
+		6970, 4975, 0,3,0,	// Reactor_T_WATER_		Reactor_T_WATER
+		6971, 4976, 0,3,0,	// Reactor_T_GROUND_	Reactor_T_GROUND
+		6972, 4977, 0,3,0,	// Reactor_T_WIND_		Reactor_T_WIND
+		6973, 4978, 3,3,0,	// Reactor_Cure_101_	Reactor_Cure_101
+		6974, 4979, 3,3,0,	// Reactor_Cure_102_	Reactor_Cure_102
+		6975, 4980, 3,3,0,	// Reactor_Cure_201_	Reactor_Cure_201
+		6976, 4981, 3,3,0,	// Reactor_Cure_202_	Reactor_Cure_202
+		6977, 4982, 1,0,0,	// Reactor_A_STR_		Reactor_A_STR
+		6978, 4983, 1,0,0,	// Reactor_A_INT_		Reactor_A_INT
+		6979, 4984, 3,3,0,	// Reactor_A_DEF_		Reactor_A_DEF
+		6980, 4985, 1,1,0,	// Reactor_A_AVOI_		Reactor_A_AVOI
+		6981, 4986, 3,3,0,	// Reactor_A_ATK_		Reactor_A_ATK
+		6982, 4987, 3,3,0,	// Reactor_A_MATK_		Reactor_A_MATK
+		6983, 4988, 3,3,0,	// Reactor_A_MHP_		Reactor_A_MHP
+		6984, 4989, 3,3,0,	// Reactor_A_MSP_		Reactor_A_MSP
+		6985, 4990, 1,0,0,	// Reactor_A_FROZ_		Reactor_A_FROZ
+		6986, 4991, 1,1,0;	// Reactor_A_ASPD_		Reactor_A_ASPD
+	.@size = getarraysize(.@list);
+
+	for ( .@i = 0; .@i < .@size; .@i += 5 ) {
+		if (countitem(.@list[.@i]) < 1)
+			.@menu$ += sprintf( "^aaaaaa%s (Missing)^000000:", getitemname(.@list[.@i]) );
+		else
+			.@menu$ += sprintf( "%s:", getitemname(.@list[.@i]) );
+	}
+	mes "[MARS_01]";
+	mes "" + strcharinfo(0) + ",";
+	mes "Choisissez l'enchantement que vous souhaitez utiliser !";
+	next;
+	.@s = select("Quit.:" + .@menu$) - 2;
+	if (.@s < 0) {
+		mes "[MARS_01]";
+		mes "Pour le moment.";
+		close;
+	}
+	.@s *= 5;
+	.@item_req = .@list[.@s];
+	.@item_enchant_id = .@list[.@s+1];
+	.@first_slot_only = .@list[.@s+4];
+
+	.@equip_id = getequipid(.@part);
+	.@equip_refine = getequiprefinerycnt(.@part);
+	setarray .@card[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3);
+
+	if (countitem(.@item_req) < 1) {
+		mes "[MARS_01]";
+		mes "Pour le moment.";
+		close;
+	}
+	if (.@part == EQI_ARMOR)
+		.@max_num_enchant = .@list[.@s+2];
+	else if (.@part == EQI_GARMENT)
+		.@max_num_enchant = .@list[.@s+3];
+	else {
+		mes "[MARS_01]";
+		mes "Veuillez contacter l'administrateur.";
+		close;
+	}
+
+	// anti-hack
+	if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine)) {
+		mes "[MARS_01]";
+		mes "Avez-vous retiré votre équipement ?";
+		close;
+	}
+
+	if (.@card[0] > 0 && .@item_enchant_id == .@card[0]) { .@slot_sum++; }
+	if (.@card[1] > 0 && .@item_enchant_id == .@card[1]) { .@slot_sum++; }
+	if (.@card[2] > 0 && .@item_enchant_id == .@card[2]) { .@slot_sum++; }
+	if (.@card[3] > 0 && .@item_enchant_id == .@card[3]) { .@slot_sum++; }
+
+	if (.@max_num_enchant < 1) {
+		mes "[MARS_01]";
+		mes "Le design que vous avez choisi est incompatible avec l'équipement.";
+		close;
+	}
+	if (.@first_slot_only > 0 && .@card[3] != 0) {
+		mes "[MARS_01]";
+		mes "Ce design ne sert qu'à renforcer la première utilisation, mais l'équipement possède d'autres performances ; veuillez utiliser un autre design pour le renforcer !";
+		close;
+	}
+	if (.@slot_sum >= .@max_num_enchant) {
+		mes "[MARS_01]";
+		mes "The maximum number of enchants is " + .@max_num_enchant + ". The item has reached the upper limit.";
+		close;
+	}
+	if (.@card[1] != 0) {
+		mes "[MARS_01]";
+		mes "Le nombre d'objets a atteint la limite.";
+		close;
+	}
+
+	// anti-hack
+	if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine)) {
+		mes "[MARS_01]";
+		mes "Veuillez faire une attention particulière si l'équipement va être retiré.";
+		close;
+	}
+
+	switch( .@equip_id ) {
+	case 20773:	// Excelion_Wing
+	case 15128:	// Excelion_Suit
+		break;
+	default:
+		mes "[MARS_01]";
+		mes "Le produit ne possède pas de numéro de série, ne répond pas aux spécifications du produit et ne peut donc pas être renforcé.";
+		close;
+	}
+	mes "[MARS_01]^0000ff";
+	mes "Choose " + getequipname(.@part) + " + " + getitemname(.@item_req) + ",";
+	mes "^000000------------------";
+	mes "Your selected design can be upgraded to the equipment limit ^0000ff" + .@max_num_enchant + " the same design, ^000000so far, enhanced ^0000ff" + .@slot_sum + " times^000000, do you want to continue?";
+	next;
+	if (select( "I'll think about it...", "Go on." ) == 1) {
+		mes "[MARS_01]";
+		mes "Revenez la prochaine fois que vous aurez besoin de moi~";
+		close;
+	}
+
+	// anti-hack
+	if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3]) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine))
+		close;
+
+	if (.@card[3] == 0) {
+		.@enchant_count = 1;
+		.@card[3] = .@item_enchant_id;
+	}
+	else if (.@card[2] == 0) {
+		.@enchant_count = 2;
+		.@card[2] = .@item_enchant_id;
+	}
+	else if (.@card[1] == 0) {
+		.@enchant_count = 3;
+		.@card[1] = .@item_enchant_id;
+	}
+	else {
+		mes "[MARS_01]";
+		mes "L'équipement a atteint la limite supérieure du renforcement ! Bonjour !";
+		close;
+	}
+	specialeffect2 EF_REPAIRWEAPON;
+	mes "[MARS_01]";
+	if (.@enchant_count < 5)
+		mes "The first equipment has been upgraded ^990000" + .@enchant_count + " times^000000.";
+	else
+		mes "Pour une performance supplémentaire, l'équipement^990000 ^000000 peut être amélioré.";	// never displayed
+
+	delitem .@item_req, 1;
+	delequip .@part;
+	getitem2 .@equip_id,1,1,.@equip_refine,0,.@card[0],.@card[1],.@card[2],.@card[3];
+	close;
+}

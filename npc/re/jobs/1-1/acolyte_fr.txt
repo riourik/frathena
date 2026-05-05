@@ -1,0 +1,333 @@
+//===== rAthena Script ======================================= 
+//= Renewal Acolyte Job Quest
+//===== By: ================================================== 
+//= Kisuka
+//===== Current Version: ===================================== 
+//= 1.2
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Job Change to Acolyte Class
+//===== Additional Comments: ================================= 
+//= 1.0 First Version. [Kisuka]
+//= 1.1 Added back the npcs used for the priest quest.
+//= 1.2 Added support for Baby classes. [Euphy]
+//============================================================ 
+prt_church,184,41,4	script	Cleric#aco	60,{
+	if (Upper == 1) {
+		if (ADVJOB == Job_High_Priest || ADVJOB == Job_Champion) {
+			if (Class == Job_Novice_High) {
+				mes "[Père Mareusis]";
+				mes "Ah, je sens que vous avez vécu une vie antérieure.";
+				mes "Vous devez avoir appris beaucoup de choses avant d'entrer dans Valhalla.";
+				next;
+				if (!callfunc("F_CanChangeJob")) {
+					mes "[Père Mareusis]";
+					mes "Malheureusement, je ne pense pas que vous soyez prêt à devenir un Acolyte encore. Veuillez terminer l'apprentissage des Compétences de Base d'abord.";
+					next;
+					mes "[Père Mareusis]";
+					mes "En attendant,";
+					mes "je vais attendre jusqu'à ce que vous soyez prêt.";
+					mes "avec vous.";
+					mes "Que Dieu soit";
+					mes "[Père Mareusis]";
+					close;
+				}
+				mes "[Père Mareusis]";
+				mes "vous souhaite bonne chance pour votre";
+				mes "nouveau voyage de vie.";
+				mes "[Père Mareusis]";
+				mes "Maintenant, partez en quête pour trouver ceux qui ont besoin de votre aide. Que Dieu éclaire votre chemin.";
+				next;
+				skill "NV_TRICKDEAD",0,SKILL_PERM;
+				jobchange Job_Acolyte_High;
+				skill "AL_HOLYLIGHT",1,SKILL_PERM;
+				mes "[Père Mareusis]";
+				mes "Maintenant, partez en quête pour trouver des gens qui ont besoin de votre aide. Que Dieu éclaire votre route.";
+				close;
+			}else{
+				mes "[Père Mareusis]";
+				mes "Maintenant, aventure-toi pour chercher ceux qui ont besoin de ton aide. Que Dieu éclaire ta voie.";
+				close;
+			}
+		}else{
+			mes "[Père Mareusis]";
+			mes "Je sens que vous avez vécu une expérience de vie antérieure. Vous devriez avoir appris beaucoup de choses avant d'entrer dans Valhalla.";
+			next;
+			mes "[Père Mareusis]";
+			mes "Cependant, je peux dire que vous n'êtes pas fait pour être un Acolyte. Souvenez-vous qui vous étiez dans votre vie antérieure et trouvez votre chemin.";
+			close;
+		}
+	}
+	mes "[Père Mareusis]";
+	mes "Qu'est-ce que vous cherchez?";
+	next;
+	switch(select("Change your job to acolyte.:Ask the requirements to be an acolyte.:Quit it.")) {
+	case 1:
+		mes "[Père Mareusis]";
+		if(BaseJob != Job_Novice) {
+			if(BaseJob == Job_Acolyte)
+				mes "Ça va aujourd'hui ? Je peux dire par votre habillement que vous êtes déjà un Acolyte. Vous ne plaisantez pas, n'est-ce pas ?";
+			else
+				mes "Je suis désolé, mais il semble que tu aies déjà ton propre métier, n'est-ce pas ?";
+			close;
+		}else{
+			mes "Veux-tu vraiment devenir un serviteur de Dieu ?";
+			mes "Voyons si tu es prêt ou non... Hmm...";
+			next;
+			if (!callfunc("F_CanChangeJob")) {
+				mes "[Père Mareusis]";
+				mes "Oh mon dieu ! Tu n'as pas encore accompli l'exercice de base ?! Il te reste beaucoup de chemin à parcourir ! Reviens après avoir augmenté ton niveau d'emploi !";
+				close;
+			}
+			mes "[Père Mareusis]";
+			mes "Hmm... ton niveau d'emploi est suffisant...";
+			mes "Bien. Maintenant, je vais te donner la qualification pour devenir un Acolyte.";
+			next;
+			mes "[Père Mareusis]";
+			mes "N'oublie jamais d'être reconnaissant envers Dieu, qui nous prend soin à tout moment. Dans le chaos et les moments de difficulté, affronte tes épreuves avec une foi inébranlable.";
+			callfunc "Job_Change",Job_Acolyte;
+			getitem 1545,1;	// N_Mace
+			next;
+			mes "[Père Mareusis]";
+			mes "Enfin, je tiens sincèrement à vous féliciter pour avoir persévéré dans votre épreuve de pénitence.";
+			close;
+		}
+	case 2:
+		mes "[Père Mareusis]";
+		mes "Veux-tu devenir un Acolyte ?";
+		mes "Alors, tu dois accomplir les exigences suivantes en considérant qu'elles sont les pratiques données par Dieu.";
+		next;
+		mes "[Père Mareusis]";
+		mes "D'abord, tu dois atteindre au moins le niveau d'emploi Novice 9 et apprendre toutes les Compétences de Base.";
+		mes "C'est la chose la plus élémentaire à faire, donc tu dois y voir un moyen de te former toi-même.";
+		next;
+		mes "[Père Mareusis]";
+		mes "Quand tu penses avoir rempli cette exigence, reviens alors vers moi. Ensuite, tu auras un métier sacré dans lequel tu pourras répandre la volonté de Dieu.";
+		close;
+	case 3:
+		close;
+	}
+}
+
+prt_fild03,365,255,2	script	Ascetic#aco	89,{
+	mes "[Père Rubalkabara]";
+	if (BaseJob == Job_Novice) {
+		if (job_acolyte_q == 6) {
+			mes "Prenez soin de vous. Ils devraient savoir que vous m'avez rencontré quand vous arriverez au Sanctuaire de Prontera.";
+			next;
+			mes "[Père Rubalkabara]";
+			mes "J'ai envoyé un pigeon voyageur avec un message. J'espère qu'il arrivera là-bas en toute sécurité...";
+			close;
+		}
+		if (job_acolyte_q != 0) {
+			if (job_acolyte_q == 2) {
+				mes "Oh...? Vous devez être celui qui aspire à devenir un Acolyte. J'ai déjà reçu des nouvelles du Sanctuaire que vous pourriez venir.";
+				next;
+				mes "[Père Rubalkabara]";
+				mes "Now, your name was " + strcharinfo(0) + ", right? Excellent, thank you for visiting me.";
+				next;
+				mes "[Père Rubalkabara]";
+				mes "Je crois que l'on vous a déjà parlé beaucoup d'Acolytes par le Frère Mareusis. De plus, il y a plein de gens utiles dans le Sanctuaire de Prontera.";
+				next;
+				mes "[Père Rubalkabara]";
+				mes "Il me semble qu'il n'y a vraiment pas besoin pour moi d'enseigner grand-chose. En outre, je suis sûr que quelqu'un de votre génération pourrait avoir du mal à écouter un vieil homme comme moi. Hahaha~";
+				next;
+				mes "[Père Rubalkabara]";
+				mes "Cependant, les leçons peuvent venir des endroits où vous l'attendriez le moins. Dieu aime enseigner ses enfants par des moyens étranges. Vous verrez.";
+				next;
+				mes "[Père Rubalkabara]";
+				mes "^FF0000Bien, je vais envoyer le message leur disant que vous m'avez rendu visite. Donc, vous pouvez maintenant retourner au Sanctuaire de Prontera.";
+				next;
+				mes "[Père Rubalkabara]";
+				mes "^FF0000Au revoir.";
+				close2;
+				savepoint "prt_fild03",361,255,1,1;
+				set job_acolyte_q,6;
+				end;
+			}
+			else {
+				mes "Oh...";
+				mes "^FF0000Êtes-vous l'un des postulants à l'accolite...?";
+				mes "^FF0000Je ne pense pas que votre nom figure sur ma liste. Hmmm...";
+				mes "Voyons...";
+				next;
+				mes "[Père Rubalkabara]";
+				mes "Your name is " + strcharinfo(0) + "?";
+				mes "^FF0000Pourquoi ne retournez-vous pas au Sanctuaire de Prontera et vérifiez encore une fois?";
+				mes "^FF0000Hum ? Qu'est-ce qui vous amène ici ? C'est un endroit très dangereux pour un Novice comme vous !";
+				next;
+				mes "[Père Rubalkabara]";
+				mes "^FF0000Bienvenue dans la Profondeur. Asseyez-vous et contemplez le message de Dieu avec moi. Ce lieu est magnifique, même si le danger accompagne son sentiment de sérénité...";
+				close;
+			}
+		}
+		else {
+			mes "^FF0000Êtes-vous venu ici dans la Profondeur pour vous entraîner ? Ou êtes-vous simplement un Errant ?";
+			close;
+		}
+	}
+	else if (BaseJob == Job_Acolyte) callfunc "F_FatherRub";
+	else {
+		if (BaseJob == Job_Priest) {
+			mes "Salutations.";
+			next;
+			mes "[Père Rubalkabara]";
+			mes "^FF0000Qu'importe qui vous êtes, prenez soin de vous. Les monstres ici sont surprenamment forts, contrairement à leur apparence mignonne.";
+			close;
+		}
+		else {
+			mes "Oh oh...";
+			mes "^FF0000Je vais envoyer un pigeon voyageur au Sanctuaire de Prontera. Lorsque vous reviendrez, le Prêtre là-bas aurait déjà reçu mon message.";
+			next;
+			mes "[Père Rubalkabara]";
+			mes "^FF0000Je prierai Dieu et j'espère que vous devenez rapidement un Acolyte.";
+			close;
+		}
+	}
+}
+
+moc_fild07,41,355,4	script	Ascetic#2aco	95,{
+	mes "[Mère Mathilda]";
+	if (BaseJob == Job_Novice) {
+		if (job_acolyte_q == 7) {
+			mes "^FF0000Ah, je suppose que vous êtes l'un des postulants à l'accolite. Je vous salue chaleureusement.";
+			next;
+			mes "[Mère Mathilda]";
+			mes "^FF0000Veuillez retourner au Sanctuaire de Prontera et parler au Prêtre en charge.";
+			close;
+		}
+		if (job_acolyte_q != 0) {
+			if (job_acolyte_q == 3) {
+				mes "^FF0000Vous devez être l'un des postulants à l'accolite.";
+				next;
+				mes "[Mère Mathilda]";
+				mes "What is your name? " + strcharinfo(0) + "? Let's see... Ah, you're on my list.";
+				next;
+				mes "[Mère Mathilda]";
+				mes "I will send a message to the Sanctuary confirming that you, " + strcharinfo(0) + " visited me and completed your penance.";
+				next;
+				mes "[Mère Mathilda]";
+				mes "^FF0000Je vous salue chaleureusement.";
+				close2;
+				savepoint "moc_fild07",35,355,1,1;
+				set job_acolyte_q,7;
+				end;
+			}
+			else {
+				mes "Ah...!";
+				mes "^FF0000Quel est votre nom maintenant ?";
+				mes "^FF0000Il semble que votre nom";
+				mes "Je t'accueille sincèrement.";
+				next;
+				mes "[Mère Mathilda]";
+				mes "Maintenant, quel est ton nom ?";
+				mes "" + strcharinfo(0) + "? Let's see...";
+				next;
+				mes "[Mère Mathilda]";
+				mes "Hmm...";
+				mes "Il semble que ton nom";
+				mes "^FF0000n'est pas sur ma liste...^000000";
+				next;
+				mes "[Mère Mathilda]";
+				mes "Peut-être devriez-vous retourner au Sanctuaire de Prontera et vérifier à nouveau le lieu de votre épreuve de pénitence.";
+				close;
+			}
+		}
+		else {
+			mes "...";
+			close;
+		}
+	}
+	else if (BaseJob == Job_Acolyte) callfunc "F_MotherMart";
+	else {
+		if (BaseJob == Job_Priest) {
+			mes "Bonjour ~";
+			next;
+			mes "[Mère Mathilda]";
+			mes "Comment se passe votre entraînement ? J'espère sincèrement que vous appréciez la grâce de Dieu dans laquelle vous vivez.";
+			close;
+		}
+		else {
+			mes "Que Dieu";
+			mes "vous accompagne...";
+			close;
+		}
+	}
+}
+
+prt_fild00,208,218,6	script	Ascetic#3aco	98,{
+	mes "[Père Yosuke]";
+	if (BaseJob == Job_Novice) {
+		if (job_acolyte_q == 8) {
+			mes "Quoi?";
+			next;
+			mes "[Père Yosuke]";
+			mes "Avez-vous encore des affaires avec moi?! Non, tu n'en as pas ! Va immédiatement au Sanctuaire !";
+			close;
+		}
+		if (job_acolyte_q != 0) {
+			if (job_acolyte_q == 4) {
+				mes "Salut.";
+				mes "Quelle que soit ta nature,";
+				mes "tu ressembles à un";
+				mes "postulant acolyte.";
+				mes "Droite?";
+				next;
+				mes "[Père Yosuke]";
+				mes "Pas mal, pas mal. Tu as bien supporté l'épreuve de pénitence.";
+				mes "Alors quel est ton nom ?";
+				next;
+				mes "[Père Yosuke]";
+				mes "" + strcharinfo(0) + ", huh?";
+				next;
+				mes "[Père Yosuke]";
+				mes "Okay. I'll send a message to the Sanctuary that you, " + strcharinfo(0) + ", came to visit me.";
+				next;
+				mes "[Père Yosuke]";
+				mes "Va maintenant au Sanctuaire et termine ta formation pour devenir un Acolyte, petit bonhomme.";
+				close2;
+				savepoint "prt_fild00",206,230,1,1;
+				set job_acolyte_q,8;
+				end;
+			}
+			else {
+				mes "Salut.";
+				mes "Tu ressembles à un postulant acolyte. Est-ce bien ça ?";
+				next;
+				mes "[Père Yosuke]";
+				mes "Pas mal du tout, tu es arrivé jusqu'ici depuis Prontera. Alors quel est ton nom, petit ?";
+				next;
+				mes "[Père Yosuke]";
+				mes "" + strcharinfo(0) + ", huh? Why isn't your name on my list?";
+				next;
+				mes "[Père Yosuke]";
+				mes "Tu as probablement fait une erreur. Va au Sanctuaire et vérifie avec l'Archevêque.";
+				close;
+			}
+		}
+		else {
+			mes "Toi...";
+			mes "Novice.";
+			mes "Il y a quelque chose";
+			mes "que tu veux me dire ?";
+			close;
+		}
+	}
+	else if (BaseJob == Job_Acolyte) callfunc "F_FatherYos";
+	else {
+		if (BaseJob == Job_Priest) {
+			mes "Hé...";
+			next;
+			mes "[Père Yosuke]";
+			mes "Si tu le souhaites, viens t'asseoir ici avec moi et médite les grandes vérités. La majesté de Dieu est vraiment inspirante...";
+			close;
+		}
+		else {
+			mes "As-tu quelque chose à dire ? Parce que malheureusement pour toi,";
+			mes "^FF0000Je n'ai aucune réponse.^FF0000";
+			close;
+		}
+	}
+}
+

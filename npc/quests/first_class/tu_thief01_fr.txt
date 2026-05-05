@@ -1,0 +1,722 @@
+//===== rAthena Script =======================================
+//= Thief Class Tutorial and Job Specific Quest
+//===== By: ==================================================
+//= Fix up by Jukka
+//===== Current Version: =====================================
+//= 2.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Thief training quest.
+//===== Additional Comments: =================================
+//= 1.0 Fully working
+//= 1.1 optimized [Lupus]
+//= 1.2 Fixed experience gains to match upcoming rate adjustments. [SinSloth]
+//= 1.3 Fixed a few minor mistakes [Playtester]
+//= 1.4 Misc. updates. [L0ne_W0lf]
+//= 1.5 Added Pre-Renewal support. [Euphy]
+//= 2.0 Fixed a wrong exp value & clean-up. [Capuche]
+//============================================================
+
+// Thief Trainer
+//============================================================
+moc_ruins,66,164,4	script	Thief Trainer#T	4_M_02,{
+	mes "[Yierhan]";
+	if(Class == Job_Novice){
+		mes "Eh...?";
+		mes "Un Novice ?";
+		mes "Toujours à réfléchir";
+		mes "au métier que tu vas choisir...";
+		mes "[Yierhan]";
+		mes "Est-ce exact?";
+		next;
+		mes "[Yierhan]";
+		mes "que je peux ajouter -- viens me parler. Je te montrerai les ficelles du métier !";
+		mes "Quaaaat fais-tu";
+		close;
+	}
+	else if (BaseClass == Job_Thief && Upper != 2) {
+		if (Class != Job_Thief && tu_thief01 < 8) {
+			mes "ici ? Il n'y a rien que je puisse t'enseigner !";
+			mes "Tu es bien au-delà de mes capacités !";
+			mes "[Yierhan]";
+			mes "En fait, je pense que tu es qualifié pour m'apprendre quelques trucs !";
+			next;
+			mes "[Yierhan]";
+			mes "Je suis Yierhan.";
+			mes "J'ai justement la charge";
+			mes "de former les nouveaux Voleurs.";
+			mes "Come on! I need new moves!";
+			close;
+		}
+		if(tu_thief01 == 0){
+			mes "Salut mec.";
+			mes "I'm Yierhan.";
+			mes "I happen to be";
+			mes "the guy in charge";
+			mes "of training new Thieves.";
+			next;
+			switch(select("Training?:Training? Right now?")){
+			case 1:
+				mes "[Yierhan]";
+				mes "Oui, l'entraînement. Je veux dire, ce genre de choses est naturel pour certains, mais d'autres ont besoin un peu plus d'aide. Donc c'est une de ces choses 'au cas où'.";
+				next;
+				break;
+			case 2:
+				mes "[Yierhan]";
+				mes "Maintenant ?";
+				mes "Oui, maintenant !";
+				mes "Mais si pour une raison quelconque tu n'es pas prêt, je suppose que je peux attendre.";
+				close;
+			}
+			mes "[Yierhan]";
+			mes "Bon, d'abord, les Voleurs utilisent des attaques au corps à corps. Bon, la plupart d'entre nous le font. Il y en a quelques-uns qui préfèrent utiliser des Arbalètes à longue portée. Mais tous nous sommes bons pour être rapides !";
+			next;
+			mes "[Yierhan]";
+			mes "Donc pour les attaques au corps à corps, quel attribut augmente vos dégâts ? Allez.";
+			mes "Maintenant, vous devriez le savoir si vous n'avez pas sauté l'Entraînement des Débutants.";
+			next;
+			switch(select("^6B8E23INT^000000:^2F4F2FSTR^000000:^23238EDEX^000000")){
+			case 1:
+				mes "[Yierhan]";
+				mes "Dis donc quoi ? ^6B8E23INT^000000 affecte les dégâts magiques, la défense magique et certaines compétences. Les Voleurs ne travaillent même pas avec la magie !";
+				next;
+				mes "[Yierhan]";
+				mes "Vous devez avoir sauté les Exercices pour Débutants ! Ce n'est pas que je vous en veuille d'ailleurs. De toute façon, c'est ^2F4F2FSTR^000000 qui augmente vos dégâts d'attaque, compris ?";
+				next;
+				mes "[Yierhan]";
+				mes "Donc si vous avez l'impression que les dégâts que vous infligez sont assez faibles, vous pourriez souhaiter plus de points d'attributs en ^2F4F2FSTR^000000. Jusqu'où vous élevez votre propre STR dépend vraiment de vous.";
+				getexp 200,100;
+				break;
+			case 2:
+				mes "[Yierhan]";
+				mes "Oui, c'est ça ! Si tu veux augmenter tes dégâts, tu as besoin";
+				mes "de mettre quelques points d'attribut dans ^2F4F2FSTR^000000. Augmenter STR augmente également";
+				mes "votre limite de poids maximum aussi.";
+				next;
+				mes "[Yierhan]";
+				mes "Donc si vous avez l'impression que les dégâts que vous infligez sont assez faibles, vous pourriez souhaiter plus de points d'attributs en ^2F4F2FSTR^000000. Jusqu'où vous élevez votre propre STR dépend vraiment de vous.";
+				next;
+				mes "[Yierhan]";
+				mes "Bien sûr, ^23238EDEX^000000 et LUK peuvent";
+				mes "également augmenter vos dégâts d'attaque, mais ils sont insignifiants par rapport à STR. Je le répète : ^660000insignifiants^000000.";
+				getexp 400,200;
+				break;
+			case 3:
+				mes "[Yierhan]";
+				mes "Dites donc quoi ? ^23238EDEX^000000 affecte";
+				mes "votre précision d'attaque, pas vos dégâts ! Bon, sauf si vous utilisez";
+				mes "une Arbalète. Sinon, cela n'augmente vos dégâts que d'une toute petite quantité.";
+				next;
+				mes "[Yierhan]";
+				mes "Vous devez avoir sauté les Exercices pour Débutants ! Ce n'est pas que je vous en veuille d'ailleurs. De toute façon, c'est ^2F4F2FSTR^000000 qui augmente vos dégâts d'attaque, compris ?";
+				next;
+				mes "[Yierhan]";
+				mes "Donc si vous avez l'impression que les dégâts que vous infligez sont assez faibles, vous pourriez souhaiter plus de points d'attributs en ^2F4F2FSTR^000000. Jusqu'où vous élevez votre propre STR dépend vraiment de vous.";
+				getexp 200,100;
+			}
+			tu_thief01 = 1;
+			specialeffect2 EF_HIT5;
+			close;
+		}
+		else if(tu_thief01 == 1){
+			mes "D'accord, assez parlé des attributs.";
+			mes "Vous savez quoi ? Je pense que je vais juste discuter avec vous des compétences que nous, les Voleurs, utilisons.";
+			next;
+			mes "[Yierhan]";
+			mes "Donc montez le niveau de vos compétences, apprenez-en quelques nouvelles si vous voulez, et";
+			mes "revenez ensuite ici.";
+			tu_thief01 = 2;
+			close;
+		}
+		else if(tu_thief01 == 2){
+			mes "D'accord, laissez-moi voir vos compétences. Vous savez que vous devez modifier votre stratégie de combat en fonction des compétences dont vous disposez, n'est-ce pas ? Les compétences sont tout aussi importantes que les attributs !";
+			next;
+			.@chk_th_skill1 = getskilllv("TF_DOUBLE");
+			.@chk_th_skill2 = getskilllv("TF_MISS");
+			.@chk_th_skill3 = getskilllv("TF_STEAL");
+			.@chk_th_skill4 = getskilllv("TF_HIDING");
+			.@chk_th_skill5 = getskilllv("TF_POISON");
+			.@chk_th_skill6 = getskilllv("TF_DETOXIFY");
+
+			if(.@chk_th_skill1 == 0 && .@chk_th_skill2 == 0 && .@chk_th_skill3 == 0 && .@chk_th_skill4 == 0 && .@chk_th_skill5 == 0 && .@chk_th_skill6 == 0){
+				mes "[Yierhan]";
+				mes "Vous n'avez encore appris aucune compétence ? Allez, ce sont vos compétences qui vous distingueront des Novices et de tout le monde !";
+				close;
+			}
+			if(.@chk_th_skill1 > 0){
+				mes "[Yierhan]";
+				mes "Ah, donc tu as appris";
+				mes "Level "+.@chk_th_skill1+" Double Attack.";
+				mes "Super ! Cette compétence vous donne la chance d'attaquer deux fois en une";
+				mes "attaque. Génial !";
+				next;
+				mes "[Yierhan]";
+				mes "C'est une compétence Passive, elle est donc toujours active et ne consomme aucune SP pour être utilisée. Plus votre niveau de Double Attaque est élevé, plus vous effectuerez de doubles attaques.";
+				next;
+			}
+			if(.@chk_th_skill2 > 0){
+				mes "[Yierhan]";
+				mes "Voyons...";
+				mes "Level "+.@chk_th_skill2+" Increase Dodge?";
+				mes "Cela augmente votre Taux d'Évasion, ce qui signifie que vous avez une meilleure chance de esquiver les attaques de vos ennemis.";
+				next;
+				mes "[Yierhan]";
+				mes "Tout comme la compétence Double Attack, Augmenter l'Evasion est une compétence Passive. Elle ne consomme pas de SP et elle est toujours en";
+				mes "effet. Si vous n'aimez pas être écorché, c'est votre compétence.";
+				next;
+			}
+			if(.@chk_th_skill3 > 0){
+				mes "[Yierhan]";
+				mes "Wow, donc vous avez";
+				mes "got Level "+.@chk_th_skill3+" Steal~";
+				mes "Maintenant, c'est la compétence qui donne son nom à notre métier ! Vous ne pouvez cependant pas l'utiliser contre des personnes...";
+				mes "it against people, though...";
+				next;
+				mes "[Yierhan]";
+				mes "Mais vous pouvez utiliser Vol pour prendre des objets aux monstres. Si vous avez de la chance, vous pourrez ainsi obtenir d'excellents objets. Oh, et Vol n'affecte pas les taux de chute des monstres.";
+				next;
+			}
+			if(.@chk_th_skill4 > 0){
+				mes "[Yierhan]";
+				mes "Vous avez appris";
+				mes "Level "+.@chk_th_skill4+" Hiding?";
+				mes "Bon, tu ne peux apprendre";
+				mes "que cela après avoir monté la compétence Vol à un certain niveau.";
+				next;
+				mes "[Yierhan]";
+				mes "Bien sûr, vous utilisez la compétence Cachée pour vous enfouir sous terre en cas d'urgence, comme lorsque vous êtes encerclé par des ennemis redoutables. Faites attention cependant...";
+				mes "[Yierhan]";
+				next;
+				mes "[Yierhan]";
+				mes "[Yierhan]";
+				next;
+			}
+			if(.@chk_th_skill5 > 0){
+				mes "[Yierhan]";
+				mes "D'accord, je vois que tu";
+				mes "know Level "+.@chk_th_skill5+" Envenom.";
+				mes "aimais être dangereux,";
+				mes "^FF0000Danseur(se),";
+				next;
+				mes "[Yierhan]";
+				mes "Cette compétence d'attaque a une chance";
+				mes "de poisonner votre ennemi pendant un certain temps. Tant qu'il est empoisonné, l'ennemi perd continuellement de ses PV et subit une réduction de sa défense.";
+				next;
+				mes "[Yierhan]";
+				mes "Eh bien, mais souviens-toi.";
+				mes "Si le monstre est trop fort pour toi, tu pourrais ne pas réussir à l'empoisonner. Alors n'en fais pas trop.";
+				next;
+			}
+			if(.@chk_th_skill6 > 0){
+				mes "[Yierhan]";
+				mes "Level "+.@chk_th_skill6+" Detoxify.";
+				mes "Si tu as pris la peine d'apprendre cela, tu dois être du genre";
+				mes "prudent ou quelque chose comme ça.";
+				next;
+				mes "[Yierhan]";
+				mes "Vous ne pouvez apprendre Détoxifier";
+				mes "[Yierhan]";
+				next;
+			}
+			mes "[Yierhan]";
+			mes "D'accord, je suppose";
+			mes "si vous voulez savoir";
+			mes "sur d'autres compétences,";
+			mes "je peux vous expliquer rapidement.";
+			tu_thief01 = 3;
+			getexp BaseLevel*30,BaseLevel*15;
+			specialeffect2 EF_HIT5;
+			close;
+		}
+		else if(tu_thief01 == 3){
+			mes "Donc...";
+			mes "Y a-t-il des";
+			mes "les compétences que vous";
+			mes "souhaitez expliquées ou est-ce";
+			mes "surtout des choses que";
+			mes "vous connaissez déjà ?";
+			while(1){
+				next;
+				switch(select("Double Attack:Increase Dodge:Steal:Hiding:Envenom:Detoxify:I know enough.")) {
+				case 1:
+					mes "[Yierhan]";
+					mes "Comme son nom l'indique,";
+					mes "Double Attaque donne à vos attaques la chance d'être un double coup, deux frises en une seule attaque.";
+					next;
+					mes "[Yierhan]";
+					mes "C'est une compétence Passive, elle est donc toujours active et ne consomme aucune SP pour être utilisée. Plus votre niveau de Double Attaque est élevé, plus vous effectuerez de doubles attaques.";
+					.@read_d = 1;
+					break;
+				case 2:
+					mes "[Yierhan]";
+					mes "Augmenter l'Évasion";
+					mes "apporte une belle amélioration";
+					mes "à votre taux d'échappement qui";
+					mes "ce que les autres métiers n'offrent pas.";
+					mes "Pourquoi subir des dégâts quand vous";
+					mes "pouvez les éviter complètement ?";
+					next;
+					mes "[Yierhan]";
+					mes "Tout comme la compétence Double Attack, Augmenter l'Evasion est une compétence Passive. Elle ne consomme pas de SP et elle est toujours en";
+					mes "effet. Si vous n'aimez pas être écorché, c'est votre compétence.";
+					.@read_f = 1;
+					break;
+				case 3:
+					mes "[Yierhan]";
+					mes "Vol est une Compétence Active qui a des chances de vous faire voler quelques";
+					mes "objets gratuits ! Vous ne pouvez cependant pas l'utiliser contre d'autres joueurs.";
+					next;
+					specialeffect2 EF_STEAL;
+					mes "[Yierhan]";
+					mes "Mais vous pouvez utiliser le Vol pour prendre des objets aux monstres ! Si vous avez de la chance, vous pouvez ainsi obtenir de bons objets. Oh, et le Vol n'affecte pas les taux de chute des monstres.";
+					.@read_s = 1;
+					break;
+				case 4:
+					mes "[Yierhan]";
+					mes "Caché est une compétence active où vous vous enfouissez sous terre. Vous ne pouvez rester caché que pendant un certain temps et vous ne pouvez pas bouger, mais parfois c'est mieux d'être trouvé !";
+					next;
+					mes "[Yierhan]";
+					mes "Bien sûr, vous utilisez la compétence Cachée pour vous enfouir sous terre en cas d'urgence, comme lorsque vous êtes encerclé par des ennemis redoutables. Faites attention cependant...";
+					mes "[Yierhan]";
+					next;
+					mes "[Yierhan]";
+					mes "[Yierhan]";
+					.@read_p = 1;
+					break;
+				case 5:
+					mes "[Yierhan]";
+					mes "Envenom is an offensive Active Skill that every Thief should know. But that's just what I think.";
+					next;
+					mes "[Yierhan]";
+					mes "Cette compétence d'attaque a une chance";
+					mes "de poisonner votre ennemi pendant un certain temps. Tant qu'il est empoisonné, l'ennemi perd continuellement de ses PV et subit une réduction de sa défense.";
+					mes "[Daewoon]";
+					.@read_h = 1;
+					break;
+				case 6:
+					mes "[Yierhan]";
+					mes "Puisque les Voleurs traitent";
+					mes "beaucoup avec le poison,";
+					mes "nous devons avoir un moyen";
+					mes "de, euh, goûter à notre propre remède.";
+					mes "[Yierhan]";
+					next;
+					mes "[Yierhan]";
+					mes "après avoir appris la compétence Envenomer. Détoxifier vous permet de contrebalancer les effets du poison sur une cible.";
+					mes "[Yierhan]";
+					.@read_r = 1;
+					next;
+					specialeffect2 EF_DETOXICATION;
+					break;
+				case 7:
+					mes "[Yierhan]";
+					mes "Ouais...";
+					mes "la prochaine partie de l'entraînement des Voleurs...";
+					mes "[Yierhan]";
+					next;
+					mes "[Yierhan]";
+					mes "D'accord, nous avons étudié les compétences et vous avez pratiqué un peu, non ? Vous devriez avoir...";
+					tu_thief01 = 4;
+					specialeffect2 EF_HIT5;
+					.@total = .@read_d + .@read_f + .@read_s + .@read_p + .@read_h + .@read_r;
+					if (.@total)
+						getexp (.@total*300),(.@total*100);
+					close;
+				}
+			}
+		}
+		else if(tu_thief01 == 4){
+			mes "[Yierhan]";
+			next;
+			mes "[Yierhan]";
+			mes "Alright, now I got some actual fight training I want you to do. Here's a chance for you to figure what skills are best for which situations.";
+			next;
+			mes "[Yierhan]";
+			mes "Va et ramène-moi";
+			mes "10 ^ff0000Plume d'Oiseau^000000.";
+			mes "Tu peux aller tuer des Pickies pour en obtenir. Ce ne devrait pas être si dur. Oh, et utilise cet aile pour revenir.";
+			tu_thief01 = 5;
+			savepoint "moc_ruins",80,164,1,1;
+			getitem 602,1; //Wing_Of_Butterfly
+			getexp 100,50;
+			specialeffect2 EF_HIT5;
+			close2;
+			warp "moc_fild12",158,373;
+			end;
+		}
+		else if(tu_thief01 == 5 || tu_thief01 == 6){
+			if(countitem(916) < 10){
+				mes "Eh bien, tu n'as pas les 10 ^ff0000Plume d'Oiseau^000000 que je t'ai demandés ! Tu dois appliquer ce que tu sais, tu comprends.";
+				mes "Allez, dépêche-toi de le faire !";
+				close2;
+				warp "moc_fild07",203,38;
+				end;
+			}
+			else {
+				mes "D'accord... !";
+				mes "Bien joué, mon pote.";
+				mes "Puisque tu as ces plumes, tu dois être vraiment motivé pour devenir un bon Voleur.";
+				next;
+				mes "[Yierhan]";
+				mes "J'espère que tu continues";
+				mes "à travailler dur";
+				mes "pour devenir de mieux en mieux.";
+				mes "Fais toujours de ton mieux ! Oh,";
+				mes "et as-tu des questions ?";
+				next;
+				if(tu_thief01 == 6){
+					switch(select("About those traces...:Nope.")) {
+ 					case 1:
+						mes "[Yierhan]";
+						mes "Tu l'as découvert, hein ?";
+						mes "Bon, je n'avais vraiment";
+						mes "pas envie de te le dire,";
+						mes "vu que tu es un nouveau";
+						mes "Voleur et tout, mais...";
+						next;
+						mes "[Yierhan]";
+						mes "Il y a eu cette";
+						mes "bataille qui s'est déroulée";
+						mes "dans la partie sud";
+						mes "de cette ville.";
+						next;
+						mes "[Yierhan]";
+						mes "Comme cela est arrivé tard dans la nuit, peu de personnes en savent réellement quelque chose. Quant à moi, je restais tard lors d'une réunion du guilde, donc c'était";
+						mes "C'est de la chance pure que je l'aie vu.";
+						next;
+						mes "[Yierhan]";
+						mes "Je suis retourné là où le combat a eu lieu et j'ai trouvé des traces indiquant que les combattants sont allés vers le sud.";
+						next;
+						mes "[Yierhan]";
+						mes "Puisque du poison a été utilisé dans";
+						mes "le combat, je suppose qu'un Assassin était impliqué, mais je ne peux pas être sûr. Si tu veux vérifier cela, suis les traces de ce combat.";
+						next;
+						mes "[Yierhan]";
+						mes "Eh, mais fais attention";
+						mes "à ne pas trop t'approcher";
+						mes "du poison ! Cette substance";
+						mes "est assez puissante !";
+						tu_thief01 = 8;
+						getitem 1207,1; //Main_Gauche
+						getexp 1000,500;
+						specialeffect2 EF_HIT5;
+						close;
+					case 2:
+						mes "[Yierhan]";
+						mes "Bien!";
+						mes "Moins de travail pour moi !";
+						mes "Bon, tu ferais mieux de devenir plus fort la prochaine fois que je te verrai. Oh, et tu peux avoir ces objets. Tu sais, vu que tu es si gangster et tout.";
+						tu_thief01 = 7;
+						getitem 1207,1; //Main_Gauche
+						getexp 500,200;
+						specialeffect2 EF_HIT5;
+						close;
+					}
+				}
+				else {
+					switch(select("It was nice to meet you.:Nope.")) {
+					case 1:
+						mes "[Yierhan]";
+						mes "Ouais, c'était vraiment cool juste de traîner. Continue à combattre";
+						mes "les monstres comme tu le fais et";
+						mes "tu seras un grand Voleur dans pas longtemps.";
+						next;
+						mes "[Yierhan]";
+						mes "Et comme j'aime";
+						mes "tant toi, gamin,";
+						mes "tu peux avoir ça.";
+						mes "Prends-le, c'est à toi !";
+						getexp 500,200;
+						break;
+					case 2:
+						mes "[Yierhan]";
+						mes "Bien!";
+						mes "Moins de travail pour moi !";
+						mes "Bon, tu ferais mieux de devenir plus fort la prochaine fois que je te verrai. Oh, et tu peux avoir ces objets. Tu sais, vu que tu es si gangster et tout.";
+						getexp 50,20;
+						break;
+					}
+					tu_thief01 = 7;
+					getitem 1207,1; //Main_Gauche
+					specialeffect2 EF_HIT5;
+					close;
+				}
+			}
+		}
+		else if(tu_thief01 == 7){
+			mes "[Yierhan]";
+			mes "Tu sais...";
+			mes "Il y a eu cette";
+			mes "bataille qui s'est déroulée";
+			mes "dans la partie sud";
+			mes "de cette ville.";
+			next;
+			mes "[Yierhan]";
+			mes "Comme cela est arrivé tard dans la nuit, peu de personnes en savent réellement quelque chose. Quant à moi, je restais tard lors d'une réunion du guilde, donc c'était";
+			mes "C'est de la chance pure que je l'aie vu.";
+			next;
+			mes "[Yierhan]";
+			mes "Je suis retourné là où le combat a eu lieu et j'ai trouvé des traces indiquant que les combattants sont allés vers le sud.";
+			next;
+			mes "[Yierhan]";
+			mes "Puisque du poison a été utilisé dans";
+			mes "le combat, je suppose qu'un Assassin était impliqué, mais je ne peux pas être sûr. Si tu veux vérifier cela, suis les traces de ce combat.";
+			next;
+			mes "[Yierhan]";
+			mes "Eh, mais fais attention";
+			mes "à ne pas trop t'approcher";
+			mes "du poison ! Cette substance";
+			mes "est assez puissante !";
+			next;
+			mes "[Yierhan]";
+			mes "Hey, tu pourrais tomber sur";
+			mes "du poison, alors n'oublie pas que";
+			mes "les Herbes Vertes et les Poisons Verts";
+			mes "peuvent le contrebalancer. Oh, et garde à l'esprit que les Pierres Rouges peuvent";
+			mes "être utilisées dans des attaques de poison.";
+			next;
+			mes "[Yierhan]";
+			mes "Hey, si tu décides de vérifier cela";
+			mes "decide to check it";
+			mes "Sortez, soyez très prudent";
+			mes "Les autres là-bas, d'accord ?";
+			tu_thief01 = 8;
+			getexp 200,100;
+			specialeffect2 EF_HIT5;
+			close;
+		}
+		else if(tu_thief01 == 8){
+			mes "Salut mec.";
+			mes "Vous allez bien ?";
+			next;
+			mes "[Yierhan]";
+			mes "Se battre contre quelque chose";
+			mes "dont vous ne connaissez rien est toujours risqué. Puisque j'ai entendu dire qu'il y a des outsiders autour qui exhibent leur puissance, mieux vaut faire attention.";
+			next;
+			mes "[Yierhan]";
+			mes "C'est une bonne politique que d'être vraiment prudent lors de vos aventures. Gardez un œil sur les monstres et regardez";
+			mes "aussi autour des gens ! Compris ?";
+			close;
+		}
+		else if(tu_thief01 < 26){
+			mes "J'ai entendu dire qu'il y avait";
+			mes "ce-là un Assassin";
+			mes "qui est parti en mission";
+			mes "et n'est jamais revenu.";
+			next;
+			mes "[Yierhan]";
+			mes "Ce qui était étrange, c'est que la Guilde des Assassins a rapporté que la mission avait été accomplie !";
+			mes "Je me souviens avoir entendu dire de ce gars-là";
+			mes "qu'il était vraiment bon...";
+			next;
+			mes "[Yierhan]";
+			mes "C'est fou, n'est-ce pas ?";
+			mes "Quoi qu'il en soit, prenez";
+			mes "[Akagi]";
+			close;
+		}
+		else if(tu_thief01 == 26){
+			mes "Eh, as-tu";
+			mes "terminé ta mission ?";
+			mes "Je sais, je sais, ce que tu dois faire est assez dur.";
+			next;
+			switch(select("I'm still investigating.:Not yet.:Yes, I did.")) {
+			case 1:
+				mes "[Yierhan]";
+				mes "Ah, c'est ça. Bon, c'est compréhensible. Je veux dire, ces choses prennent du temps, tu sais ?";
+				close;
+			case 2:
+				mes "[Yierhan]";
+				mes "Euh... ?";
+				mes "C'est bon.";
+				mes "Je suppose que ce genre de choses demande patience et réflexion.";
+				mes "Tu sais, des trucs dans lesquels je suis terrible.";
+				close;
+			case 3:
+				mes "[Yierhan]";
+				mes "D'accord... !";
+				mes "Alors, qu'est-ce qui se passe ?";
+				mes "Fais-moi signe avec";
+				mes "ce que tu sais~";
+				next;
+				mes "^3355FFTu expliques les résultats de ton enquête à Yierhan et lui parles du bout de tissu que tu as trouvé lors de ta mission.^000000";
+				next;
+				mes "[Yierhan]";
+				mes "Bout de tissu ?";
+				mes "Hé, d'accord. Dis donc,";
+				mes "laisse-moi jeter un coup d'œil.";
+				next;
+				mes "[Yierhan]";
+				mes "Waouh !";
+				mes "Tu as fait du bon travail.";
+				mes "C'est un assez";
+				mes "importantes informations !";
+				next;
+				mes "[Yierhan]";
+				mes "Tu vois, le motif sur ce tissu ressemble un peu à l'un des codes utilisés par les Assassins. Et ce motif précis semble provenir de l'un de ces hauts Assassins.";
+				next;
+				mes "[Yierhan]";
+				mes "Je pourrais peut-être comprendre ce qui s'est passé cette nuit-là grâce aux nouvelles informations que ce tissu pourrait me fournir. Merci beaucoup !";
+				next;
+				mes "[Yierhan]";
+				mes "À partir de maintenant,";
+				mes "les supérieurs du";
+				mes "groupe prendront le relais pour cette enquête. Vous avez fait votre travail parfaitement, il est donc temps d'affûter vos compétences.";
+				next;
+				mes "[Yierhan]";
+				mes "Tiens, tout ceci t'appartient. Considère-le comme une récompense pour nous avoir aidés. Prends soin de toi maintenant~";
+				tu_thief01 = 27;
+				getitem 2307,1; //Mantle
+				Zeny = Zeny + 5000;
+				getexp 8000,3000;
+				close;
+			}
+		}
+		else {
+			mes "[Yierhan]";
+			mes "Hé...";
+			mes "Tu as des rêves,";
+			mes "n'est-ce pas ? Je sais,";
+			mes "c'est un sujet assez profond";
+			mes "que j'ai sorti de";
+			mes "nulle part, mais...";
+			next;
+			mes "[Yierhan]";
+			mes "J'aime simplement conseiller aux gens de suivre leurs rêves. Alors fais-le. Une vie sans rien à attendre est assez ennuyeuse, n'est-ce pas ?";
+			close;
+		}
+	}
+	else if (BaseClass == Job_Mage && Upper != 2){
+		if(tu_magician01 < 7){
+			mes "[Yierhan]";
+			mes "Salut.";
+			mes "Je suis l'entraîneur des Voleurs par ici. Ouais, on dirait qu'on n'a pas grand chose en commun, mais...";
+			next;
+			mes "[Yierhan]";
+			mes "En fait, j'ai quelques amis magiciens de temps à autre. Ce côté mystique est largement au-dessus de ma tête, mais";
+			mes "j'ai beaucoup de respect pour ça.";
+			close;
+		}
+		else if(tu_magician01 == 7){
+			mes "Hum...?";
+			mes "C'est bizarre, d'habitude seuls les";
+			mes "voleurs traînent dans ce coin. Qu'est-ce que quelqu'un comme toi fait ici ? À moins que...";
+			mes "[Yierhan]";
+			next;
+			select("I'm here on behalf of 'Mana.'");
+			mes "[Yierhan]";
+			mes "[Yierhan]";
+			next;
+			mes "[Yierhan]";
+			mes "[Yierhan]";
+			next;
+			mes "[Yierhan]";
+			mes "[Yierhan]";
+			mes "En tout cas, rends-toi à South Morocc puisque ça semble être un bon endroit pour commencer l'enquête. Tu verras ce qu'on a trouvé juste en dehors de la porte de South Morocc.";
+			next;
+			mes "[Yierhan]";
+			mes "Anyway, head over to";
+			mes "South Morocc since it seems to be a good place to start investigating. You'll see what we found right outside the South Morocc gate.";
+			tu_magician01 = 8;
+			close;
+		}
+		else if(tu_magician01 < 26){
+			mes "J'ai entendu dire qu'il y avait";
+			mes "ce-là un Assassin";
+			mes "qui est parti en mission";
+			mes "et n'est jamais revenu.";
+			next;
+			mes "[Yierhan]";
+			mes "Ce qui était étrange, c'est que la Guilde des Assassins a rapporté que la mission avait été accomplie !";
+			mes "Je me souviens avoir entendu dire de ce gars-là";
+			mes "qu'il était vraiment bon...";
+			next;
+			mes "[Yierhan]";
+			mes "Fais attention, mon pote.";
+			mes "Il semble que votre";
+			mes "enquête ?";
+			mes "soit liée à";
+			mes "cet Assassin mystérieux...";
+			close;
+		}
+		else if(tu_magician01 == 26){
+			mes "Alors comment va l'";
+			mes "enquête ?";
+			mes "[Gabriel Valentine]";
+			mes "J'ai été si occupé,";
+			mes "je n'ai pas pu me concentrer";
+			mes "du tout dessus...";
+			next;
+			switch(select("I'm still investigating.:I'm not done yet...:Oh, I finished~")) {
+			case 1:
+				mes "[Yierhan]";
+				mes "Ah, c'est ça. Bon, c'est compréhensible. Je veux dire, ces choses prennent du temps, tu sais ?";
+				close;
+			case 2:
+				mes "[Yierhan]";
+				mes "Euh... ?";
+				mes "C'est bon.";
+				mes "Je suppose que ce genre de choses demande patience et réflexion.";
+				mes "Tu sais, des trucs dans lesquels je suis terrible.";
+				close;
+			case 3:
+				mes "[Yierhan]";
+				mes "D'accord... !";
+				mes "Alors, qu'est-ce qui se passe ?";
+				mes "Fais-moi signe avec";
+				mes "ce que tu sais~";
+				next;
+				mes "^3355FFTu expliques les résultats de ton enquête à Yierhan et lui parles du bout de tissu que tu as trouvé lors de ta mission.^000000";
+				next;
+				mes "[Yierhan]";
+				mes "Bout de tissu ?";
+				mes "Hé, d'accord. Dis donc,";
+				mes "laisse-moi jeter un coup d'œil.";
+				next;
+				mes "[Yierhan]";
+				mes "Waouh !";
+				mes "Tu as fait du bon travail.";
+				mes "C'est un assez";
+				mes "importantes informations !";
+				next;
+				mes "[Yierhan]";
+				mes "Tu vois, le motif sur ce tissu ressemble un peu à l'un des codes utilisés par les Assassins. Et ce motif précis semble provenir de l'un de ces hauts Assassins.";
+				next;
+				mes "[Yierhan]";
+				mes "Je pourrais peut-être comprendre ce qui s'est passé cette nuit-là grâce aux nouvelles informations que ce tissu pourrait me fournir. Merci beaucoup !";
+				next;
+				mes "[Yierhan]";
+				mes "À partir de maintenant,";
+				mes "les supérieurs du";
+				mes "groupe prendront le relais pour cette enquête. Vous avez fait votre travail parfaitement, il est donc temps d'affûter vos compétences.";
+				next;
+				mes "[Yierhan]";
+				mes "Tiens, voici ces affaires qui sont à toi. Considère-les comme une récompense pour nous avoir aidés. D'accord ? Je vais également dire à Mana que tu as fait un excellent travail. Prends soin de toi~";
+				tu_magician01 = 27;
+				Zeny = Zeny + 5000;
+				getexp 5000,2000;
+				close;
+			}
+		}
+		else {
+			mes "Comme je le pensais,";
+			mes "plusieurs groupes";
+			mes "étaient impliqués dans tout cela.";
+			mes "Hélas. Quelque chose de très mauvais";
+			mes "pourrait arriver bientôt...";
+			close;
+		}
+	}
+	mes "Certains pensent que";
+	mes "le désert n'est qu'un";
+	mes "lieu dangereux et inconfortable";
+	mes "où personne ne veut";
+	mes "être. Mais il y a toutes";
+	mes "sortes de choses géniales ici.";
+	next;
+	mes "[Yierhan]";
+	mes "Nous avons la chaleur étouffante qui encourage les tenues légères, nous avons... des cactus. Nous avons plus de sable que sur une plage. Euh... Des tempêtes de sable ?";
+	close;
+}

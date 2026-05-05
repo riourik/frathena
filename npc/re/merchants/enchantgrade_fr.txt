@@ -1,0 +1,131 @@
+//===== rAthena Script ======================================= 
+//= Enchant Grade
+//===== Changelogs: ==========================================
+//= 1.0 First Version. [JohnnyPlayy]
+//= 1.1 Fixed small issues. [Lemongrass]
+//= 1.2 Added translation. [Asheraf]
+//= 1.3 Added paramarket NPC and warps. [Balfear]
+//= 1.4 Translated paramarket NPC. [Lemongrass]
+//============================================================
+
+grademk,34,184,4	script	Sratos#sratos	4_JP_GARM_H,{
+	mes "[Sratos]";
+	mes "Bonjour, cher client qui est entré, espérons un miracle aujourd'hui.";
+	mes "Comment puis-je t'aider?";
+	next;
+	switch( select( "Enhance the equipment's grade.", "Exchange Etel items", "What is Grade Enhancement?" ) ){
+		case 1:
+			mes "[Sratos]";
+			mes "Notre client. Vous souhaitez améliorer le niveau de l'équipement.";
+			mes "Il n'est pas facile de déplacer la puissance magique des gemmes.";
+			next;
+			mes "[Sratos]";
+			mes "La puissance magique peut exploser sur place.";
+			mes "Alors l'arme qui héritera de cette puissance magique explose également !";
+			next;
+			switch( select( "I'll still do it!", "I'll think about it." ) ){
+				case 1:
+					mes "[Sratos]";
+					mes "Je souhaite bonne chance à nos courageux clients !";
+					close2;
+					enchantgradeui();
+					end;
+				case 2:
+					mes "[Sratos]";
+					mes "Chaque fois que vous aurez le courage de relever le défi, revenez.";
+					close;
+			}
+		case 2:
+			mes "[Sratos]";
+			mes "Ce sont des gemmes utilisées pour améliorer les niveaux.";
+			mes "Poussière d'Etel, les gemmes qui serviront de base, et si vous me versez une petite somme, je l'échangerai contre des gemmes d'Etel.";
+			close2;
+			callshop "EnchantGradeExchange";
+			end;
+
+		case 3:
+			mes "[Sratos]";
+			mes "Parfois, on trouve des bijoux instables contenant beaucoup de puissance magique pure.";
+			mes "On appelle cela des pierres éthérées, n'est-ce pas ?";
+			next;
+			mes "[Sratos]";
+			mes "Vous pouvez transférer la puissance magique de la pierre éthérée vers d'autres armes, mais bien sûr, il y a un certain risque.";
+			mes "C'est fragile, donc si vous n'êtes pas prudent, paf ! Cela va exploser.";
+			next;
+			mes "[Sratos]";
+			mes "De toute façon, si vous utilisez cette gemme éthérique, vous pouvez améliorer l'arme que vous utilisez.";
+			mes "Les performances s'améliorent. Nous appelons cela une amélioration de grade.";
+			next;
+			mes "[Sratos]";
+			mes "Vous aussi, ne seriez-vous pas heureux si les armes que vous aimez pouvaient progresser d'un cran ?";
+			mes "Nous sommes ceux qui y assistons. C'est un peu risqué, cependant. ahahaha.";
+			close;
+	}
+
+OnInit:
+	setunittitle(getnpcid(0), "<Grade Enhancer>");
+	end;
+}
+
+paramk,34,184,4	script	Suribell#suribell	4_F_FRUIT,{
+	mes "[Suribell]";
+	mes "Que la bonne chance vous accompagne toujours !";
+	mes "Bienvenue au Centre d'Amélioration de Grade du Paramarket~";
+	next;
+	switch( select( "Enhance the equipment's grade.", "Exchange Etel items", "What is Grade Enhancement?" )) {
+		case 1:
+			mes "[Suribell]";
+			mes "Souhaitez-vous libérer le potentiel de votre équipement préféré ?";
+			mes "Des explosions peuvent également survenir lors du traitement des pouvoirs magiques.";
+			next;
+			mes "[Suribell]";
+			mes "Néanmoins, si vous essayez d'améliorer votre grade... !";
+			mes "Moi, Suribell, je ferai de mon mieux !";
+			next;
+			switch( select( "I'll still do it!", "I'll think about it." ) ){
+				case 1:
+					mes "[Suribell]";
+					mes "Tenons-nous la main et ayons foi ! Essayez de serrer les dents !";
+					close2;
+					enchantgradeui();
+					end;
+				case 2:
+					mes "[Suribell]";
+					mes "D'accord ! Buvons un verre d'eau froide !";
+					close;
+			}
+		case 2:
+			mes "[Suribell]";
+			mes "Vous avez besoin de gemmes éthériques pour améliorer les grades !";
+			mes "Si vous combinez la poussière d'Etel et des bijoux pour le fabriquer, c'est parfait ! Un bijou d'Etel pour les aventuriers est complet !";
+			mes "Souhaitez-vous combiner des bijoux et de la poussière d'Etel ?";
+			close2;
+			callshop "EnchantGradeExchange";
+			end;
+		case 3:
+			mes "[Suribell]";
+			mes "Parfois, on trouve des bijoux instables contenant beaucoup de puissance magique pure.";
+			mes "J'ai décidé d'appeler de telles gemmes des gemmes éthériques.";
+			mes "Qui ? Je suis Suribell !";
+			next;
+			mes "[Suribell]";
+			mes "La puissance magique des gemmes éthériques peut parfois réveiller le potentiel caché du matériel.";
+			mes "Nous l'appelons amélioration de grade car cela monte d'un niveau !";
+			next;
+			mes "[Suribell]";
+			mes "L'aventurier pourrait posséder un potentiel inconnu pour lui-même.";
+			mes "Il existe un risque que cela soit détruit si c'est mal fait, mais essayez-le avec foi !";
+			close;
+	}
+
+OnInit:
+	setunittitle(getnpcid(0), "<Grade Enhancer>");
+	end;
+}
+
+// = Portals
+//============================================================
+prontera,50,293,0	warp	Grademk_Int	1,1,grademk,13,172
+grademk,9,172,0	warp	Grademk_Out	1,1,prontera,50,290
+paramk,8,171,0	warp	grade_in	1,1,paramk,141,64
+paramk,145,64,0	warp	grade_out	1,1,paramk,11,171

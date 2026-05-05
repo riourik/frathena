@@ -1,0 +1,317 @@
+//===== rAthena Script ======================================= 
+//= Quest NPCs related to Payon
+//===== By: ================================================== 
+//= kobra_k88
+//===== Current Version: ===================================== 
+//= 1.7
+//===== Compatible With: ===================================== 
+//= rAthena Project; 7.15 +
+//===== Description: ========================================= 
+//= Pretend Murder, Ear Muffs, Oxygen, Derivuchi Cap, Helm of Angel Quests.
+//===== Additional Comments: ================================= 
+//= 1.1 Helm of Angel bug fixed [Lupus]
+//= 1.2 Fixed skirt of virgin [Lupus]
+//= 1.3 Fixed exploits [Lupus]
+//= 1.4 Removed Duplicates [Silent]
+//= 1.5 Updated Dialogs from "Pretend Murdered Quest" [Samuray22]
+//= 1.5a replaced item "names" with item id. [Lupus]
+//= 1.6 Updated Dialogs from "Oxygen Mask Quest" [Samuray22]
+//= 1.7 Updated headgear quests. [L0ne_W0lf]
+//= 1.8 Updating NPC Position. [JohnnyPlayy]
+//============================================================ 
+
+// 'Pretend Murdered' Quest
+//============================================================
+payon_in01,99,72,4	script	Granny	103,{
+	if (checkweight(908,1) == 0) {
+		mes "^3355FFAttendez une seconde ! En ce moment, vous transportez trop d'objets avec vous. Veuillez revenir après avoir déposé certains de vos objets dans le coffre-fort Kafra.^000000";
+		close;
+	}
+	if (countitem(1049) > 3) {
+		mes "[Mamie]";
+		mes "Je souhaiterais pouvoir confectionner des vêtements pour mes petits-enfants pendant la saison festive...";
+		next;
+		mes "[Mamie]";
+		mes "Oh ! Auriez-vous l'amabilité de me donner votre ^3355FFJupe de Vierge^000000 ? J'en aurais besoin de quatre. S'il vous plaît, je vous en supplie.";
+		next;
+		switch(select("Alright.:No way!")) {
+		case 1:
+			delitem 1049,4; //Skirt_Of_Virgin
+			mes "[Mamie]";
+			mes "Oh ! Merci infiniment~ Maintenant, je peux confectionner des vêtements pour Kitty Cutty~";
+			next;
+			mes "[Mamie]";
+			mes "Ah, Attendez ! J'ai presque oublié. J'étais une actrice très populaire dans ma jeunesse. Mes amis acteurs m'ont offert un cadeau de mariage lorsque j'ai quitté la Troupe. Je le garde comme souvenir de ces moments précieux.";
+			next;
+			mes "[Mamie]";
+			mes "Si cela ne vous dérange pas...";
+			mes "Je voudrais vous offrir ceci.";
+			next;
+			getitem 2293,1; //Pretend_Murdered
+			mes "[Mamie]";
+			mes "Au revoir, aventurier~ !";
+			mes "Merci d'avoir rendu une vieille femme si heureuse...";
+			close;
+		case 2:
+			mes "[Mamie]";
+			mes "*Soupir* Comment puis-je obtenir moi-même des ^3355FFJupe de Vierge^000000 ? Je suis juste si faible et frêle, même rouler dans mon fauteuil me fatigue. *Gloussement* Tout ce que je veux, c'est rendre mes petits-enfants heureux...";
+			close;
+		}
+	}
+	else {
+		mes "[Mamie]";
+		mes "Je cueille des champignons sur la Montagne de Payon tous les jours. Le temps passe et avant que je ne m'en rende compte, il est déjà temps festif. J'aimerais pouvoir confectionner des vêtements pour ma famille à cette époque de l'année.";
+		next;
+		mes "[Mamie]";
+		mes "...";
+		mes "Mais pour cela, j'ai besoin de ^3355FF4 Jupe de Vierge^000000...";
+		next;
+		mes "[Mamie]";
+		mes "Jeune voyageur, veuillez m'aider. Lorsque vous trouverez des ^3355FFJupe de Vierge^000000, veuillez les ramener à moi. Je vous en serais vraiment reconnaissante...";
+		close;
+	}
+}
+
+// 'Ear Muffs' Quest
+//============================================================
+payon_in01,18,10,4	script	Mystic Lady	76,{
+	mes "[Dame Mystique]";
+	mes "Ma famille produit et vend le produit hivernal spécial ^3355FFBoucles d'Oreilles^000000 depuis de nombreuses années. Nous venons tout juste de déménager ici, mais il fait toujours chaud, donc nous avons du mal à gagner notre vie.";
+	next;
+	mes "[Dame Mystique]";
+	mes "Si vous comptez voyager vers des régions plus froides, je vous suggère d'emmener quelques ^3355FFBoucles d'Oreilles^000000...";
+	emotion ET_THINK;
+	next;
+	mes "[Dame Mystique]";
+	mes "Les Boucles d'Oreilles sont la spécialité de ma famille, et nous les fournissons aux clients qui possèdent un ^FF33551 Rubis Maudit^000000, une ^3311AA1 Casquette,^000000 des ^3355FF 200 Plumes^000000 et des ^DDDD005000 Zénies^000000.";
+	emotion ET_THINK;
+	next;
+	switch(select("Oh Yeah? That sounds good.:No thank you, Ma'am.")) {
+	case 1:
+		if ((countitem(724) > 0) && (countitem(949) > 199) && (countitem(5001) > 0) && (Zeny > 4999)) {
+			mes "[Dame Mystique]";
+			delitem 724,1; //Cardinal_Jewel_
+			delitem 949,200; //Feather
+			delitem 5001,1; //Headset
+			set Zeny,Zeny-5000;
+			mes "Voici, je vous donnerai celle-ci déjà fabriquée.";
+			getitem 2283,1; //Ear_Mufs
+			next;
+			mes "[Dame Mystique]";
+			mes "Merci d'avoir acheté notre produit. Vous ne vous repentirez pas d'avoir acheté nos Bouchons d'oreille : Satisfaction garantie~";
+			emotion ET_THINK;
+			close;
+		}
+		else {
+			mes "[Dame Mystique]";
+			mes "Oh chère...";
+			mes "Vous n'avez pas assez d'argent ou d'objets. Malheureusement, nous ne pouvons pas offrir de réductions. Veuillez comprendre que nous devons gagner notre vie...";
+			emotion ET_THINK;
+			close;
+		}
+	case 2:
+		mes "[Dame Mystique]";
+		mes "C'est bon.";
+		mes "Je crois que";
+		mes "nous nous reverrons.";
+		mes "...Un de ces jours.";
+		emotion ET_THINK;
+		close;
+	}
+}
+
+// 'Oxygen Mask' Quest
+//============================================================
+payon_in02,25,71,4	script	Boy	86,{
+	if (countitem(701) > 4) {
+		mes "[Jeune homme]";
+		mes "ArrrGggghh!";
+		mes "Ah, Non je ne peux pas...";
+		next;
+		mes "[Jeune homme]";
+		mes "*Huk*";
+		mes "Maintenant même mes yeux sont fous !! Pourquoi ces bugs semblent-ils soudainement si mignons ?! Nooooooo~!!!";
+		next;
+		switch(select("Show Ora Ora:Give Ora Ora:Cancel")) {
+		case 1:
+			mes "[Jeune homme]";
+			mes "Oooooohhhh!!!";
+			mes "Est-ce, est-ce que";
+			mes "c'est celui-là ?";
+			mes "^FF0000C'est...^";
+			mes "Ora Ora!!";
+			next;
+			mes "[Jeune homme]";
+			mes "Je vais faire court ! Donnez-le-moi et je vous donnerai mon trésor ! Alors qu'en pensez-vous de mon idée ? Vous voulez faire un deal ?";
+			close;
+		case 2:
+			if (countitem(701) > 4) {
+				delitem 701,5; //Ora_Ora
+			}
+			mes "[Jeune homme]";
+			mes "Muhahahahah!!!";
+			mes "Enfin, j'ai ça !";
+			mes "Ora Ora !";
+			mes "Stupide et dégoûtant";
+			mes "Pucerons voleurs !!";
+			mes "Tu vas payer !!!";
+			next;
+			mes "[Jeune homme]";
+			mes "Huk... Huk...";
+			mes "Désolée, j'ai été hors de contrôle avec le plaisir pendant un moment. Maintenant, je vais donner mon trésor comme promis.";
+			next;
+			getitem 5004,1; //Oxygen_Mask
+			mes "[Jeune homme]";
+			mes "Quand tu portes ça sur ta bouche et que tu commences à respirer, il filtre les impuretés avant qu'elles n'atteignent tes poumons.";
+			next;
+			mes "[Jeune homme]";
+			mes "Kakakakakaka !";
+			mes "J'ai hâte";
+			mes "d'utiliser ça";
+			mes "Ora Ora !";
+			close;
+		case 3:
+			mes "[Jeune homme]";
+			mes "Huhuhuhuhu...";
+			mes "Et si je ne parviens pas à me débarrasser de tous ces pucerons voleurs ? Je pourrais même finir par les aimer... *Huk*";
+			close;
+		}
+	}
+	else {
+		mes "[Jeune homme]";
+		mes "Wahhhhhh ! Moi, moi...";
+		mes "Je ne peux plus tenir comme ça !";
+		mes "Toi petit sale crasseux bâtard !";
+		next;
+		switch(select("Continue:Cancel")) {
+		case 1:
+			mes "[Jeune homme]";
+			mes "Oh mec...";
+			mes "Tout a commencé quand mes parents sont morts alors que j'étais un tout petit enfant. Dès le début, j'ai dû travailler pour vivre et j'ai eu vraiment du mal.";
+			next;
+			mes "[Jeune homme]";
+			mes "J'ai travaillé pendant 10 ans dans l'espoir d'acheter ma maison de rêve où je pourrais retrouver un peu de paix et de confort à nouveau. Finalement, j'ai pensé avoir assez de zeny pour me permettre ma très propre douce maison.";
+			next;
+			mes "[Jeune homme]";
+			mes "Malheureusement, je n'avais pas assez d'argent pour acheter la belle maison sur laquelle je portais mon regard. Mais alors, j'ai trouvé cette maison, qui était plus grande et moins chère que la première. Je l'ai achetée sans réfléchir...";
+			next;
+			mes "[Jeune homme]";
+			mes "Doux Jésus ! Il s'avère que c'est un Paradis pour les bugs de Voleurs !!!";
+			next;
+			mes "[Jeune homme]";
+			mes "J'ai tout essayé de mon mieux. Je les ai cajolés, je les ai tués, mais cela n'a apporté la paix qu'un instant ! J'ai même essayé de brûler cette maison...!";
+			next;
+			mes "[Jeune homme]";
+			mes "*Hoquet* Je veux dire, vraiment, ai-je besoin d'^3355FF Ora Ora^000000 pour m'en débarrasser ? On dit que c'est très rarement vu dans les pays lointains.";
+			next;
+			mes "[Jeune homme]";
+			mes "Si je pouvais en acheter 5, je n'aurais plus à être frustré par ces dégoûtants bugs...";
+			close;
+		case 2:
+			mes "[Jeune homme]";
+			mes "Ce combat sans fin avec les bugs m'a vraiment épuisé. Je me rends. Faites comme vous le voulez, vous sales types !";
+			close;
+		}
+	}
+}
+
+// 'Helm of Angel' and 'Deviruchi Cap' Quest
+//============================================================
+-	script	Young man#12	89,{
+	mes "[Jeune homme]";
+	mes "...Quoi ? Qu'est-ce qu'il y a ?";
+	next;
+	switch(select("Can you make me a special item?:Hey.")) {
+	case 1:
+		mes "[Jeune homme]";
+		mes "Euh ? Alors tu sais déjà ce que je spécialise, hein ? Je suppose qu'il n'y a pas besoin de la sécrétion habituelle. Dis-moi ce que tu veux.";
+		next;
+		switch(select("Helm of Angel.:Deviruchi Cap.:I will come next time.")) {
+		case 1:
+			mes "[Jeune homme]";
+			mes "1 Casque (avec slot).";
+			mes "1 Aile d'Ange.";
+			mes "5 Griffe de Garm.";
+			mes "C'est tout ce dont j'ai besoin.";
+			next;
+			mes "[Jeune homme]";
+			mes "Attends ! Sache simplement que je m'en fiche si les objets dans ton inventaire ont été améliorés ou s'ils ont des cartes attachées.";
+			next;
+			mes "[Jeune homme]";
+			mes "Je veux dire, toutes les cartes ou améliorations sur les objets que j'utiliserai pour te fabriquer quelque chose seront perdues une fois l'objet créé. Sois donc prudent quand tu me donnes tes affaires.";
+			next;
+			mes "[Jeune homme]";
+			mes "As-tu rassemblé les objets ? Alors donne-les-moi.";
+			next;
+			switch(select("Give him the items.:Don't give him the items.")) {
+			case 1:
+				if ((countitem(2229) > 0) && (countitem(2254) > 0) && (countitem(7036) > 4)) {
+					mes "[Jeune homme]";
+					mes ".....Hmm.";
+					mes "D'accord, voici ton Casque de l'Ange. Prends-le.";
+					delitem 2229,1; //Helm_
+					delitem 2254,1; //Angelic_Chain
+					delitem 7036,5; //Fang_Of_Garm
+					close2;
+					getitem 5025,1; //Helm_Of_Angel
+					end;
+				}
+				else {
+					mes "[Jeune homme]";
+					mes "...Le nombre d'objets n'est pas correct. Tu ferais mieux de vérifier à deux fois.";
+					close;
+				}
+			case 2:
+				mes "[Jeune homme]";
+				mes "Fais comme tu le souhaites...";
+				close;
+			}
+		case 2:
+			mes "[Jeune homme]";
+			mes "600 Cornes du Petit Mal.";
+			mes "40 Griffe de Griffon.";
+			mes "C'est tout ce dont j'ai besoin.";
+			next;
+			mes "[Jeune homme]";
+			mes "Attends ! Sache simplement que je m'en fiche si les objets dans ton inventaire ont été améliorés ou s'ils ont des cartes attachées.";
+			next;
+			mes "[Jeune homme]";
+			mes "Je veux dire, toutes les cartes ou améliorations sur les objets que j'utiliserai pour te fabriquer quelque chose seront perdues une fois l'objet créé. Sois donc prudent quand tu me donnes tes affaires.";
+			next;
+			mes "[Jeune homme]";
+			mes "As-tu rassemblé les objets ? Alors donne-les-moi.";
+			next;
+			switch(select("Give him the items.:Don't give him the items.")) {
+			case 1:
+				if ((countitem(1038) > 599) && (countitem(7048) > 39)) {
+					mes "[Jeune homme]";
+					mes ".....Hmm. Voici ton Chapeau Deviruchi. S'il te plaît, prends-le.";
+					delitem 1038,600; //Petite_DiablOfs_Horn
+					delitem 7048,40; //Talon_Of_Griffin
+					close2;
+					getitem 5038,1; //Deviruchi_Cap
+					end;
+				}
+				else {
+					mes "[Jeune homme]";
+					mes "...Le nombre d'objets n'est pas correct. Tu ferais mieux de vérifier à nouveau.";
+					close;
+				}
+			case 2:
+				mes "[Jeune homme]";
+				mes "Fais comme tu le souhaites...";
+				close;
+			}
+		case 3:
+			mes "[Jeune homme]";
+			mes "Hm. D'accord.";
+			mes "Alors nous nous reverrons.";
+			close;
+		}
+	case 2:
+		mes "[Jeune homme]";
+		mes "Hm.";
+		mes "Prenez soin de vous.";
+		close;
+	}
+}

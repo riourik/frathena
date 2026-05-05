@@ -1,0 +1,2221 @@
+//===== rAthena Script ======================================= 
+//= Alchemist Skills Quests
+//===== By: ================================================== 
+//= Lupus, Reddozen, Samuray22
+//===== Current Version: ===================================== 
+//= 2.2
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Quests for item: Elemental_Create_Book
+//= Quest for skill: Bioethics
+//===== Additional Comments: ================================= 
+//= 1.9 Rescripted to Aegis 10.3 stadards. [L0ne_W0lf]
+//= 2.0 Rescripted (and re-added) Bio Ethics quest. [L0ne_W0lf]
+//= 2.1 Fixed a Resurrection -> Homunculus Resurrection. [L0ne_W0lf]
+//= 2.1a Deleted some unused Variables in Bio Ethics quest. [Samuray22]
+//= 2.2 Replaced effect numerics with constants. [L0ne_W0lf]
+//============================================================
+
+yuno_in04,33,108,4	script	Pisruik#qsk_al	883,{
+	if (BaseJob == Job_Alchemist) {
+		if (JobLevel < 40) {
+			mes "[Pisruik]";
+			mes "^333333*Toux toux*^000000";
+			mes "Bon sang, si seulement j'avais";
+			mes "un peu plus d'argent";
+			mes "pour acheter des médicaments.";
+			mes "Je devrais être resté";
+			mes "à la maison aujourd'hui, mais...";
+			close;
+		}
+		if (ALCHE_SK == 0) {
+			mes "[Pisruik]";
+			mes "^333333*Toux toux*^000000";
+			mes "Aïe, il n'y a rien de plus";
+			mes "pénible que travailler quand";
+			mes "on devrait se reposer.";
+			mes "H-hé ! Euh, qu'est-ce que tu fais ?";
+			set ALCHE_SK,1;
+			next;
+			mes "[Pisruik]";
+			mes "Q-quitte de regarder";
+			mes "mes résultats d'analyse juste";
+			mes "comme ça inst--oh. Attends.";
+			mes "Tu n'es pas l'un des";
+			mes "chercheurs ici. Hm.";
+			next;
+			mes "[Pisruik]";
+			mes "Euh... N'as-tu rien de mieux à faire ?";
+			mes "anything better to do";
+			mes "que d'essouffler mon";
+			mes "dos ? Je tente de finir";
+			mes "quelque chose ici ! Oh, peu";
+			mes "importe, je suis juste de mauvaise humeur...";
+			close;
+		}
+		else if (ALCHE_SK == 1) {
+			mes "[Pisruik]";
+			mes "Vous encore ? Vous ne semblez";
+			mes "pas faire de recherches ici.";
+			mes "Y a-t-il quelque chose dont vous avez besoin ?";
+			mes "Cependant, je crains ne pas pouvoir";
+			mes "vous être d'une grande aide.";
+			next;
+			if (select("What are you working on?:I don't need anything, thanks.") == 1) {
+				mes "[Pisruik]";
+				mes "Eh bien, je ne suis pas sûr de pouvoir";
+				mes "vous donner tous les détails.";
+				mes "Vous voyez, tout le monde ici est";
+				mes "un chercheur qui ne peut se permettre";
+				mes "de louer un laboratoire pour lui-même. Nous avons donc fini par partager celui-ci.";
+				next;
+				mes "[Pisruik]";
+				mes "Même si nous avons tous contribué à la location de ce laboratoire, nous devenons tous assez désespérés.";
+				mes "in to rent this lab, we're all";
+				mes "getting pretty desperate. In";
+				mes "fait, quelques-uns d'entre nous ont même";
+				mes "volé le travail les uns aux autres.";
+				mes "C'est assez pathétique, hein ?";
+				next;
+				mes "[Pisruik]";
+				mes "Je suppose que c'est ce qui arrive";
+				mes "quand on est pauvre et qu'on n'a pas";
+				mes "de travail quotidien. Les choses sont";
+				mes "si mauvaises en ce moment, je ne peux même plus";
+				mes "me permettre d'acheter de nouveaux matériaux !";
+				mes "Que puis-je faire ?";
+				next;
+				mes "[Pisruik]";
+				mes "Ah, j'ai une idée ! Vous êtes";
+				mes "un aventurier, n'est-ce pas ?";
+				mes "Si vous êtes toujours curieux de savoir";
+				mes "ce que je fais dans mes recherches, je vous en dirai plus";
+				mes "si vous m'aidez à rassembler quelques provisions.";
+				mes "[Pisruik]";
+				next;
+				mes "[Pisruik]";
+				mes "beaucoup de mal si vous saviez ce qui se passe";
+				mes "much harm if you knew what";
+				mes "De toute façon, je travaillais déjà.";
+				mes "Je veux dire, nous devrions travailler";
+				mes "sur le même projet pour que vous";
+				mes "puissiez en bénéficier. Alors, quel est votre nom ?";
+				next;
+				mes "["+ strcharinfo(0) +"]";
+				mes "I am called "+ strcharinfo(0) +".";
+				next;
+				set ALCHE_SK,2;
+				mes "[Pisruik]";
+				mes "Ah, "+ strcharinfo(0) +".";
+				mes "^FF0000Voudriez-vous me l'apporter ?^000000";
+				mes "^FF00005 Pierres Jaunes^000000,";
+				mes "^FF00004 Flacons de Potion Vides^000000,";
+				mes "^FF000010 Coeurs de Sirènes^000000,";
+				mes "et ^FF000010 Poussière de Papillon^000000 ?";
+				close;
+			}
+			mes "[Pisruik]";
+			mes "Si vous êtes venu ici pour acheter";
+			mes "des Manuels de Potion ou autre chose";
+			mes "de ce genre, vous avez mal choisi";
+			mes "votre interlocuteur. Tout ce que vous voyez";
+			mes "ici est destiné à la réalisation";
+			mes "d'un projet personnel.";
+			close;
+		}
+		else if (ALCHE_SK == 2) {
+			mes "[Pisruik]";
+			mes "Super, vous êtes de retour !";
+			mes "Voyons donc, vous aviez besoin de";
+			mes "une Épée Rapide avec 2 Fentes ?";
+			mes "4 Flacons de Potion Vides...";
+			mes "^FF0000Et... Et... Quoi d'autre";
+			mes "m'avez-vous demandé de ramasser ?";
+			next;
+			switch(select("5 Yellow Gemstones:5 Blue Gemstones:5 Red Gemstones")) {
+			case 1:
+				mes "[Pisruik]";
+				mes "Oui, oui !";
+				mes "5 Pierres précieuses jaunes.";
+				mes "C'est ce dont j'avais besoin.";
+				mes "Je suis sûr qu'il y en avait plus,";
+				mes "mais je n'arrive pas à me souvenir exactement...";
+				next;
+				if (select("10 Hearts of Mermaid:10 Large Jellopies") == 1) {
+					mes "[Pisruik]";
+					mes "Bien sûr !";
+					mes "10 Cœurs de Sirène !";
+					mes "Comment puis-je oublier ça ?";
+					mes "Et ensuite, la dernière chose";
+					mes "que je vous ai demandé était... euh...";
+					next;
+					if (select("10 Frill:10 Moth Dust") == 1) {
+						mes "[Pisruik]";
+						mes "Non, ce ne peut pas être";
+						mes "ça. J'ai déjà plein de Frills.";
+						mes "Hmmm... Qu'est-ce qui me manque maintenant ?";
+						mes "[Pisruik]";
+						close;
+					}
+					mes "[Pisruik]";
+					mes "Right. I was just";
+					mes "sur le point de le dire.";
+					mes "Alors vous avez souvenir";
+					mes "de m'apporter tout cela ?";
+					next;
+					if (select("No.:Yes!") == 1) {
+						if (rand(1,5) == 1) {
+							mes "[Pisruik]";
+							mes "Vous n'avez pas...";
+							mes "Oh, admettez-le simplement.";
+							mes "Vous ne voulez pas";
+							mes "le faire pour moi, non ?";
+							mes "Ne gaspillez pas votre";
+							mes "temps uniquement pour mon compte.";
+							close;
+						}
+						mes "[Pisruik]";
+						mes "Pas encore, hein ?";
+						mes "Bien que j'espère que vous pourrez";
+						mes "m'apporter ces choses dès";
+						mes "que possible, vous";
+						mes "n'êtes pas obligé de le faire,";
+						mes "vous savez. Oui, ce n'est rien.";
+						close;
+					}
+					mes "[Pisruik]";
+					mes "Vraiment ?";
+					mes "Bon, laissez-moi vérifier";
+					mes "ce que vous avez apporté";
+					mes "pour m'assurer que vous n'avez pas";
+					mes "oublie tout. Hm...";
+					next;
+					if (countitem(715) > 4 && countitem(1093) > 3 && countitem(950) > 9 && countitem(1057) > 9) {
+						delitem 715,5; //Yellow_Gemstone
+						delitem 1093,4; //Empty_Potion
+						delitem 950,10; //Heart_Of_Mermaid
+						delitem 1057,10; //Moth_Dust
+						set ALCHE_SK,3;
+						mes "[Pisruik]";
+						mes "Super, il semble que";
+						mes "tout soit ici.";
+						mes "D'accord, laisse-moi jeter";
+						mes "ces-là. Maintenant, devinez ce que";
+						mes "je vais fabriquer avec les";
+						mes "matériaux que vous avez apportés.";
+						next;
+						switch(select("Medicine?:Bomb?")) {
+						case 1:
+							set ALCHE_SK,4;
+							mes "[Pisruik]";
+							mes "Hahahah, c'est ça !";
+							mes "Je travaille sur la création d'un";
+							mes "nouveau type de médicament.";
+							break;
+						case 2:
+							set ALCHE_SK,4;
+							mes "[Pisruik]";
+							mes "Une bombe ? Je ressemble à un";
+							mes "fou pour vous ? Non, non...";
+							mes "Je développe une nouvelle forme de";
+							mes "médicament. Oui, les bombes rapportent";
+							mes "bien de l'argent, mais où vais-je";
+							mes "les tester ? Ici ? Pas question !";
+							break;
+						}
+						next;
+						mes "[Pisruik]";
+						mes "En tout cas, ce médicament";
+						mes "réagit avec les enzymes digestives";
+						mes "du corps humain pour initier";
+						mes "des changements métaboliques temporaires";
+						mes "qui arrêtent artificiellement l'absorption";
+						mes "de la chaleur dans le corps.";
+						next;
+						mes "[Pisruik]";
+						mes "L'effet réel de ce";
+						mes "médicament est qu'il augmente considérablement";
+						mes "la résistance du corps à la plupart";
+						mes "des formes de chaleur ! Cependant,";
+						mes "il réduira également la résistance";
+						mes "comme effet secondaire.";
+						next;
+						mes "[Pisruik]";
+						mes "Je sais que mon remède semble";
+						mes "un peu bizarre, mais pensez aux";
+						mes "applications ! Si utilisé dans les";
+						mes "bonnes situations, ce remède peut être";
+						mes "très pratique.";
+						next;
+						mes "[Pisruik]";
+						mes "Ah, voyant que vous êtes toujours";
+						mes "ici, auriez-vous l'obligeance de m'aider";
+						mes "encore une fois ? J'en ai besoin d'environ,";
+						mes "heu, 20 Fleurs Mangeuses. Si vous pouviez les";
+						mes "me ramener, cela me rendrait un grand service.";
+						mes "[Pisruik]";
+						next;
+						switch(select("Nope, I'm too busy!:Sure, I'll help you.:What's in it for me?")) {
+						case 1:
+							set ALCHE_SK,5;
+							mes "[Pisruik]";
+							mes "Je suppose que je devrai rassembler";
+							mes "celles-ci moi-même. D'accord, bon,";
+							mes "vu que nous avons tous les deux obtenu";
+							mes "ce que nous voulions, je suppose";
+							mes "votre affaire avec moi est terminée.";
+							close;
+						case 2:
+							set ALCHE_SK,6;
+							mes "[Pisruik]";
+							mes "Merci, je te remercie vraiment";
+							mes "je vous en remercie. Pendant";
+							mes "que j'attends votre retour,";
+							mes "je peux commencer à faire bouillir";
+							mes "l'extrait de trèfle.";
+							next;
+							select("Clover extract? What's that for?");
+							mes "[Pisruik]";
+							mes "Bon, j'ai besoin de l'extrait de trèfle";
+							mes "pour un composé que je vais préparer avec";
+							mes "les fleurs de Maneater. Je suis";
+							mes "un peu faible, donc j'évite de trop voyager quand c'est possible.";
+							mes "[Pisruik]";
+							mes "Oui, depuis que j'étais";
+							next;
+							mes "[Pisruik]";
+							mes "faible et une mauvaise vue.";
+							mes "Le médecin me conseille d'éviter";
+							mes "le stress et le travail dur, mais";
+							mes "le stress et le travail dur,";
+							mes "mais la recherche est ma vie.";
+							mes "la recherche est ma vie.";
+							if (Sex == SEX_FEMALE) {
+								next;
+								mes "[Pisruik]";
+								mes "Je me demande...";
+								mes "Si vous comprenez";
+								mes "ce que je ressens et tout ce dont j'ai dû faire de sacrifices";
+								mes "pour mon rêve. Heh, bon...";
+								mes "[Pisruik]";
+							}
+							next;
+							mes "[Pisruik]";
+							mes "J'espère que vous comprenez que";
+							mes "rassembler des Fleurs de Maneater seule, donc si je veux obtenir";
+							mes "le plus d'aide possible. Merci encore pour votre coopération.";
+							mes "[Pisruik]";
+							mes "Je suis occupé en ce moment.";
+							mes "avez-vous fait quelque chose ?";
+							close;
+						case 3:
+							mes "[Pisruik]";
+							mes "Ha ha ha ha !";
+							mes "C'est vraiment le genre d'affaires";
+							mes "comme vous! D'accord,";
+							mes "je peux être pauvre, mais si";
+							mes "vous m'aidez, je vous donnerai";
+							mes "les résultats de mes recherches.";
+							next;
+							if (select("Nah, I'm too busy.:Alright, I'll help you.") == 1) {
+								set ALCHE_SK,5;
+								mes "[Pisruik]";
+								mes "Je suppose que je devrai rassembler";
+								mes "celles-ci moi-même. D'accord, bon,";
+								mes "vu que nous avons tous les deux obtenu";
+								mes "ce que nous voulions, je suppose";
+								mes "votre affaire avec moi est terminée.";
+								close;
+							}
+							set ALCHE_SK,6;
+							mes "[Pisruik]";
+							mes "Merci, je te remercie vraiment";
+							mes "je vous en remercie. Pendant";
+							mes "que j'attends votre retour,";
+							mes "je peux commencer à faire bouillir";
+							mes "l'extrait de trèfle.";
+							next;
+							select("Clover extract? What's that for?");
+							mes "[Pisruik]";
+							mes "Bon, j'ai besoin de l'extrait de trèfle";
+							mes "pour un composé que je vais préparer avec";
+							mes "les fleurs de Maneater. Je suis";
+							mes "un peu faible, donc j'évite de trop voyager quand c'est possible.";
+							mes "[Pisruik]";
+							mes "Oui, depuis que j'étais";
+							next;
+							mes "[Pisruik]";
+							mes "faible et une mauvaise vue.";
+							mes "Le médecin me conseille d'éviter";
+							mes "le stress et le travail dur, mais";
+							mes "le stress et le travail dur,";
+							mes "mais la recherche est ma vie.";
+							mes "la recherche est ma vie.";
+							if (Sex == SEX_FEMALE) {
+								next;
+								mes "[Pisruik]";
+								mes "Je me demande...";
+								mes "Si vous comprenez";
+								mes "ce que je ressens et tout ce dont j'ai dû faire de sacrifices";
+								mes "pour mon rêve. Heh, bon...";
+								mes "[Pisruik]";
+							}
+							next;
+							mes "[Pisruik]";
+							mes "J'espère que vous comprenez que";
+							mes "rassembler des Fleurs de Maneater seule, donc si je veux obtenir";
+							mes "le plus d'aide possible. Merci encore pour votre coopération.";
+							mes "[Pisruik]";
+							mes "Je suis occupé en ce moment.";
+							mes "avez-vous fait quelque chose ?";
+							close;
+						}
+					}
+					else if (countitem(715) == 0 && countitem(1093) == 0 && countitem(950) == 0 && countitem(1057) == 0) {
+						mes "[Pisruik]";
+						mes "Alors vous saviez ce qu'il";
+						mes "fallait apporter, êtes venu(e)";
+						mes "pour me rappeler ce que j'avais";
+						mes "oublié, mais n'avez rien apporté ?";
+						mes "Étrange. Bon bah...";
+						mes "Apportez les objets la prochaine fois.";
+						close;
+					}
+					else {
+						mes "[Pisruik]";
+						mes "Oh, ce n'est pas bon, certains";
+						mes "des objets que j'ai demandés sont";
+						mes "manquants. Je suis désolé, mais l'Alchimie";
+						mes "devient dangereusement imprévisible";
+						mes "lorsque les choses ne sont pas utilisées en";
+						mes "quantités exactes. Hmmm...";
+						next;
+						mes "[Pisruik]";
+						mes "Bon, je peux me permettre de";
+						mes "repousser mes délais si vous promettez de revenir";
+						mes "avec le reste.";
+						mes "avec les matériaux dont j'ai besoin";
+						mes "aussitôt que possible.";
+						close;
+					}
+				}
+				mes "[Pisruik]";
+				mes "De la Grande Jellopy ?";
+				mes "Oui, Grande... non.";
+				mes "Attends, cela ne sonne";
+				mes "ça ne sonne pas du tout juste.";
+				mes "Non, c'était autre chose";
+				mes "dont j'ai besoin que vous acheminiez.";
+				close;
+			case 2:
+				mes "[Pisruik]";
+				mes "Des Pierres Bleues... ?";
+				mes "potion qui augmente";
+				mes "la tolérance à la Terre";
+				mes "la tolérance à l'Eau,";
+				mes "propriété, je pense. Qu'est-ce";
+				mes "qui ne va pas avec ma mémoire ?!";
+				close;
+			case 3:
+				mes "[Pisruik]";
+				mes "Non, c'était pour la";
+				mes "potion qui augmente";
+				mes "la tolérance à la Terre";
+				mes "tolerance to the Earth";
+				mes "propriété, je pense. Qu'est-ce";
+				mes "qui ne va pas avec ma mémoire ?!";
+				close;
+			}
+		}
+		else if (ALCHE_SK == 3) {
+			mes "[Pisruik]";
+			mes "Pourquoi as-tu juste parti ?";
+			mes "Tu ne m'as même pas laissé";
+			mes "finir de parler ! Bon, peut-être";
+			mes "que ce n'est pas ta faute.";
+			mes "De toute façon, juste pour que tu saches,";
+			mes "je développe un nouveau médicament.";
+			set ALCHE_SK,4;
+			close;
+		}
+		else if (ALCHE_SK == 4) {
+			//NPC dialogue interrupted
+			mes "[Pisruik]";
+			mes "D'accord, voulais-tu";
+			mes "en savoir plus sur le médicament que";
+			mes "je développe ? Je veux dire,";
+			mes "c'est pour ça que tu es venu, non ?";
+			mes "[Pisruik]";
+			next;
+			if (select("No, thanks.:Yes, please.") == 1) {
+				mes "[Pisruik]";
+				mes "Très bien alors.";
+				mes "prêt à prendre le temps de t'expliquer";
+				mes "tout cela. Après tout, tu as bien";
+				mes "fait ça pour...";
+				mes "you. After all, you did";
+				mes "aidez-moi juste à ce moment-là.";
+				close;
+			}
+			mes "[Pisruik]";
+			mes "Je travaille sur une nouvelle";
+			mes "forme de médicament qui,";
+			mes "j'espère, sera utilisée";
+			mes "pour le bien-être et";
+			mes "la protection de l'humanité !";
+			next;
+			mes "[Pisruik]";
+			mes "En tout cas, ce médicament";
+			mes "réagit avec les enzymes digestives";
+			mes "du corps humain pour initier";
+			mes "des changements métaboliques temporaires";
+			mes "qui arrêtent artificiellement l'absorption";
+			mes "de la chaleur dans le corps.";
+			next;
+			mes "[Pisruik]";
+			mes "L'effet réel de ce";
+			mes "médicament est qu'il augmente considérablement";
+			mes "la résistance du corps à la plupart";
+			mes "des formes de chaleur ! Cependant,";
+			mes "il réduira également la résistance";
+			mes "comme effet secondaire.";
+			next;
+			mes "[Pisruik]";
+			mes "Je sais que mon remède semble";
+			mes "un peu bizarre, mais pensez aux";
+			mes "applications ! Si utilisé dans les";
+			mes "bonnes situations, ce remède peut être";
+			mes "très pratique.";
+			next;
+			mes "[Pisruik]";
+			mes "Ah, voyant que vous êtes toujours";
+			mes "ici, auriez-vous l'obligeance de m'aider";
+			mes "encore une fois ? J'en ai besoin d'environ,";
+			mes "heu, 20 Fleurs Mangeuses. Si vous pouviez les";
+			mes "me ramener, cela me rendrait un grand service.";
+			mes "[Pisruik]";
+			next;
+			switch(select("Nope, I'm too busy!:Sure, I'll help you.:What's in it for me?")) {
+			case 1:
+				set ALCHE_SK,5;
+				mes "[Pisruik]";
+				mes "Je suppose que je devrai rassembler";
+				mes "celles-ci moi-même. D'accord, bon,";
+				mes "vu que nous avons tous les deux obtenu";
+				mes "ce que nous voulions, je suppose";
+				mes "votre affaire avec moi est terminée.";
+				close;
+			case 2:
+				set ALCHE_SK,6;
+				mes "[Pisruik]";
+				mes "Merci, je te remercie vraiment";
+				mes "je vous en remercie. Pendant";
+				mes "que j'attends votre retour,";
+				mes "je peux commencer à faire bouillir";
+				mes "l'extrait de trèfle.";
+				next;
+				select("Clover extract? What's that for?");
+				mes "[Pisruik]";
+				mes "Bon, j'ai besoin de l'extrait de trèfle";
+				mes "pour un composé que je vais préparer avec";
+				mes "les fleurs de Maneater. Je suis";
+				mes "un peu faible, donc j'évite de trop voyager quand c'est possible.";
+				mes "[Pisruik]";
+				mes "Oui, depuis que j'étais";
+				next;
+				mes "[Pisruik]";
+				mes "faible et une mauvaise vue.";
+				mes "Le médecin me conseille d'éviter";
+				mes "le stress et le travail dur, mais";
+				mes "le stress et le travail dur,";
+				mes "mais la recherche est ma vie.";
+				mes "la recherche est ma vie.";
+				if (Sex == SEX_FEMALE) {
+					next;
+					mes "[Pisruik]";
+					mes "Je me demande...";
+					mes "Si vous comprenez";
+					mes "ce que je ressens et tout ce dont j'ai dû faire de sacrifices";
+					mes "pour mon rêve. Heh, bon...";
+					mes "[Pisruik]";
+				}
+				next;
+				mes "[Pisruik]";
+				mes "J'espère que vous comprenez que";
+				mes "rassembler des Fleurs de Maneater seule, donc si je veux obtenir";
+				mes "le plus d'aide possible. Merci encore pour votre coopération.";
+				mes "[Pisruik]";
+				mes "Je suis occupé en ce moment.";
+				mes "avez-vous fait quelque chose ?";
+				close;
+			case 3:
+				mes "[Pisruik]";
+				mes "Ha ha ha ha !";
+				mes "C'est vraiment le genre d'affaires";
+				mes "comme vous! D'accord,";
+				mes "je peux être pauvre, mais si";
+				mes "vous m'aidez, je vous donnerai";
+				mes "les résultats de mes recherches.";
+				next;
+				if (select("Nah, I'm too busy.:Alright, I'll help you.") == 1) {
+					set ALCHE_SK,5;
+					mes "[Pisruik]";
+					mes "Je suppose que je devrai rassembler";
+					mes "celles-ci moi-même. D'accord, bon,";
+					mes "vu que nous avons tous les deux obtenu";
+					mes "ce que nous voulions, je suppose";
+					mes "votre affaire avec moi est terminée.";
+					close;
+				}
+				set ALCHE_SK,6;
+				mes "[Pisruik]";
+				mes "Merci, je te remercie vraiment";
+				mes "je vous en remercie. Pendant";
+				mes "que j'attends votre retour,";
+				mes "je peux commencer à faire bouillir";
+				mes "l'extrait de trèfle.";
+				next;
+				select("Clover extract? What's that for?");
+				mes "[Pisruik]";
+				mes "Bon, j'ai besoin de l'extrait de trèfle";
+				mes "pour un composé que je vais préparer avec";
+				mes "les fleurs de Maneater. Je suis";
+				mes "un peu faible, donc j'évite de trop voyager quand c'est possible.";
+				mes "[Pisruik]";
+				mes "Oui, depuis que j'étais";
+				next;
+				mes "[Pisruik]";
+				mes "faible et une mauvaise vue.";
+				mes "Le médecin me conseille d'éviter";
+				mes "le stress et le travail dur, mais";
+				mes "le stress et le travail dur,";
+				mes "mais la recherche est ma vie.";
+				mes "la recherche est ma vie.";
+				if (Sex == SEX_FEMALE) {
+					next;
+					mes "[Pisruik]";
+					mes "Je me demande...";
+					mes "Si vous comprenez";
+					mes "ce que je ressens et tout ce dont j'ai dû faire de sacrifices";
+					mes "pour mon rêve. Heh, bon...";
+					mes "[Pisruik]";
+				}
+				next;
+				mes "[Pisruik]";
+				mes "J'espère que vous comprenez que";
+				mes "rassembler des Fleurs de Maneater seule, donc si je veux obtenir";
+				mes "le plus d'aide possible. Merci encore pour votre coopération.";
+				mes "[Pisruik]";
+				mes "Je suis occupé en ce moment.";
+				mes "avez-vous fait quelque chose ?";
+				close;
+			}
+		}
+		else if (ALCHE_SK == 5) {
+			//refuse bringing Maneater Blossom
+			mes "[Pisruik]";
+			mes "vous aller et me laisser faire mon travail.";
+			mes "Vous n'avez pas oublié";
+			mes "[Pisruik]";
+			mes "Ouais, peu importe.";
+			mes "get going and let";
+			mes "me do my work.";
+			next;
+			if (select("Alright, sorry to bother you.:Can I still help you?") == 1) {
+				mes "[Pisruik]";
+				mes "Yeah, whatever.";
+				mes "Hâte-toi de partir";
+				mes "afin que je puisse me concentrer.";
+				close;
+			}
+			mes "[Pisruik]";
+			mes "Euh ? Qu'est-ce qui t'a";
+			mes "changé d'avis ? Bon,";
+			mes "je ne peux pas me permettre de refuser";
+			mes "n'importe quelle aide, donc je suppose que c'est";
+			mes "a \"Yes.\" Yeah, you can help.";
+			next;
+			mes "[Pisruik]";
+			mes "D'accord, va chercher pour moi";
+			mes "20 Fleurs Mangeuses d'Hommes.";
+			mes "Si je n'étais pas si faible, j'irais les";
+			mes "chercher moi-même, mais--*Toussote* comme tu peux le voir,";
+			mes "je ne me sens pas très bien.";
+			set ALCHE_SK,6;
+			next;
+			mes "[Pisruik]";
+			if (Sex == SEX_FEMALE) {
+				mes "Je... Je te remercie vraiment";
+				mes "de ta volonté de m'aider";
+				mes "dans mes recherches...";
+				mes "me in my research...";
+			}
+			else {
+				mes "J'espère que tu me ramèneras ces";
+				mes "articles dès que possible";
+				mes "tu peux. Et ne lâche pas";
+				mes "comme ça cette fois !";
+			}
+			close;
+		}
+		else if (ALCHE_SK == 6) {
+			if (countitem(1032) > 19) {
+				delitem 1032,20; //Blossom_Of_Maneater
+				set ALCHE_SK,7;
+				mes "[Pisruik]";
+				mes "Merci beaucoup pour";
+				mes "en m'apportant ces";
+				mes "Fleurs de Maneater.";
+				if (Sex == SEX_FEMALE) {
+					mes "Tu n'imagines pas";
+					mes "ce que cela signifie pour moi~";
+				}
+				else {
+					mes "Maintenant, tout ce qu'il me reste à faire,";
+					mes "c'est mélanger ces fleurs avec l'extrait de trèfle";
+					mes "que j'ai préparé.";
+				}
+				next;
+				set ALCHE_SK,9;
+				specialeffect EF_SUI_EXPLOSION;
+				mes "[Pisruik]";
+				mes "Ah!";
+				mes "Ma... ma figure !";
+				next;
+				//...Pretty Boy mode -_-
+				mes "[Pisruik]";
+				mes "Hé...";
+				mes "vous avez croisé mon père !";
+				mes "C'était une explosion assez";
+				mes "grosse...";
+				next;
+				mes "["+ strcharinfo(0) +"]";
+				mes "Vos lunettes...";
+				mes "Elles sont cassées...";
+				next;
+				if (Sex == SEX_FEMALE) {
+					mes "^3355FFL'explosion a détruit les";
+					mes "lunettes de Pisruik, révélant";
+					mes "le beau visage d'un";
+					mes "homme magnifique, magnifique.^000000";
+				}
+				else {
+					mes "^3355FFL'explosion a fait voler en éclats";
+					mes "les lunettes de Pisruik. Sans";
+					mes "elles, il ressemble plus à un";
+					mes "mannequin masculin qu'à un chercheur scientifique taré.^000000";
+					mes "Holy crap!";
+				}
+				next;
+				mes "["+ strcharinfo(0) +"]";
+				mes "Tu es un";
+				mes "beau gars !";
+				mes "[Pisruik]";
+				next;
+				mes "[Pisruik]";
+				mes "bien sans mes lunettes.";
+				mes "Bon, au moins je peux dire";
+				mes "que tu ne saignes pas.";
+				mes "Mais es-tu en ordre ?";
+				mes "Oh, je vais bien.";
+				next;
+				mes "["+ strcharinfo(0) +"]";
+				mes "Mais que vas-tu faire pour tes";
+				mes "lunettes ?";
+				mes "tes lunettes ?";
+				mes "[Pisruik]";
+				next;
+				mes "[Pisruik]";
+				mes "Tu as raison.";
+				mes "Je n'ai pas par hasard";
+				mes "une paire de plus. Hé, peux-tu";
+				mes "me trouver une paire de lunettes,";
+				mes "la même que celle que je portais ?";
+				next;
+				mes "[Pisruik]";
+				mes "Je sais que c'est trop";
+				mes "pour te demander, mais sans elles,";
+				mes "je suis presque aveugle.";
+				mes "Je ne peux pas faire grand-chose si je";
+				mes "ne peux même pas voir. Je suis vraiment désolé.";
+				mes "about this, "+ strcharinfo(0) +".";
+				close;
+			}
+			else {
+				mes "[Pisruik]";
+				mes "Tu pourrais revenir avec";
+				mes "20 Fleurs de Mangeur d'Hommes";
+				mes "afin que je puisse finir ce";
+				mes "médicament dont je me charge ?";
+				mes "Merci, merci. Je dois courir après";
+				mes "ce projet...";
+				close;
+			}
+		}
+		else if (ALCHE_SK == 7) {
+			set ALCHE_SK,8;
+			mes "[Pisruik]";
+			mes "Hmmm...";
+			mes "En fait, j'ai mal calculé";
+			mes "le nombre de Fleurs Mangeuses";
+			mes "dont j'ai besoin. Pourrais-tu m'en";
+			mes "apporter une de plus ? Désolé, je sais que c'est un peu embêtant...";
+			close;
+		}
+		else if (ALCHE_SK == 8) {
+			if (countitem(1032) > 0) {
+				delitem 1032,1; //Blossom_Of_Maneater
+				set ALCHE_SK,7;
+				mes "[Pisruik]";
+				mes "Merci beaucoup !";
+				mes "Maintenant, j'ai enfin la";
+				mes "quantité exacte de Fleurs de Maneater dont j'aurai besoin.";
+				mes "Blossoms that I'll need.";
+				if (Sex == SEX_FEMALE) {
+					mes "Je suis vraiment désolé de vous avoir causé toutes ces ennuis.";
+					mes "your through all this trouble.";
+				}
+				else {
+					mes "Enfin, je commence la partie";
+					mes "la plus excitante de ce projet !";
+				}
+				next;
+				set ALCHE_SK,9;
+				specialeffect EF_SUI_EXPLOSION;
+				mes "[Pisruik]";
+				mes "Ah!";
+				mes "Ma... ma figure !";
+				next;
+				//...Pretty Boy mode -_-
+				mes "[Pisruik]";
+				mes "Hé...";
+				mes "vous avez croisé mon père !";
+				mes "C'était une explosion assez";
+				mes "grosse...";
+				next;
+				mes "["+ strcharinfo(0) +"]";
+				mes "Vos lunettes...";
+				mes "Elles sont cassées...";
+				next;
+				if (Sex == SEX_FEMALE) {
+					mes "^3355FFL'explosion a détruit les";
+					mes "lunettes de Pisruik, révélant";
+					mes "le beau visage d'un";
+					mes "homme magnifique, magnifique.^000000";
+				}
+				else {
+					mes "^3355FFL'explosion a fait voler en éclats";
+					mes "les lunettes de Pisruik. Sans";
+					mes "elles, il ressemble plus à un";
+					mes "mannequin masculin qu'à un chercheur scientifique taré.^000000";
+					mes "Holy crap!";
+				}
+				next;
+				mes "["+ strcharinfo(0) +"]";
+				mes "Tu es un";
+				mes "beau gars !";
+				mes "[Pisruik]";
+				next;
+				mes "[Pisruik]";
+				mes "bien sans mes lunettes.";
+				mes "Bon, au moins je peux dire";
+				mes "que tu ne saignes pas.";
+				mes "Mais es-tu en ordre ?";
+				mes "Oh, je vais bien.";
+				next;
+				mes "["+ strcharinfo(0) +"]";
+				mes "Mais que vas-tu faire pour tes";
+				mes "lunettes ?";
+				mes "tes lunettes ?";
+				mes "[Pisruik]";
+				next;
+				mes "[Pisruik]";
+				mes "Tu as raison.";
+				mes "Je n'ai pas par hasard";
+				mes "une paire de plus. Hé, peux-tu";
+				mes "me trouver une paire de lunettes,";
+				mes "la même que celle que je portais ?";
+				next;
+				mes "[Pisruik]";
+				mes "Je sais que c'est trop";
+				mes "pour te demander, mais sans elles,";
+				mes "je suis presque aveugle.";
+				mes "Je ne peux pas faire grand-chose si je";
+				mes "ne peux même pas voir. Je suis vraiment désolé.";
+				mes "about this, "+ strcharinfo(0) +".";
+				close;
+			}
+			else {
+				mes "[Pisruik]";
+				mes "Hmmm...";
+				mes "En fait, j'ai mal calculé";
+				mes "le nombre de Fleurs Mangeuses";
+				mes "dont j'ai besoin. Pourrais-tu m'en";
+				mes "apporter une de plus ? Désolé, je sais que c'est un peu embêtant...";
+				close;
+			}
+		}
+		else if (ALCHE_SK == 9) {
+			mes "^3355FFPisruik tient ses";
+			mes "lunettes cassées et plisse les yeux.";
+			mes "Il semble qu'il aime";
+			mes "il en a vraiment besoin,";
+			mes "même s'il semble beaucoup moins";
+			mes "drôle sans eux.^000000";
+			next;
+			if (select("Let him try a pair of your glasses:Don't give him anything") == 1) {
+				if (countitem(2243) > 0) {
+					delitem 2243,1; //Spinning_Eyes
+					set ALCHE_SK,10;
+					//changes the quest steps by deicision.
+					mes "["+ strcharinfo(0) +"]";
+					mes "Voici, pourquoi ne pas en prendre un peu de ce véritable";
+					mes "vérifie ce que je transporte et";
+					mes "vois s'il y a une paire de";
+					mes "lunettes que tu puisses utiliser ?";
+					next;
+					mes "[Pisruik]";
+					mes "Euh ? Oh, c'est toi ?";
+					mes "Ah, cette paire de lunettes";
+					mes "fonctionne ! Merci beaucoup,";
+					mes "je peux voir à nouveau ! Maintenant,";
+					mes "laisse-moi vérifier les résultats de l'";
+					mes "expérience que nous avons menée.";
+					next;
+					mes "[Pisruik]";
+					mes "D'accord, le tube à essai n'était";
+					mes "pas endommagé. Oui, selon";
+					mes "ces lectures, ce médicament";
+					mes "devrait être pleinement fonctionnel !";
+					mes "Je pense que c'est un succès !";
+					mes "Bien, théoriquement en tout cas.";
+					next;
+					mes "[Pisruik]";
+					mes "Hmm, modifier les attributs";
+					mes "du corps humain pour certains";
+					mes "effets peut susciter des controverses";
+					mes "plus tard, mais j'espère que cette chose";
+					mes "que j'ai inventée sera utilisée à";
+					mes "bien. Ah, c'est juste !";
+					next;
+					mes "[Pisruik]";
+					mes "Voudrais-tu que je t'en fasse?";
+					mes "te tout ce que j'ai appris dans mes recherches ?";
+					mes "Vous devriez pouvoir créer un nouveau";
+					mes "type de potion en utilisant les connaissances";
+					mes "que je peux vous enseigner.";
+					mes "[Pisruik]";
+					next;
+					if (select("Sure!:No, thanks.") == 1) {
+						mes "[Pisruik]";
+						mes "Great, "+ strcharinfo(0) +"!";
+						mes "sache que je peux te faire confiance";
+						mes "pour utiliser ces recherches à";
+						mes "de nobles fins. Maintenant,";
+						mes "lis attentivement cette thèse et";
+						mes "toutes mes notes supplémentaires...";
+						next;
+						mes "^3355FFPisruik explique en détail";
+						mes "les propriétés de son médicament,";
+						mes "l'effet qu'il a sur les organes";
+						mes "humains, ainsi que quelques";
+						mes "avertissements concernant les effets";
+						mes "secondaires du médicament.^000000";
+						next;
+						set ALCHE_SK,11;
+						getitem 7434,1; //Elemental_Create_Book
+						mes "[Pisruik]";
+						mes "Eh bien, vous devriez être";
+						mes "prêt à créer vos propres";
+						mes "potions qui sont une variation";
+						mes "de ma médecine. Mais vous aurez";
+						mes "probablement besoin de garder cette";
+						mes "thèse comme référence prête.";
+						next;
+						mes "[Pisruik]";
+						if (Sex == SEX_MALE) {
+							mes "J'espère que nous nous";
+							mes "rencontrerons à nouveau un jour";
+							mes "dans le futur. Bonne chance sur";
+							mes "vos aventures, aventurier.";
+							mes "*Touss-touss* Maintenant... Quelle";
+							mes "sera ma prochaine projet ?";
+						}
+						else {
+							mes "De toute façon, je dois être";
+							mes "travailler sur un nouveau projet";
+							mes "bientôt, donc je suppose que c'est";
+							mes "ici où nous prenons congé pour le moment.";
+							mes "Mais je dois dire, ce fut vraiment";
+							mes "un grand plaisir de vous rencontrer...";
+						}
+						close;
+					}
+					mes "[Pisruik]";
+					mes "R-Vraiment... ?";
+					mes "Eh bien, si un jour tu changes";
+					mes "d'avis, n'hésite pas à revenir";
+					mes "pour que je t'apprenne.";
+					if (Sex == SEX_FEMALE) {
+						mes "Et ce n'est vraiment pas un problème !";
+						mes "J'aime vraiment ta compagnie...";
+					}
+					close;
+				}
+				else {
+					mes "^3355FFMalheureusement, il n'y a rien dans votre inventaire";
+					mes "qui semble être un remplacement";
+					mes "approprié pour les lunettes cassées de Pisruik.";
+					mes "Écoutez, vous avez l'air si";
+					mes "bien meilleur quand vous n'êtes pas";
+					close;
+				}
+			}
+			mes "["+ strcharinfo(0) +"]";
+			mes "lunettes.";
+			mes "much better when you're";
+			mes "not wearing glasses.";
+			next;
+			mes "[Pisruik]";
+			mes "Excusez-moi,";
+			mes "Tu reviens encore ?";
+			next;
+			mes "["+ strcharinfo(0) +"]";
+			mes "Hahahahhaha~ !";
+			mes "Rien du tout !";
+			close;
+		}
+		else if (ALCHE_SK == 10) {
+			mes "[Pisruik]";
+			mes "So, "+ strcharinfo(0) +",";
+			mes "Voudrais-tu que je t'en fasse?";
+			mes "je vais t'enseigner les résultats";
+			mes "de la recherche que j'ai";
+			mes "menée. Lis cette thèse et";
+			next;
+			if (select("Yes!:No, thanks.") == 1) {
+				mes "[Pisruik]";
+				mes "Great, "+ strcharinfo(0) +"!";
+				mes "sache que je peux te faire confiance";
+				mes "pour utiliser ces recherches à";
+				mes "de nobles fins. Maintenant,";
+				mes "lis attentivement cette thèse et";
+				mes "toutes mes notes supplémentaires...";
+				next;
+				mes "^3355FFPisruik explique en détail";
+				mes "les propriétés de son médicament,";
+				mes "l'effet qu'il a sur les organes";
+				mes "humains, ainsi que quelques";
+				mes "avertissements concernant les effets";
+				mes "secondaires du médicament.^000000";
+				next;
+				set ALCHE_SK,11;
+				getitem 7434,1; //Elemental_Create_Book
+				mes "[Pisruik]";
+				mes "Eh bien, vous devriez être";
+				mes "prêt à créer vos propres";
+				mes "potions qui sont une variation";
+				mes "de ma médecine. Mais vous aurez";
+				mes "probablement besoin de garder cette";
+				mes "thèse comme référence prête.";
+				next;
+				mes "[Pisruik]";
+				if (Sex == SEX_MALE) {
+					mes "J'espère que nous nous";
+					mes "rencontrerons à nouveau un jour";
+					mes "dans le futur. Bonne chance sur";
+					mes "vos aventures, aventurier.";
+					mes "*Touss-touss* Maintenant... Quelle";
+					mes "sera ma prochaine projet ?";
+				}
+				else {
+					mes "De toute façon, je dois être";
+					mes "travailler sur un nouveau projet";
+					mes "bientôt, donc je suppose que c'est";
+					mes "ici où nous prenons congé pour le moment.";
+					mes "Mais je dois dire, ce fut vraiment";
+					mes "un grand plaisir de vous rencontrer...";
+				}
+				close;
+			}
+			mes "[Pisruik]";
+			mes "R-Vraiment... ?";
+			mes "Eh bien, si un jour tu changes";
+			mes "d'avis, n'hésite pas à revenir";
+			mes "pour que je t'apprenne.";
+			if (Sex == SEX_FEMALE) {
+				mes "Et ce n'est vraiment pas un problème !";
+				mes "J'aime vraiment ta compagnie...";
+			}
+			close;
+		}
+		else if (ALCHE_SK == 11) {
+			if (countitem(7434) == 0) {
+				mes "[Pisruik]";
+				mes "Euh oh...";
+				mes "Tu as perdu la thèse";
+				mes "que j'ai écrite pour toi ? Je n'ai";
+				mes "pas le temps d'en écrire une autre";
+				mes "pour toi maintenant...";
+				close;
+			}
+			else if (countitem(7434) == 1) {
+				mes "[Pisruik]";
+				mes "Donc, comment vas-tu depuis que tu utilises";
+				mes "les potions que je t'ai appris à fabriquer ?";
+				mes "J'espère qu'elles te seront utiles lors de tes aventures.";
+				mes "[Pisruik]";
+				mes "Euh, donc des copies de mes";
+				close;
+			}
+			else if (countitem(7434) > 1) {
+				mes "[Pisruik]";
+				mes "Huh, so copies of my";
+				mes "les thèses circulent";
+				mes "dans le public ? Bon,";
+				mes "^FF0000Désolé, mais je n'ai pas";
+				mes "temps d'autographier votre copie...";
+				close;
+			}
+		}
+		else {
+			mes "[Pisruik]";
+			mes "Mmm...?";
+			mes "Avez-vous besoin de quelque chose";
+			mes "en particulier ? Bien que,";
+			mes "je crains qu'une personne en";
+			mes "ma position ne puisse pas";
+			mes "beaucoup vous aider.";
+			close;
+		}
+	}
+	else {
+		mes "[Pisruik]";
+		mes "Mmm...?";
+		mes "Avez-vous besoin de quelque chose";
+		mes "en particulier ? Bien que,";
+		mes "je crains qu'une personne en";
+		mes "ma position ne puisse pas";
+		mes "beaucoup vous aider.";
+		close;
+	}
+}
+
+yuno_in04,22,107,5	script	Irache#qsk_al	740,{
+	mes "[Irache]";
+	mes "Heh heh heh...!";
+	mes "C'est fait ! Avec cette";
+	mes "formule, je peux fondre n'importe quelle";
+	mes "substance dans le monde !";
+	mes "Hahahaha ! Rien ne peut s'opposer";
+	mes "à moi et à la domination du monde--";
+	next;
+	mes "[Irache]";
+	mes "Owwww !";
+	mes "La formule secrète !";
+	mes "Elle brûle à travers";
+	mes "la fiole ! Je l'ai rendue";
+	mes "trop puissante ! Sacrebleu !";
+	close;
+}
+
+yuno_in04,27,107,4	script	Degas#qsk_al	748,{
+	mes "Et cet autre geek toussote tout le temps. Entre les deux,";
+	mes "C'est si pénible de travailler";
+	mes "si près d'autres";
+	mes "scientifiques. Le mec à côté";
+	mes "rit toujours en parlant de la prise du";
+	mes "monde et autres conneries.";
+	mes "[Degas]";
+	next;
+	mes "Et cet autre geek toussote tout le temps. Entre les deux,";
+	mes "c'est trop bruyant pour me concentrer sur mes recherches !";
+	mes "always coughing. Between";
+	mes "the two of them, it's far too";
+	mes "noisy to focus on my research!";
+	mes "Si seulement je pouvais travailler dans mon propre laboratoire privé et secret...";
+	close;
+}
+
+yuno_in04,33,106,4	script	Pile of Books#qsk_al	111,{
+	mes "^3355FFC'est simplement un tas";
+	mes "de documents éparpillés.";
+	mes "Bien qu'il semble désorganisé,";
+	mes "il ne semble pas que les gens";
+	mes "ici aient des difficultés à trouver^FFFFFF ^3355FF ce dont ils ont besoin quand ils en ont besoin.";
+	close;
+}
+
+// Start Bioethics quest
+lhz_in01,224,140,3	script	Kellasus#qsk_al	57,{
+	if (BaseJob == Job_Alchemist && bioeth == 13) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Continuez le bon travail. J'ai";
+		mes "l'impression que";
+		mes "notre avenir pourrait";
+		mes "dépendre de vous...";
+		mes "[Kellasus]";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 12) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "par vous enseigner ^FF0000Bioéthique^000000,";
+		mes "la compétence fondamentale pour";
+		mes "créer des Homunculi.";
+		mes "[Kellasus]";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "vous devez apprécier le";
+		mes "you've got to appreciate the";
+		mes "la douceur de la vie et sincèrement";
+		mes "vous souciez des êtres vivants.";
+		mes "Ainsi, vous devez toujours prendre";
+		mes "soin de votre Homunculus.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Vous devez constamment vérifier";
+		mes "si votre Homunculus est fatigué ou affamé,";
+		mes "ou s'il a été blessé. Vous devez également prendre";
+		mes "en compte les sentiments de votre Homunculus envers vous, son propriétaire.";
+		mes "[Kellasus]";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "vous aurez maîtrisé la Bioéthique. Cela semble simple, mais vous ne pouvez comprendre";
+		mes "une relation avec un Homunculus que par l'expérience.";
+		mes "[Kellasus]";
+		mes "Bon, vous devriez maintenant avoir assez de connaissances pour créer et prendre soin";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Well, you should know enough";
+		mes "by now to create and care for";
+		mes "your own Homunculus. I trust";
+		mes "that you will be responsible";
+		mes "dans votre quête de découvertes";
+		mes "qui pourraient bénéficier à l'humanité.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Avant de nous séparer,";
+		mes "voudriez-vous vous souvenir des";
+		mes "me dire votre nom ?";
+		next;
+		mes "[" + strcharinfo(0) + "]";
+		mes "Mon nom est...";
+		mes "" + strcharinfo(0) + ".";
+		next;
+		set bioeth,13;
+		skill "AM_BIOETHICS",1,SKILL_PERM;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Ah...";
+		mes "" + strcharinfo(0) + ".";
+		mes "Je me souviendrai de cela. Au revoir";
+		mes "pour le moment, et j'espère que vous";
+		mes "ferez une grande contribution à";
+		mes "le monde de l'alchimie un jour.";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 11) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Nos points de vue peuvent être";
+		mes "différents, mais je suis d'accord pour dire que";
+		mes "il y a trop de potentiel dans";
+		mes "l'étude des Homunculus que je ne peux plus";
+		mes "ignorer en tant que scientifique";
+		mes "et en tant qu'humanitaire.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Si je vous enseigne ces compétences,";
+		mes "vous pourriez être sur le chemin d'une";
+		mes "ligne morale. Mais je pense que cela devrait";
+		mes "aller bien si vous travaillez à apprendre";
+		mes "quelque chose qui bénéficiera au";
+		mes "bien commun.";
+		next;
+		mes "[" + strcharinfo(0) + "]";
+		mes "Est-ce...";
+		mes "Ça veut dire";
+		mes "vous m'apprendrez ?";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Ne vous excitez pas trop.";
+		mes "Je suis toujours incertain si l'étude des";
+		mes "Homunculus devrait être ouverte à tous les";
+		mes "Alchimistes, mais pour le moment,";
+		mes "je pense que je peux vous faire confiance.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Cependant, vous devez utiliser les compétences";
+		mes "que je vous enseigne pour bénéficier enfin à d'autres";
+		mes "personnes. Ce n'est pas comme si je pouvais vous obliger à oublier une fois que vous saurez fabriquer des Homunculus, compris ?";
+		mes "[Kellasus]";
+		mes "to make Homunculi, understand?";
+		next;
+		set bioeth,12;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Veuillez me donner un peu";
+		mes "de temps pour préparer mon cours";
+		mes "pour vous. Il s'est écoulé beaucoup de";
+		mes "temps depuis que j'ai fait cela...";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 10) {
+		set bioeth,11;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "^333333*Soupir*^000000";
+		mes "Je suis si confus...";
+		mes "Il n'y a aucun doute sur le fait que";
+		mes "tout ce que vous dites est juste.";
+		mes "Mais maintenant, je ne sais plus quoi";
+		mes "croire...";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 9) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Êtes-vous venu pour";
+		mes "me demander encore une fois de vous enseigner";
+		mes "les compétences d'Homuncule ?";
+		mes "Vous êtes incroyablement persévérant,";
+		mes "mais je suppose que c'est peut-être";
+		mes "ainsi que vous êtes devenu Alchimiste...";
+		next;
+		mes "[" + strcharinfo(0) + "]";
+		mes "Eh bien, je suis venu ici plus ou moins";
+		mes "pour demander cela.";
+		mes "Mais d'abord, j'ai entendu une rumeur";
+		mes "disant que votre fils était vraiment";
+		mes "malade depuis un certain temps...";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "O-oui. C'est vraiment";
+		mes "difficile pour moi de";
+		mes "parler de cette époque.";
+		mes "L'idée de perdre";
+		mes "mon fils est trop lourde à porter.";
+		mes "Il signifie tout pour moi...";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "J'étais si désespérée à";
+		mes "garder mon fils en vie que";
+		mes "j'aurais vendu mon âme";
+		mes "sans aucun regret. Je suis plus";
+		mes "qu'encline à sacrifier ma";
+		mes "propre vie pour son bien.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Heureusement, mon fils";
+		mes "a guéri de sa";
+		mes "maladie et il est très";
+		mes "en bonne santé aujourd'hui. Mais";
+		mes "Pourquoi me rappelles-tu";
+		mes "une chose comme celle-ci ?";
+		next;
+		mes "[" + strcharinfo(0) + "]";
+		mes "Tu as raison, la création";
+		mes "d'homuncules soulève une question";
+		mes "morale. Mais plutôt que de parler";
+		mes "de morale,";
+		mes "je veux faire appel à ton sens";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Je ne suis pas d'accord.";
+		mes "Que voulez-vous dire exactement";
+		mes "par humanitarisme ?";
+		mes "Je crois que l'étude des";
+		next;
+		mes "[" + strcharinfo(0) + "]";
+		mes "homuncules pourrait nous aider à découvrir";
+		mes "le secret de la vie. Il y a trop";
+		mes "de potentiel pour faire le bien";
+		mes "pour qu'on puisse l'ignorer.";
+		mes "Je ne suis pas intéressé par";
+		mes "la création de nouvelles créatures ou";
+		next;
+		mes "["+ strcharinfo(0) +"]";
+		mes "I'm not interested in";
+		mes "creating new creatures or";
+		mes "jouer à Dieu. Ce que je veux vraiment";
+		mes "est la connaissance pour soigner les gens";
+		mes "quel que soit le mal. Peu";
+		mes "importe à quel point il est désespéré.";
+		next;
+		mes "["+ strcharinfo(0) +"]";
+		mes "Cela peut être immoral de";
+		mes "créer des formes de vie expérimentales";
+		mes "et les sacrifier,";
+		mes "mais je suis prêt à le faire pour";
+		mes "les gens qui pourraient avoir besoin";
+		mes "de ce remède que je pourrais découvrir...";
+		next;
+		mes "["+ strcharinfo(0) +"]";
+		mes "Quand votre fils était";
+		mes "malade, vous étiez prêt à faire des sacrifices pour voir";
+		mes "qu'il se rétablisse. Mais encore,";
+		mes "il y a d'autres personnes dans le";
+		mes "monde avec des maladies plus graves...";
+		mes "Je veux étudier";
+		next;
+		mes "["+ strcharinfo(0) +"]";
+		mes "les Homunculi parce que";
+		mes "il y a une chance que";
+		mes "je puisse réussir à apporter";
+		mes "I might be able to bring";
+		mes "espérer du quelqu'un";
+		mes "situation désespérée...";
+		next;
+		set bioeth,10;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Je n'ai jamais...";
+		mes "Je ne pensais pas...";
+		mes "Désolé. J'ai besoin";
+		mes "de quelques moments seul(e)...";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 8) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Bien que j'admette que";
+		mes "vous êtes capable d'apprendre";
+		mes "ce que je pourrais vous enseigner";
+		mes "sur les Homunculi, je ne peux pas";
+		mes "de bonne conscience le faire. Je suis";
+		mes "désolé(e), mais veuillez abandonner.";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 7) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Combien de fois dois-je vous le";
+		mes "vous ? Désolé(e), mais je ne peux rien vous enseigner concernant les Homunculi.";
+		mes "Cela me dérange particulièrement que vous sachiez absolument rien d'eux...";
+		next;
+		mes "[" + strcharinfo(0) + "]";
+		mes "Mais pendant mon absence,";
+		mes "j'ai passé tant de temps";
+		mes "à étudier les Homunculi";
+		mes "de ces experts en alchimie.";
+		mes "Je garantis que je suis qualifié";
+		mes "pour apprendre les bases !";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Experts... ? Ah, vous voulez dire";
+		mes "Skrajjad, Keshibien et";
+		mes "Broncher. Mes anciens collègues.";
+		mes "D'accord. Mais je serai le juge";
+		mes "de savoir si vous avez appris";
+		mes "quelque chose sur les Homunculi.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "^FF0000[Maître de la Salle des Examens]^FF0000: Je vais vous poser";
+		mes "plusieurs questions, donc";
+		mes "j'espère que vous répondrez correctement";
+		mes "à toutes ces questions.";
+		mes "^FF0000Êtes-vous prêt(e)?";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Première question.";
+		mes "Quelle compétence, maîtrisée";
+		mes "au niveau de compétence 1, permet";
+		mes "au lanceur de faire reculer un";
+		mes "Homuncule, le plaçant dans";
+		mes "un état inert de hibernation ?";
+		next;
+		input .@input$;
+		if (.@input$ == "Vaporize") {
+			mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+			mes "Hmm, pas mal. Alors tu as";
+			mes "étudié. Maintenant, la deuxième";
+			mes "question. Quel est l'objet, dont le nom indique une très première étape";
+			mes "du développement d'un Homunculus, utilisé pour la compétence Appeler Homunculus ?";
+			next;
+			input .@input$;
+			if (.@input$ == "Embryo") {
+				mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+				mes "Euh. Tu as celle-là aussi";
+				mes "bien répondu. D'accord, troisième";
+				mes "question. Quel est le nom de la";
+				mes "compétence, maîtrisée au niveau";
+				mes "de compétence 5, qui te permet";
+				mes "de ressusciter les Homunculi ?";
+				next;
+				input .@input$;
+				if (.@input$ == "Homunculus Resurrection") {
+					mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+					mes "Alors tu as mis beaucoup";
+					mes "d'efforts à étudier cela. Je";
+					mes "vraiment admire ta détermination et il";
+					mes "semble que tu aies le potentiel pour être un très grand";
+					mes "Alchimiste.";
+					mes "be a really great Alchemist.";
+					next;
+					mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+					mes "Néanmoins, même si vous êtes";
+					mes "qualifié pour apprendre toutes les";
+					mes "compétences d'homuncule, je choisis";
+					mes "de ne pas vous les enseigner selon";
+					mes "mes propres principes personnels.";
+					mes "Rien ne peut changer mon avis.";
+					next;
+					mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+					mes "Je reconnais que je suis fier";
+					mes "des progrès que vous avez";
+					mes "accomplis, mais je ne peux tout simplement pas";
+					mes "me résoudre à faire partie de ce que";
+					mes "je considère comme un abus du don de la vie.";
+					mes "[Kellasus]";
+					next;
+					set bioeth,8;
+					mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+					mes "endurer d'être responsable de toutes les conséquences qui";
+					mes "pourraient découler de l'existence";
+					mes "bear to be responsible for";
+					mes "any of the consequences that";
+					mes "may come with the existence";
+					mes "de vie artificiellement créée.";
+					close;
+				}
+				else {
+					mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+					mes "Je suis déçu...";
+					mes "J'espérais vraiment que";
+					mes "vous ayez tout appris";
+					mes "sur les Homunculi,";
+					mes "mais il semble qu'il y ait";
+					mes "quelques lacunes dans vos connaissances.";
+					close;
+				}
+			}
+			else {
+				mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+				mes "Hmm... Il semble que";
+				mes "vous n'ayez toujours pas appris";
+				mes "assez sur les Homunculi.";
+				mes "Même si je voulais vous enseigner,";
+				mes "il semble que vous ne soyez";
+				mes "pas tout à fait prêt(e) à apprendre...";
+				close;
+			}
+		}
+		else {
+			mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+			mes "Vous seriez capable de répondre";
+			mes "correctement à la première question";
+			mes "si vous étiez vraiment sérieux(se)";
+			mes "dans l'étude des Homunculi.";
+			mes "Vous feriez mieux d'abandonner et de";
+			mes "trouver un nouvel intérêt alchimique.";
+			close;
+		}
+	}
+	if (BaseJob == Job_Alchemist && bioeth > 3) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Je suis désolé, mais";
+		mes "Je refuse d'enseigner";
+		mes "à quoi que ce soit lié";
+		mes "aux compétences Homunculus.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Je devrais être insulté que";
+		mes "vous me demandiez, mais il y eut un temps où j'étais plus";
+		mes "comme vous, donc je peux comprendre";
+		mes "ce que vous ressentez. Cependant, mes";
+		mes "points de vue sont maintenant très différents...";
+		mes "[Kellasus]";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 3) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "vous amène ici ?";
+		mes "En tant que senior dans le domaine de l'Alchimie, je peux";
+		mes "vous donner quelques conseils si vous êtes bloqué par un problème particulier...";
+		mes "Je veux que vous";
+		mes "give you some advice if you're stumped by a particular problem...";
+		next;
+		if (select("Teach me the Homunculus Skills.:No, nothing.") == 1) {
+			mes "[" + strcharinfo(0) + "]";
+			mes "je veux que tu m'apprennes";
+			mes "enseigne-moi comment";
+			mes "créer un Homunculus.";
+			next;
+			mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+			mes "...";
+			mes "Encore toi ?";
+			mes "Je ne pense pas avoir bien";
+			mes "compris ce que tu as dit.";
+			next;
+			mes "[" + strcharinfo(0) + "]";
+			mes "J'ai dit...";
+			mes "je veux que tu m'apprennes";
+			mes "les compétences pour la création d'un Homunculus.";
+			mes "[Kellasus]";
+			next;
+			mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+			mes "Mes avertissements concernant les connaissances";
+			mes "qui devraient être interdites aux";
+			mes "Alchimistes, tu veux quand même aller";
+			mes "et créer un Homunculus ?!";
+			mes "[Kellasus]";
+			next;
+			mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+			mes "aborder ce sujet.";
+			mes "Mais je ne comprends toujours pas pourquoi tu voudrais soudainement";
+			mes "But I still don't understand why you would suddenly want to ";
+			mes "apprenez ces compétences. Oui,";
+			mes "c'est vrai que je pourrais vous enseigner...";
+			next;
+			set bioeth,4;
+			mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+			mes "mais je refuse de transmettre";
+			mes "mes connaissances sur les Homunculi";
+			mes "à quiconque, pour quelque raison que ce soit.";
+			mes "Vous devez le savoir,";
+			mes "je suppose. Je suis stupéfait que vous";
+			mes "ayez même l'audace de demander !";
+			close;
+		}
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Non ? Eh bien, je suppose";
+		mes "qu'apprendre par soi-même";
+		mes "est bon, mais parfois,";
+		mes "il est utile de demander";
+		mes "de l'aide à ceux qui sont";
+		mes "plus expérimentés que vous.";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 2) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Ah, vous êtes de retour...";
+		mes "comment je compte vous remercier pour votre discrétion. Eh bien, laissez-moi vous montrer un des pouvoirs que j'ai acquis grâce à mon entraînement spirituel.";
+		mes "c'est pourquoi je vous ai averti";
+		mes "des dangers d'utiliser";
+		mes "L'Alchimie pour acquérir des connaissances";
+		mes "qui devraient être interdites.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Il vaut mieux que vous le sachiez maintenant";
+		mes "que de découvrir plus tard et ne pas";
+		mes "être préparé. Il existe une compétence";
+		mes "en Alchimie qui transgresse";
+		mes "les lois naturelles en créant";
+		mes "une vie non prévue par Dieu.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "C'est une compétence extrêmement";
+		mes "dangereuse qui a été";
+		mes "développée à partir de l'orgueil";
+		mes "humain. La vie est une belle";
+		mes "chose, un cadeau précieux, que";
+		mes "nous n'osons pas altérer.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Ma plus grande honte de ma";
+		mes "vie est ma contribution à";
+		mes "ce domaine des connaissances. À";
+		mes "À cette époque, j'étais jeune et";
+		mes "têtue, trop fière pour";
+		mes "admettre que je jouais à Dieu.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Je suis même allé si loin que";
+		mes "je suis devenu l'Alchimiste le plus";
+		mes "compétent dans la création";
+		mes "de ^FF0000Homunculi^000000. Mais j'ai";
+		mes "changé mes manières. Je ne...";
+		mes "Je n'en créerai jamais d'autres.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "L'alchimie est un domaine d'étude";
+		mes "incroyable, et c'est formidable";
+		mes "que vous vous soyez consacré";
+		mes "à elle, mais n'oubliez jamais que";
+		mes "cette science possède un grand potentiel pour l'abus, tout comme pour le bien.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Je crains seulement que votre quête";
+		mes "de connaissances, votre curiosité insatiable";
+		mes "pour révéler l'inconnu, ne vous mènent sur le chemin de l'";
+		mes "Homuncule. Pour votre propre bien, n'envisagez pas cette idée.";
+		next;
+		set bioeth,3;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Rappelez-vous que toute vie est";
+		mes "précieuse. Si vos motivations";
+		mes "sont bonnes et non corrompues par";
+		mes "la soif de la gloire ou du gain,";
+		mes "et si vous travaillez pour le bien supérieur de l'humanité, tout ira bien.";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 1) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "^FF0000 Ah, c'est toi encore.";
+		mes "Puisque vous êtes ici, laissez-moi";
+		mes "vous poser une question.";
+		mes "Que pensez-vous exactement de";
+		mes "l'Alchimie ?";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Attendez. Ne répondez pas à";
+		mes "cette question. En tant que personne plus";
+		mes "expérimentée dans ce domaine,";
+		mes "je crois que la réponse";
+		mes "à cette question est plus";
+		mes "compliquée que vous ne le pensez.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "La plupart des gens voient les Alchimistes";
+		mes "comme de scientifiques avares, supposant";
+		mes "que nous utilisons nos compétences exclusivement pour^FFFFFF.^000000la transmutation d'or. De";
+		mes "tous, apprendre à faire cela";
+		mes "fait partie de notre formation de base.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Mais apprendre la transmutation";
+		mes "fait partie de quelque chose de plus grand.";
+		mes "Tous les Alchimistes doivent s'efforcer de";
+		mes "dompter la nature pour le bien";
+		mes "de l'humanité. Pour cela, il faut";
+		mes "étudier toutes les sciences.";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Les domaines de la Médecine,";
+		mes "de la Chimie, de la Biologie, de la Géologie,";
+		mes "de l'Astronomie, de l'Astrologie, de la Géo-mancie,";
+		mes "des Mathématiques, de la Physique et même";
+		mes "de la Philosophie doivent tous être appris";
+		mes "par l'Alchimiste compétent.";
+		next;
+		set bioeth,2;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Une fois que vous aurez pénétré dans";
+		mes "l'immense et passionnant domaine de l'Alchimie,";
+		mes "il n'y a plus de retour en arrière. Faites";
+		mes "de votre mieux pour apprendre tout ce que";
+		mes "vous pouvez, et n'oubliez jamais que vous avez des responsabilités envers l'humanité.";
+		close;
+	}
+	if (BaseJob == Job_Alchemist) {
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Vous êtes un autre";
+		mes "praticien de";
+		mes "l'Alchimie, n'est-ce pas ?";
+		mes "Ça fait longtemps";
+		mes "depuis que j'ai parlé à";
+		mes "un si jeune collègue...";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "En tant que votre aîné,";
+		mes "je vous encourage à vous concentrer";
+		mes "sur votre entraînement. Éclairez-vous et satisfaites votre";
+		mes "curiosité en résolvant les";
+		mes "énigmes de la science.";
+		mes "[Kellasus]";
+		next;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Mais écoutez bien mes mots...";
+		mes "Il existe des secrets de";
+		mes "science qui ne doit jamais";
+		mes "être découverte par les humains.";
+		mes "Ne soyez pas si orgueilleux à";
+		mes "point de chercher des vérités interdites.";
+		next;
+		set bioeth,1;
+		mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+		mes "Bonne chance dans vos";
+		mes "études, et j'espère que vous n'utiliserez jamais votre";
+		mes "recherche d'answers comme une excuse pour céder à";
+		mes "la cupidité et l'obsession.";
+		mes "[Kellasus]";
+		mes "Hmm. Qui décide ce qui est bien et mal ? Qu'est-ce que";
+		close;
+	}
+	mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+	mes "à la compréhension de l'humanité ?";
+	mes "[Kellasus]";
+	mes "Il y en a beaucoup qui seraient d'accord pour dire que seul Dieu détient";
+	mes "secrets were never intended";
+	mes "for mankind to understand?";
+	next;
+	mes "l'on doit connaître et quels secrets n'étaient jamais destinés";
+	mes "There are many who would";
+	mes "agree that God alone wields";
+	mes "l'autorité sur la vie et la mort.";
+	mes "Mais l'Alchimie offre";
+	mes "un moyen pour les audacieux...";
+	close;
+}
+
+lhz_in01,225,122,5	script	Skrajjad#qsk_al	754,{
+	if (BaseJob == Job_Alchemist && bioeth > 4) {
+		mes "[Skrajjad]";
+		mes "Je vous ai enseigné tout ce que";
+		mes "je peux sur les Homunculi.";
+		mes "J'espère avoir été d'une certaine";
+		mes "aide dans votre quête de connaissances et de compréhension de notre univers.";
+		next;
+		mes "[Skrajjad]";
+		mes "Si vous ne l'avez pas déjà fait,";
+		mes "veuillez rendre visite à Keshibien,";
+		mes "maître de la compétence Appel d'Homuncule.";
+		mes "C'est une personne gentille qui est";
+		mes "toujours prête à faire des efforts";
+		mes "pour aider les jeunes scientifiques.";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 4) {
+		mes "[Skrajjad]";
+		mes "Ah, vous êtes celui/là";
+		mes "qui a eu le courage";
+		mes "de demander à Kellasus d'enseigner";
+		mes "l'Alchimie. Je dois dire";
+		mes "que j'admire votre attitude,";
+		if (Sex == SEX_MALE)
+			mes "jeune homme. Maintenant, ne t'inquiète pas...";
+		else
+			mes "jeune fille. Maintenant, ne t'inquiète pas...";
+		next;
+		mes "[Skrajjad]";
+		mes "Je comprends comment tu";
+		mes "dois te sentir après que Kellasus";
+		mes "ait refusé de t'enseigner ses";
+		mes "méthodes, mais cela ne signifie pas";
+		mes "que tu n'apprendras jamais";
+		mes "à créer un Homunculus.";
+		next;
+		mes "[Skrajjad]";
+		mes "Je crois que tu pourras apprendre ce que tu désires si tu parviens à";
+		mes "te former auprès de tous les experts en Homunculus. Quand tu montreras à quel point";
+		mes "tu es sérieux dans cette entreprise, alors Kellasus pourrait changer d'avis sur toi.";
+		next;
+		mes "[Skrajjad]";
+		mes "Laisse-moi t'enseigner ma spécialité en";
+		mes "Homunculus,";
+		mes "la compétence ^FF0000Vaporize^000000. En réalité,";
+		mes "elle est inutile sans la technique de Kellasus, mais elle devrait être un";
+		mes "technique, but it should be a";
+		mes "un bon point de départ.";
+		next;
+		mes "[Skrajjad]";
+		mes "La compétence Vaporize";
+		mes "est une compétence d'Alchimiste";
+		mes "qui ne traite que des";
+		mes "Homunculi. Vaporize est";
+		mes "maîtrisée au Niveau de Compétence 1.";
+		next;
+		mes "[Skrajjad]";
+		mes "Cette compétence vous permet de";
+		mes "réduire votre Homunculus";
+		mes "en vapeur afin qu'il soit dans un";
+		mes "état chimique inerte. C'est";
+		mes "très similaire à l'hibernation";
+		mes "si on y réfléchit.";
+		next;
+		mes "[Skrajjad]";
+		mes "Maintenant, si vous voulez";
+		mes "ramener un Homunculus vaporisé,";
+		mes "vous devrez connaître le ^FF0000Call Homunculus^000000";
+		mes "que vous pouvez apprendre auprès de";
+		mes "which you can learn from";
+		mes "Keshibien. N'oubliez pas...";
+		next;
+		mes "[Skrajjad]";
+		mes "Les homunculi sont des êtres vivants,";
+		mes "donc ne les faites pas";
+		mes "évaporer et rappeler";
+		mes "irréfléchimentement. Ce genre";
+		mes "de comportement serait inhumain.";
+		next;
+		mes "[Skrajjad]";
+		mes ""Montrez du respect à toutes les formes de vie"";
+		mes ""." C'est le credo";
+		mes "pour l'expert en homunculi.";
+		mes "Allez maintenant trouver ^FF0000Keshibien^000000";
+		mes "afin qu'il puisse vous enseigner";
+		mes "la compétence Appeler Homuncule.";
+		next;
+		set bioeth,5;
+		mes "[Skrajjad]";
+		mes "Bonne chance à";
+		mes "vos études";
+		mes "et j'espère que vous";
+		mes "trouverez les réponses";
+		mes "que vous cherchez.";
+		close;
+	}
+	mes "[Skrajjad]";
+	mes "L'alchimie est merveilleuse...";
+	mes "Elle intègre toutes les";
+	mes "sciences et de nombreux autres";
+	mes "domaines des connaissances que";
+	mes "ce n'est pas suffisant d'être un";
+	mes "savoir-faire de tous... Non...";
+	next;
+	mes "[Skrajjad]";
+	mes "D'un certain sens, vous devez";
+	mes "être un maître de tous les métiers";
+	mes "pour être compétent en Alchimie.";
+	mes "Mais c'est incroyablement gratifiant pour ceux d'entre nous qui n'arrêtent jamais de demander";
+	mes "comment et pourquoi notre monde fonctionne.";
+	close;
+}
+
+lhz_in01,204,138,5	script	Keshibien#qsk_al	750,{
+	if (BaseJob == Job_Alchemist && bioeth > 5) {
+		mes "J'entends que les Alchimistes d'";
+		mes "J'espère que vous";
+		mes "pourrez faire bon usage";
+		mes "de ce que je vous ai enseigné.";
+		mes "Je suis heureux d'avoir pu";
+		mes "contribuer quelque chose à";
+		mes "votre apprentissage de l'Alchimie.";
+		next;
+		mes "J'entends que les Alchimistes d'";
+		mes "Maintenant, la seule personne qualifiée";
+		mes "pour vous enseigner le talent de Résurrection d'Homuncule est Brocher.";
+		mes "Resurrection skill is Brocher.";
+		mes "Il est... Il est un personnage, mais";
+		mes "il est aussi un excellent professeur.";
+		next;
+		mes "J'entends que les Alchimistes d'";
+		mes "Maintenant...";
+		mes "Où pourrait-il être ?";
+		mes "Je sais qu'il aime boire,";
+		mes "donc peut-être que vous pouvez le trouver";
+		mes "dans un endroit où l'on sert";
+		mes "de l'alcool à Lighthalzen ?";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 5) {
+		mes "J'entends que les Alchimistes d'";
+		mes "Oh ! Vous devez être celui";
+		mes "dont m'a parlé Skrajjad.";
+		mes "Ainsi, vous êtes venu";
+		mes "pour que je puisse vous enseigner le talent";
+		mes "d'Appel d'Homuncule ?";
+		next;
+		mes "J'entends que les Alchimistes d'";
+		mes "D'abord de tout, c'est toujours";
+		mes "un plaisir de rencontrer un autre";
+		mes "collègue. Je suis Keshibien,";
+		mes "bien que je sois un expert en cette";
+		mes "compétence particulière, dans l'ensemble, je ne suis qu'un alchimiste ordinaire.";
+		next;
+		mes "J'entends que les Alchimistes d'";
+		mes "De toute façon, la compétence Appeler Homuncule";
+		mes "nécessite de connaître la compétence Vaporiser et est maîtrisée";
+		mes "au Niveau de Compétence 1. Cette compétence vous permet d'invoquer un Homuncule.";
+		mes "Plutôt simple jusqu'à présent, non ?";
+		mes "[Keshibien]";
+		next;
+		mes "J'entends que les Alchimistes d'";
+		mes "Homuncule vaporisé si";
+		mes "vous en avez un.";
+		mes "Sinon, vous pouvez simplement";
+		mes "en créer un en utilisant";
+		mes "cette compétence et ces objets...";
+		mes "[Keshibien]";
+		next;
+		mes "J'entends que les Alchimistes d'";
+		mes "^FF00001 Tube de Verre^000000,";
+		mes "^FF00001 Graine de Vie^000000 et";
+		mes "^FF00001 Seed of Life^000000 and";
+		mes "^FF00001 Rosée du matin d'Yggdrasil^000000.";
+		next;
+		mes "J'entends que les Alchimistes d'";
+		mes "Bon, c'est tout l'";
+		mes "information technique";
+		mes "que je dois partager avec vous.";
+		mes "N'oubliez jamais de bien traiter";
+		mes "votre Homunculus. Euh,";
+		mes "une fois que vous en avez invoqué un, en tout cas.";
+		next;
+		mes "J'entends que les Alchimistes d'";
+		mes "Mais avant de pouvoir le faire,";
+		mes "vous devez apprendre";
+		mes "les techniques que seul";
+		mes "Kellasus peut vous enseigner.";
+		mes "Pour l'instant, allez à ^FF0000Broncher^000000";
+		mes "et apprenez de lui, d'accord ?";
+		next;
+		mes "J'entends que les Alchimistes d'";
+		mes "Broncher a";
+		mes "la spécialité dans la";
+		mes "compétence Réanimation d'Homunculus.";
+		mes "Vous devriez être capable de";
+		mes "trouvez-le quelque part dans la ville,";
+		mes "bien que je ne sache pas où...";
+		next;
+		set bioeth,6;
+		mes "J'entends que les Alchimistes d'";
+		mes "En tout cas, ce fut vraiment";
+		mes "agréable de vous rencontrer. J'espère que";
+		mes "vous serez capable d'apprendre à utiliser pleinement un Homunculus";
+		mes "un jour prochainement. Cependant, vous devrez";
+		mes "convaincre Kellasus...";
+		mes "[Keshibien]";
+		close;
+	}
+	mes "J'entends que les Alchimistes d'";
+	mes "Bonjour ~";
+	mes "Vous devez être de";
+	mes "Rune-Midgarts, n'est-ce pas ?";
+	mes "[Keshibien]";
+	next;
+	mes "J'entends que les Alchimistes d'";
+	mes "là-bas sont assez";
+	mes "compétents. Je me demande si j'aurai";
+	mes "jamais l'occasion de collaborer avec l'un d'eux...";
+	mes "[Broncher]";
+	mes "Vous encore ? Ne vous ai-je déjà";
+	mes "collaborate with any of them...";
+	close;
+}
+
+lhz_in02,278,273,3	script	Broncher#qsk_al	709,{
+	if (BaseJob == Job_Alchemist && bioeth > 6) {
+		mes "[Broncher]";
+		mes "You again? Didn't I already";
+		mes "t'enseigner l'Homunculus";
+		mes "La compétence Résurrection ? Viens";
+		mes "ici, il n'y a plus rien que je puisse faire pour toi. Laisse-moi";
+		mes "m'amuser ici...";
+		mes "[Broncher]";
+		next;
+		mes "[Broncher]";
+		mes "va déranger Kellasus et fais-lui enseigner les techniques de base de l'Homunculus.";
+		mes "Maintenant, va-t'en, tu me réveilles ! Va donc, sors d'ici !";
+		mes "[Broncher]";
+		mes "^333333*Hoquet!*^000000";
+		mes "Oh mon dieu, ce truc est génial ! Ouais. Ouais,";
+		mes "ça tombe pile au bon moment.";
+		close;
+	}
+	if (BaseJob == Job_Alchemist && bioeth == 6) {
+		mes "[Broncher]";
+		mes "Holy crap! Y-you're that Alchemist que Skrajjad";
+		mes "Oh mec...";
+		mes "(Note : Les noms propres 'Alchemist', 'Skrajjad' et l'exclamation 'Holy crap!' sont conservés tels quels selon la règle des noms propres, bien que 'Holy crap' soit un anglicisme courant dans le jeu).";
+		mes "is great! Yeah. Yeah,";
+		mes "this really hits the spot.";
+		next;
+		mes "[Brocher]";
+		mes "Holy crap! Y-you're that";
+		mes "Alchemist that Skrajjad";
+		mes "m'a dit de m'attendre ! Quoi-- ?";
+		mes "Vous avez déjà visité Keshibien ?";
+		mes "Crap ! J'avais pensé que vous n'arriveriez pas";
+		mes "ici pour une autre... Heure !";
+		next;
+		mes "[Broncher]";
+		mes "Oh, oublions l'éveil.";
+		mes "Je vais juste vous enseigner la";
+		mes "^FF0000Résurrection d'Homuncule^000000";
+		mes "compétence. C'est l'une des dernières";
+		mes "compétences que vous devez apprendre";
+		mes "pour les Homuncules, de toute façon.";
+		next;
+		mes "[Broncher]";
+		mes "Oui, vous pouvez littéralement";
+		mes "ramener les Homuncules des morts.";
+		mes "Oh, et vous devriez savoir que cette compétence";
+		mes "est maîtrisée au Niveau de Compétence 5.";
+		mes "[Broncher]";
+		next;
+		mes "[Broncher]";
+		mes "Homuncule des morts";
+		mes "Homunculus back from";
+		mes "les morts, vous les repoussez simplement";
+		mes "ce bouton, celui qui est";
+		mes "étiqueté ''Homunculus";
+		mes "Résurrection.'' Facile, non ?";
+		next;
+		mes "[Broncher]";
+		mes "Bon, la leçon est finie.";
+		mes "Vous savez tout ce que";
+		mes "vous devez savoir sur l'utilisation de";
+		mes "la Résurrection d'Homunculus.";
+		mes "Mais vous avez toujours besoin de Kellasus";
+		mes "pour vous enseigner les bases.";
+		set bioeth,7;
+		next;
+		mes "[Broncher]";
+		mes "Sans ces techniques de base,";
+		mes "tout ce que vous avez étudié chez nous";
+		mes "sera inutile. Alors...";
+		mes "Bonne chance pour convaincre";
+		mes "Kellasus de vous enseigner.";
+		mes "[Broncher]";
+		next;
+		mes "[Broncher]";
+		mes "Now leave alone";
+		mes "et laisse-moi profiter";
+		mes "de tout cet alcool";
+		mes "en solitude, d'accord ?";
+		close;
+	}
+	mes "[Broncher]";
+	mes "^333333*Hiccup~*^000000";
+	mes "Oh oui, c'est";
+	mes "la chose ! Je l'appelle...";
+	mes "Ma formule ''Anti-Sobriété''";
+	mes "! Impossible de trouver quelque chose";
+	mes "de mieux créé...";
+	close;
+}
+
+lhz_in03,106,34,3	script	Koring#qsk_al	706,{
+	if (BaseJob == Job_Alchemist && bioeth == 8 || bioeth == 9) {
+		mes "[Koring]";
+		mes "Mon papa est le meilleur des";
+		mes "Alchimistes ! Il est sioooo";
+		mes "intelligent, et je n'ai jamais entendu";
+		mes "dire qu'il se trompait avant !";
+		next;
+		mes "[Koring]";
+		mes "Mon papa réfléchit beaucoup";
+		mes "récemment et je ne sais pas pourquoi. Mon papa devient";
+		mes "très sérieux quand il est";
+		mes "really serious when he's ";
+		mes "inquiète pour quelque chose.";
+		next;
+		mes "[Koring]";
+		mes "Il essaie toujours de son mieux";
+		mes "pour me rendre heureuse et m'aider quand j'ai des problèmes.";
+		mes "help me when I have problems.";
+		mes "Comme la fois où j'étais vraiment malade...";
+		next;
+		mes "[Koring]";
+		mes "Papa a fait de son mieux pour préparer";
+		mes "un remède qui m'aiderait,";
+		mes "et il a cherché partout un médecin capable de me guérir. Pendant";
+		mes "doctor who could cure me. For";
+		mes "un moment, j'étais vraiment effrayée,";
+		mes "mais mon Papa n'a jamais abandonné.";
+		next;
+		if (bioeth == 8) set bioeth,9;
+		mes "[Koring]";
+		mes "Il peut être un peu";
+		mes "grougnon maintenant, mais mon";
+		mes "Papa est toujours le meilleur !";
+		mes "J'espère qu'il se sentira mieux bientôt.";
+		close;
+	}
+	mes "[Koring]";
+	mes "Comment mon Papa a-t-il obtenu";
+	mes "si intelligente ? Je voudrais pouvoir";
+	mes "apprendre les choses aussi vite que";
+	mes "lui pour devenir alchimiste moi aussi quand je serai grande !";
+	mes "[Beninne]";
+	close;
+}
+
+lhz_in03,109,31,5	script	Beninne#qsk_al	90,{
+	if (BaseJob == Job_Alchemist && bioeth == 8 || bioeth == 9) {
+		mes "[Beninne]";
+		mes "Kellasus ? Il est soit très têtu";
+		mes "soit déterminé, selon comment tu veux";
+		mes "y voir. Une fois que son esprit";
+		mes "est fait, il ne bougera pas !";
+		mes "[Beninne]";
+		mes "C'est un très bon mari et père,";
+		next;
+		mes "[Beninne]";
+		mes "le monde pour changer son avis une fois qu'il est";
+		mes "convaincu d'avoir raison sur quelque chose.";
+		mes "[Beninne]";
+		mes "Bien sûr, si tu parviens";
+		mes "convinced that he's right";
+		mes "about something.";
+		next;
+		mes "[Beninne]";
+		mes "Of course, if you manage";
+		mes "pour le contredire, il";
+		mes "fera tout ce qui est en son pouvoir pour";
+		mes "se rattraper. Kellasus a été";
+		mes "ainsi depuis que je l'ai rencontré.";
+		next;
+		mes "[Beninne]";
+		mes "C'est si agréable de";
+		mes "avoir quelqu'un comme ça";
+		mes "qui se soucie de vous protéger.";
+		mes "Kellasus aime son travail,";
+		mes "mais il aime encore plus sa famille.";
+		mes "Incroyable, n'est-ce pas ?";
+		close;
+	}
+	mes "[Beninne]";
+	mes "La plupart des gens pensent que";
+	mes "être l'épouse d'un scientifique";
+	mes "serait si difficile. Je dois";
+	mes "avoir de la chance, car mon mari est";
+	mes "un tel homme de famille, même";
+	mes "s'il est Alchimiste.";
+	close;
+}
+
+lighthalzen,226,210,3	script	Nannan#qsk_al	86,{
+	mes "[Nannan]";
+	mes "Vous savez, je pensais toujours que tous les Alchimistes étaient des types bibliophiles,";
+	mes "des savants dont le visage était toujours enfoui dans des livres à étudier. Mais";
+	mes "Je suis parvenu à en trouver un qui ne correspond absolument pas à ce stéréotype de nerd.";
+	next;
+	mes "[Nannan]";
+	mes "Ce type, quel est son nom,";
+	mes "Broncher, c'est toujours du gaspillage";
+	mes "passait son temps à boire. Je suppose qu'il a découvert le secret de transformer";
+	mes "l'eau en alcool de qualité supérieure A. Mais au moins, il n'est pas ce genre de type raide.";
+	next;
+	mes "[Nannan]";
+	mes "je ne sais pas combien";
+	mes "il serait utile à un aspirant";
+	mes "Alchimiste, mais à mon avis,";
+	mes "l'homme est un homme à part entière";
+	mes "génie! Du moins, comparé";
+	mes "à un gars de la rue comme moi...";
+	close;
+}
+
+lhz_in01,218,141,7	script	Alchemist#qsk_al	98,{
+	mes "Je suis également impressionné par le fait qu'il ne laisse pas son travail l'empêcher d'être";
+	mes "De tous les humains,";
+	mes "je crois que Kellasus est";
+	mes "celui qui s'en est le plus rapproché pour découvrir";
+	mes "les secrets de la vie. Il";
+	mes "ne manque jamais de me surprendre...";
+	mes "[Alchimiste]";
+	next;
+	mes "Je suis également impressionné par le fait qu'il ne laisse pas son travail l'empêcher d'être";
+	mes "le meilleur père et mari qu'il puisse être pour sa famille. Il est";
+	mes "un exemple pour nous tous.";
+	mes "[Alchimiste]";
+	mes "Kellasus l'est vraiment.";
+	mes "he can for his family. He's";
+	mes "an example for all of us.";
+	next;
+	mes "Je suis également impressionné par le fait qu'il ne laisse pas son travail l'empêcher d'être";
+	mes "Kellasus really is";
+	mes "une personne incroyable.";
+	mes "Il n'y a pas d'alchimiste";
+	mes "que je connaisse qui ne le regarde";
+	mes "pas en haut dans les domaines de";
+	mes "ni la science ni la vie personnelle.";
+	close;
+}
+
+//============================================================ 
+// Old changelog
+//============================================================ 
+//= 1.0 for fully working skills only [Lupus]
+//= 1.1 Added more new skill quests for more classes [Lupus]
+//= Somehow eA engine doesn't let you keep learn't skill V_V'
+//= 1.2 Added to correct locations, correct NPC's, fixed
+//= some of the items required and made them into real
+//= quests. [Reddozen] 
+//= 1.3 Fixed bugs and minor typos. Optimized [Lupus]
+//= 1.3a fixed an item ID typo, thx 2Spiritual Kid
+//= 1.3b Splitted into different files [DracoRPG]
+//= 1.4 Added Creators + Baby Alchemists can pass Bio Ethics
+//= 	Quest too [Lupus]
+//= 1.5 Removed duplicates [Toms] 1.5a fixed typo [Lupus]
+//= 1.6 Moved some NPCs related to Lighthalzen quests. [SinSloth]
+//= 1.7 Updated "Elemental Potion Creation Quest" to the official one. [Samuray22]
+//= 1.8 Added some missing NPCs from the Laboratory. [Samuray22]
+//= 1.8a replaced item "names" with item id [Lupus]
+//============================================================

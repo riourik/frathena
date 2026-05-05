@@ -1,0 +1,487 @@
+//===== rAthena Script =======================================
+//= Swordsman Skills Quests
+//===== By: ==================================================
+//= kobra_k88
+//===== Current Version: =====================================
+//= 1.9
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Quests for skills: Fatal Blow, Mobile HP Recovery,
+//  Auto-Berserk
+//===== Additional Comments: =================================
+//= 1.6 Rescripted to Aegis 10.3 stadards. [L0ne_W0lf]
+//= 1.7 Updated to latest available official file. [Masao]
+//= 1.8 Fixed JobLevel requirements. [Euphy]
+//= 1.9 Moved Izlude NPC to pre-re/re paths. [Euphy]
+//=     Updated "Knight De Thomas" NPC to latest version.
+//============================================================
+
+-	script	::KnightDeThomas	98,4,4,{
+	if ((BaseClass == Job_Swordman) && (JobLevel >= 35 || (BaseJob == Job_Knight || BaseJob == Job_Crusader))) {
+		if (getskilllv("SM_MOVINGRECOVERY") == 1) {
+			mes "[De Thomas]";
+			mes "Oh, c'est toi ?";
+			mes "Ça fait longtemps !";
+			mes "Tu sembles en meilleure forme qu'avant.";
+			mes "Hahahaha!";
+			mes "Prends soin de toi ! À bientôt !";
+			close;
+		} else if (countitem(713) >= 200 && countitem(1058) >= 1) {
+			mes "[De Thomas]";
+			mes "Bienvenue de retour...";
+			mes "Es-tu prêt à apprendre Body Movin' ?";
+			next;
+			switch (select("Yes.:No, I'm not ready yet.")) {
+			case 1:
+				mes "[De Thomas]";
+				mes "Laisse-moi voir.....";
+				next;
+				mes "[De Thomas]";
+				mes "D'accord ! Je vais maintenant t'apprendre...";
+				mes "...la compétence Body Movin' !";
+				next;
+				delitem 713,200; //Empty_Bottle
+				delitem 1058,1; //Wing_Of_Moth
+				skill "SM_MOVINGRECOVERY",1,SKILL_PERM;
+				mes "[De Thomas]";
+				mes "Et voilà !";
+				mes "Essaie-toi.";
+				mes "Mais ne l'exagère pas.";
+				next;
+				mes "[De Thomas]";
+				mes "Oh oui, je n'aurai plus besoin de ta";
+				mes "armure, tu peux donc la garder.";
+				mes "Bonne chance maintenant !";
+				close;
+			case 2:
+				mes "[De Thomas]";
+				mes "C'est ainsi?";
+				mes "Revenez lorsque vous serez prêt.";
+				close;
+			}
+		} else {
+			mes "[De Thomas]";
+			mes "Hmmm... C'est un guerrier...";
+			mes "Tu sais bien que je suis De Thomas Carlos, non ?";
+			mes "Chevalier de la 3e Cavalerie de Prontera.";
+			mes "De Thomas Carlos !";
+			next;
+			mes "[De Thomas]";
+
+			// bug: official script always states that job level is too low
+			//mes "Attends une seconde, ton niveau d'emploi n'est pas supérieur à ^00880035^000000 !";
+			//mes "Reviens quand ce sera le cas.";
+
+			// custom: old dialog
+			mes "Tu ne possèdes pas tous les objets que je demande.";
+			next;
+			mes "[De Thomas]";
+			mes "Souviens-toi, j'ai besoin de ^008800200^000000 fioles vides^000000, de ton armure et d'une ^008800Aile de Papillon^000000. Reviens quand tu auras tout.";
+			close;
+		}
+	} else {
+		mes "[De Thomas]";
+		mes "Mon nom est De Thomas Carlos.";
+		mes "Chevalier de la 3e Cavalerie de Prontera.";
+		mes "J'ai une certaine mission en ce moment.";
+		mes "Ehem ! Dois-je dire plus ?";
+		close;
+	}
+	end;
+
+OnTouch:
+	if ((BaseClass == Job_Swordman) && (JobLevel >= 35 || (BaseJob == Job_Knight || BaseJob == Job_Crusader))) {
+		mes "[De Thomas]";
+		mes "Oh non ! Tu dois avoir été blessé ! Vas-tu bien ?";
+		mes "Tu as dû combattre fort pour subir de telles blessures sérieuses...";
+		mes "Être un guerrier en armure doit s'accompagner de beaucoup de responsabilité et de sacrifice.";
+		next;
+		mes "[De Thomas]";
+		if (Sex == SEX_MALE)
+			mes "Pour ces guerriers en armure, il existe une merveilleuse compétence.";
+		else
+			mes "Pour ces guerrières en armure, il existe une merveilleuse compétence, jeune dame.";
+		mes "Je vous présente - Récupération de PV en mouvement !";
+		mes "Le déplacement du corps est une compétence magnifique";
+		mes "qui vous permet de regagner des forces (PV)";
+		mes "pendant que vous êtes en mouvement !";
+		next;
+		mes "[De Thomas]";
+		mes "Elle est actuellement en développement";
+		mes "de sorte qu'elle ne peut pas récupérer autant,";
+		mes "mais elle aidera un peu.";
+		mes "Que pensez-vous ? Souhaitez-vous apprendre cette compétence ?";
+		next;
+		switch (select("What a nice skill! I want to learn it!:No, thank you.")) {
+		case 1:
+			mes "[De Thomas]";
+			mes "Très bien. Je vous dirai ce dont vous avez besoin pour apprendre cette compétence.";
+			mes "Premièrement, votre niveau de métier doit être supérieur à ^00880035^000000.";
+			mes "Vous aurez également besoin de ^008800200 fioles vides^000000.";
+			mes "Pourquoi ? Parce que c'est la preuve que vous avez combattu avec ferveur pour avoir utilisé autant de potions.";
+			next;
+			mes "[De Thomas]";
+			mes "Aussi, l'armure que vous avez utilisée au combat.";
+			mes "Ceci est également la preuve d'un combattant expérimenté.";
+			mes "Pour l'armure... votre armure est parfaite !";
+			mes "Apportez votre armure !";
+			mes "Enfin et surtout... apportez-moi une ^008800Aile de Phalène^000000.";
+			next;
+			select("Eh? You need that, too?");
+			mes "[De Thomas]";
+			mes "Pas vraiment.. Je n'en ai pas vraiment BESOIN.";
+			mes "C'est juste que ma nièce a reçu une tâche de chasse aux bugs pour les vacances d'été.";
+			mes "Bien sûr ! Ce serait beaucoup plus facile pour moi de le faire moi-même.";
+			mes "mais je dois travailler ici tout le temps, donc je n'ai pas exactement le temps d'y aller et de le chercher.";
+			next;
+			mes "[De Thomas]";
+			mes "Ne trouvez-vous pas pitoyable que je doive rester à un seul endroit chaque jour, sans pouvoir sortir ?";
+			mes "S'il vous plaît, trouvez-moi-en une...*glou glou*";
+			mes "Si vous ne le faites pas...";
+			close;
+		case 2:
+			mes "[De Thomas]";
+			mes "...";
+			close;
+		}
+	}
+	end;
+}
+
+prt_in,75,88,5	script	Leon Von Frich	85,3,3,{
+	if ((BaseClass == Job_Swordman) && (JobLevel >= 25 || (BaseJob == Job_Knight || BaseJob == Job_Crusader))) {
+		if (getskilllv("SM_FATALBLOW") == 1) {
+			mes "[Leon]";
+			mes "Hein ?";
+			mes "Je me demandais qui c'était !";
+			mes "Ah, c'est toi d'avant !";
+			mes "Enchanté de te revoir ! Comment vas-tu ?";
+			mes "Fais attention ! Hahaha !";
+			close;
+		}
+		else if ((countitem(1752) > 9) && (countitem(1751) > 9) && (countitem(532) > 0) && (countitem(962) > 29) && (countitem(526) > 4)) {
+			mes "[Leon]";
+			mes "Ooh ! Vous êtes plus que prêt";
+			mes "à apprendre le Coup Fatal !";
+			mes "Alors qu'en pensez-vous ? Voulez-vous l'apprendre ?";
+			next;
+			switch (select("Yes!:No, I don't want to.:But, what is Fatal Blow?")) {
+			case 1:
+				mes "[Leon]";
+				mes "D'accord, commençons !";
+				next;
+				delitem 1752,10; //Fire_Arrow
+				delitem 1751,10; //Silver_Arrow
+				delitem 532,1; //Banana_Juice
+				delitem 962,30; //Tentacle
+				delitem 526,5; //Royal_Jelly
+				skill "SM_FATALBLOW",1,SKILL_PERM;
+				mes "[Leon]";
+				mes "Succès !";
+				mes "Utilisez votre nouvelle compétence à son plein potentiel.";
+				mes "Hahahahahahahaha !";
+				close;
+			case 2:
+				mes "[Leon]";
+				mes "Je ne vous aime pas !!!";
+				close;
+			case 3:
+				mes "[Leon]";
+				mes "J'ai développé cette compétence récemment.";
+				mes "Lorsque vous utilisez Bash, selon";
+				mes "votre niveau, vous pouvez figer";
+				mes "votre adversaire. .";
+				mes "Vous avez appris Bash, n'est-ce pas ?";
+				next;
+				mes "[Leon]";
+				mes "Qu'en pensez-vous ? Figer est";
+				mes "une technique très utile. Ne trouvez-vous pas cette compétence attrayante ?";
+				mes "Quand tu penses que c'est fait, reviens simplement vers moi !";
+				close;
+			}
+		}
+		mes "[Leon]";
+		mes "Ooh ! Un jeune et fort spadassin !";
+		next;
+		mes "[Leon]";
+		mes "Wow, en voyant ton bras, tu dois aimer utiliser Bash ?";
+		next;
+		select("Eh, I... just...");
+		mes "[Leon]";
+		if (Sex == SEX_FEMALE) {
+			mes "Pas besoin d'être surpris.";
+			mes "Si tu utilises une épée, bien sûr que tu devrais avoir un bon bras !";
+		}
+		else {
+			mes "Rien à quoi s'embarrasser.";
+			mes "Même si tu es une femme, il faut un bras fort pour utiliser une épée !";
+		}
+		mes "Dans ces temps où ne subsistent que des jeunes inutiles et paresseux,";
+		mes "Je suis ravi d'avoir rencontré quelqu'un de fort comme toi.";
+		next;
+		mes "[Leon]";
+		mes "Oui, j'aimerais offrir un cadeau à un spadassin aussi impressionnant que toi.";
+		next;
+		switch (select("What present?:It's ok.")) {
+		case 1:
+			mes "[Leon]";
+			mes "Haha rien de spécial, mais une compétence pour attaquer le point vital !";
+			next;
+		case 2:
+			mes "[Leon]";
+			mes "...Haha rien de spécial, juste une compétence qui vise la zone vitale !";
+			next;
+		}
+		mes "[Leon]";
+		mes "C'est une compétence que j'ai développée récemment.";
+		mes "Quand vous utilisez Bash, selon";
+		mes "votre niveau, votre adversaire peut";
+		mes "être assommé.";
+		mes "Vous avez appris Bash, n'est-ce pas ?";
+		next;
+		mes "[Leon]";
+		mes "Quand j'étais guerrier comme vous,";
+		mes "j'aimais utiliser Bash. À chaque fois, je pensais";
+		mes "- peut-être que l'attaque serait plus puissante";
+		mes "si j'utilisais l'étourdissement en même temps.";
+		next;
+		mes "[Leon]";
+		mes "Je me suis retiré du champ de bataille pour faire des recherches";
+		mes "et enfin, j'ai développé cette nouvelle merveilleuse compétence !";
+		mes "Voulez-vous apprendre cette compétence ?";
+		next;
+		switch (select("Yes.:No.:Do you have any advice on how to eat sushi?")) {
+		case 1:
+			mes "[Leon]";
+			mes "D'accord. Je vous dirai les conditions.";
+			mes "Tout d'abord, il faut que vous ayez le niveau 5 en Bash.";
+			mes "Vous devrez également préparer 10 Flèches de Feu, 10 Flèches d'Argent, 1 bouteille de Jus de Banane, 30 Tentacules et 5 bouteilles de Gelée Royale.";
+			mes "Ce sont... un peu comme des ingrédients.";
+			next;
+			mes "[Leon]";
+			mes "revenez vers moi une fois que vous aurez tous les matériaux.";
+			mes "Nous en parlerons alors.";
+			close;
+		case 2:
+			mes "[Leon]";
+			mes "Hahahahahahahahahaha !";
+			mes "...";
+			mes "...";
+			mes " ...";
+			mes "Je suis à bout de mots ! ?";
+			close;
+		case 3:
+			mes "[Sushi King Leon]";
+			mes "La meilleure façon de manger du sushi est";
+			mes "avec les mains.";
+			mes "C'est la base.";
+			mes "Et tremper le poisson, pas le riz,";
+			mes "dans la sauce soja.";
+			next;
+			mes "[Sushi King Leon]";
+			mes "Ainsi, vous obtenez une saveur plus riche.";
+			mes "De plus, mangez toujours ce qui est de saison.";
+			mes "Manger dans l'ordre du poisson blanc puis";
+			mes "du poisson bleu le rendra meilleur !";
+			mes "Mmm ! J'aime le sushi~~ !";
+			close;
+		}
+	}
+	mes "[Leon]";
+	mes "Oh non ! Je n'ai rien à vous offrir !";
+	mes "Je ne peux pas dire de choses agréables et amusantes à tout le monde.";
+	mes "autre que les épeuriers !";
+	mes "À bientôt dans un meilleur monde !";
+	close;
+
+OnTouch_:
+	mes "[Leon]";
+	mes "Hahahahahahaha !";
+	mes "Hahahahahahaha !";
+	close;
+}
+
+prt_in,94,57,3	script	Juan	85,4,4,{
+	if (BaseClass == Job_Swordman) {
+		if (getskilllv("SM_AUTOBERSERK") == 1) {
+			mes "[Juan]";
+			mes "Mmm ? Longue absence !";
+			mes "Comment ça va ?";
+			mes "Tu as renforcé tes forces depuis la dernière fois.";
+			mes "Beaucoup attendent de grandes choses de toi.";
+			mes "Tu peux le faire.";
+			close;
+		}
+		else if (JobLevel < 10 && (BaseJob != Job_Knight && BaseJob != Job_Crusader)) {
+			mes "[?]";
+			mes "Qui êtes-vous ?";
+			mes "Eh, tu es encore un débutant.";
+			mes "Je suis occupé, alors entraîne-toi un peu plus avant de revenir.";
+			mes "before coming back.";
+			close;
+		}
+		else if (JobLevel < 30 && (BaseJob != Job_Knight && BaseJob != Job_Crusader)) {
+			mes "[Juan]";
+			mes "Oh, enchanté de te rencontrer.";
+			mes "Tu peux repartir maintenant. (sourire~)";
+			close;
+		}
+		else if ((countitem(924) > 34) && (countitem(958) > 9) && (countitem(957) > 9) && (countitem(518) > 9)) {
+			mes "[Juan]";
+			mes "Ooh ! Jeune épeurier !";
+			mes "Tu es prêt à apprendre la";
+			mes "nouvelle compétence, Auto Berserk ?!";
+			next;
+			switch (select("Hoho, I would like to learn it now.:What is that?")) {
+			case 1:
+				mes "[Juan]";
+				mes "D'accord. Alors...";
+				next;
+				delitem 924,35; //Powder_Of_Butterfly
+				delitem 958,10; //Horrendous_Mouth
+				delitem 957,10; //Decayed_Nail
+				delitem 518,10; //Honey
+				skill "SM_AUTOBERSERK",1,SKILL_PERM;
+				mes "[Juan]";
+				mes "Vous venez de devenir un guerrier";
+				mes "capable d'utiliser l'Auto Berserk.";
+				mes "Vous pouvez maintenant vous lancer dans";
+				mes "de grandes aventures !";
+				next;
+				mes "[Juan]";
+				mes "Bonne chance!";
+				next;
+				mes "[Juan]";
+				mes "....................................oh yeah.";
+				mes "J'ai oublié de dire quelque chose.";
+				mes "Il y a certaines choses dont vous devez garder à l'esprit.";
+				next;
+				mes "[Juan]";
+				mes "Une fois que vous avez récupéré vos points de vie,";
+				mes "cette compétence disparaîtra.";
+				mes "De plus, il n'y a pas vraiment de limite de temps,";
+				mes "mais elle peut tout de même disparaître lorsque";
+				mes "vous subissez une attaque d'une compétence capable";
+				mes "d'annuler l'état Provocqué.";
+				next;
+				mes "[Juan]";
+				mes "Si vous ne vous souvenez pas de ces caractéristiques,";
+				mes "vous pourriez rencontrer des problèmes sur le champ de bataille.";
+				mes "quand la disparait soudainement.";
+				next;
+				mes "[Juan]";
+				mes "Alors... au revoir pour de vrai~";
+				close;
+			case 2:
+				mes "[Juan]";
+				mes "Auto Berserk ?";
+				mes "C'est une compétence cruciale sur le champ de bataille.";
+				mes "Quand votre santé est en rouge,";
+				mes "votre potentiel caché provoque vous-même";
+				mes "pour vous aider dans le combat.";
+				next;
+				mes "[Juan]";
+				mes "C'est parfait pour ceux qui";
+				mes "combattent sur le champ de bataille comme le feu !";
+				mes "Avec votre capacité, vous pouvez apprendre";
+				mes "cette compétence tout de suite.";
+				mes "Alors, je vais vous dire les matériaux nécessaires.";
+				next;
+				mes "[Juan]";
+				mes "Vous avez besoin de 35 Poudre d'Éphémère.";
+				mes "L'énergie provenant des magnifiques";
+				mes "ailes d'un papillon vous aidera";
+				mes "à rassembler votre force !";
+				mes "Et 10 Horrendous Mouth.";
+				mes "10 Decayed Nail.";
+				mes "et enfin, mais pas le moins du monde...";
+				mes "10 Honey !";
+				next;
+				mes "[Juan]";
+				mes "Avez-vous tout noté ?";
+				mes "Comme d'habitude, revenez quand vous êtes prêt.";
+				mes "quand vous serez prêt.";
+				mes "J'ai hâte de vous revoir.";
+				close;
+			}
+		}
+		mes "[Juan]";
+		mes "Oh non, vous avez plus de blessures";
+		mes "depuis la dernière fois que je vous ai vu.";
+		mes "Vous êtes allé au combat ainsi ?";
+		mes "Il semble que vous poussiez vos limites.";
+		next;
+		mes "[Juan]";
+		mes "Même si vous avez beaucoup de force,";
+		mes "vous ne pouvez pas faire grand-chose lorsque vous atteignez vos limites, donc";
+		mes "ne surestimez pas vos pouvoirs.";
+		mes "Bien sûr, vous pourriez toujours utiliser la";
+		mes "compétence que nous avons développée pour surmonter ces limites.";
+		next;
+		switch (select("Eh! What are you talking about?:Haha, there can't be such a thing.:Keuuuuuuuh!")) {
+		case 1:
+			mes "[Juan]";
+			mes "La compétence s'appelle Berserk.";
+			mes "Elle est considérée comme la fleur d'un champ de bataille.";
+			mes "Quand votre santé est rouge,";
+			mes "votre potentiel caché vous provoque";
+			mes "pour vous aider dans le combat.";
+			next;
+			mes "[Juan]";
+			mes "C'est parfait pour ceux qui";
+			mes "combattent sur le champ de bataille comme le feu !";
+			mes "Avec votre capacité, vous pouvez apprendre";
+			mes "cette compétence tout de suite.";
+			mes "Alors, je vais vous dire les matériaux nécessaires.";
+			next;
+			mes "[Juan]";
+			mes "Vous avez besoin de 35 Poudre d'Éphémère.";
+			mes "L'énergie provenant des magnifiques";
+			mes "ailes d'un papillon vous aidera";
+			mes "à rassembler votre force !";
+			mes "Et 10 Horrendous Mouth.";
+			mes "10 Decayed Nail.";
+			mes "et enfin, mais pas le moins du monde...";
+			mes "10 Honneurs !";
+			next;
+			mes "[Juan]";
+			mes "Avez-vous tout noté ?";
+			mes "Comme d'habitude, revenez quand vous êtes prêt.";
+			mes "quand vous serez prêt.";
+			mes "J'ai hâte de vous revoir.";
+			close;
+		case 2:
+			mes "[Juan]";
+			mes "Bleh, avez-vous été dupé toute votre vie ?";
+			mes "Je ne sais pas. Ne me parlez plus.";
+			close;
+		case 3:
+			mes "[Juan]";
+			mes "Keuuuuuuuuuuuuuh !";
+			mes "Ooowwwwwuuuuuuuuuuuuuhhh !";
+			mes "Keuaaaaaaaaaaah !";
+			close;
+		}
+	}
+	mes "[Juan]";
+	mes "Vous passez un bon voyage ?";
+	mes "J'espère que vous aurez de beaux jours devant vous.";
+	mes "Ah, je suis simplement le gentil chevalier Juan.";
+	mes "Ne vous inquiétez pas trop pour moi. Hahaha...";
+	close;
+}
+
+//============================================================ 
+// Old changelog
+//============================================================ 
+//= Fully working
+//= 1.0a Now using functions found in "Global_Functions.txt"
+//=     for class checks.
+//= 1.1 Added missing delitem [Lupus]
+//= 1.2 Added Baby Class Support [Lupus]
+//= 1.3 Removed callfunc Is_####_Class in favor of baseClass [Silentdragon]
+//= 1.4 Updated the NPC to allow subclasses of swordsman to learn the skills, [MasterOfMuppets]
+//= 1.5 Fixed exploits [Lupus]
+//= 1.5a Fixed some typos [IVBela]
+//============================================================

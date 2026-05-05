@@ -1,0 +1,568 @@
+//===== rAthena Script ======================================
+//= Dimensional Gap NPCs
+//===== Description: =========================================
+//= NPC script for Dimensional Gap
+//===== Additional Comments: =================================
+//= 1.0 First Version. [Nova]
+//============================================================
+
+mid_camp,207,290,6	script	Expedition Guide#01	4_M_EIN_SOLDIER,{
+	mes "[Guide de l'Expédition]";
+	mes "Allez-vous entrer dans le ^0000FFDécalage Dimensionnel^000000 ? Veuillez utiliser cet Appareil de Transport que vous voyez ici.";
+	next;
+	switch(select("What is the Dimensional Gap?:End Conversation.")) {
+	case 1:
+		mes "[Guide de l'Expédition]";
+		mes "Comme vous le savez, nous avons déjà traversé la Fente Dimensionnelle pour atteindre le Vide d'Ash, non ? Le Décalage Dimensionnel est une extension de cette découverte initiale.";
+		next;
+		mes "[Guide de l'Expédition]";
+		mes "Un membre de l'équipe de l'Expédition a trouvé ces passages arrière permettant de traverser les Fentes Dimensionnelles.";
+		next;
+		mes "[Guide de l'Expédition]";
+		mes "C'est comme une version de la coalition Midgard du pont Bifrost, afin de nous connecter à différentes parties du Nouveau Monde.";
+		next;
+		mes "[Guide de l'Expédition]";
+		mes "Le temps et l'espace sont déformés dans le Décalage Dimensionnel. Tous les passages n'ont pas encore été découverts ; veuillez donc faire preuve de prudence lorsque vous entrez dans une zone non vérifiée.";
+		next;
+		mes "[Guide de l'Expédition]";
+		mes "Quiconque s'est perdu ici n'a pas encore retourné.";
+		close;
+	case 2:
+		mes "[Guide de l'Expédition]";
+		mes "Prenez soin de vous.";
+		close;
+	}
+}
+
+mid_camp,212,290,4	script	Expedition Guide#02	4_M_EIN_SOLDIER,{
+	mes "[Guide de l'Expédition]";
+	mes "Veuillez utiliser un ^0000FFAppareil de Transport^000000 si vous souhaitez traverser la fente dimensionnelle. L'intérieur n'a pas encore été entièrement exploré, alors veuillez faire attention à l'intérieur.";
+	close;
+}
+
+moc_fild22b,225,198,6	duplicate(Expedition Guide#01)	Expedition Guide#03	4_M_MOC_SOLDIER
+moc_fild22b,223,203,4	duplicate(Expedition Guide#02)	Expedition Guide#04	4_M_MOC_SOLDIER
+bif_fild01,314,155,6	duplicate(Expedition Guide#01)	Expedition Guide#05	4_M_EIN_SOLDIER
+bif_fild01,320,154,4	duplicate(Expedition Guide#02)	Expedition Guide#06	4_M_EIN_SOLDIER
+dic_fild02,236,33,6	duplicate(Expedition Guide#01)	Expedition Guide#07	4_M_EIN_SOLDIER
+dic_fild02,239,36,4	duplicate(Expedition Guide#02)	Expedition Guide#08	4_M_EIN_SOLDIER
+
+dali,137,87,4	script	Allied Forces Soldier	4_M_MOCASS1,{
+	mes "[Soldat des Forces Alliées]";
+	mes "Cette fente dimensionnelle est connectée au ^0000FFCamp d'Expédition^000000 des Forces Alliées à Jotunheim.";
+	next;
+	mes "[Soldat des Forces Alliées]";
+	mes "Ne vous inquiétez pas, cela a été installé après avoir testé des centaines d'expériences pour assurer un téléportation sûre.";
+	close;
+}
+
+dali,122,60,4	script	Morocc Soldier	4_M_MOC_SOLDIER,{
+	mes "[Soldat marocain]";
+	mes "Cette fente dimensionnelle est connectée à ^0000FFMorocc^000000 dans le Midgard.";
+	next;
+	mes "[Soldat marocain]";
+	mes "Ceci est le portail le plus rapide pour retourner dans notre monde. La zone est toujours détruite, mais les efforts de restauration seront bientôt en route.";
+	close;
+}
+
+dali,51,104,6	script	Spledide Soldier	4_M_FAIRYSOLDIER2,{
+	mes "[Soldat Spledide]";
+	mes "Cette brèche dimensionnelle est connectée au sud de ^0000FFBifrost^000000. Elle permet un voyage rapide vers la ligne de front de Splendide.";
+	next;
+	mes "[Soldat Spledide]";
+	mes "Si nous l'utilisons correctement, cela nous permettra d'avancer plus facilement vers la capitale des Sapha.";
+	next;
+	mes "[Soldat Spledide]";
+	mes "Le Maire nous a demandé de coopérer autant que possible au lieu de combattre, donc je suis sous les ordres de ne rien faire. Puisque nous avons un ennemi commun, nous ne combattrons pas les Sapha... pour le moment...";
+	close;
+}
+
+dali,56,126,4	script	Dispatched Sapha	4_MAN_BENKUNI,{
+	mes "[Sapha Déployée]";
+	mes "Cette brèche dimensionnelle est connectée à la zone sud des ^0000FFMontagnes Kamidal^000000 d'El Dicastes. Je suis juste passé pour mes recherches, mais c'est incroyable.";
+	next;
+	mes "[Sapha Déployée]";
+	mes "De plus, elle se trouve à côté de la capitale des Laphine..... Hmm... Ne vous inquiétez pas, je ne veux pas combattre en un tel lieu.";
+	close;
+}
+
+dali,109,94,4	shop	Sundries Merchant	4_M_MERCAT2,611:-1,1750:-1,1065:-1
+
+dali,112,95,4	script	Logistics Manager	4_M_MERCAT2,{
+	mes "[Gestionnaire Logistique]";
+	mes "Bienvenue. Je suis chargé de la logistique pour prendre soin de vos objets dans cet endroit étrange. Avez-vous besoin d'accéder à votre stockage ?";
+	next;
+	switch(select("Open Storage 200 Zeny.:No Thanks.")) {
+	case 1:
+		if (Zeny > 199) {
+			if(!callfunc("F_CanOpenStorage")){
+				mes "[Gestionnaire Logistique]";
+				mes "Vous n'êtes pas encore qualifié pour utiliser le Stockage.";
+			}
+			else {
+				Zeny -= 200;
+				openstorage;
+			}
+		}
+		else {
+			mes "[Gestionnaire Logistique]";
+			mes "Vous avez besoin d'au moins 200 zeny pour utiliser le Stockage.";
+		}
+		break;
+	case 2:
+		mes "[Gestionnaire Logistique]";
+		mes "Dites-le-moi si vous changez d'avis.";
+	}
+	close;
+}
+
+dali,115,85,5	script	Party Leader#dali	2_M_SWORDMASTER,{
+	hideonnpc "Party Leader#dali";
+	hideoffnpc "Party Leader#dali2";
+	donpcevent "#dalichat::OnEnable";
+	end;
+}
+
+dali,115,85,0	script	#dalichat	-1,{
+	end;
+OnInit:
+	hideonnpc "Party Leader#dali2";
+	disablenpc "#dalichat";
+	end;
+OnEnable:
+	enablenpc "#dalichat";
+	initnpctimer;
+	end;
+OnTimer1000:
+	npctalk "Attention!!!", "Party Leader#dali2";
+	end;
+OnTimer2000:
+	npctalk "Here, here. Everybody be quiet and line up!", "Party Leader#dali2";
+	end;
+OnTimer3000:
+	npctalk "We have now entered the inside of the Dimensional Crack. Where should be go first?", "Party Leader#dali2";
+	end;
+OnTimer4000:
+	npctalk "Anyone have an opinion?", "Party Leader#dali2";
+	end;
+OnTimer6000:
+	npctalk "I heard rumors about some magic swordman. Let's go find him.", "Party Member#MONK";
+	end;
+OnTimer7500:
+	npctalk "We heard about a magic competition being held here!", "Party Member#WANDERER";
+	end;
+OnTimer9000:
+	npctalk "Where is it?!", "Party Member#MONK";
+	end;
+OnTimer10500:
+	npctalk "Uh, I'm a little bit hungry... I wonder if anybody is selling some warm sweet potatoes or even dumplings...", "Party Member#CRU";
+	end;
+OnTimer12000:
+	npctalk "You want to eat again?", "Party Member#GUILL";
+	end;
+OnTimer13500:
+	npctalk "I am just wondering about the tournament..", "Party Member#WANDERER";
+	end;
+OnTimer15000:
+	npctalk "I need to eat something before doing anything.", "Party Member#CRU";
+	end;
+OnTimer16500:
+	npctalk "By the way, I also heard about something called the Devil's Tower.", "Party Member#MONK";
+	end;
+OnTimer18000:
+	npctalk "I just saw a street trader passing by... Where is he?", "Party Member#GUILL";
+	end;
+OnTimer19500:
+	emotion ET_SLEEPY, getnpcid(0, "Party Member#SURA");
+	npctalk "Huh? What is this? You still haven't entered?", "Party Member#SURA";
+	end;
+OnTimer20000:
+	npctalk "I am curious about the Faceworms I heard about from a Laphine.", "Party Member#MONK";
+	end;
+OnTimer21000:
+	npctalk "Can I come back after having a meal?", "Party Member#CRU";
+	end;
+OnTimer22500:
+	npctalk "Can you even catch that?", "Party Member#WANDERER";
+	npctalk "Are you awake?", "Party Member#SHADOW";
+	end;
+OnTimer24000:
+	emotion ET_FRET, getnpcid(0, "Party Member#SURA");
+	npctalk "Why are you still here?", "Party Member#SURA";
+	end;
+OnTimer24500:
+	npctalk "Hang on a bit. The merchant is going to pass by soon.", "Party Member#GUILL";
+	end;
+OnTimer25500:
+	npctalk "That is your wish....", "Party Member#MONK";
+	end;
+OnTimer27000:
+	npctalk "I want to buy cold grape juice~", "Party Member#CRU";
+	end;
+OnTimer28500:
+	npctalk "I have no idea. There might be an accident up front.", "Party Member#SHADOW";
+	end;
+OnTimer30000:
+	npctalk "What? How dare you?!", "Party Member#WANDERER";
+	end;
+OnTimer31500:
+	npctalk "Give me a sip of juice.", "Party Member#GUILL";
+	end;
+OnTimer32000:
+	npctalk "Cough~ Cough~", "Party Member#EINOLD";
+	end;
+OnTimer33000:
+	emotion ET_FRET, getnpcid(0, "Party Member#SURA");
+	end;
+OnTimer34000:
+	npctalk "Damn! I am pissed off! I came here because I heard only a party is allowed to get in!", "Party Member#SURA";
+	end;
+OnTimer36000:
+	npctalk "Are you going to hit me? Do it!", "Party Member#MONK";
+	emotion ET_ANGER, getnpcid(0, "Party Member#MONK");
+	npctalk "You pay for your food.", "Party Member#CRU";
+	end;
+OnTimer37500:
+	emotion ET_FRET, getnpcid(0, "Party Member#SURA");
+	end;
+OnTimer39000:
+	npctalk "Whatever, I'm not eating.", "Party Member#WANDERER";
+	npctalk "So mean.. I won't eat then.", "Party Member#GUILL";
+	npctalk "Right.. I should have entered with another group!", "Party Member#SHADOW";
+	end;
+OnTimer40500:
+	emotion ET_KIK, getnpcid(0, "Party Member#CRU");
+	npctalk "Hey. Are you pissed off?", "Party Member#CRU";
+	end;
+OnTimer42000:
+	npctalk "Not at all.", "Party Member#GUILL";
+	end;
+OnTimer43500:
+	emotion ET_KIK, getnpcid(0, "Party Member#MONK");
+	npctalk "Look at him snoozing. Hehe.", "Party Member#MONK";
+	end;
+OnTimer45000:
+	emotion ET_SLEEPY, getnpcid(0, "Party Member#SURA");
+	npctalk "Bah, je m'en fiche. Je vais prendre une sieste, donc réveillez-moi quand nous serons prêts.";
+	end;
+OnTimer46500:
+	emotion ET_KIK, getnpcid(0, "Party Member#CRU");
+	npctalk "You are upset!!", "Party Member#CRU";
+	npctalk "Can I get back before I die...", "Party Member#WANDERER";
+	npctalk "What? You, we gotta talk! I've been too nice to you!", "Party Member#EINOLD";
+	end;
+OnTimer48000:
+	npctalk "Excuse me..... everyone.............?", "Party Leader#dali2";
+	end;
+OnTimer49500:
+	emotion ET_ANGER, getnpcid(0, "Party Member#GUILL");
+	npctalk "No!!!!!!!!!", "Party Member#GUILL";
+	npctalk "Whatever~", "Party Member#MONK";
+	end;
+OnTimer51000:
+	emotion ET_CRY, getnpcid(0, "Party Leader#dali2");
+	npctalk "Please listen to me....", "Party Leader#dali2";
+	npctalk "He's angry all right....", "Party Member#WANDERER";
+	npctalk "Take a nap. I am sleepy too, so we'll take shifts.", "Party Member#SHADOW";
+	end;
+OnTimer52500:
+	hideonnpc "Party Leader#dali2";
+	hideoffnpc "Party Leader#dali";
+	stopnpctimer;
+	disablenpc "#dalichat";
+	end;
+}
+
+dali,115,85,3	script	Party Leader#dali2	2_M_SWORDMASTER,{}
+dali,117,81,7	script	Party Member#WANDERER	4_F_WANDERER,{}
+dali,117,79,5	script	Party Member#CRU	4_F_CRU,{}
+dali,118,83,3	script	Party Member#MONK	4_F_MONK,{}
+dali,119,76,7	script	Party Member#SHADOW	4_F_SHADOWCHASER,{}
+dali,119,78,2	script	Party Member#GUILL	4_M_JPNOJI,{}
+dali,120,77,4	script	Party Member#SURA	4_F_SURA,{}
+dali,120,81,3	script	Party Member#EINOLD	4_M_EINOLD,{}
+
+dali,102,83,5	script	Merchant Prince#HUMERC	4_M_HUMERCHANT,2,2,{
+	mes "[Prince Canet]";
+	mes "Qui êtes-vous ?";
+	next;
+	mes "[Prince Canet]";
+	mes "Que veux-tu?";
+	mes "Vous cherchez quelque chose de";
+	mes "particulier ?";
+	next;
+	mes "[Prince Canet]";
+	mes "Alors certains enforcement ont été";
+	mes "à réprimer les marchands récemment.";
+	mes "Je ne peux rien vendre.";
+	next;
+	mes "[Prince Canet]";
+	mes "Venez ici...";
+	next;
+	mes "[Jumpy Knight]";
+	mes "Je savais que vous seriez là !!";
+	mes "Le commerce illégal n'est pas autorisé";
+	mes "ici !";
+	mes "Vous ne le savez pas ?";
+	hideoffnpc "Jumpy Knight#JP_RUN";
+	next;
+	mes "[Prince Canet]";
+	mes "Qui dit ça ?";
+	next;
+	mes "[Jumpy Knight]";
+	mes "D'accord, alors montrez-moi votre permis.";
+	next;
+	mes "[Prince Canet]";
+	mes "Autorisation ?";
+	mes "Personne n'est responsable ici !";
+	next;
+	mes "[Prince Canet]";
+	mes "Toi ! Si tu as besoin de quelque chose, viens à";
+	mes "moi d'accord ?";
+	next;
+	mes "[Jumpy Knight]";
+	mes "Je vais te rattraper !";
+	hideonnpc "Merchant Prince#HUMERC";
+	close2;
+	hideonnpc "Jumpy Knight#JP_RUN";
+	enablenpc "Merchant Prince#HUMERC2";
+	hideoffnpc "Merchant Prince#HUMERC2";
+	disablenpc "Merchant Prince#HUMERC";
+	end;
+OnTouch:
+	mes "[Prince Canet]";
+	mes "Boisson fraîche !";
+	mes "Pomme, raisin, orange~";
+	mes "Tout ce que tu veux !";
+	next;
+	mes "[Prince Canet]";
+	mes "Patate douce, ravioli~";
+	mes "Ici nous avons de délicieux desserts~";
+	close;
+}
+
+dali,105,82,1	script	Jumpy Knight#JP_RUN	4_M_JP_RUN,{
+	end;
+OnInit:
+	hideonnpc "Jumpy Knight#JP_RUN";
+	end;
+}
+
+dali,63,112,7	script	Merchant Prince#HUMERC2	4_M_HUMERCHANT,2,2,{
+	mes "[Prince Canet]";
+	mes "Tu dois payer un péage pour passer ici.";
+	next;
+	switch(select("What toll?"))
+	{
+		case 1:
+			mes "[Prince Canet]";
+			mes "Tu ne savais pas ?";
+			mes "500 zeny";
+			next;
+			mes "[Jumpy Knight]";
+			mes "Toi là !";
+			mes "Arrête-toi tout de suite !";
+			hideoffnpc "Jumpy Knight#JP_RUN2";
+			next;
+			mes "[Prince Canet]";
+			mes "Aïe ! Comment fais-tu toujours pour me suivre ?";
+			mes "Tu as un coup de foudre pour moi ou quoi ? Je ne pense pas que nous soyons faits l'un pour l'autre...";
+			next;
+			mes "[Jumpy Knight]";
+			mes "Pourquoi ne pas le découvrir alors ?";
+			next;
+			mes "[Prince Canet]";
+			mes "C'est fini, plus de paroles.";
+			mes "Je m'en vais~";
+			next;
+			mes "[Jumpy Knight]";
+			mes "Continue de courir, toi le lâche rusé !";
+			hideonnpc "Merchant Prince#HUMERC2";
+			close2;
+			hideonnpc "Jumpy Knight#JP_RUN2";
+			hideoffnpc "Merchant Prince#HUMERC3";
+			disablenpc "Merchant Prince#HUMERC2";
+			end;
+	}
+OnInit:
+	disablenpc "Merchant Prince#HUMERC2";
+	end;
+OnTouch:
+	mes "[Prince Canet]";
+	mes "500 zeny";
+	close;
+}
+
+dali,67,113,3	script	Jumpy Knight#JP_RUN2	4_M_JP_RUN,{
+	end;
+OnInit:
+	hideonnpc "Jumpy Knight#JP_RUN2";
+	end;
+}
+
+dali,89,97,3	script	Merchant Prince#HUMERC3	4_M_HUMERCHANT,{
+	mes "[Prince Canet]";
+	mes "Tu as de la chance d'avoir fait ta rencontre.";
+	mes "[Murnak Mijoul]";
+	mes "Qui suis-je ?";
+	mes "Je suis ici pour devenir un marchand.";
+	mes "Roi.";
+	next;
+	mes "[Prince Canet]";
+	mes "Je travaille peut-être dans une étalage sur le trottoir.";
+	mes "maintenant, mais j'aurai un vrai magasin";
+	mes "un jour.";
+	next;
+	mes "[Prince Canet]";
+	mes "C'est mon premier jour donc je fais une";
+	mes "grande vente.";
+	next;
+	mes "[Prince Canet]";
+	mes "Voyons... j'ai un...";
+	mes "Anneau de quelque chose !";
+	mes "Épée de trucs !";
+	mes "Un sac à dos d'une certaine sorte !";
+	next;
+	mes "[Prince Canet]";
+	mes "Dites-moi si vous avez besoin de quoi que ce soit,";
+	hideoffnpc "Jumpy Knight#JP_RUN3";
+	next;
+	mes "[Prince Canet]";
+	mes "Que faites-vous ici?";
+	mes "Ceci est mon emplacement pour un magasin";
+	mes "Dégagez de mon territoire !";
+	next;
+	mes "[Jumpy Knight]";
+	mes "Bah !!";
+	mes "Vous allez regretter ces mots !";
+	next;
+	mes "[Prince Canet]";
+	mes "Je tremble...";
+	hideonnpc "Merchant Prince#HUMERC3";
+	close2;
+	hideonnpc "Jumpy Knight#JP_RUN3";
+	enablenpc "Merchant Prince#HUMERC";
+	hideoffnpc "Merchant Prince#HUMERC";
+	end;
+OnInit:
+	hideonnpc "Merchant Prince#HUMERC3";
+	end;
+}
+
+dali,89,94,7	script	Jumpy Knight#JP_RUN3	4_M_JP_RUN,{
+	end;
+OnInit:
+	hideonnpc "Jumpy Knight#JP_RUN3";
+	end;
+}
+
+
+dali02,58,123,3	script	Curious Knight#KY_KNT	4_M_KY_KNT,{
+	mes "[Chevalier Curieux]";
+	mes "Le garde royal d'ici";
+	mes "était désespéré de recevoir de l'aide.";
+	mes "Nous sommes entrés par un endroit secret";
+	mes "dans le palais.";
+	next;
+	mes "[Chevalier Curieux]";
+	mes "On nous a emmenés ici...";
+	mes "Je ne sais pas où je suis mais je dois";
+	mes "établir une base ici pour la";
+	mes "Chevalerie.";
+	close;
+}
+dali02,51,112,5	script	Confused Thief#DST_SOL	4_DST_SOLDIER,{
+	mes "[Voleur Confus]";
+	mes "Une minute, je suis dans un bar...";
+	mes "La suivante, je suis ici...";
+	mes "Qu'est-ce que c'est que cet endroit ?";
+	next;
+	mes "[Voleur Confus]";
+	mes "Il n'y a ni jour ni nuit d'ici.";
+	mes "Hum, quelque chose doit être précieux";
+	mes "dans cet endroit...";
+	close;
+}
+dali02,65,115,5	script	Adventurous Rafflesia#ra	4_M_RAFLE_GR,{
+	mes "[Adventurous Rafflesia]";
+	mes "Non, non, ce doit être Thanatos";
+	mes "Tour...";
+	mes "Je sens de la magie noire ici.";
+	next;
+	mes "[Guide]";
+	mes "Oh, nous sommes de retour ici encore.";
+	mes "Je ne trouve pas de sortie !";
+	mes "Nous sommes piégés dans ce labyrinthe !";
+	next;
+	mes "[Touriste]";
+	mes "Est-ce que cet endroit est la fameuse Prontera ?";
+	mes "C'est sombre comme dans une grande ville !";
+	next;
+	mes "[Voyageur]";
+	mes "J'entends une horloge qui tic-tac.";
+	mes "Cet endroit doit être Geffen !";
+	close;
+}
+
+dali02,68,117,5	script	Guide#ra	4_M_RAFLE_GR,{
+	mes "[Guide]";
+	mes "Oh, nous sommes de retour ici encore.";
+	mes "Je ne trouve pas de sortie !";
+	mes "Nous sommes piégés dans ce labyrinthe !";
+	next;
+	mes "[Touriste]";
+	mes "Est-ce que cet endroit est la fameuse Prontera ?";
+	mes "C'est sombre comme dans une grande ville !";
+	next;
+	mes "[Voyageur]";
+	mes "J'entends une horloge qui tic-tac.";
+	mes "Cet endroit doit être Geffen !";
+	next;
+	mes "[Adventurous Rafflesia]";
+	mes "Non, non, ce doit être Thanatos";
+	mes "Tour...";
+	mes "Je sens de la magie noire ici.";
+	close;
+}
+
+dali02,65,119,5	script	Tourist#ra	4_M_RAFLE_GR,{
+	mes "[Touriste]";
+	mes "Est-ce que cet endroit est la fameuse Prontera ?";
+	mes "C'est sombre comme dans une grande ville !";
+	next;
+	mes "[Adventurous Rafflesia]";
+	mes "Non, non, ce doit être Thanatos";
+	mes "Tour...";
+	mes "Je sens de la magie noire ici.";
+	next;
+	mes "[Guide]";
+	mes "Oh, nous sommes de retour ici encore.";
+	mes "Je ne trouve pas de sortie !";
+	mes "Nous sommes piégés dans ce labyrinthe !";
+	next;
+	mes "[Voyageur]";
+	mes "J'entends une horloge qui tic-tac.";
+	mes "Cet endroit doit être Geffen !";
+	close;
+}
+
+dali02,69,122,5	script	Traveller#ra	4_M_RAFLE_GR,{
+	mes "[Voyageur]";
+	mes "J'entends une horloge qui tic-tac.";
+	mes "Cet endroit doit être Geffen !";
+	next;
+	mes "[Guide]";
+	mes "Oh, nous sommes de retour ici encore.";
+	mes "Je ne trouve pas de sortie !";
+	mes "Nous sommes piégés dans ce labyrinthe !";
+	next;
+	mes "[Touriste]";
+	mes "Est-ce que cet endroit est la fameuse Prontera ?";
+	mes "C'est sombre comme dans une grande ville !";
+	next;
+	mes "[Adventurous Rafflesia]";
+	mes "Non, non, ce doit être Thanatos";
+	mes "Tour...";
+	mes "Je sens de la magie noire ici.";
+	close;
+}

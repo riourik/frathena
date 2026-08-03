@@ -1767,10 +1767,10 @@ int32 clif_spawn( const block_list* bl, bool walking ){
 /// 0x7db <type>.W <value>.L (ZC_HO_PAR_CHANGE)
 /// 0xba5 <type>.W <value>.Q (ZC_HO_PAR_CHANGE2)
 void clif_homunculus_updatestatus( const map_session_data& sd, _sp type ) {
-#if PACKETVER >= 20090610
 	if( !hom_is_active(sd.hd) )
 		return;
 
+#if PACKETVER >= 20090610
 	PACKET_ZC_HO_PAR_CHANGE p = {};
 
 	p.packetType = HEADER_ZC_HO_PAR_CHANGE;
@@ -1817,6 +1817,8 @@ void clif_homunculus_updatestatus( const map_session_data& sd, _sp type ) {
 	}
 
 	clif_send(&p, sizeof(p), &sd, SELF);
+#else
+	clif_hominfo(&sd, sd.hd, 0);
 #endif
 }
 
@@ -1824,7 +1826,7 @@ void clif_homunculus_updatestatus( const map_session_data& sd, _sp type ) {
 /// 022e <name>.24B <modified>.B <level>.W <hunger>.W <intimacy>.W <equip id>.W <atk>.W <matk>.W <hit>.W <crit>.W <def>.W <mdef>.W <flee>.W <aspd>.W <hp>.W <max hp>.W <sp>.W <max sp>.W <exp>.L <max exp>.L <skill points>.W <atk range>.W	(ZC_PROPERTY_HOMUN)
 /// 09f7 <name>.24B <modified>.B <level>.W <hunger>.W <intimacy>.W <equip id>.W <atk>.W <matk>.W <hit>.W <crit>.W <def>.W <mdef>.W <flee>.W <aspd>.W <hp>.L <max hp>.L <sp>.W <max sp>.W <exp>.L <max exp>.L <skill points>.W <atk range>.W (ZC_PROPERTY_HOMUN_2)
 void clif_hominfo( const map_session_data* sd, const homun_data *hd, int32 flag ){
-#if PACKETVER_MAIN_NUM >= 20101005 || PACKETVER_RE_NUM >= 20080827 || defined(PACKETVER_ZERO)
+#if PACKETVER_MAIN_NUM >= 20101005 || PACKETVER_RE_NUM >= 20080827 || PACKETVER_SAK_NUM >= 20080618 || defined(PACKETVER_ZERO)
 	nullpo_retv( sd );
 	nullpo_retv( hd );
 

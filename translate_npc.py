@@ -289,7 +289,7 @@ def _batch_translate(texts: list[str]) -> dict[str, str]:
     results = {}
     for i in range(0, len(uncached), 50):
         chunk = uncached[i:i + 50]
-        for attempt in range(3):
+        for attempt in range(6):
             try:
                 translated = GoogleTranslator(source="en", target="fr").translate_batch(chunk)
                 with _cache_lock:
@@ -304,8 +304,9 @@ def _batch_translate(texts: list[str]) -> dict[str, str]:
             except TranslationNotFound:
                 break
             except Exception as e:
-                if attempt < 2:
-                    time.sleep(attempt + 1)
+                if attempt < 5:
+                    # Google limite a ~5 requetes/s : on attend de plus en plus longtemps
+                    time.sleep(5 * 2 ** attempt)
                 else:
                     print(f"  [warn] google batch failed: {e}")
     return results

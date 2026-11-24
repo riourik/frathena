@@ -89,7 +89,13 @@ jobs:
 
       - name: Update translations
         if: steps.check.outputs.behind != '0'
-        run: python translate_npc.py --gen-conf
+        run: |
+          python translate_npc.py --gen-conf --workers 1 2>&1 | tee translate.log
+          # Si Google a refuse des traductions, on s'arrete : pas de PR avec du texte anglais
+          if grep -q "batch failed" translate.log; then
+            echo "::error::Google Translate a refuse des requetes, relance plus tard"
+            exit 1
+          fi
 
       - name: Commit translations
         if: steps.check.outputs.behind != '0'

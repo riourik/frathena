@@ -46,7 +46,9 @@ jobs:
       # No || true: if upstream has conflicts, the workflow fails and notifies you
       - name: Merge upstream
         if: steps.check.outputs.behind != '0'
-        run: git merge upstream/master --no-edit
+        run: |
+          echo "before=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          git merge upstream/master --no-edit
 
       - name: Setup Python
         if: steps.check.outputs.behind != '0'
@@ -58,14 +60,27 @@ jobs:
         if: steps.check.outputs.behind != '0'
         run: pip install deep-translator
 
+      # Les fichiers anglais modifiés par rAthena : on supprime leur version _fr
+      # pour qu'elle soit retraduite (le cache évite de retraduire les phrases inchangées)
+      - name: Mark changed NPC files for re-translation
+        if: steps.check.outputs.behind != '0'
+        run: |
+          git diff --name-only "$before" HEAD -- npc | grep '\.txt$' | grep -v '_fr\.txt$' | while read -r f; do
+            fr="${f%.txt}_fr.txt"
+            if [ -f "$f" ]; then
+              echo "A retraduire : $f"
+              rm -f "$fr"
+            fi
+          done
+
       - name: Update translations
         if: steps.check.outputs.behind != '0'
-        run: python translate_npc.py
+        run: python translate_npc.py --gen-conf
 
       - name: Commit translations
         if: steps.check.outputs.behind != '0'
         run: |
-          git add $(find npc -name '*_fr.txt') translation_cache.json || true
+          git add $(find npc -name '*_fr.txt' -o -name '*_fr.conf') npc/re/scripts_main.conf npc/pre-re/scripts_main.conf translation_cache.json || true
           git diff --staged --quiet || git commit -m "Update French NPC translations"
 
       - name: Push branch
@@ -93,6 +108,7 @@ jobs:
           - [ ] Verify translated files look correct
           EOF
           )" \
+            --repo riourik/frathena \
             --base master \
             --head "${{ steps.branch.outputs.name }}" \
           || echo "PR already exists for today, skipping"

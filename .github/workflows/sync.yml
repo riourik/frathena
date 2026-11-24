@@ -48,7 +48,21 @@ jobs:
         if: steps.check.outputs.behind != '0'
         run: |
           echo "before=$(git rev-parse HEAD)" >> $GITHUB_ENV
-          git merge upstream/master --no-edit
+          if ! git merge upstream/master --no-edit; then
+            # Conflits dans .github/workflows : on prend la version de rAthena
+            conflicts=$(git diff --name-only --diff-filter=U)
+            others=$(echo "$conflicts" | grep -v '^\.github/workflows/' || true)
+            if [ -n "$others" ]; then
+              echo "Conflits a resoudre a la main :"
+              echo "$others"
+              exit 1
+            fi
+            echo "Conflits de workflows resolus avec la version rAthena :"
+            echo "$conflicts"
+            git checkout --theirs -- $conflicts
+            git add -- $conflicts
+            git commit --no-edit
+          fi
 
       - name: Setup Python
         if: steps.check.outputs.behind != '0'

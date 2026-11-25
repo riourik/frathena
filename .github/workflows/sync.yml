@@ -51,13 +51,14 @@ jobs:
           if ! git merge upstream/master --no-edit; then
             # Conflits dans .github/workflows : on prend la version de rAthena
             conflicts=$(git diff --name-only --diff-filter=U)
-            others=$(echo "$conflicts" | grep -v '^\.github/workflows/' || true)
+            # scripts_main.conf : on prend celui de rAthena, --gen-conf remet les _fr ensuite
+            others=$(echo "$conflicts" | grep -v '^\.github/workflows/' | grep -v '^npc/.*scripts_main\.conf$' || true)
             if [ -n "$others" ]; then
               echo "Conflits a resoudre a la main :"
               echo "$others"
               exit 1
             fi
-            echo "Conflits de workflows resolus avec la version rAthena :"
+            echo "Conflits resolus avec la version rAthena :"
             echo "$conflicts"
             git checkout --theirs -- $conflicts
             git add -- $conflicts

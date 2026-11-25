@@ -436,12 +436,17 @@ def generate_conf(source: str, output: str, suffix: str = '_fr') -> int:
         m = _IMPORT_RE.match(line)
         if m:
             prefix, path, _, tail = m.groups()
+            tail = tail.rstrip('\r\n')
+            # Toujours des / : marche sous Windows ET Linux (les \\ ne marchent que sous Windows)
+            path = path.replace('\\', '/')
             p = Path(path)
             fr = p.parent / f"{p.stem}{suffix}{p.suffix}"
-            if fr.exists():
-                out.append(f"{prefix}{fr}{tail}\n")
+            if not p.stem.endswith(suffix) and fr.exists():
+                out.append(f"{prefix}{fr.as_posix()}{tail}\n")
                 replaced += 1
                 continue
+            out.append(f"{prefix}{path}{tail}\n")
+            continue
         out.append(line)
     Path(output).write_text(''.join(out), encoding='utf-8')
     return replaced

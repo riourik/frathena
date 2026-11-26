@@ -316,6 +316,8 @@ def _sanitize(t: str) -> str:
     """Rend une traduction sure a mettre entre guillemets dans un script rAthena."""
     # Google ajoute parfois des retours a la ligne : une chaine ne peut pas en contenir
     t = re.sub(r'\s*[\r\n]+\s*', ' ', t)
+    # Google ajoute parfois des \ inutiles (4\,000) : rAthena les signale en avertissement
+    t = re.sub(r'\\(.)', lambda m: m.group(0) if m.group(1) in 'abtnvfr?"\'\\x01234567' else m.group(1), t)
     # Les " internes doivent etre echappes en \" (Google retire les \)
     t = re.sub(r'(?<!\\)"', r'\\"', t)
     # rAthena ignore un \ place juste apres une lettre accentuee : on intercale une espace

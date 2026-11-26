@@ -75,23 +75,11 @@ jobs:
         if: steps.check.outputs.behind != '0'
         run: pip install deep-translator
 
-      # Les fichiers anglais modifiés par rAthena : on supprime leur version _fr
-      # pour qu'elle soit retraduite (le cache évite de retraduire les phrases inchangées)
-      - name: Mark changed NPC files for re-translation
-        if: steps.check.outputs.behind != '0'
-        run: |
-          git diff --name-only "$before" HEAD -- npc | grep '\.txt$' | grep -v '_fr\.txt$' | while read -r f; do
-            fr="${f%.txt}_fr.txt"
-            if [ -f "$f" ]; then
-              echo "A retraduire : $f"
-              rm -f "$fr"
-            fi
-          done
-
       - name: Update translations
         if: steps.check.outputs.behind != '0'
         run: |
-          python translate_npc.py --gen-conf --workers 1 2>&1 | tee translate.log
+          set -o pipefail
+          python translate_npc.py --gen-conf --workers 1 --retranslate-since "$before" 2>&1 | tee translate.log
           # Si Google a refuse des traductions, on s'arrete : pas de PR avec du texte anglais
           if grep -q "batch failed" translate.log; then
             echo "::error::Google Translate a refuse des requetes, relance plus tard"

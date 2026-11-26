@@ -312,6 +312,61 @@ def _batch_translate(texts: list[str]) -> dict[str, str]:
     return results
 
 
+def _sanitize(t: str) -> str:
+    """Rend une traduction sure a mettre entre guillemets dans un script rAthena."""
+    # Google ajoute parfois des retours a la ligne : une chaine ne peut pas en contenir
+    t = re.sub(r'\s*[\r\n]+\s*', ' ', t)
+    # Les " internes doivent etre echappes en \" (Google retire les \)
+    t = re.sub(r'(?<!\\)"', r'\\"', t)
+    # Un \ final echapperait le guillemet fermant
+    if t.endswith('\\') and not t.endswith('\\\\'):
+        t = t[:-1]
+    return t
+
+
+def harvest(old_en_text: str, fr_text: str) -> int:
+    """Recupere dans le cache les traductions deja presentes dans un fichier _fr,
+    en le comparant ligne a ligne a la version anglaise dont il a ete tire."""
+    en_lines = old_en_text.splitlines()
+    fr_lines = fr_text.splitlines()
+    if len(en_lines) != len(fr_lines):
+        return 0
+    added = 0
+    for en, fr in zip(en_lines, fr_lines):
+        re_en, re_fr = _extract(en), _extract(fr)
+        if not re_en or not re_fr:
+            continue
+        s_en = re_en[0].group(re_en[1])
+        s_fr = re_fr[0].group(re_fr[1])
+        if s_en not in cache and s_fr and s_fr != s_en and _should_translate(s_en):
+            cache[s_en] = s_fr
+            added += 1
+    return added
+
+
+def harvest_from_git(rev: str) -> int:
+    """Pour chaque NPC anglais modifie depuis `rev`, recupere les traductions du _fr existant."""
+    import subprocess
+    files = subprocess.run(['git', 'diff', '--name-only', rev, 'HEAD', '--', 'npc'],
+                           capture_output=True, text=True, check=True).stdout.split()
+    total = 0
+    for f in files:
+        p = Path(f)
+        if p.suffix != '.txt' or p.stem.endswith('_fr'):
+            continue
+        fr = p.parent / f"{p.stem}_fr{p.suffix}"
+        if not fr.exists():
+            continue
+        old = subprocess.run(['git', 'show', f'{rev}:{f}'], capture_output=True)
+        if old.returncode != 0:
+            continue
+        n = harvest(old.stdout.decode('utf-8', errors='ignore'),
+                    fr.read_text(encoding='utf-8', errors='ignore'))
+        print(f"  harvest {f}: {n}")
+        total += n
+    return total
+
+
 def translate_file(input_path: Path, output_path: Path) -> bool:
     if _verbose:
         print(f"  [translating] {input_path.name}", flush=True)
@@ -337,7 +392,7 @@ def translate_file(input_path: Path, output_path: Path) -> bool:
 
     # Phase 3: apply cached translations
     for i, m, g, text in hits:
-        translated = cache.get(text, text)
+        translated = _sanitize(cache.get(text, text))
         if _verbose and translated != text:
             print(f"    {text!r} → {translated!r}", flush=True)
         lines[i] = lines[i][:m.start(g)] + translated + lines[i][m.end(g):]
@@ -535,6 +590,11 @@ if __name__ == "__main__":
         help="Generate French .conf files and patch scripts_main.conf"
     )
     parser.add_argument(
+        '--retranslate-since', metavar='REV',
+        help="Retraduire les NPC anglais modifies depuis REV (commit git), "
+             "en recuperant d'abord les traductions deja presentes dans leur _fr"
+    )
+    parser.add_argument(
         '--verbose', action='store_true',
         help="Print each translated string"
     )
@@ -559,6 +619,21 @@ if __name__ == "__main__":
         print("Engine: Google Translate")
 
     load_cache()
+
+    if args.retranslate_since:
+        print(f"\n=== Recuperation des traductions existantes (depuis {args.retranslate_since}) ===")
+        n = harvest_from_git(args.retranslate_since)
+        print(f"  -> {n} traductions recuperees dans le cache")
+        import subprocess
+        changed = subprocess.run(['git', 'diff', '--name-only', args.retranslate_since, 'HEAD', '--', 'npc'],
+                                 capture_output=True, text=True, check=True).stdout.split()
+        for f in changed:
+            p = Path(f)
+            if p.suffix == '.txt' and not p.stem.endswith(args.suffix) and p.exists():
+                fr = p.parent / f"{p.stem}{args.suffix}{p.suffix}"
+                if fr.exists():
+                    print(f"  a retraduire : {f}")
+                    fr.unlink()
 
     total_done = total_skipped = total_files = 0
 

@@ -318,6 +318,8 @@ def _sanitize(t: str) -> str:
     t = re.sub(r'\s*[\r\n]+\s*', ' ', t)
     # Les " internes doivent etre echappes en \" (Google retire les \)
     t = re.sub(r'(?<!\\)"', r'\\"', t)
+    # rAthena ignore un \ place juste apres une lettre accentuee : on intercale une espace
+    t = re.sub(r'(?<=[^\x00-\x7f])\\', lambda m: ' \\', t)
     # Un \ final echapperait le guillemet fermant
     if t.endswith('\\') and not t.endswith('\\\\'):
         t = t[:-1]
